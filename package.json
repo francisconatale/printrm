@@ -8,7 +8,7 @@
     "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development ELECTRON_START_URL=http://localhost:5173 electron .",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
     "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd java-wrapper && gradlew.bat stageApp",
+    "build:backend": "cd backend && gradlew.bat stageApp",
     "dist": "npm run build:frontend && npm run build:backend && electron-builder"
   },
   "devDependencies": {
@@ -33,7 +33,7 @@
     ],
     "extraResources": [
       {
-        "from": "java-wrapper/build/staging/backend",
+        "from": "backend/build/staging/backend",
         "to": "backend",
         "filter": [
           "**/*"

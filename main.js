@@ -51,14 +51,27 @@ function startBackend() {
     console.log("Expected JRE at:", jrePath);
     console.log("Expected JAR at:", jarPath);
 
+    let finalJavaCmd = jrePath;
+
     if (!fs.existsSync(jrePath)) {
-        const errorMsg = `JAVA NOT FOUND\nPath: ${jrePath}`;
-        console.error(errorMsg);
-        dialog.showErrorBox("Backend Error", errorMsg);
-        return;
+        console.warn(`Bundled JRE not found at ${jrePath}. Falling back to system 'java'.`);
+        finalJavaCmd = 'java';
     }
 
-    springBootProcess = spawn(jrePath, ['-jar', jarPath, '--server.port=8080']);
+    if (!fs.existsSync(jarPath)) {
+        console.error(`Backend JAR not found at ${jarPath}`);
+        // Fallback for testing without full packaging
+        const localJar = path.join(__dirname, 'backend/build/staging/backend/prusaslicer-java-wrapper.jar');
+        if (fs.existsSync(localJar)) {
+            console.log("Found JAR in staging, using local path:", localJar);
+            jarPath = localJar;
+        } else {
+            dialog.showErrorBox("Backend Error", "No se encontró el archivo .jar del servidor.");
+            return;
+        }
+    }
+
+    springBootProcess = spawn(finalJavaCmd, ['-jar', jarPath, '--server.port=8080']);
   }
 
   springBootProcess.on('error', (err) => {
