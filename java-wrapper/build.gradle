@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.prusaslicer.wrapper'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Stage task for later use in Electron
+task stageApp(type: Copy) {
+    dependsOn bootJar
+    
+    // Carpeta de salida final para Electron
+    into "$buildDir/staging"
+    
+    // 1. JAR del Backend
+    from(bootJar.archiveFile) {
+        into "backend"
+        rename { "prusaslicer-java-wrapper.jar" }
+    }
+    
+    // 2. JRE Embebido
+    from("$buildDir/jre") {
+        into "backend/jre"
+    }
+    
+    // 3. Binarios de PrusaSlicer
+    from("$projectDir/../backend/bin") {
+        into "bin"
+    }
+}
+
+// Minimal JRE generation using jlink
+task generateJre(type: Exec) {
+    def jlinkPath = "${System.getProperty('java.home')}/bin/jlink"
+    def outputDir = "$buildDir/jre"
+    
+    doFirst {
+        delete outputDir
+    }
+    
+    commandLine jlinkPath,
+        '--module-path', "${System.getProperty('java.home')}/jmods",
+        '--add-modules', 'java.base,java.logging,java.naming,java.desktop,java.management,java.security.jgss,java.instrument,java.sql,jdk.unsupported',
+        '--output', outputDir,
+        '--strip-debug',
+        '--no-man-pages',
+        '--no-header-files',
+        '--compress', '2'
+}
+
+stageApp.dependsOn generateJre

@@ -1,0 +1,55 @@
+{
+  "name": "prusaslicer-portable",
+  "version": "1.0.0",
+  "description": "Portable 3D Slicing App with React and Spring Boot",
+  "main": "main.js",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development ELECTRON_START_URL=http://localhost:5173 electron .",
+    "dev": "concurrently "npm run dev:frontend" "npm run dev:electron"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd java-wrapper && gradlew.bat stageApp",
+    "dist": "npm run build:frontend && npm run build:backend && electron-builder"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "cross-env": "^7.0.3",
+    "electron": "^34.0.1",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.2"
+  },
+  "build": {
+    "appId": "com.prusaslicer.portable",
+    "win": {
+      "target": "portable",
+      "icon": "frontend/public/vite.svg"
+    },
+    "directories": {
+      "output": "output/printcrm"
+    },
+    "files": [
+      "main.js",
+      "frontend/dist/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "java-wrapper/build/staging/backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "java-wrapper/build/staging/bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "backend/configs",
+        "to": "configs"
+      }
+    ]
+  }
+}
