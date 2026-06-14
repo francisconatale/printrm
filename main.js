@@ -41,7 +41,7 @@ function startBackend() {
   if (isDev) {
     console.log("Mode: Development");
     springBootProcess = spawn('cmd.exe', ['/c', 'gradlew.bat', 'bootRun', '--args="--server.port=8080"'], {
-      cwd: path.join(__dirname, 'java-wrapper')
+      cwd: path.join(__dirname, 'backend')
     });
   } else {
     console.log("Mode: Production");

@@ -40,7 +40,7 @@
         ]
       },
       {
-        "from": "java-wrapper/build/staging/bin",
+        "from": "backend/build/staging/bin",
         "to": "bin",
         "filter": [
           "**/*"

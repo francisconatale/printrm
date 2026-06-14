@@ -18,9 +18,9 @@ echo [+] Limpiando carpeta de salida (output)...
 if exist "output" rd /s /q "output"
 
 echo [+] Limpiando temporales de Java (Gradle/Maven)...
-if exist "java-wrapper\build" rd /s /q "java-wrapper\build"
-if exist "java-wrapper\.gradle" rd /s /q "java-wrapper\.gradle"
-if exist "java-wrapper\target" rd /s /q "java-wrapper\target"
+if exist "backend\build" rd /s /q "backend\build"
+if exist "backend\.gradle" rd /s /q "backend\.gradle"
+if exist "backend\target" rd /s /q "backend\target"
 
 echo [+] Limpiando temporales de Frontend (Vite)...
 if exist "frontend\dist" rd /s /q "frontend\dist"

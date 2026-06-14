@@ -16,8 +16,8 @@ if errorlevel 1 goto :error
 
 echo.
 echo [+] Limpiando builds anteriores de Java...
-if exist "java-wrapper\build" rd /s /q "java-wrapper\build"
-if exist "java-wrapper\jre" rd /s /q "java-wrapper\jre"
+if exist "backend\build" rd /s /q "backend\build"
+if exist "backend\jre" rd /s /q "backend\jre"
 
 echo.
 echo [+] Iniciando proceso de compilacion y empaquetado...
