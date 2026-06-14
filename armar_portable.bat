@@ -11,7 +11,7 @@ if errorlevel 1 goto :error
 
 echo.
 echo [+] Instalando dependencias del frontend...
-cd frontend && call npm install && cd ..
+cd frontend && call npm install --legacy-peer-deps && cd ..
 if errorlevel 1 goto :error
 
 echo.
