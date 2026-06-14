@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+dist/
+output/
+frontend/dist/
+java-wrapper/build/
+java-wrapper/target/
+bin/
+backend/bin/
+
+# IDEs and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Temporary Java files
+java-wrapper/.gradle/
+.gradle/
+
+# G-code outputs (tests)
+backend/output/*.gcode
+
+# Environment variables
+.env
+.env.local
