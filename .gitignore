@@ -23,8 +23,7 @@ Thumbs.db
 java-wrapper/.gradle/
 .gradle/
 
-# G-code outputs (tests)
-backend/output/*.gcode
+
 
 # Environment variables
 .env
