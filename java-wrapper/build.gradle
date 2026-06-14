@@ -31,30 +31,25 @@ tasks.named('test') {
 task stageApp(type: Copy) {
     dependsOn bootJar
     
-    // Carpeta de salida final para Electron
     into "$buildDir/staging"
     
-    // 1. JAR del Backend
-    from(bootJar.archiveFile) {
-        into "backend"
-        rename { "prusaslicer-java-wrapper.jar" }
+    // Copy the boot JAR into backend folder
+    into("backend") {
+        from(bootJar.archiveFile) {
+            rename { "prusaslicer-java-wrapper.jar" }
+        }
     }
     
-    // 2. JRE Embebido
-    from("$buildDir/jre") {
-        into "backend/jre"
-    }
-    
-    // 3. Binarios de PrusaSlicer
-    from("$projectDir/../backend/bin") {
-        into "bin"
+    // Copy PrusaSlicer binaries into 'bin' folder
+    into("bin") {
+        from "$projectDir/../backend/bin"
     }
 }
 
 // Minimal JRE generation using jlink
 task generateJre(type: Exec) {
     def jlinkPath = "${System.getProperty('java.home')}/bin/jlink"
-    def outputDir = "$buildDir/jre"
+    def outputDir = "$buildDir/staging/backend/jre"
     
     doFirst {
         delete outputDir
