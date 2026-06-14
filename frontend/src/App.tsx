@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import './App.css'
+import { LoadingScreen } from './components/loading-screen'
+import { Dashboard } from './components/dashboard'
 
 function App() {
   const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
@@ -47,42 +48,10 @@ function App() {
   }, [retryCount])
 
   if (!isBackendReady) {
-    return (
-      <div className="loading-screen">
-        <div className="loader-container">
-          <div className="spinner"></div>
-          <h2>Iniciando Motor de PrusaSlicer...</h2>
-          <p>{error ? error : `Conectando con el servidor (intento ${retryCount})...`}</p>
-          {error && <button onClick={() => window.location.reload()}>Reintentar</button>}
-        </div>
-      </div>
-    )
+    return <LoadingScreen retryCount={retryCount} error={error} />
   }
 
-  return (
-    <div className="App">
-      <header className="app-header">
-        <h1>PrusaSlicer Cost Calculator</h1>
-        <div className="status-badge ready">Motor Activo</div>
-      </header>
-      
-      <main className="app-content">
-        <div className="card">
-          <h2>¡Bienvenido!</h2>
-          <p>El sistema está listo para procesar tus archivos STL.</p>
-          <div className="actions">
-            <button className="primary-btn">Nuevo Cálculo</button>
-          </div>
-        </div>
-      </main>
-
-      <footer>
-        <p className="read-the-docs">
-          Versión Portable 1.0.0
-        </p>
-      </footer>
-    </div>
-  )
+  return <Dashboard />
 }
 
 export default App
