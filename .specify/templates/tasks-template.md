@@ -152,7 +152,7 @@ Examples of foundational tasks (adjust based on your project):
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX [P] Visual Compliance Review: Verify 0.5px borders and 8pt spacing alignment
+- [ ] TXXX [P] Visual Compliance Review: Verify zero UI shadows, 1px hairline borders, and Studio Tight typography
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/

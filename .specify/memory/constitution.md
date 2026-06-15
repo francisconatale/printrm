@@ -1,76 +1,131 @@
-<!-- 
+<!--
 Sync Impact Report:
-- Version change: 1.0.0 -> 2.0.0
-- List of modified principles:
-  - PRINCIPLE_1: I. Library-First -> I. Spatial Separation
-  - PRINCIPLE_2: II. CLI Interface -> II. Intentional Color Usage
-  - PRINCIPLE_3: III. Test-First (NON-NEGOTIABLE) -> III. Super-Card Shell Architecture
-  - PRINCIPLE_4: IV. Integration Testing -> IV. Balanced Typography & Spacing
-  - PRINCIPLE_5: V. Observability -> V. Minimalist Components & Data Display
-- Added sections: UI Specification, Development Quality Gates
-- Removed sections: N/A
-- Templates requiring updates:
-  - .specify/templates/plan-template.md: ✅ Updated
-  - .specify/templates/spec-template.md: ✅ Updated
-  - .specify/templates/tasks-template.md: ✅ Updated
-- Follow-up TODOs: 
-  - RATIFICATION_DATE set to 2026-06-15.
+- Version change: 1.0.0
+- Core principles defined from SRS v1.0 + design system inherited
+- Stack: Spring Boot (backend) + React 18 (frontend)
+- Templates initialized:
+  - .specify/specs/001-perfiles-gastos-fijos/
+  - .specify/specs/002-motor-de-calculo/
+  - .specify/specs/003-historial-exportacion/
+  - .specify/specs/004-core-app-shell/
+- Follow-up TODOs: N/A
 -->
 
-# 3D Finance Constitution
+# Calculadora 3D — Constitution
 
 ## Core Principles
 
-### I. Spatial Separation
-UI elements are distinguished primarily through whitespace and alignment rather than borders. Borders are restricted to 0.5px and appear only where strictly necessary for clarity.
+### I. Product Protagonist (Data-First)
+La interfaz debe retroceder para que los datos financieros sean los protagonistas. Se prohíbe el uso de cromo decorativo, gradientes innecesarios o marcos que compitan con las métricas de costo y precio. Cada elemento visual debe justificarse por su aporte informativo.
 
-### II. Intentional Color Usage
-The UI follows a strict 95/4/1 distribution: 
-- 95% Slate (neutral backgrounds, text, and separators).
-- 4% Semantic (Green for income, Red for expenses, Amber for warnings).
-- 1% Indigo (Primary CTA, Logo, and active navigation).
-Indigo is never used in body text; semantic colors are never used decoratively.
+### II. Monochromatic Sophistication
+Se utiliza una paleta neutra basada en el tono `Ink` (#1d1d1f). El uso de colores saturados queda restringido únicamente a datos semánticos críticos (precio de venta, alertas). Se prohíbe la "Exageración Visual": los indicadores de selección deben ser sutiles (cambios de fondo leves o líneas hairline).
 
-### III. Super-Card Shell Architecture
-The application lives within a "Super-Card" container (white background, radius-xl) over a subtle gray background (slate-100). This generates a desktop-native application feel rather than a traditional website.
+### III. Studio Tight Typography
+Se utiliza la fuente Inter con un sistema de jerarquía editorial estricto. Los titulares de más de 17px deben llevar un tracking negativo ("Studio Tight"). El cuerpo de texto estándar es de 17px. Los valores financieros usan fuente monoespaciada. Se prohíbe el uso del peso tipográfico 500 en elementos decorativos.
 
-### IV. Balanced Typography & Spacing
-System utilizes the Inter font family with strict adherence to 400 (Regular) and 500 (Medium) weights. Spacing is governed by a strict 8pt grid system; all margins and paddings must be multiples of 4 or 8.
+### IV. Minimalist Elevation & Shadow
+La interfaz debe ser mayoritariamente plana. Se permite una única sombra de firma (`3px 5px 30px 0px rgba(0,0,0,0.22)`) reservada exclusivamente para el Super-Card principal. Los botones y tarjetas se separan mediante whitespace y bordes hairline de 0.5px.
 
-### V. Minimalist Components & Data Display
-Monetary figures always use Mono fonts for vertical alignment. Iconography is strictly limited to Tabler Icons (outline style). UI components must maintain density balance—neither too compact nor too airy.
+### V. Functional Density & Full-Stack Integrity
+La aplicación utiliza **Spring Boot** como backend y **React 18** como frontend. Toda persistencia de datos (Perfiles, Historial, Cálculos) es responsabilidad del backend a través de una API REST. El frontend actúa como vista de alta fidelidad: no persiste estado crítico en localStorage salvo preferencias de UI. Las herramientas deben ser densas y directas; se prohíbe mezclar layouts de marketing en áreas del motor financiero.
+
+### VI. Real-Time Calculation Contract
+Todo cambio en cualquier input del formulario debe disparar un recálculo inmediato sin intervención del usuario. No existe botón "Calcular". La latencia máxima aceptable entre input y resultado visible es de 200ms. Los cálculos se ejecutan en el frontend; el backend es fuente de verdad para persistencia, no para cálculo.
 
 ## UI Specification
 
 ### Palette
-- **Base (Slate):** 900 (Dark text), 100 (Subtle surfaces), 50 (Page background).
-- **Accent (Indigo):** 500 (Main), 700 (Hover).
-- **Semantic:** Green-500 (Success), Red-500 (Danger), Amber-500 (Warning).
+- **Primary Accent:** Ink (#1d1d1f)
+- **Surfaces:** Canvas (#ffffff), Parchment (#f5f5f7)
+- **Borders:** Hairline (#e0e0e0) — siempre 0.5px
+- **Semantic:** Success (#22c55e), Warning (#f59e0b), Destructive (#ef4444)
 
 ### Typography Scale
-- **Heading-1:** 28px/500/-0.5px letter-spacing.
-- **Body:** 14px/400.
-- **Mono:** 13px/400 (for all financial data).
+- **Hero Display:** 56px / 600 / -0.025em tracking
+- **Display Lg:** 40px / 600 / -0.01em tracking
+- **Section Header:** 24px / 600 / -0.015em tracking
+- **Body:** 17px / 400 / -0.022em tracking
+- **Financial Figures:** Mono, 17–40px según contexto
 
 ### Layout
-- **Sidebar:** 240px (Fixed).
-- **Main Area:** Flex-1 (32px padding).
-- **Right Panel:** 300px (Optional activity/summary).
+- **Sidebar:** 240px (Fixed)
+- **Main Area:** Flex-1 (Scroll independiente)
+- **Super-Card:** max-w-[1440px], centrado, bg-white, border-radius 16px, border 0.5px
+- **Grid:** Sistema de 8pt (padding/margin siempre múltiplos de 4 u 8)
 
-## Development Quality Gates
+### API Contract (Frontend ↔ Backend)
+- Base URL: `/api/v1`
+- Autenticación: ninguna en v1
+- Formato: JSON, `Content-Type: application/json`
+- Errores: estructura `{ "error": "string", "code": "string" }`
 
-### Visual Compliance
-Every new UI feature must be validated against the 0.5px border rule and the 8pt spacing grid. Focus rings for accessibility must use Indigo-500 with 15% opacity.
+## Arquitectura de Entrega
 
-### Theme Support
-All surfaces and components must explicitly define behavior for both Light and Dark modes. Dark mode must maintain the same Indigo-500 accent but adjust semantic colors for better legibility on dark backgrounds.
+### Stack
+- **Backend:** Spring Boot 3.x, Java 21, SQLite (liviano, portable, sin dependencias externas)
+- **Frontend:** React 18, TypeScript, Tailwind CSS 3.4, Vite
+
+### Integración
+El frontend consume la API REST del backend. No existe lógica de negocio duplicada: las fórmulas de cálculo viven exclusivamente en el frontend como funciones puras testeables. El backend no recalcula; almacena los resultados tal como los envía el frontend.
+
+### Separación de responsabilidades
+| Responsabilidad | Frontend | Backend |
+|---|---|---|
+| Cálculo de costos | ✅ | ❌ |
+| Persistencia de perfiles | ❌ | ✅ |
+| Persistencia de historial | ❌ | ✅ |
+| Autocompletado de modelos | ✅ (data estática) | ❌ |
+| Exportación CSV/PDF | ✅ | ⚠️ (PDF en v2) |
+| Validación de inputs | ✅ (inmediata) | ✅ (de seguridad) |
+
+## Reglas de Negocio (Canónicas)
+
+Estas fórmulas son la fuente de verdad. Cualquier implementación debe producir resultados idénticos.
+
+```
+tiempo_total_h    = horas + (minutos / 60)
+costo_energia     = (consumo_W / 1000) × tiempo_total_h × precio_kWh
+costo_filamento   = (gramos / 1000) × precio_filamento_kg
+costo_desgaste    = (costo_repuestos / vida_util_h) × tiempo_total_h
+subtotal          = costo_energia + costo_filamento + costo_desgaste + insumos_extra
+costo_base        = subtotal × (1 + margen_error / 100)
+precio_venta      = costo_base × multiplicador
+```
+
+## Anti-Patrones de Diseño
+
+### La Exageración Visual
+Prohibido el uso de bloques de color sólidos y vibrantes en elementos de navegación o formularios. Los colores semánticos solo aparecen en resultados críticos.
+
+### Densidad de Marketing
+Prohibido el uso de heros, frases aspiracionales o ilustraciones decorativas dentro del motor financiero.
+
+### Estado Duplicado
+Prohibido mantener el mismo dato en localStorage y en el backend simultáneamente. El backend es la única fuente de verdad para datos persistentes.
+
+### Cálculo en Backend
+Prohibido enviar inputs al backend para obtener resultados calculados. Las fórmulas son funciones puras del frontend.
+
+## Glosario de Dominio
+
+| Término | Definición |
+|---|---|
+| **Perfil** | Conjunto de parámetros fijos de una impresora (filamento, energía, desgaste). |
+| **Costo base** | Suma de todos los costos de producción con margen de error aplicado. Sin ganancia. |
+| **Precio de venta** | Costo base multiplicado por el margen de ganancia. |
+| **Multiplicador** | Factor de ganancia. Mayorista: 3×, Minorista: 4×, Llaveros: 5×. |
+| **Margen de error** | Porcentaje buffer sobre el subtotal para absorber imprecisiones. |
+| **Insumos extra** | Costos adicionales no energéticos ni de filamento (pintura, packaging, etc.). |
+| **Super-Card** | Contenedor principal de la app: white, rounded-2xl, border 0.5px. |
 
 ## Governance
-This constitution serves as the foundational law for all project development. Any implementation that violates these principles must provide a written justification in the Implementation Plan.
+
+Esta constitución es la ley fundamental del proyecto. Cualquier implementación que viole estos principios debe justificarse en el Plan de Implementación correspondiente.
 
 ### Amendment Procedure
-1. Propose changes via a Constitution Amendment PR.
-2. Update versioning (MAJOR for principle changes, MINOR for additions, PATCH for clarifications).
-3. Update all dependent templates and documentation.
+1. Proponer cambios vía PR de Enmienda Constitucional.
+2. Actualizar versión (MAJOR para cambios de principios, MINOR para adiciones).
+3. Sincronizar todos los templates de specs.
 
-**Version**: 2.0.0 | **Ratified**: 2026-06-15 | **Last Amended**: 2026-06-15
+**Version**: 1.0.0 | **Ratified**: 2026-06-15 | **Last Amended**: 2026-06-15

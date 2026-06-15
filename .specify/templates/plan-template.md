@@ -18,33 +18,33 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]
+**Language/Version**: [e.g., Java 21 (Spring Boot), TypeScript (React)]
 
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+**Primary Dependencies**: [e.g., Spring Web, Spring Data JPA, React, Studio Theme]
 
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+**Storage**: [e.g., SQLite (portable), or orchestrated via Spring Boot]
 
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]
+**Testing**: [e.g., JUnit 5, Vitest]
 
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Target Platform**: [e.g., Desktop via Wrapper]
 
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]
+**Project Type**: [e.g., Full-Stack with specialized Wrapper delivery]
 
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]
+**Performance Goals**: [domain-specific, e.g., <200ms API response]
 
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]
+**Constraints**: [domain-specific, e.g., offline-capable via wrapper caching]
 
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Scale/Scope**: [domain-specific]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **Spatial Separation**: Is the design relying on whitespace over borders? (Max 0.5px borders)
-- [ ] **Color Intent**: Does it follow the 95/4/1 rule (Slate/Semantic/Indigo)?
-- [ ] **Typography**: Are weights restricted to 400/500? Is financial data in Mono?
-- [ ] **Grid System**: Do all margins/paddings follow the 8pt system?
-- [ ] **Shell Consistency**: Does the component fit within the Super-Card architecture?
+- [ ] **Product Protaganist**: Does the UI recede to highlight products/data?
+- [ ] **Monochromatic Accent**: Is it using Ink (#1d1d1f) and avoiding saturated colors?
+- [ ] **Studio Typography**: Is it using the 17px body and negative tracking on display?
+- [ ] **Minimalist Elevation**: Are shadows used ONLY for product imagery?
+- [ ] **Full-Stack Integrity**: Does the design consider the Spring Boot backend and Wrapper delivery model?
 
 ## Project Structure
 

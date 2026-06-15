@@ -87,10 +87,11 @@
 
 ### Visual Compliance
 
-- **Design System**: MUST strictly follow the principles defined in `.specify/memory/constitution.md`.
-- **Borders**: MUST NOT exceed 0.5px thickness.
-- **Typography**: MUST use Inter (400/500) for UI and Mono for financial figures.
-- **Spacing**: MUST adhere to the 8pt grid system.
+- **Design System**: MUST strictly follow the principles defined in `.specify/memory/constitution.md` (Studio Edition).
+- **Borders**: MUST use Hairline (#e0e0e0) 1px borders for separation.
+- **Typography**: MUST use Inter with Studio Tight tracking for headlines and 17px for body.
+- **Shadows**: MUST NOT use shadows on UI components (buttons, cards).
+- **Full-Stack**: MUST consider the Spring Boot API integration and Wrapper constraints.
 
 ### Functional Requirements
 

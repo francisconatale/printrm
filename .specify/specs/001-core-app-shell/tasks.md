@@ -1,51 +1,51 @@
-# Tasks: Core App Shell and Layout
+# Tasks: Core App Shell and Layout (Studio Edition)
 
 **Input**: Design documents from `.specify/specs/001-core-app-shell/`
 
-**Prerequisites**: plan.md, spec.md
+**Prerequisites**: plan.md, spec.md, Studio Constitution v3.1.0
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel
 - **[Story]**: US1 (Shell), US2 (Sidebar), US3 (Visuals)
 
-## Phase 1: Design System Setup
+## Phase 1: Design System Setup (Monochromatic Studio)
 
-**Purpose**: Establish the visual tokens and global styles.
+**Purpose**: Establish the visual tokens and global styles for the Studio Edition.
 
-- [ ] T001 [P] [US3] Configure Tailwind colors and border widths in `frontend/tailwind.config.js` (add slate/indigo palettes and `0.5` border weight).
-- [ ] T002 [P] [US3] Update `frontend/src/index.css` to enforce Inter font, 400/500 weights only, and set global border default to `0.5px`.
-- [ ] T003 [P] [US3] Define CSS variables for spacing and radii in `frontend/src/index.css` (radius-xl: 16px, radius-lg: 12px).
+- [x] T001 [P] [US3] Configure `studio-theme.css` with monochromatic variables (`Ink` #1d1d1f, `Hairline` #e0e0e0).
+- [x] T002 [P] [US3] Enforce Inter font with "Studio Tight" tracking (-0.022em to -0.025em) and 17px body base.
+- [x] T003 [P] [US3] Define global border utilities for 1px Hairline (removing previous 0.5px Slate attempt).
 
 ## Phase 2: Foundational Components
 
-**Purpose**: Create the structural shell elements.
+**Purpose**: Create the structural shell elements compatible with the Wrapper architecture.
 
-- [ ] T004 [US1] Create `frontend/src/components/layout/app-shell.tsx` with the `slate-100` background and `radius-xl` Super-Card container.
-- [ ] T005 [US2] Create `frontend/src/components/layout/sidebar.tsx` with a fixed `240px` width and the Indigo-500 logo area.
-- [ ] T006 [US2] Implement navigation items in `sidebar.tsx` with hover and active states (white bg + 0.5px border for active).
+- [x] T004 [US1] Update `frontend/src/components/layout/app-shell.tsx` to act as a simple flex container for Sidebar + Content.
+- [x] T005 [US2] Redesign `frontend/src/components/layout/sidebar.tsx` with monochromatic selection style (Ink bar + Black/5 bg).
+- [x] T006 [US2] Implement View-Switching state logic in `App.tsx` to navigate between StudioOverview and StudioDashboard.
 
-## Phase 3: Integration
+## Phase 3: Content Integration
 
-**Purpose**: Assemble the shell and integrate with the existing app logic.
+**Purpose**: Assemble the functional views within the shell.
 
-- [ ] T007 [US1] Update `frontend/src/App.tsx` to wrap the application content with the new `AppShell`.
-- [ ] T008 [US2] Integrate the `Sidebar` into the `AppShell` layout.
-- [ ] T009 [US1] Adjust `frontend/src/components/dashboard.tsx` to ensure it renders correctly within the new layout padding (space-8 / 32px).
+- [x] T007 [US1] Create `frontend/src/components/studio-overview.tsx` to preserve the high-impact summary view.
+- [x] T008 [US1] Create `frontend/src/components/studio-dashboard.tsx` to act as the primary financial motor.
+- [x] T009 [US3] Audit all shadows: Ensure zero shadows on UI components; reserve unique shadow for product imagery.
 
 ## Phase 4: Polish & Compliance
 
 **Purpose**: Final audit and refinements.
 
-- [ ] T010 [P] Visual Compliance Review: Audit all borders in the dev server to ensure they are exactly `0.5px`.
-- [ ] T011 [P] Spacing Audit: Verify that all margins and paddings in the shell are multiples of 8 (or 4).
-- [ ] T012 [P] Color Check: Confirm distribution matches 95% Slate, 4% Semantic, 1% Indigo.
+- [ ] T010 [P] Visual Compliance Review: Verify that no solid blue or high-contrast selection blocks remain.
+- [ ] T011 [P] Spacing Audit: Verify 8pt grid consistency across the full-bleed Studio tiles.
+- [ ] T012 [P] Wrapper Check: Ensure layout is responsive to the fixed sidebar and scrollable content area.
 
 ---
 
 ## Dependencies & Execution Order
 
-1. **Phase 1** (T001-T003) must be completed first to provide the styling tokens.
-2. **Phase 2** (T004-T006) depends on Phase 1 tokens.
-3. **Phase 3** (T007-T009) integrates the components created in Phase 2.
-4. **Phase 4** (T010-T012) is the final validation.
+1. **Phase 1** must be solid as it defines the monochromatic tokens.
+2. **Phase 2** establishes the navigation contract used by all future features.
+3. **Phase 3** delivers the current MVP state.
+4. **Phase 4** is the final visual quality gate.

@@ -57,7 +57,7 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
         <div className="col-span-full border-b border-[#f0f0f0] pb-2 mb-2">
           <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Datos Generales</h3>
         </div>
@@ -187,18 +187,18 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
 
       </div>
 
-      <div className="flex gap-4 pt-6 border-t border-[#f0f0f0]">
+      <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-[#f0f0f0]">
         <button 
           type="button"
           onClick={onCancel}
-          className="studio-button-secondary-pill !py-2.5 flex-1"
+          className="studio-button-secondary-pill !py-3 flex-1 order-2 sm:order-1"
         >
           Cancelar
         </button>
         <button 
           type="submit"
           disabled={isLoading}
-          className="studio-button-primary !py-2.5 flex-1 disabled:opacity-50"
+          className="studio-button-primary !py-3 flex-1 disabled:opacity-50 order-1 sm:order-2"
         >
           {isLoading ? 'Guardando...' : 'Guardar Perfil'}
         </button>

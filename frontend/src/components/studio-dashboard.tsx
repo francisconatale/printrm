@@ -14,6 +14,7 @@ import { PerfilSelector } from '../features/perfiles/components/PerfilSelector'
 import { PerfilForm } from '../features/perfiles/components/PerfilForm'
 import { PiezaForm } from '../features/calculo/components/PiezaForm'
 import { ResultadoPanel } from '../features/calculo/components/ResultadoPanel'
+import { STLUpload } from '../features/calculo/components/STLUpload'
 import { useCalculo } from '../features/calculo/hooks/useCalculo'
 import { PiezaInput } from '../features/calculo/types/calculo.types'
 import { usePerfilActivo } from '../features/perfiles/hooks/usePerfilActivo'
@@ -70,6 +71,15 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
         alert('Cálculo guardado en el historial');
       }
     });
+  };
+
+  const handleSlicingComplete = (data: { horas: number; minutos: number; gramos: number }) => {
+    setPiezaInput(prev => ({
+      ...prev,
+      horas: data.horas,
+      minutosAdicionales: data.minutos,
+      gramos: Math.round(data.gramos * 100) / 100
+    }));
   };
 
   return (
@@ -131,7 +141,7 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
             <div className="lg:col-span-2 space-y-12">
               <div className="border-b border-[#f0f0f0] pb-4">
                 <h2 className="studio-display-md !text-2xl">Datos de la Pieza</h2>
-                <p className="studio-caption text-[#7a7a7a]">Ingresá los parámetros de esta impresión específica.</p>
+                <p className="studio-caption text-[#7a7a7a]">Ingresá los parámetros de esta impresión específica o importá un STL.</p>
               </div>
               
               <PiezaForm 
@@ -140,12 +150,8 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
                 disabled={!perfilActivo}
               />
 
-              <div className="bg-[#fcfcfc] border border-dashed border-[#e0e0e0] rounded-[2rem] p-12 text-center group cursor-pointer hover:border-[#1d1d1f] transition-colors">
-                 <div className="size-12 bg-[#1d1d1f] text-white rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                   <Plus size={24} />
-                 </div>
-                 <p className="studio-body-strong">Importar G-Code / STL</p>
-                 <p className="studio-caption text-[#7a7a7a] mt-1">Extraé tiempo y peso automáticamente (Próximamente)</p>
+              <div className="pt-8">
+                <STLUpload onSlicingComplete={handleSlicingComplete} />
               </div>
             </div>
 
@@ -166,22 +172,28 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
 
       {/* Modal de Perfil */}
       {showPerfilModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[2.5rem] w-full max-w-2xl p-10 relative shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-2xl p-6 md:p-10 relative shadow-2xl animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
             <button 
-              onClick={() => setShowPerfilModal(false)}
-              className="absolute right-8 top-8 p-2 hover:bg-[#f5f5f7] rounded-full transition-colors"
+              onClick={() => {
+                setShowPerfilModal(false);
+                setEditingPerfil(null);
+              }}
+              className="absolute right-4 top-4 md:right-8 md:top-8 p-2 hover:bg-[#f5f5f7] rounded-full transition-colors"
             >
               <X size={20} className="text-[#7a7a7a]" />
             </button>
             <div className="mb-10">
               <h2 className="studio-display-md !text-3xl">{editingPerfil ? 'Editar Perfil' : 'Nuevo Perfil'}</h2>
-              <p className="studio-body text-[#7a7a7a] mt-2">Configurá los costos fijos de tu impresora e insumos.</p>
+              <p className="studio-body text-[#7a7a7a] mt-2">Configurá los costos fijos y el motor de slicing (.ini) para tu impresora.</p>
             </div>
             <PerfilForm 
               initialData={editingPerfil}
               onSubmit={handlePerfilSubmit}
-              onCancel={() => setShowPerfilModal(false)}
+              onCancel={() => {
+                setShowPerfilModal(false);
+                setEditingPerfil(null);
+              }}
               isLoading={isCreating || isUpdating}
             />
           </div>
