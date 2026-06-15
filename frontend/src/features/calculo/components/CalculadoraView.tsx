@@ -3,6 +3,7 @@ import { X } from "lucide-react"
 
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav'
 import { PerfilForm } from '../../perfiles/components/PerfilForm'
+import { Modal } from '../../../components/ui/modal'
 import { ResultadoPanel } from '../components/ResultadoPanel'
 import { STLUpload } from '../components/STLUpload'
 import { SlicingConfigSelector } from '../components/SlicingConfigSelector'
@@ -20,7 +21,7 @@ import { useGuardarCalculo } from '../api/calculos.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
 
-export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () => void, isDark: boolean }) {
+export function CalculadoraView() {
   const { perfilActivo } = usePerfilActivo();
   const { data: printers } = useGetPerfiles();
   const { data: filaments } = useGetFilamentProfiles();
@@ -173,10 +174,8 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
   };
 
   return (
-    <div className="flex flex-col w-full bg-white min-h-full">
+    <div className="flex flex-col w-full bg-background min-h-full">
       <StudioSubNav
-        onToggleTheme={onToggleTheme}
-        isDark={isDark}
         showPerfilSelector
         onAddPerfil={() => {
           setEditingPerfil(null)
@@ -190,7 +189,7 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
 
       <main className="flex-1 overflow-hidden">
         {/* Operational Section - Studio Spacing */}
-        <section className="px-8 md:px-12 py-6 bg-white h-full overflow-y-auto custom-scrollbar">
+        <section className="px-8 md:px-12 py-6 bg-background h-full overflow-y-auto custom-scrollbar">
           <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Input Column */}
@@ -204,9 +203,9 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
                   onReset={handleResetAnalysis}
                 />
 
-                <div className="pt-8 border-t border-[#e0e0e0]">
+                <div className="pt-8 border-t border-[var(--border-subtle)]">
                   <div className="mb-6">
-                    <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1]">Parámetros de Impresión</h3>
+                    <h3 className="text-[10px] font-bold uppercase text-muted-foreground">Parámetros de Impresión</h3>
                   </div>
                   <SlicingConfigSelector 
                     printers={printers || []}
@@ -223,7 +222,7 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
             {/* Financial Column */}
             <div className="lg:col-span-5">
               <div className="sticky top-8">
-                <div className="p-7 border border-[#f0f0f0] rounded-[2rem] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-in fade-in duration-500">
+                <div className="p-7 border border-[var(--border-faint)] rounded-[2rem] bg-card animate-in fade-in duration-500">
                   <ResultadoPanel 
                     resultado={resultado}
                     onSave={handleSaveCalculo}
@@ -247,40 +246,25 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
       </main>
 
       {/* Modal - The Floating Canvas */}
-      {showPerfilModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2rem] w-full max-w-2xl max-h-[85vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300">
-            <button 
-              onClick={() => {
-                setShowPerfilModal(false);
-                setEditingPerfil(null);
-              }}
-              className="absolute right-8 top-8 p-2 hover:bg-[#f5f5f7] rounded-full transition-colors z-10"
-            >
-              <X size={20} className="text-[#7a7a7a]" />
-            </button>
-
-            <div className="p-10 pb-0 shrink-0">
-              <div className="mb-10">
-                <h2 className="studio-display-md !text-4xl tracking-tight">{editingPerfil ? 'Ajustar Perfil' : 'Nuevo Perfil'}</h2>
-                <p className="studio-body text-[#7a7a7a] mt-4">Configurá las especificaciones de hardware y el motor de slicing para esta unidad.</p>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto px-10 pb-12 custom-scrollbar">
-              <PerfilForm 
-                initialData={editingPerfil}
-                onSubmit={handlePerfilSubmit}
-                onCancel={() => {
-                  setShowPerfilModal(false);
-                  setEditingPerfil(null);
-                }}
-                isLoading={isCreating || isUpdating}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={showPerfilModal}
+        onClose={() => {
+          setShowPerfilModal(false);
+          setEditingPerfil(null);
+        }}
+        title={editingPerfil ? 'Ajustar Perfil' : 'Nuevo Perfil'}
+        description="Configurá las especificaciones de hardware y el motor de slicing para esta unidad."
+      >
+        <PerfilForm 
+          initialData={editingPerfil}
+          onSubmit={handlePerfilSubmit}
+          onCancel={() => {
+            setShowPerfilModal(false);
+            setEditingPerfil(null);
+          }}
+          isLoading={isCreating || isUpdating}
+        />
+      </Modal>
     </div>
   )
 }

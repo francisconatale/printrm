@@ -28,17 +28,16 @@ export const SlicingConfigSelector: React.FC<SlicingConfigSelectorProps> = ({
   onChange 
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#fcfcfc] border border-[#e0e0e0] rounded-2xl p-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-muted/[0.06] rounded-2xl p-4">
       
       {/* PRINT SETTINGS PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Ajuste Impresión (Print)</label>
+        <label className="text-[10px] font-bold uppercase text-muted-foreground">Ajuste Impresión (Print)</label>
         <Select value={selected.print} onValueChange={(val) => onChange('print', val)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+          <SelectContent side="bottom">
             {prints.map(p => (
               <SelectItem key={p.id} value={p.id}>{p.nombre} ({p.layerHeight}mm)</SelectItem>
             ))}
@@ -48,13 +47,12 @@ export const SlicingConfigSelector: React.FC<SlicingConfigSelectorProps> = ({
 
       {/* FILAMENT PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Material (Filamento)</label>
+        <label className="text-[10px] font-bold uppercase text-muted-foreground">Material (Filamento)</label>
         <Select value={selected.filament} onValueChange={(val) => onChange('filament', val)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+          <SelectContent side="bottom">
             {filaments.map(f => (
               <SelectItem key={f.id} value={f.id}>{f.nombre} ({f.material})</SelectItem>
             ))}
@@ -64,13 +62,12 @@ export const SlicingConfigSelector: React.FC<SlicingConfigSelectorProps> = ({
 
       {/* PRINTER PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Impresora (Printer)</label>
+        <label className="text-[10px] font-bold uppercase text-muted-foreground">Impresora (Printer)</label>
         <Select value={selected.printer} onValueChange={(val) => onChange('printer', val)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Seleccionar" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+          <SelectContent side="bottom">
             {printers.map(p => (
               <SelectItem key={p.id} value={p.id}>{p.nombre} ({p.modeloImpresora})</SelectItem>
             ))}

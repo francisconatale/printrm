@@ -1,10 +1,11 @@
-import React, { Suspense, useMemo, useEffect, useRef, Component } from 'react';
+﻿import React, { Suspense, useMemo, useEffect, useRef, Component } from 'react';
 import * as THREE from 'three';
 import { Canvas, useLoader, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, Center, Environment } from '@react-three/drei';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { Camera, Play, Pause } from 'lucide-react';
+import { useTheme } from '../../../providers/ThemeProvider';
 
 interface STLViewerProps {
   file: File | null;
@@ -16,6 +17,8 @@ const COLORS = [
   { name: 'Chalk', value: '#ffffff' },
   { name: 'Action', value: '#0066cc' },
 ];
+
+const isPresetColor = (color: string) => COLORS.some(c => c.value.toUpperCase() === color.toUpperCase());
 
 class STLErrorBoundary extends Component<
   { children: React.ReactNode },
@@ -97,6 +100,8 @@ const ViewerControls = ({
   activeColor: string,
   onColorChange: (color: string) => void
 }) => {
+  const colourInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
       {/* Color Selector */}
@@ -110,20 +115,42 @@ const ViewerControls = ({
             title={c.name}
           />
         ))}
+        <div className="w-px h-4 bg-black/10" />
+        <button
+          onClick={() => colourInputRef.current?.click()}
+          className={`size-4 rounded-full border transition-all hover:scale-125 active:scale-95 flex items-center justify-center ${
+            !isPresetColor(activeColor)
+              ? 'border-black/40 scale-110 shadow-sm'
+              : 'border-dashed border-black/10 hover:border-black/30'
+          }`}
+          style={!isPresetColor(activeColor) ? { backgroundColor: activeColor } : {}}
+          title="Color personalizado"
+        >
+          {isPresetColor(activeColor) && (
+            <span className="text-[7px] font-bold text-black/30">+</span>
+          )}
+        </button>
+        <input
+          ref={colourInputRef}
+          type="color"
+          value={isPresetColor(activeColor) ? '#1d1d1f' : activeColor}
+          onChange={(e) => onColorChange(e.target.value)}
+          className="hidden"
+        />
       </div>
 
       {/* Action Buttons */}
       <div className="flex items-center gap-1.5">
         <button 
           onClick={onToggleRotate}
-          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-[#1d1d1f] hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
           title={isAutoRotate ? "Pausar Rotación" : "Activar Rotación"}
         >
           {isAutoRotate ? <Pause size={16} /> : <Play size={16} />}
         </button>
         <button 
           onClick={onScreenshot}
-          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-[#1d1d1f] hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
           title="Capturar Render"
         >
           <Camera size={16} />
@@ -134,6 +161,8 @@ const ViewerControls = ({
 };
 
 export const STLViewer: React.FC<STLViewerProps> = ({ file }) => {
+  const { isDark } = useTheme();
+  const canvasBg = isDark ? '#1c1c1e' : '#f5f5f7';
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [blobUrl, setBlobUrl] = React.useState<string | null>(null);
@@ -170,9 +199,9 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file }) => {
   return (
     <div className="w-full h-full relative group">
       {isLoading && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#f5f5f7] pointer-events-none">
-          <div className="size-8 border-2 border-[#1d1d1f]/10 border-t-[#1d1d1f] rounded-full animate-spin" />
-          <p className="studio-caption text-[#7a7a7a]">Renderizando...</p>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 pointer-events-none" style={{ backgroundColor: canvasBg }}>
+          <div className="size-8 border-2 border-foreground/10 border-t-foreground rounded-full animate-spin" />
+          <p className="studio-caption text-muted-foreground">Renderizando...</p>
         </div>
       )}
 
@@ -190,7 +219,7 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file }) => {
           camera={{ position: [0, 0, 5], fov: 45 }}
           style={{ width: '100%', height: '100%' }}
         >
-          <color attach="background" args={['#f5f5f7']} />
+          <color attach="background" args={[canvasBg]} />
           <ambientLight intensity={0.5} />
           <pointLight position={[10, 10, 10]} intensity={1} />
           <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
@@ -215,3 +244,8 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file }) => {
     </div>
   );
 };
+
+
+
+
+

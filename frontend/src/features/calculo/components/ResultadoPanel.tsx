@@ -27,7 +27,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   resultado, onSave, isSaving, onAnalyze, isAnalyzing, hasFile, hasAnalyzed,
   insumosExtra = 0, onInsumosExtraChange, multiplicador = 3, onMultiplicadorChange, onReset,
 }) => {
-  const { ajustes, updateAjustes, isUpdating } = useAjustes();
+  const { ajustes, updateAjustes } = useAjustes();
   const [showInsumos, setShowInsumos] = React.useState(false);
   const [form, setForm] = React.useState<Ajustes>({
     preciokWh: 0,
@@ -41,25 +41,26 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   const hasResult = hasAnalyzed && resultado && (resultado.horas > 0 || resultado.gramos > 0);
   const showSettings = !hasResult;
 
-  const handleSaveSettings = () => {
+  const handleAnalyzeAndSave = () => {
     updateAjustes(form);
+    onAnalyze?.();
   };
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6 border-b border-[#f0f0f0] pb-4">
-        <span className="text-[10px] font-bold uppercase text-[#a1a1a1]">Análisis de Producción</span>
+      <div className="flex items-center justify-between mb-6 border-b border-[var(--border-subtle)] pb-4">
+        <span className="text-[10px] font-bold uppercase text-muted-foreground">Análisis de Producción</span>
         <div className="flex items-center gap-2">
           {ajustes && hasResult && (
-            <span className="text-[10px] font-bold bg-[#f5f5f7] px-2 py-1 rounded text-[#7a7a7a]">
+            <span className="text-[10px] font-bold bg-muted/30 px-2 py-1 rounded text-muted-foreground">
               ERROR: {ajustes.margenError}%
             </span>
           )}
           {hasResult && onReset && (
             <button onClick={onReset}
-              className="size-6 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] flex items-center justify-center transition-colors"
+              className="size-6 rounded-full bg-muted/30 hover:bg-muted/30 flex items-center justify-center transition-colors"
               title="Volver atrás">
-              <X size={12} className="text-[#7a7a7a]" />
+              <X size={12} className="text-muted-foreground" />
             </button>
           )}
         </div>
@@ -68,16 +69,16 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
       {hasResult && resultado ? (
         <>
           <div className="space-y-4 flex-1 overflow-y-auto">
-            <div className="grid grid-cols-2 gap-4 pb-6 border-b border-[#f0f0f0]">
+            <div className="grid grid-cols-2 gap-4 pb-6 border-b border-[var(--border-subtle)]">
               <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase text-[#a1a1a1]">Tiempo</span>
-                <p className="text-lg studio-caption font-bold text-[#1d1d1f]">
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">Tiempo</span>
+                <p className="text-lg studio-caption font-bold text-foreground">
                   {resultado.horas}h {resultado.minutosAdicionales}m
                 </p>
               </div>
               <div className="space-y-0.5">
-                <span className="text-[10px] font-bold uppercase text-[#a1a1a1]">Material</span>
-                <p className="text-lg studio-caption font-bold text-[#1d1d1f]">
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">Material</span>
+                <p className="text-lg studio-caption font-bold text-foreground">
                   {resultado.gramos}g
                 </p>
               </div>
@@ -85,58 +86,58 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
 
             <div className="space-y-3 pt-2">
               <div className="flex justify-between items-center">
-                <span className="studio-caption text-[#7a7a7a]">Costo Energía</span>
-                <span className="studio-caption font-semibold text-[#1d1d1f]">{formatCurrency(resultado.costoEnergia)}</span>
+                <span className="studio-caption text-muted-foreground">Costo Energía</span>
+                <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoEnergia)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="studio-caption text-[#7a7a7a]">Costo Filamento</span>
-                <span className="studio-caption font-semibold text-[#1d1d1f]">{formatCurrency(resultado.costoFilamento)}</span>
+                <span className="studio-caption text-muted-foreground">Costo Filamento</span>
+                <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoFilamento)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="studio-caption text-[#7a7a7a]">Desgaste Máquina</span>
-                <span className="studio-caption font-semibold text-[#1d1d1f]">{formatCurrency(resultado.costoDesgaste)}</span>
+                <span className="studio-caption text-muted-foreground">Desgaste Máquina</span>
+                <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoDesgaste)}</span>
               </div>
 
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => setShowInsumos(!showInsumos)}
-                    className="size-5 rounded-full bg-[#f5f5f7] hover:bg-[#e0e0e0] flex items-center justify-center transition-colors"
+                    className="size-5 rounded-full bg-muted/30 hover:bg-muted/30 flex items-center justify-center transition-colors"
                     title="Añadir insumos extra">
-                    <Plus size={10} className="text-[#7a7a7a]" />
+                    <Plus size={10} className="text-muted-foreground" />
                   </button>
-                  <span className="studio-caption text-[#7a7a7a]">Insumos Extra</span>
+                  <span className="studio-caption text-muted-foreground">Insumos Extra</span>
                 </div>
                 {showInsumos ? (
                   <div className="flex items-center gap-1">
                     <input type="number" value={insumosExtra || ''}
                       onChange={(e) => onInsumosExtraChange?.(parseFloat(e.target.value) || 0)}
-                      className="w-20 text-right bg-transparent border-b border-[#e0e0e0] studio-caption font-semibold outline-none focus:border-[#1d1d1f]" placeholder="0" autoFocus />
+                      className="w-20 text-right bg-transparent border-b border-border studio-caption font-semibold outline-none focus:border-primary" placeholder="0" autoFocus />
                   </div>
                 ) : (
-                  <span className="studio-caption font-semibold text-[#1d1d1f]">{formatCurrency(insumosExtra)}</span>
+                  <span className="studio-caption font-semibold text-foreground">{formatCurrency(insumosExtra)}</span>
                 )}
               </div>
 
-              <div className="flex justify-between items-center border-t border-[#f0f0f0] pt-4">
-                <span className="studio-caption text-[#1d1d1f] font-bold">Costo Base</span>
-                <span className="studio-caption font-bold text-[#1d1d1f]">{formatCurrency(resultado.costoBase)}</span>
+              <div className="flex justify-between items-center border-t border-[var(--border-subtle)] pt-4">
+                <span className="studio-caption text-foreground font-bold">Costo Base</span>
+                <span className="studio-caption font-bold text-foreground">{formatCurrency(resultado.costoBase)}</span>
               </div>
 
-              <div className="mt-8 pt-8 border-t-2 border-black/5 flex flex-col items-center">
-                <p className="text-[10px] font-bold uppercase text-[#a1a1a1] mb-2">Precio Sugerido</p>
-                <p className="text-4xl font-bold tracking-tight text-[#1d1d1f] mb-2">
+              <div className="mt-8 pt-8 border-t border-[var(--border-subtle)] flex flex-col items-center">
+                <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Precio Sugerido</p>
+                <p className="text-4xl font-bold tracking-tight text-foreground mb-2">
                   {formatCurrency(resultado.precioVenta)}
                 </p>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f5f5f7] border border-[#e0e0e0]">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/20">
                   <button onClick={() => {
                     const vals = [2, 3, 4, 5];
                     const idx = vals.indexOf(multiplicador);
                     onMultiplicadorChange?.(vals[(idx + 1) % vals.length]);
-                  }} className="size-4 rounded-full hover:bg-[#e0e0e0] flex items-center justify-center transition-colors"
+                  }} className="size-4 rounded-full hover:bg-muted/30 flex items-center justify-center transition-colors"
                     title="Ajustar multiplicador de ganancia">
-                    <Percent size={9} className="text-[#7a7a7a]" />
+                    <Percent size={9} className="text-muted-foreground" />
                   </button>
-                  <span className="text-[9px] font-bold text-[#7a7a7a] uppercase tracking-wider">Markup: {multiplicador}x</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Markup: {multiplicador}x</span>
                 </div>
               </div>
             </div>
@@ -152,46 +153,39 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           {showSettings && (
             <>
               <div className="space-y-1">
-                <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1]">Parámetros Globales (Electricidad)</h3>
-                <p className="text-[10px] text-[#7a7a7a]">Configuraciones de precio regionales y márgenes generales.</p>
+                <h3 className="text-[10px] font-bold uppercase text-muted-foreground">Parámetros Globales (Electricidad)</h3>
+                <p className="text-[10px] text-muted-foreground">Configuraciones de precio regionales y márgenes generales.</p>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Precio Energía ($ / kWh)</label>
+                  <label className="text-[10px] font-bold uppercase text-muted-foreground">Precio Energía ($ / kWh)</label>
                   <input type="number" step="any" value={form.preciokWh || ''}
                     onChange={(e) => setForm(f => ({ ...f, preciokWh: parseFloat(e.target.value) || 0 }))}
                     className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
                 </div>
-                <div className="border-t border-[#e0e0e0]" />
+                <div className="border-t border-border" />
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Margen de Seguridad / Error (%)</label>
+                  <label className="text-[10px] font-bold uppercase text-muted-foreground">Margen de Seguridad / Error (%)</label>
                   <input type="number" value={form.margenError || ''}
                     onChange={(e) => setForm(f => ({ ...f, margenError: parseFloat(e.target.value) || 0 }))}
                     className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
-                  <p className="text-[10px] text-[#7a7a7a] leading-relaxed mt-1">Se aplica sobre el subtotal de costos antes del multiplicador.</p>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">Se aplica sobre el subtotal de costos antes del multiplicador.</p>
                 </div>
               </div>
             </>
           )}
 
           {isAnalyzing ? (
-            <div className="flex items-center justify-center gap-3 text-[#7a7a7a] py-6">
-              <div className="size-5 border-2 border-[#1d1d1f]/10 border-t-[#1d1d1f] rounded-full animate-spin" />
+            <div className="flex items-center justify-center gap-3 text-muted-foreground py-6">
+              <div className="size-5 border-2 border-foreground/10 border-t-foreground rounded-full animate-spin" />
               <span className="text-[13px] font-semibold">Analizando modelo...</span>
             </div>
           ) : hasFile ? (
-            <button onClick={onAnalyze} disabled={isAnalyzing}
-              className="w-full py-3 bg-[#1d1d1f] text-white rounded-full text-[13px] font-bold hover:bg-[#333] active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+            <button onClick={handleAnalyzeAndSave} disabled={isAnalyzing}
+              className="w-full py-3 bg-primary text-white rounded-full text-[13px] font-bold hover:opacity-85 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
               Analizar modelo
             </button>
           ) : null}
-
-          {showSettings && (
-            <button onClick={handleSaveSettings} disabled={isUpdating}
-              className="w-full py-2 bg-[#f5f5f7] text-[#7a7a7a] rounded-full text-[11px] font-bold hover:bg-[#e0e0e0] active:scale-95 transition-all disabled:opacity-30">
-              {isUpdating ? 'Guardando...' : 'Guardar Ajustes Globales'}
-            </button>
-          )}
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ import { StudioOverview } from './components/studio-overview'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
+import { ThemeProvider } from './providers/ThemeProvider'
 
 
 function App() {
@@ -12,24 +13,6 @@ function App() {
   const [retryCount, setRetryCount] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' || 
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    }
-    return false
-  })
-
-  useEffect(() => {
-    const root = window.document.documentElement
-    if (isDark) {
-      root.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      root.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }, [isDark])
 
   useEffect(() => {
     let interval: number;
@@ -77,24 +60,26 @@ function App() {
   const renderView = () => {
     switch (currentView) {
       case 'overview':
-        return <StudioOverview onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+        return <StudioOverview />
       case 'calculator':
-        return <CalculadoraView onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+        return <CalculadoraView />
       case 'profiles':
-        return <PerfilesDashboardView onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+        return <PerfilesDashboardView />
       case 'dashboard':
       default:
-        return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-[#7a7a7a]">Próximamente...</p></div>
+        return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>
     }
   }
 
   return (
-    <AppShell>
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-      <main className="flex-1 overflow-y-auto">
-        {renderView()}
-      </main>
-    </AppShell>
+    <ThemeProvider>
+      <AppShell>
+        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+        <main className="flex-1 overflow-y-auto">
+          {renderView()}
+        </main>
+      </AppShell>
+    </ThemeProvider>
   )
 }
 

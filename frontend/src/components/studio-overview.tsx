@@ -8,13 +8,10 @@ import {
 } from "lucide-react"
 import { StudioSubNav } from './layout/studio-sub-nav'
 
-export function StudioOverview({ onToggleTheme, isDark }: { onToggleTheme: () => void, isDark: boolean }) {
+export function StudioOverview() {
   return (
-    <div className="flex flex-col w-full bg-white min-h-full">
-      <StudioSubNav
-        onToggleTheme={onToggleTheme}
-        isDark={isDark}
-      />
+    <div className="flex flex-col w-full bg-background min-h-full">
+      <StudioSubNav />
 
       <main className="flex flex-col">
         {/* Stats Tile - Grid of Cards */}
@@ -61,8 +58,8 @@ export function StudioOverview({ onToggleTheme, isDark }: { onToggleTheme: () =>
             <h2 className="studio-display-lg mb-4 text-white">Bring your designs to life.</h2>
             <p className="studio-lead mb-12 text-white/80">Real-time cost estimation powered by slicer</p>
             
-            <div className="w-full max-w-[600px] border-2 border-dashed border-white/20 rounded-[2.5rem] p-20 flex flex-col items-center justify-center cursor-pointer hover:border-white/40 transition-colors bg-white/5">
-               <div className="size-20 bg-white/10 rounded-full flex items-center justify-center mb-6">
+            <div className="w-full max-w-[600px] border-2 border-dashed border-white/20 rounded-[2.5rem] p-20 flex flex-col items-center justify-center cursor-pointer hover:border-white/40 transition-colors bg-background/5">
+               <div className="size-20 bg-background/10 rounded-full flex items-center justify-center mb-6">
                  <Plus className="size-10 text-white" />
                </div>
                <p className="studio-display-md !text-2xl text-white">Upload STL file</p>
@@ -110,7 +107,7 @@ export function StudioOverview({ onToggleTheme, isDark }: { onToggleTheme: () =>
         </section>
 
         {/* Footer */}
-        <footer className="bg-[#f5f5f7] py-16 px-6">
+        <footer className="bg-[var(--studio-parchment)] py-16 px-6">
           <div className="max-w-[1024px] mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
               <div className="flex flex-col gap-4">

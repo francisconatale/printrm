@@ -23,18 +23,18 @@ export const STLUpload: React.FC<STLUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className={`relative border border-[#e0e0e0] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-[#f5f5f7] p-0' : 'bg-[#f5f5f7]/30 hover:bg-[#f5f5f7]/50 p-12 text-center'}`}>
+      <div className={`relative border border-[var(--border-faint)] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-muted/20 p-0' : 'bg-muted/10 hover:bg-muted/20 p-12 text-center'}`}>
         
         {file ? (
           <div className="relative h-[320px] w-full">
             {/* Subtle Floating File Info */}
-            <div className="absolute top-4 left-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 shadow-sm pointer-events-none transition-all group-hover:bg-white/60">
-              <div className="size-6 rounded-full bg-white/40 flex items-center justify-center text-[#1d1d1f]">
+            <div className="absolute top-4 left-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border-subtle)] shadow-sm pointer-events-none transition-all group-hover:bg-background/90">
+              <div className="size-6 rounded-full bg-background/50 flex items-center justify-center text-foreground">
                 <FileText size={12} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-[#1d1d1f] leading-none">{file.name}</p>
-                <p className="text-[8px] font-medium text-[#7a7a7a] mt-0.5 uppercase tracking-wider">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p className="text-[10px] font-bold text-foreground leading-none">{file.name}</p>
+                <p className="text-[8px] font-medium text-muted-foreground mt-0.5 uppercase tracking-wider">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
               </div>
             </div>
 
@@ -51,7 +51,7 @@ export const STLUpload: React.FC<STLUploadProps> = ({
 
             <button
               onClick={onReset}
-              className="absolute top-4 right-4 z-30 size-8 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-[#7a7a7a] hover:bg-white/80 hover:text-[#1d1d1f] transition-all shadow-sm"
+              className="absolute top-4 right-4 z-30 size-8 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border-subtle)] flex items-center justify-center text-muted-foreground hover:bg-background/90 hover:text-foreground transition-all shadow-sm"
               title="Volver atrás"
             >
               <X size={14} />
@@ -71,19 +71,19 @@ export const STLUpload: React.FC<STLUploadProps> = ({
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
               disabled={isSlicing}
             />
-            <div className="size-16 rounded-full flex items-center justify-center mx-auto border border-[#e0e0e0] bg-white text-[#7a7a7a] transition-all group-hover:text-[#1d1d1f]">
+            <div className="size-16 rounded-full flex items-center justify-center mx-auto bg-muted/20 text-muted-foreground transition-all group-hover:text-foreground group-hover:bg-muted/30">
               <Upload size={24} />
             </div>
             <div>
-              <p className="studio-body-strong !text-lg text-[#1d1d1f]">Importar Modelo STL</p>
-              <p className="studio-caption text-[#7a7a7a] mt-1">Arrastrá tu diseño para análisis automático</p>
+              <p className="studio-body-strong !text-lg text-foreground">Importar Modelo STL</p>
+              <p className="studio-caption text-muted-foreground mt-1">Arrastrá tu diseño para análisis automático</p>
             </div>
           </div>
         )}
       </div>
 
       {!perfilActivo && file && (
-        <div className="flex items-center gap-3 text-amber-600 bg-amber-50 p-4 rounded-[1.5rem] border border-amber-100 animate-in fade-in zoom-in-95">
+        <div className="flex items-center gap-3 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-4 rounded-[1.5rem] border border-amber-200 dark:border-amber-800/50 animate-in fade-in zoom-in-95">
           <AlertCircle size={18} className="shrink-0" />
           <p className="text-[12px] font-semibold">
             Necesitás un **Perfil Activo** para analizar.
