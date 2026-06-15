@@ -19,10 +19,16 @@ public class PerfilResponseDTO {
     private LocalDateTime actualizadoEn;
     private String modeloImpresora;
     private Double consumoW;
+    private Double vidaUtilHoras;
+    private Double costoRepuestos;
+
+    // Slicer fields
+    private Double nozzleDiameter;
+    private String bedShape;
+    private Double maxPrintHeight;
 
     // Slicer Configuration
     private String printConfig;
     private String filamentConfig;
     private String printerConfig;
 }
-

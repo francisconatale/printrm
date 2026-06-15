@@ -12,7 +12,5 @@ import lombok.NoArgsConstructor;
 public class AjustesDTO {
     private Double filamentoPorKg;
     private Double preciokWh;
-    private Double vidaUtilHoras;
-    private Double costoRepuestos;
     private Double margenError;
 }

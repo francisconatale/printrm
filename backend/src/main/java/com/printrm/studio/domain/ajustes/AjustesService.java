@@ -22,8 +22,6 @@ public class AjustesService {
                     .id(AJUSTES_ID)
                     .filamentoPorKg(15000.0)
                     .preciokWh(50.0)
-                    .vidaUtilHoras(5000.0)
-                    .costoRepuestos(25000.0)
                     .margenError(10.0)
                     .build();
             ajustesRepository.save(defaultAjustes);
@@ -43,8 +41,6 @@ public class AjustesService {
                                 return AjustesDTO.builder()
                                         .filamentoPorKg(15000.0)
                                         .preciokWh(50.0)
-                                        .vidaUtilHoras(5000.0)
-                                        .costoRepuestos(25000.0)
                                         .margenError(10.0)
                                         .build();
                             });
@@ -59,8 +55,6 @@ public class AjustesService {
 
         ajustes.setFilamentoPorKg(dto.getFilamentoPorKg());
         ajustes.setPreciokWh(dto.getPreciokWh());
-        ajustes.setVidaUtilHoras(dto.getVidaUtilHoras());
-        ajustes.setCostoRepuestos(dto.getCostoRepuestos());
         ajustes.setMargenError(dto.getMargenError());
 
         Ajustes saved = ajustesRepository.save(ajustes);
@@ -71,8 +65,6 @@ public class AjustesService {
         return AjustesDTO.builder()
                 .filamentoPorKg(ajustes.getFilamentoPorKg())
                 .preciokWh(ajustes.getPreciokWh())
-                .vidaUtilHoras(ajustes.getVidaUtilHoras())
-                .costoRepuestos(ajustes.getCostoRepuestos())
                 .margenError(ajustes.getMargenError())
                 .build();
     }

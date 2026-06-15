@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,6 +83,12 @@ public class PerfilService {
                 .creadoEn(perfil.getCreadoEn())
                 .actualizadoEn(perfil.getActualizadoEn())
                 .modeloImpresora(perfil.getModeloImpresora())
+                .consumoW(perfil.getConsumoW())
+                .vidaUtilHoras(perfil.getVidaUtilHoras())
+                .costoRepuestos(perfil.getCostoRepuestos())
+                .nozzleDiameter(perfil.getNozzleDiameter())
+                .bedShape(perfil.getBedShape())
+                .maxPrintHeight(perfil.getMaxPrintHeight())
                 .printConfig(perfil.getPrintConfig())
                 .filamentConfig(perfil.getFilamentConfig())
                 .printerConfig(perfil.getPrinterConfig())
@@ -96,6 +100,11 @@ public class PerfilService {
                 .nombre(dto.getNombre())
                 .modeloImpresora(dto.getModeloImpresora())
                 .consumoW(dto.getConsumoW())
+                .vidaUtilHoras(dto.getVidaUtilHoras())
+                .costoRepuestos(dto.getCostoRepuestos())
+                .nozzleDiameter(dto.getNozzleDiameter())
+                .bedShape(dto.getBedShape())
+                .maxPrintHeight(dto.getMaxPrintHeight())
                 .printConfig(dto.getPrintConfig())
                 .filamentConfig(dto.getFilamentConfig())
                 .printerConfig(dto.getPrinterConfig())
@@ -106,9 +115,13 @@ public class PerfilService {
         perfil.setNombre(dto.getNombre());
         perfil.setModeloImpresora(dto.getModeloImpresora());
         perfil.setConsumoW(dto.getConsumoW());
+        perfil.setVidaUtilHoras(dto.getVidaUtilHoras());
+        perfil.setCostoRepuestos(dto.getCostoRepuestos());
+        perfil.setNozzleDiameter(dto.getNozzleDiameter());
+        perfil.setBedShape(dto.getBedShape());
+        perfil.setMaxPrintHeight(dto.getMaxPrintHeight());
         perfil.setPrintConfig(dto.getPrintConfig());
         perfil.setFilamentConfig(dto.getFilamentConfig());
         perfil.setPrinterConfig(dto.getPrinterConfig());
     }
 }
-

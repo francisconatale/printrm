@@ -37,6 +37,21 @@ public class Perfil {
     @Column(name = "consumo_w")
     private Double consumoW;
 
+    @Column(name = "vida_util_horas")
+    private Double vidaUtilHoras;
+
+    @Column(name = "costo_repuestos")
+    private Double costoRepuestos;
+
+    @Column(name = "nozzle_diameter")
+    private Double nozzleDiameter;
+
+    @Column(name = "bed_shape")
+    private String bedShape;
+
+    @Column(name = "max_print_height")
+    private Double maxPrintHeight;
+
     @Column(name = "print_config")
     private String printConfig;
 
@@ -46,4 +61,3 @@ public class Perfil {
     @Column(name = "printer_config")
     private String printerConfig;
 }
-

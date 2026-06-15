@@ -27,12 +27,6 @@ public class Ajustes {
     @Column(name = "precio_kwh")
     private Double preciokWh;
 
-    @Column(name = "vida_util_horas")
-    private Double vidaUtilHoras;
-
-    @Column(name = "costo_repuestos")
-    private Double costoRepuestos;
-
     @Column(name = "margen_error")
     private Double margenError;
 }
