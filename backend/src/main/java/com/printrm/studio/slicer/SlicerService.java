@@ -84,16 +84,30 @@ public class SlicerService {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (line.contains("estimated printing time (normal mode)")) {
-                    result.setEstimatedTime(line.split("=")[1].trim());
+                if (!line.startsWith(";")) continue; // Optimize by only checking comments at end of file
+
+                if (line.contains("estimated printing time")) {
+                    // Handles "estimated printing time (normal mode) = ..." and "estimated printing time = ..."
+                    String[] parts = line.split("=");
+                    if (parts.length > 1) result.setEstimatedTime(parts[1].trim());
                 } else if (line.contains("total filament used [g]")) {
-                    result.setFilamentUsedG(Double.parseDouble(line.split("=")[1].trim()));
+                    String[] parts = line.split("=");
+                    if (parts.length > 1) {
+                        try {
+                            result.setFilamentUsedG(Double.parseDouble(parts[1].trim()));
+                        } catch (NumberFormatException ignored) {}
+                    }
                 } else if (line.contains("filament used [cm3]")) {
-                    result.setFilamentUsedCm3(Double.parseDouble(line.split("=")[1].trim()));
+                    String[] parts = line.split("=");
+                    if (parts.length > 1) {
+                        try {
+                            result.setFilamentUsedCm3(Double.parseDouble(parts[1].trim()));
+                        } catch (NumberFormatException ignored) {}
+                    }
                 }
             }
-        } catch (IOException | NumberFormatException e) {
-            System.err.println("Error parsing metadata: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error reading G-code for metadata: " + e.getMessage());
         }
         return result;
     }

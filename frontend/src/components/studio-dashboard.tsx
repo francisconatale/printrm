@@ -32,6 +32,7 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
     multiplicador: 3
   });
 
+  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const resultado = useCalculo(piezaInput);
   
   const [showPerfilModal, setShowPerfilModal] = React.useState(false);
@@ -42,16 +43,30 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
   const { mutate: guardarCalculo, isPending: isSavingCalculo } = useGuardarCalculo();
 
   const handlePerfilSubmit = (data: any) => {
+    console.log("StudioDashboard - Iniciando guardado de perfil:", { editingPerfil, data });
     if (editingPerfil) {
       updatePerfil({ id: editingPerfil.id, ...data }, {
         onSuccess: () => {
+          console.log("Perfil actualizado con éxito");
           setShowPerfilModal(false);
           setEditingPerfil(null);
+        },
+        onError: (err) => {
+          console.error("Error al actualizar perfil:", err);
+          alert("Error al actualizar el perfil. Revisa la consola.");
         }
       });
     } else {
       createPerfil(data, {
-        onSuccess: () => setShowPerfilModal(false)
+        onSuccess: (newPerfil) => {
+          console.log("Perfil creado con éxito:", newPerfil);
+          setShowPerfilModal(false);
+          // Opcional: auto-seleccionar el nuevo perfil
+        },
+        onError: (err) => {
+          console.error("Error al crear perfil:", err);
+          alert("Error al crear el perfil. Revisa la consola.");
+        }
       });
     }
   };
@@ -80,6 +95,7 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
       minutosAdicionales: data.minutos,
       gramos: Math.round(data.gramos * 100) / 100
     }));
+    setIsAnalyzing(false);
   };
 
   return (
@@ -121,7 +137,11 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
             <span className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a] mb-2 block">Balance Sugerido</span>
             <div className="flex items-baseline gap-4">
               <h1 className="studio-hero-display font-mono">
-                {resultado ? new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(resultado.precioVenta) : '$ 0,00'}
+                {isAnalyzing ? (
+                  <span className="animate-pulse opacity-40">Procesando...</span>
+                ) : resultado ? (
+                  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(resultado.precioVenta)
+                ) : '$ 0,00'}
               </h1>
               <span className="studio-display-md !text-xl text-green-600 opacity-80">+{piezaInput.multiplicador}x</span>
             </div>
@@ -147,11 +167,14 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
               <PiezaForm 
                 input={piezaInput} 
                 onChange={setPiezaInput} 
-                disabled={!perfilActivo}
+                disabled={!perfilActivo || isAnalyzing}
               />
 
               <div className="pt-8">
-                <STLUpload onSlicingComplete={handleSlicingComplete} />
+                <STLUpload 
+                  onSlicingStart={() => setIsAnalyzing(true)}
+                  onSlicingComplete={handleSlicingComplete} 
+                />
               </div>
             </div>
 
@@ -172,30 +195,37 @@ export function StudioDashboard({ onToggleTheme, isDark }: { onToggleTheme: () =
 
       {/* Modal de Perfil */}
       {showPerfilModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-2xl p-6 md:p-10 relative shadow-2xl animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
-            <button 
-              onClick={() => {
-                setShowPerfilModal(false);
-                setEditingPerfil(null);
-              }}
-              className="absolute right-4 top-4 md:right-8 md:top-8 p-2 hover:bg-[#f5f5f7] rounded-full transition-colors"
-            >
-              <X size={20} className="text-[#7a7a7a]" />
-            </button>
-            <div className="mb-10">
-              <h2 className="studio-display-md !text-3xl">{editingPerfil ? 'Editar Perfil' : 'Nuevo Perfil'}</h2>
-              <p className="studio-body text-[#7a7a7a] mt-2">Configurá los costos fijos y el motor de slicing (.ini) para tu impresora.</p>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] flex flex-col relative shadow-2xl animate-in zoom-in-95 duration-200">
+            {/* Header Fijo */}
+            <div className="p-6 md:p-10 pb-0 shrink-0">
+              <button 
+                onClick={() => {
+                  setShowPerfilModal(false);
+                  setEditingPerfil(null);
+                }}
+                className="absolute right-4 top-4 md:right-8 md:top-8 p-2 hover:bg-[#f5f5f7] rounded-full transition-colors z-10"
+              >
+                <X size={20} className="text-[#7a7a7a]" />
+              </button>
+              <div className="mb-6">
+                <h2 className="studio-display-md !text-3xl">{editingPerfil ? 'Editar Perfil' : 'Nuevo Perfil'}</h2>
+                <p className="studio-body text-[#7a7a7a] mt-2">Configurá los costos fijos y el motor de slicing (.ini) para tu impresora.</p>
+              </div>
             </div>
-            <PerfilForm 
-              initialData={editingPerfil}
-              onSubmit={handlePerfilSubmit}
-              onCancel={() => {
-                setShowPerfilModal(false);
-                setEditingPerfil(null);
-              }}
-              isLoading={isCreating || isUpdating}
-            />
+
+            {/* Area de scroll con el formulario */}
+            <div className="flex-1 overflow-y-auto px-6 md:px-10 pb-10 custom-scrollbar">
+              <PerfilForm 
+                initialData={editingPerfil}
+                onSubmit={handlePerfilSubmit}
+                onCancel={() => {
+                  setShowPerfilModal(false);
+                  setEditingPerfil(null);
+                }}
+                isLoading={isCreating || isUpdating}
+              />
+            </div>
           </div>
         </div>
       )}

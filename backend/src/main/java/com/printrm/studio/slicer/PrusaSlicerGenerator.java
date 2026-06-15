@@ -1,4 +1,4 @@
-package com.printrm.studio;
+package com.printrm.studio.slicer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

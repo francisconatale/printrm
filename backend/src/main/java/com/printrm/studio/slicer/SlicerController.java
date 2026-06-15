@@ -59,7 +59,8 @@ public class SlicerController {
 
             return ResponseEntity.ok(result);
 
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error during slicing: " + e.getMessage());
         }
     }

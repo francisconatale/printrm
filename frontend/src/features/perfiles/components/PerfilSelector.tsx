@@ -17,8 +17,10 @@ export const PerfilSelector: React.FC<PerfilSelectorProps> = ({ onAddNew, onEdit
   React.useEffect(() => {
     if (perfiles && perfiles.length > 0 && !perfilActivo) {
       const savedId = localStorage.getItem('perfilActivoId');
-      const saved = perfiles.find(p => p.id.toString() === savedId);
-      setPerfilActivo(saved || perfiles[0]);
+      const saved = perfiles.find(p => p.id === savedId);
+      const toSelect = saved || perfiles[0];
+      console.log("PerfilSelector - Auto-seleccionando:", toSelect.nombre);
+      setPerfilActivo(toSelect);
     }
   }, [perfiles, perfilActivo, setPerfilActivo]);
 
