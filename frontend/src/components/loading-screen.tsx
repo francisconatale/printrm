@@ -7,20 +7,20 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-black z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
       <div className="text-center space-y-6 max-w-sm px-6">
         <div className="relative flex items-center justify-center">
           {/* iOS-style animated spinner */}
-          <Loader2 className="h-12 w-12 text-blue-500 animate-spin transition-all duration-300 ease-in-out" />
+          <Loader2 className="h-12 w-12 text-indigo-500 animate-spin transition-all duration-300 ease-in-out" />
         </div>
         
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             PrusaSlicer
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground">
             {error ? (
-              <span className="text-red-500 font-medium">{error}</span>
+              <span className="text-destructive font-medium">{error}</span>
             ) : (
               `Iniciando el motor de cálculo...`
             )}
@@ -29,13 +29,13 @@ export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
 
         {!error && (
           <div className="flex flex-col items-center space-y-1">
-             <div className="w-48 h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+             <div className="w-48 h-1 bg-secondary rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-blue-500 transition-all duration-500 ease-out" 
+                  className="h-full bg-indigo-500 transition-all duration-500 ease-out" 
                   style={{ width: `${Math.min((retryCount / 30) * 100, 100)}%` }}
                 />
              </div>
-             <p className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
+             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
                Intento {retryCount} de 30
              </p>
           </div>
@@ -44,7 +44,7 @@ export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
         {error && (
           <button 
             onClick={() => window.location.reload()}
-            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full font-medium active:scale-95 transition-transform"
+            className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-medium active:scale-95 transition-transform shadow-lg shadow-indigo-500/20"
           >
             Reintentar
           </button>

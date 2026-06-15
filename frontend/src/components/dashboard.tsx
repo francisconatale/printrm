@@ -4,159 +4,292 @@ import {
   History, 
   Cpu, 
   HardDrive, 
-  Layers, 
-  Clock, 
-  DollarSign, 
-  Box
+  Box,
+  TrendingUp,
+  Clock,
+  Printer,
+  Search,
+  Bell,
+  Sun
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export function Dashboard() {
+function MiniBars({ className }: { className?: string }) {
+  const heights = [10, 16, 13, 22, 18, 28, 24]
   return (
-    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] p-6 lg:p-10 transition-colors duration-500">
-      {/* Header section inspired by iOS Settings/Control Center */}
-      <header className="max-w-6xl mx-auto mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-black dark:text-white">Dashboard</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Motor PrusaSlicer activo</p>
+    <svg viewBox="0 0 80 32" className={className} aria-hidden="true">
+      {heights.map((h, i) => (
+        <rect
+          key={i}
+          x={i * 11}
+          y={32 - h}
+          width={6}
+          height={h}
+          rx={2}
+          fill="currentColor"
+        />
+      ))}
+    </svg>
+  )
+}
+
+function MiniWave({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 32" className={className} aria-hidden="true" fill="none">
+      <path
+        d="M0 22 C 12 22, 14 10, 26 10 S 40 24, 52 18 S 70 6, 80 12"
+        stroke="currentColor"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function MiniSquiggle({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 32" className={className} aria-hidden="true" fill="none">
+      <path
+        d="M2 26 C 18 26, 16 6, 30 16 S 46 30, 58 12 S 72 4, 78 8"
+        stroke="currentColor"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+export function Dashboard({ onToggleTheme, isDark }: { onToggleTheme: () => void, isDark: boolean }) {
+  return (
+    <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+      {/* Header */}
+      <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onToggleTheme}
+            className="flex size-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 border border-indigo-100 shadow-sm hover:scale-105 active:scale-95 transition-all dark:bg-indigo-500/10 dark:border-indigo-500/20"
+          >
+            {isDark ? <Clock className="size-6" strokeWidth={2} /> : <Sun className="size-6" strokeWidth={2} />}
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Motor PrusaSlicer activo • v2.9.5
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2">
-           <Badge variant="outline" className="bg-white/50 dark:bg-white/5 backdrop-blur-md border-none px-3 py-1 text-xs font-semibold rounded-full shadow-sm">
-             v2.9.5
-           </Badge>
-           <button className="p-2 bg-white dark:bg-white/10 rounded-full shadow-sm active:scale-90 transition-transform">
-             <Settings className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-           </button>
+
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-full items-center gap-2 rounded-full bg-card border border-slate-200 dark:border-slate-800 pl-5 pr-1.5 sm:w-72 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+            <input
+              type="search"
+              placeholder="Buscar transacciones..."
+              aria-label="Search"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+            <button
+              type="button"
+              className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-colors"
+            >
+              <Search className="size-4" />
+            </button>
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" className="rounded-full size-12 shrink-0 border-slate-200 dark:border-slate-800 bg-card shadow-sm">
+              <History className="size-5 text-muted-foreground" />
+            </Button>
+            <Button variant="accent" className="rounded-full px-6 h-12 shadow-md shadow-indigo-500/20">
+              <Plus className="mr-1.5 size-4" />
+              Nuevo Cálculo
+            </Button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {/* Main Action Card - High impact */}
-        <Card className="col-span-1 lg:col-span-2 overflow-hidden border-none shadow-xl bg-white dark:bg-[#1C1C1E] rounded-[28px] group transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-bold flex items-center gap-2">
-              <Box className="h-5 w-5 text-blue-500" />
-              Nuevo Cálculo
-            </CardTitle>
-            <CardDescription>Sube un archivo STL para estimar costos y tiempo.</CardDescription>
+      {/* StatCards */}
+      <section
+        aria-label="Key metrics"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        <Card className="flex items-center justify-between rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm bg-card">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Ingresos Mes</p>
+            <p className="mt-1 text-2xl font-bold text-foreground font-mono">$1,240.00</p>
+          </div>
+          <MiniBars className="h-8 w-20 text-indigo-500" />
+        </Card>
+
+        <Card className="flex items-center justify-between rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm bg-card">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+              <Printer className="size-5" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Piezas Impresas</p>
+              <p className="mt-1 text-2xl font-bold text-foreground font-mono">48</p>
+            </div>
+          </div>
+          <MiniWave className="h-8 w-16 text-muted-foreground" />
+        </Card>
+
+        <Card className="flex items-center justify-between rounded-3xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm bg-card">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 border border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20">
+              <Clock className="size-5" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Horas de Vuelo</p>
+              <p className="mt-1 text-2xl font-bold text-foreground font-mono">312h</p>
+            </div>
+          </div>
+          <MiniWave className="h-8 w-16 text-muted-foreground" />
+        </Card>
+
+        <Card className="flex items-center justify-between rounded-3xl p-5 border-none shadow-md bg-indigo-500 text-white">
+          <div>
+            <p className="text-sm font-medium text-indigo-100">Filamento Usado</p>
+            <p className="mt-1 text-2xl font-bold font-mono">4.2kg</p>
+          </div>
+          <MiniSquiggle className="h-9 w-20 text-white/80" />
+        </Card>
+      </section>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-6">
+        {/* Main Action Area - STL Upload */}
+        <Card className="lg:col-span-2 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm bg-card overflow-hidden flex flex-col">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-4 px-6 pt-6">
+            <div className="space-y-1">
+              <CardTitle className="text-lg font-bold text-foreground">Cálculo en tiempo real</CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">PrusaSlicer Engine</CardDescription>
+            </div>
+            <Badge variant="success" className="rounded-full px-3 py-1">Activo</Badge>
           </CardHeader>
-          <CardContent>
-            <div className="mt-4 h-48 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col items-center justify-center space-y-3 hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer group-hover:bg-blue-50/30 dark:group-hover:bg-blue-900/10">
-              <div className="p-4 bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                <Plus className="h-6 w-6" />
+          <CardContent className="p-6 flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col items-center justify-center space-y-4 border-dashed border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] hover:border-indigo-200 transition-colors cursor-pointer group bg-background p-10">
+              <div className="size-16 bg-card text-indigo-500 rounded-full flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform border border-border">
+                <Box size={32} />
               </div>
-              <p className="text-sm font-medium text-gray-500">Arrastra tu STL aquí</p>
+              <div className="text-center">
+                <p className="text-base font-bold text-foreground">Arrastra tu archivo STL aquí</p>
+                <p className="text-sm text-muted-foreground">O haz clic para buscar en tu computadora</p>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Status / Hardware Widget */}
-        <Card className="border-none shadow-lg bg-white dark:bg-[#1C1C1E] rounded-[28px]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-gray-400">Estado del Sistema</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                  <Cpu className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <span className="font-semibold text-gray-700 dark:text-gray-200">Motor Slicer</span>
+        {/* System Status */}
+        <Card className="rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm bg-card p-6 flex flex-col text-center items-center">
+          <div className="size-20 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-500 mb-4 border-4 border-background shadow-sm dark:bg-indigo-500/10">
+            <Printer size={32} />
+          </div>
+          <h2 className="text-lg font-bold text-foreground">Estado del Sistema</h2>
+          <p className="text-sm text-muted-foreground mt-1">MK4 #01 • Imprimiendo</p>
+          
+          <div className="w-full mt-6 space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span>Progreso</span>
+                <span className="text-indigo-500">74%</span>
               </div>
-              <Badge className="bg-green-500 text-white border-none rounded-full px-2 py-0.5 text-[10px]">READY</Badge>
+              <Progress value={74} className="h-2 bg-secondary" />
             </div>
             
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-medium text-gray-500">
-                <span>Memoria del Motor</span>
-                <span>24%</span>
+            <div className="bg-background rounded-2xl p-4 flex items-center gap-3 text-left border border-slate-100 dark:border-slate-800">
+              <div className="size-10 bg-card rounded-xl flex items-center justify-center shadow-sm text-muted-foreground border border-border">
+                <HardDrive size={20} />
               </div>
-              <Progress value={24} className="h-1.5 bg-gray-100 dark:bg-gray-800" />
+              <div>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">Perfil</p>
+                <p className="text-xs font-bold text-foreground">Calidad Estándar 0.20</p>
+              </div>
             </div>
+          </div>
 
-            <div className="flex items-center gap-3 pt-2">
-               <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
-                  <HardDrive className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-               </div>
-               <div>
-                 <p className="text-xs text-gray-400">Configuración</p>
-                 <p className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase">Calidad Estándar</p>
-               </div>
-            </div>
-          </CardContent>
+          <Button variant="outline" className="w-full mt-auto rounded-xl border-slate-200 dark:border-slate-800 text-foreground hover:bg-secondary">
+            Ver Detalles
+          </Button>
         </Card>
 
-        {/* Quick Stats Widget */}
-        <Card className="border-none shadow-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-[28px]">
-           <CardContent className="p-6 grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Layers className="h-5 w-5 opacity-70" />
-                <p className="text-[10px] uppercase font-bold opacity-70">Total Piezas</p>
-                <p className="text-2xl font-bold">12</p>
-              </div>
-              <div className="space-y-1 text-right">
-                <History className="h-5 w-5 ml-auto opacity-70" />
-                <p className="text-[10px] uppercase font-bold opacity-70">Cálculos hoy</p>
-                <p className="text-2xl font-bold">4</p>
-              </div>
-              <div className="col-span-2 pt-4 border-t border-white/20 flex justify-between items-center">
-                 <div className="flex items-center gap-2">
-                   <DollarSign className="h-4 w-4 opacity-70" />
-                   <span className="text-sm font-medium">Ahorro Estimado</span>
-                 </div>
-                 <span className="text-lg font-bold">$42.50</span>
-              </div>
-           </CardContent>
+        {/* Quick Profile/Info Card */}
+        <Card className="rounded-3xl border-none shadow-md bg-indigo-500 p-6 flex flex-col text-center items-center text-white">
+          <div className="size-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
+            <Cpu size={32} className="text-white" />
+          </div>
+          <h2 className="text-lg font-bold">Optimización</h2>
+          <p className="text-sm text-indigo-100 mt-1">Sugerencias de ahorro</p>
+          <div className="mt-6 p-4 bg-white/10 rounded-2xl w-full">
+            <p className="text-xs font-medium leading-relaxed">
+              Agrupa 3 piezas más para reducir el desperdicio en un 12%.
+            </p>
+          </div>
+          <button className="mt-auto text-sm font-bold text-white underline underline-offset-4">
+            Aplicar ahora
+          </button>
         </Card>
 
-        {/* Recent Activity List */}
-        <Card className="col-span-1 lg:col-span-2 border-none shadow-lg bg-white dark:bg-[#1C1C1E] rounded-[28px] flex flex-col">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <History className="h-5 w-5 text-purple-500" />
-              Recientes
-            </CardTitle>
+        {/* Recent Transactions Table */}
+        <Card className="lg:col-span-3 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm bg-card overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-border pb-4 px-6 pt-6">
+            <CardTitle className="text-lg font-bold text-foreground">Transacciones Recientes</CardTitle>
+            <Button variant="ghost" size="sm" className="text-indigo-500 hover:bg-indigo-500/10 rounded-full px-4">Ver todas</Button>
           </CardHeader>
-          <CardContent className="flex-1 overflow-hidden">
-            <ScrollArea className="h-[200px]">
-              <div className="space-y-4 pr-4">
-                {[
-                  { name: "Soporte_Base.stl", date: "Hace 5 min", cost: "$4.20", time: "2h 15m" },
-                  { name: "Carcasa_Frontal.stl", date: "Hace 1h", cost: "$12.80", time: "8h 45m" },
-                  { name: "Engranaje_V3.stl", date: "Ayer", cost: "$1.50", time: "45m" },
-                  { name: "Brazo_Robotico.stl", date: "12 Jun", cost: "$24.10", time: "16h 20m" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl text-purple-500">
-                        <Box className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-700 dark:text-gray-200 group-hover:text-blue-500 transition-colors">{item.name}</p>
-                        <p className="text-[10px] text-gray-400 font-medium">{item.date}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                       <p className="text-sm font-bold text-gray-900 dark:text-white">{item.cost}</p>
-                       <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium justify-end">
-                         <Clock className="h-3 w-3" />
-                         {item.time}
-                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[280px]">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-secondary/30">
+                    <th className="px-6 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Fecha</th>
+                    <th className="px-6 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Descripción</th>
+                    <th className="px-6 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Estado</th>
+                    <th className="px-6 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Monto</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {[
+                    { date: "15 Jun 2026", desc: "Venta: Soporte Articulado", status: "success", label: "Pagado", amount: "+ $45.00", pos: true },
+                    { date: "14 Jun 2026", desc: "Compra: Filamento PLA Slate", status: "destructive", label: "Egreso", amount: "- $22.50", pos: false },
+                    { date: "14 Jun 2026", desc: "Venta: Carcasa Prototipo V2", status: "success", label: "Pagado", amount: "+ $120.00", pos: true },
+                    { date: "12 Jun 2026", desc: "Servicio: Mantenimiento MK4", status: "destructive", label: "Egreso", amount: "- $15.00", pos: false },
+                    { date: "10 Jun 2026", desc: "Venta: Engranaje Custom", status: "success", label: "Pagado", amount: "+ $30.00", pos: true },
+                  ].map((row, i) => (
+                    <tr key={i} className="hover:bg-secondary/20 transition-colors group">
+                      <td className="px-6 py-4 text-xs text-muted-foreground font-medium">{row.date}</td>
+                      <td className="px-6 py-4 text-sm font-bold text-foreground">{row.desc}</td>
+                      <td className="px-6 py-4">
+                        <Badge variant={row.status as any} className="rounded-full px-2.5 py-0.5 text-[10px] border-none shadow-none">
+                          {row.label}
+                        </Badge>
+                      </td>
+                      <td className={`px-6 py-4 text-sm font-mono font-bold text-right ${row.pos ? 'text-green-500' : 'text-red-400'}`}>
+                        {row.amount}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </ScrollArea>
           </CardContent>
         </Card>
-      </main>
 
-      {/* Modern floating nav indicator (iOS style) */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-black/10 dark:bg-white/10 rounded-full blur-[1px] lg:hidden" />
+        {/* Small Action Card */}
+        <Card className="rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm bg-primary p-6 flex flex-col text-center items-center text-primary-foreground">
+           <div className="size-14 bg-indigo-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20">
+             <Plus className="size-6 text-white" />
+           </div>
+           <h3 className="text-base font-bold">Nueva Orden</h3>
+           <p className="text-xs text-muted-foreground/80 mt-2 leading-relaxed">
+             Crea una orden rápida para un cliente recurrente.
+           </p>
+           <Button className="w-full mt-6 rounded-xl bg-primary-foreground text-primary hover:bg-primary-foreground/90 border-none font-bold">
+             Empezar
+           </Button>
+        </Card>
+      </div>
     </div>
   )
 }
