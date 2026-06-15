@@ -15,7 +15,7 @@ public class SlicerService {
     private static final String DEFAULT_EXE = "../bin/prusa-slicer-console.exe";
     private static final String DEFAULT_OUTPUT_DIR = "../output/";
 
-    public SlicingResult slice(String inputStl, String outputGcode, String configPath) throws IOException, InterruptedException {
+    public SlicingResult slice(String inputStl, String outputGcode, List<String> configPaths) throws IOException, InterruptedException {
         File outputDir = new File(DEFAULT_OUTPUT_DIR);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
@@ -26,7 +26,7 @@ public class SlicerService {
             outputGcode = DEFAULT_OUTPUT_DIR + baseName + ".gcode";
         }
 
-        int exitCode = runSlicer(DEFAULT_EXE, inputStl, outputGcode, configPath);
+        int exitCode = runSlicer(DEFAULT_EXE, inputStl, outputGcode, configPaths);
 
         if (exitCode == 0) {
             return parseGCodeMetadata(outputGcode);
@@ -35,7 +35,7 @@ public class SlicerService {
         }
     }
 
-    private int runSlicer(String exePath, String inputPath, String outputPath, String configPath)
+    private int runSlicer(String exePath, String inputPath, String outputPath, List<String> configPaths)
             throws IOException, InterruptedException {
 
         List<String> command = new ArrayList<>();
@@ -48,9 +48,13 @@ public class SlicerService {
             command.add(new File(outputPath).getAbsolutePath());
         }
 
-        if (configPath != null && !configPath.isEmpty()) {
-            command.add("--load");
-            command.add(new File(configPath).getAbsolutePath());
+        if (configPaths != null) {
+            for (String configPath : configPaths) {
+                if (configPath != null && !configPath.isEmpty()) {
+                    command.add("--load");
+                    command.add(new File(configPath).getAbsolutePath());
+                }
+            }
         }
 
         ProcessBuilder pb = new ProcessBuilder(command);

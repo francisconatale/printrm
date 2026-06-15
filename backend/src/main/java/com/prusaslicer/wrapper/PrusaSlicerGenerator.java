@@ -32,15 +32,18 @@ public class PrusaSlicerGenerator {
             outputGcode = DEFAULT_OUTPUT_DIR + baseName + ".gcode";
         }
         
-        String configFile = (args.length > 2) ? args[2] : null;
+        List<String> configs = new ArrayList<>();
+        if (args.length > 2) {
+            configs.add(args[2]);
+        }
 
         System.out.println("--- Iniciando Generación de G-code ---");
         System.out.println("Entrada:  " + inputStl);
         System.out.println("Salida:   " + outputGcode);
-        if (configFile != null) System.out.println("Config:   " + configFile);
+        if (!configs.isEmpty()) System.out.println("Configs:  " + configs);
 
         try {
-            int exitCode = runSlicer(DEFAULT_EXE, inputStl, outputGcode, configFile);
+            int exitCode = runSlicer(DEFAULT_EXE, inputStl, outputGcode, configs);
             
             if (exitCode == 0) {
                 System.out.println("\n[SUCCESS] G-code generado con éxito: " + outputGcode);
@@ -92,7 +95,7 @@ public class PrusaSlicerGenerator {
      * @param configPath Ruta al archivo .ini de configuración (opcional)
      * @return Código de salida del proceso
      */
-    public static int runSlicer(String exePath, String inputPath, String outputPath, String configPath) 
+    public static int runSlicer(String exePath, String inputPath, String outputPath, List<String> configPaths) 
             throws IOException, InterruptedException {
         
         List<String> command = new ArrayList<>();
@@ -105,9 +108,13 @@ public class PrusaSlicerGenerator {
             command.add(outputPath);
         }
 
-        if (configPath != null && !configPath.isEmpty()) {
-            command.add("--load");
-            command.add(configPath);
+        if (configPaths != null) {
+            for (String configPath : configPaths) {
+                if (configPath != null && !configPath.isEmpty()) {
+                    command.add("--load");
+                    command.add(configPath);
+                }
+            }
         }
 
         ProcessBuilder pb = new ProcessBuilder(command);

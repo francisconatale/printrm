@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class SlicerController {
@@ -24,7 +27,9 @@ public class SlicerController {
     @PostMapping("/slice")
     public ResponseEntity<?> sliceStl(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "config", required = false) String configName) {
+            @RequestParam(value = "printConfig", required = false) String printConfig,
+            @RequestParam(value = "filamentConfig", required = false) String filamentConfig,
+            @RequestParam(value = "printerConfig", required = false) String printerConfig) {
 
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file uploaded");
@@ -39,20 +44,27 @@ public class SlicerController {
             Path path = Paths.get(UPLOAD_DIR + file.getOriginalFilename());
             Files.write(path, file.getBytes());
 
-            // Resolve config path if provided
-            String configPath = null;
-            if (configName != null && !configName.isEmpty()) {
-                configPath = "../configs/" + configName;
-                if (!configName.endsWith(".ini")) configPath += ".ini";
-            }
+            // Resolve config paths
+            List<String> configPaths = new ArrayList<>();
+            addConfigPath(configPaths, "print/", printConfig);
+            addConfigPath(configPaths, "filament/", filamentConfig);
+            addConfigPath(configPaths, "printer/", printerConfig);
 
             // Execute slicing
-            SlicerService.SlicingResult result = slicerService.slice(path.toString(), null, configPath);
+            SlicerService.SlicingResult result = slicerService.slice(path.toString(), null, configPaths);
 
             return ResponseEntity.ok(result);
 
         } catch (IOException | InterruptedException e) {
             return ResponseEntity.internalServerError().body("Error during slicing: " + e.getMessage());
+        }
+    }
+
+    private void addConfigPath(List<String> list, String subDir, String name) {
+        if (name != null && !name.isEmpty()) {
+            String fullPath = "../configs/" + subDir + name;
+            if (!name.endsWith(".ini")) fullPath += ".ini";
+            list.add(fullPath);
         }
     }
 }
