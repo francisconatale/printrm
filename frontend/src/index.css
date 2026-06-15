@@ -3,47 +3,98 @@
 @import "@fontsource-variable/inter";
 @import "./studio-theme.css";
 
+/* =============================================
+   SHADCN / TAILWIND — Tokens mapeados al
+   Design System de Printrm
+   ============================================= */
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #1e293b;
-  --primary-foreground: #f8fafc;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #1e293b;
-  --muted: #64748b;
-  --muted-foreground: #94a3b8;
-  --accent: #6366f1;
+  /* Fondos */
+  --background:        #ffffff;
+  --foreground:        #1d1d1f;
+
+  /* Cards y popovers */
+  --card:              #ffffff;
+  --card-foreground:   #1d1d1f;
+  --popover:           #ffffff;
+  --popover-foreground:#1d1d1f;
+
+  /* Color primario — Action Blue */
+  --primary:           #0066cc;
+  --primary-foreground:#ffffff;
+
+  /* Secundario — parchment */
+  --secondary:         #f5f5f7;
+  --secondary-foreground: #1d1d1f;
+
+  /* Muted */
+  --muted:             #f5f5f7;
+  --muted-foreground:  #7a7a7a;
+
+  /* Accent */
+  --accent:            #0066cc;
   --accent-foreground: #ffffff;
-  --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #cbd5e1;
-  --ring: rgba(99, 102, 241, 0.2);
+
+  /* Destructivo */
+  --destructive:       #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Borde principal — hairline */
+  --border:            #e0e0e0;
+  --input:             #e0e0e0;
+  --ring:              rgba(0, 102, 204, 0.25);
+
+  /* ── Bordes explícitos con intensidad variable ─────────────────
+     Usá estas variables en lugar de border-border/20 etc.
+     Los modificadores de opacidad (border-border/20) NO funcionan
+     con variables hex en Tailwind — generan CSS inválido.
+  ──────────────────────────────────────────────────────────────── */
+  --border-subtle:     #ebebeb;   /* Borde muy sutil — separadores internos */
+  --border-faint:      #f2f2f2;   /* Borde casi invisible — wrappers de zona */
+
+  /* Radio base */
   --radius: 1rem;
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
-  --popover: #1e293b;
-  --popover-foreground: #f1f5f9;
-  --primary: #f1f5f9;
-  --primary-foreground: #1e293b;
-  --secondary: #334155;
-  --secondary-foreground: #f1f5f9;
-  --muted: #94a3b8;
-  --muted-foreground: #64748b;
-  --accent: #6366f1;
-  --accent-foreground: #f1f5f9;
-  --destructive: #f87171;
-  --border: #334155;
-  --input: #334155;
-  --ring: rgba(99, 102, 241, 0.2);
+  /* Fondos */
+  --background:        #1c1c1e;
+  --foreground:        #f5f5f7;
+
+  /* Cards y popovers */
+  --card:              #2c2c2e;
+  --card-foreground:   #f5f5f7;
+  --popover:           #2c2c2e;
+  --popover-foreground:#f5f5f7;
+
+  /* Color primario dark — Action Blue aclarado */
+  --primary:           #2997ff;
+  --primary-foreground:#ffffff;
+
+  /* Secundario dark */
+  --secondary:         #3a3a3c;
+  --secondary-foreground: #f5f5f7;
+
+  /* Muted dark */
+  --muted:             #3a3a3c;
+  --muted-foreground:  #86868b;
+
+  /* Accent dark */
+  --accent:            #2997ff;
+  --accent-foreground: #ffffff;
+
+  /* Destructivo dark */
+  --destructive:       #ff453a;
+  --destructive-foreground: #ffffff;
+
+  /* Borde dark */
+  --border:            #3a3a3c;
+  --input:             #3a3a3c;
+  --ring:              rgba(41, 151, 255, 0.3);
+
+  /* Bordes explícitos dark — valores reales, sin opacity hack */
+  --border-subtle:     #2e2e30;   /* Sutil: ligeramente más claro que canvas #1c1c1e */
+  --border-faint:      #252527;   /* Casi invisible: apenas por encima del canvas */
 }
 
 @tailwind base;
@@ -51,24 +102,53 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-background text-foreground transition-colors duration-200;
-    font-weight: 400;
-    min-height: 100vh;
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
-  html {
-    font-family: 'Inter', system-ui, -studio-system, sans-serif;
+  /* Transición global de colores — evita que los elementos cambien
+     de tema de forma instantánea y discontinua */
+  *, *::before, *::after {
+    transition-property: color, background-color, border-color, fill, stroke;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+
+  /* Excepción: los elementos con animaciones propias no deben heredar
+     la transición de color (interfiere con spin, fade-in, etc.) */
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce,
+  [class*="animate-"] {
+    transition-property: none;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-weight: 400;
+    min-height: 100vh;
   }
 }
 
 @layer components {
-  .heading-1 { @apply text-[28px] font-medium tracking-[-0.5px]; }
-  .heading-2 { @apply text-[20px] font-medium tracking-[-0.3px]; }
-  .heading-3 { @apply text-[15px] font-medium; }
-  .body      { @apply text-[14px] font-normal leading-[1.6]; }
-  .small     { @apply text-[12px] font-normal text-slate-500; }
-  .overline  { @apply text-[11px] font-medium tracking-[0.07em] uppercase; }
-  .mono      { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; @apply text-[13px] font-normal; }
-}
+  /* Botón primario — Action Blue, pill shape */
+  .studio-button-primary {
+    @apply inline-flex items-center justify-center bg-primary text-white px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-95 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed !important;
+    min-height: 44px;
+    /* Anular la transición global para no mezclar con active:scale */
+    transition: opacity 200ms ease, transform 200ms ease !important;
+  }
 
+  /* Botón secundario — borde Action Blue */
+  .studio-button-secondary-pill {
+    @apply inline-flex items-center justify-center bg-transparent text-primary border border-primary px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-95 hover:opacity-75 disabled:opacity-50 !important;
+    min-height: 44px;
+    transition: opacity 200ms ease, transform 200ms ease !important;
+  }
+
+  /* Clase mono — para tablas financieras densas */
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    @apply text-[13px] font-normal;
+  }
+}

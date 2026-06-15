@@ -7,9 +7,12 @@ import {
   BarChart, 
   Printer,
   Star,
-  Sliders
+  Sliders,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { useTheme } from '../../providers/ThemeProvider';
 
 export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports' | 'profiles';
 
@@ -31,10 +34,12 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
+  const { isDark, toggleTheme } = useTheme()
+
   return (
     <nav
       aria-label="Main navigation"
-      className="flex h-full flex-col items-center gap-2 bg-[#f5f5f7] border-r border-[#e0e0e0] py-8 w-20 shrink-0"
+      className="flex h-full flex-col items-center gap-2 bg-[var(--studio-parchment)] border-r border-[var(--studio-hairline)] py-8 w-20 shrink-0"
     >
 
       <ul className="flex flex-col items-center gap-4 w-full overflow-y-auto no-scrollbar">
@@ -48,13 +53,13 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
               className={cn(
                 "flex size-12 items-center justify-center rounded-full transition-all duration-300 active:scale-90 relative",
                 currentView === item.id
-                  ? "text-[#1d1d1f] bg-black/5"
-                  : "text-[#7a7a7a] hover:text-[#1d1d1f] hover:bg-black/[0.03]"
+                  ? "text-primary bg-primary/8"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
               )}
             >
               <item.icon className="size-5" strokeWidth={currentView === item.id ? 2 : 1.5} />
               {currentView === item.id && (
-                <div className="absolute -left-1 w-1 h-6 bg-[#1d1d1f] rounded-r-full" />
+                <div className="absolute -left-1 w-1 h-6 bg-primary rounded-r-full" />
               )}
             </button>
           </li>
@@ -62,7 +67,14 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       </ul>
 
       <div className="mt-auto flex flex-col items-center gap-4">
-        <div className="size-10 overflow-hidden rounded-full border border-[#e0e0e0] bg-white flex items-center justify-center text-[10px] font-semibold text-[#1d1d1f] studio-nav-link">
+        <button
+          onClick={toggleTheme}
+          className="size-10 rounded-full transition-all duration-300 active:scale-90 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/20"
+          title={isDark ? 'Modo claro' : 'Modo oscuro'}
+        >
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+        <div className="size-10 overflow-hidden rounded-full border border-border bg-background flex items-center justify-center text-[10px] font-semibold text-foreground studio-nav-link">
           FB
         </div>
       </div>

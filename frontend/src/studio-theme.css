@@ -1,136 +1,210 @@
 :root {
-  /* Colors - Switched to Monochromatic / Neutral */
-  --studio-primary: #1d1d1f;
-  --studio-primary-focus: #333333;
-  --studio-primary-on-dark: #ffffff;
-  --studio-ink: #1d1d1f;
-  --studio-body: #1d1d1f;
-  --studio-body-on-dark: #ffffff;
-  --studio-body-muted: #cccccc;
-  --studio-ink-muted-80: #333333;
-  --studio-ink-muted-48: #7a7a7a;
-  --studio-divider-soft: #f0f0f0;
-  --studio-hairline: #e0e0e0;
-  --studio-canvas: #ffffff;
-  --studio-canvas-parchment: #f5f5f7;
-  --studio-surface-pearl: #fafafc;
-  --studio-surface-tile-1: #272729;
-  --studio-surface-tile-2: #2a2a2c;
-  --studio-surface-tile-3: #252527;
-  --studio-surface-black: #000000;
+  /* =============================================
+     PRINTRM — Design System Tokens
+     Fuente de verdad: design-system.md
+     ============================================= */
+
+  /* Brand & Accent */
+  --studio-primary-action: #0066cc;   /* Action Blue — links, botones pill, focus rings */
+  --studio-primary-focus:  #0071e3;   /* Focus ring de accesibilidad */
+  --studio-primary-dark:   #2997ff;   /* Variante brillante para fondos oscuros */
+
+  /* Surface & Tiles */
+  --studio-canvas:          #ffffff;   /* Lienzo blanco — tiles de producto y cards */
+  --studio-parchment:       #f5f5f7;   /* Off-white — tiles alternos, footer, sidebar */
+  --studio-tile-dark-1:     #272729;   /* Tile oscuro principal */
+  --studio-tile-dark-2:     #2a2a2c;   /* Variante micro-aclarada */
+  --studio-surface-black:   #000000;   /* Negro puro — header y vacío fotográfico */
+  --studio-hairline:        #e0e0e0;   /* Borde 1px para cards y divisores */
+
+  /* Texto — superficies claras */
+  --studio-ink:             #1d1d1f;   /* Titulares y cuerpo en superficies claras */
+  --studio-body-on-dark:    #ffffff;   /* Todo el texto sobre tiles oscuros */
+  --studio-ink-muted-80:    #333333;   /* Texto secundario — botones pearl, footer */
+  --studio-ink-muted-48:    #7a7a7a;   /* Texto desactivado y letra pequeña */
+
+  /* Aliases internos (para compatibilidad con código existente) */
+  --studio-primary:                 var(--studio-ink);
+  --studio-primary-on-dark:         var(--studio-body-on-dark);
+  --studio-body:                    var(--studio-ink);
+  --studio-body-muted:              var(--studio-ink-muted-48);
+  --studio-divider-soft:            var(--studio-hairline);
+  --studio-canvas-parchment:        var(--studio-parchment);
+  --studio-surface-pearl:           var(--studio-parchment);
+  --studio-surface-tile-1:          var(--studio-tile-dark-1);
+  --studio-surface-tile-2:          var(--studio-tile-dark-2);
+  --studio-surface-tile-3:          #252527;
   --studio-surface-chip-translucent: rgba(210, 210, 215, 0.64);
-  --studio-on-primary: #ffffff;
-  --studio-on-dark: #ffffff;
+  --studio-on-primary:              #ffffff;
+  --studio-on-dark:                 var(--studio-body-on-dark);
+
+  /* Sub-nav frosted — adaptable por modo */
+  --studio-subnav-bg:    rgba(245, 245, 247, 0.82);
+  --studio-subnav-color: var(--studio-ink);
 
   /* Spacing */
-  --studio-spacing-xxs: 4px;
-  --studio-spacing-xs: 8px;
-  --studio-spacing-sm: 12px;
-  --studio-spacing-md: 17px;
-  --studio-spacing-lg: 24px;
-  --studio-spacing-xl: 32px;
-  --studio-spacing-xxl: 48px;
+  --studio-spacing-xxs:     4px;
+  --studio-spacing-xs:      8px;
+  --studio-spacing-sm:      12px;
+  --studio-spacing-md:      17px;
+  --studio-spacing-lg:      24px;
+  --studio-spacing-xl:      32px;
+  --studio-spacing-xxl:     48px;
   --studio-spacing-section: 80px;
 
-  /* Rounded */
+  /* Border radius */
   --studio-rounded-none: 0px;
-  --studio-rounded-xs: 5px;
-  --studio-rounded-sm: 8px;
-  --studio-rounded-md: 11px;
-  --studio-rounded-lg: 18px;
+  --studio-rounded-sm:   8px;
+  --studio-rounded-md:   11px;
+  --studio-rounded-lg:   18px;
   --studio-rounded-pill: 9999px;
   --studio-rounded-full: 9999px;
 
-  /* Shadows */
+  /* Shadows — solo para renders de producto */
   --studio-product-shadow: 3px 5px 30px 0px rgba(0, 0, 0, 0.22);
 }
 
-/* Typography Base - Using Inter as a substitute with studio-tight tracking */
+/* =============================================
+   DARK MODE — Variantes de tokens
+   ============================================= */
+.dark {
+  /* Texto en dark */
+  --studio-ink:          #f5f5f7;    /* Claro, sin ser blanco puro */
+  --studio-ink-muted-80: #b0b0b5;
+  --studio-ink-muted-48: #86868b;
+  --studio-body-on-dark: #f5f5f7;
+
+  /* Surface en dark */
+  --studio-canvas:         #1c1c1e;   /* Fondo principal dark — gris muy oscuro, no negro puro */
+  --studio-parchment:      #2c2c2e;   /* Off-dark — tiles alternos, sidebar, footer */
+  --studio-hairline:       #3a3a3c;   /* Borde sutil en dark */
+
+  /* Action Blue — se aclara para mayor contraste sobre dark */
+  --studio-primary-action: #2997ff;   /* Mismo que primary-dark en light */
+  --studio-primary-focus:  #409cff;
+
+  /* Aliases */
+  --studio-primary:                 var(--studio-ink);
+  --studio-primary-on-dark:         var(--studio-ink);
+  --studio-body:                    var(--studio-ink);
+  --studio-body-muted:              var(--studio-ink-muted-48);
+  --studio-divider-soft:            var(--studio-hairline);
+  --studio-canvas-parchment:        var(--studio-parchment);
+  --studio-surface-pearl:           var(--studio-parchment);
+  --studio-surface-chip-translucent: rgba(44, 44, 46, 0.82);
+  --studio-on-primary:              #ffffff;
+  --studio-on-dark:                 var(--studio-ink);
+
+  /* Sub-nav frosted oscuro */
+  --studio-subnav-bg:    rgba(28, 28, 30, 0.82);
+  --studio-subnav-color: var(--studio-ink);
+
+  /* Sombra de producto — más pronunciada sobre fondos oscuros */
+  --studio-product-shadow: 3px 5px 30px 0px rgba(0, 0, 0, 0.55);
+}
+
+/* =============================================
+   TIPOGRAFÍA — Escala editorial Studio Tight
+   (font-family heredada de html { font-family: 'Inter' })
+   ============================================= */
+
 .studio-font-tight {
   letter-spacing: -0.015em;
 }
 
+/* 56px / 600 / -0.025em */
 .studio-hero-display {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 56px;
   font-weight: 600;
   line-height: 1.07;
-  letter-spacing: -0.025em; /* Approximating -0.28px */
+  letter-spacing: -0.025em;
 }
 
+/* 40px / 600 / -0.01em */
 .studio-display-lg {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 40px;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.01em;
 }
 
+/* 34px / 600 / -0.011em */
 .studio-display-md {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 34px;
   font-weight: 600;
   line-height: 1.47;
-  letter-spacing: -0.011em; /* Approximating -0.374px */
+  letter-spacing: -0.011em;
 }
 
+/* 28px / 400 / +0.007em */
 .studio-lead {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 28px;
   font-weight: 400;
   line-height: 1.14;
-  letter-spacing: 0.007em; /* Approximating 0.196px */
+  letter-spacing: 0.007em;
 }
 
+/* 17px / 600 / -0.022em — no existe "tagline" en el design system, alias de display-sm */
 .studio-tagline {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 21px;
   font-weight: 600;
   line-height: 1.19;
-  letter-spacing: 0.011em; /* Approximating 0.231px */
+  letter-spacing: 0.011em;
 }
 
+/* 17px / 400 / -0.022em */
 .studio-body {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 17px;
   font-weight: 400;
   line-height: 1.47;
-  letter-spacing: -0.022em; /* Approximating -0.374px */
+  letter-spacing: -0.022em;
 }
 
+/* 17px / 600 / -0.022em */
 .studio-body-strong {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 17px;
   font-weight: 600;
   line-height: 1.24;
   letter-spacing: -0.022em;
 }
 
+/* 14px / 400 / -0.016em */
 .studio-caption {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.43;
-  letter-spacing: -0.016em; /* Approximating -0.224px */
+  letter-spacing: -0.016em;
 }
 
+/* 14px / 600 / -0.016em — alias semibold de caption */
+.studio-caption-strong {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.43;
+  letter-spacing: -0.016em;
+}
+
+/* 12px / 400 / -0.01em */
 .studio-nav-link {
-  font-family: 'Inter', system-ui, -studio-system, sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 1.0;
   letter-spacing: -0.01em;
 }
 
-/* Base Components */
+/* =============================================
+   COMPONENTES BASE
+   ============================================= */
+
+/* Botón Primario — Action Blue, pill shape */
 .studio-button-primary {
-  background-color: var(--studio-primary);
-  color: var(--studio-on-primary);
+  background-color: var(--studio-primary-action);
+  color: #ffffff;
   padding: 11px 22px;
   border-radius: var(--studio-rounded-pill);
   font-size: 17px;
   font-weight: 400;
-  transition: transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   border: none;
   cursor: pointer;
   display: inline-flex;
@@ -138,34 +212,44 @@
   justify-content: center;
 }
 
+.studio-button-primary:hover {
+  opacity: 0.85;
+}
+
 .studio-button-primary:active {
   transform: scale(0.95);
 }
 
-.studio-button-primary:focus {
+.studio-button-primary:focus-visible {
   outline: 2px solid var(--studio-primary-focus);
   outline-offset: 2px;
 }
 
+/* Botón Secundario — borde Action Blue, pill shape */
 .studio-button-secondary-pill {
   background-color: transparent;
-  color: var(--studio-primary);
-  border: 1px solid var(--studio-primary);
+  color: var(--studio-primary-action);
+  border: 1px solid var(--studio-primary-action);
   padding: 11px 22px;
   border-radius: var(--studio-rounded-pill);
   font-size: 17px;
   font-weight: 400;
-  transition: transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
+.studio-button-secondary-pill:hover {
+  opacity: 0.75;
+}
+
 .studio-button-secondary-pill:active {
   transform: scale(0.95);
 }
 
+/* Product Tile — full-bleed */
 .studio-product-tile {
   width: 100%;
   padding: var(--studio-spacing-section) var(--studio-spacing-lg);
@@ -182,18 +266,19 @@
 }
 
 .studio-tile-parchment {
-  background-color: var(--studio-canvas-parchment);
+  background-color: var(--studio-parchment);
   color: var(--studio-ink);
 }
 
 .studio-tile-dark {
-  background-color: var(--studio-surface-tile-1);
-  color: var(--studio-on-dark);
+  background-color: var(--studio-tile-dark-1);
+  color: var(--studio-body-on-dark);
 }
 
+/* Header negro */
 .studio-global-nav {
   background-color: var(--studio-surface-black);
-  color: var(--studio-on-dark);
+  color: #ffffff;
   height: 44px;
   display: flex;
   align-items: center;
@@ -202,10 +287,12 @@
   width: 100%;
 }
 
+/* Sub-nav frosted — adaptado a dark/light via variable */
 .studio-sub-nav-frosted {
-  background-color: rgba(245, 245, 247, 0.8);
+  background-color: var(--studio-subnav-bg);
+  color: var(--studio-subnav-color);
   backdrop-filter: blur(20px) saturate(180%);
-  color: var(--studio-ink);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   height: 52px;
   display: flex;
   align-items: center;
@@ -214,9 +301,10 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid var(--studio-divider-soft);
+  border-bottom: 1px solid var(--studio-hairline);
 }
 
+/* Utility Card — fondo canvas, borde hairline, radius-lg */
 .studio-store-card {
   background-color: var(--studio-canvas);
   border: 1px solid var(--studio-hairline);
@@ -227,7 +315,7 @@
   gap: var(--studio-spacing-md);
 }
 
+/* Product Shadow — SOLO para renders de producto */
 .studio-product-shadow {
   box-shadow: var(--studio-product-shadow);
 }
-
