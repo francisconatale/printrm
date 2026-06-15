@@ -9,18 +9,44 @@ import { SlicingConfigSelector } from '../components/SlicingConfigSelector'
 import { useCalculo } from '../hooks/useCalculo'
 import { PiezaInput } from '../types/calculo.types'
 import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo'
-import { useCreatePerfil, useUpdatePerfil } from '../../perfiles/api/perfiles.api'
-import { useGetSlicerConfigs } from '../../perfiles/api/perfiles.api'
+import { 
+  useCreatePerfil, 
+  useUpdatePerfil,
+  useGetPerfiles,
+  useGetFilamentProfiles,
+  useGetPrintProfiles
+} from '../../perfiles/api/perfiles.api'
 import { useGuardarCalculo } from '../api/calculos.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
 
 export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () => void, isDark: boolean }) {
   const { perfilActivo } = usePerfilActivo();
-  const { data: slicerConfigs } = useGetSlicerConfigs();
+  const { data: printers } = useGetPerfiles();
+  const { data: filaments } = useGetFilamentProfiles();
+  const { data: prints } = useGetPrintProfiles();
 
   const [file, setFile] = React.useState<File | null>(null);
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });
+
+  // Set default values when profiles are loaded
+  React.useEffect(() => {
+    if (perfilActivo && !overrideConfigs.printer) {
+      setOverrideConfigs(prev => ({ ...prev, printer: perfilActivo.id }));
+    }
+  }, [perfilActivo, overrideConfigs.printer]);
+
+  React.useEffect(() => {
+    if (filaments && filaments.length > 0 && !overrideConfigs.filament) {
+      setOverrideConfigs(prev => ({ ...prev, filament: filaments[0].id }));
+    }
+  }, [filaments, overrideConfigs.filament]);
+
+  React.useEffect(() => {
+    if (prints && prints.length > 0 && !overrideConfigs.print) {
+      setOverrideConfigs(prev => ({ ...prev, print: prints[0].id }));
+    }
+  }, [prints, overrideConfigs.print]);
 
   const [piezaInput, setPiezaInput] = React.useState<PiezaInput>({
     horas: 0,
@@ -32,7 +58,16 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
 
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [hasAnalyzed, setHasAnalyzed] = React.useState(false);
-  const resultado = useCalculo(piezaInput);
+
+  const activePrinter = React.useMemo(() => {
+    return printers?.find(p => p.id === overrideConfigs.printer) || perfilActivo;
+  }, [printers, overrideConfigs.printer, perfilActivo]);
+
+  const activeFilament = React.useMemo(() => {
+    return filaments?.find(f => f.id === overrideConfigs.filament) || null;
+  }, [filaments, overrideConfigs.filament]);
+
+  const resultado = useCalculo(piezaInput, activePrinter, activeFilament);
   
   const [showPerfilModal, setShowPerfilModal] = React.useState(false);
   const [editingPerfil, setEditingPerfil] = React.useState<Perfil | null>(null);
@@ -127,8 +162,8 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
     );
   };
 
-  const handleOverrideConfigsChange = (type: string, val: string) => {
-    setOverrideConfigs(prev => ({ ...prev, [type]: val }));
+  const handleOverrideConfigsChange = (type: 'print' | 'filament' | 'printer', val: string) => {
+    setOverrideConfigs(prev => ({ ...prev, [type]: val === '__default__' ? '' : val }));
   };
 
   const handleResetAnalysis = () => {
@@ -171,10 +206,12 @@ export function CalculadoraView({ onToggleTheme, isDark }: { onToggleTheme: () =
 
                 <div className="pt-8 border-t border-[#e0e0e0]">
                   <div className="mb-6">
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#a1a1a1]">Parámetros de Impresión</h3>
+                    <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1]">Parámetros de Impresión</h3>
                   </div>
                   <SlicingConfigSelector 
-                    configs={slicerConfigs ?? { print: [], filament: [], printer: [] }}
+                    printers={printers || []}
+                    filaments={filaments || []}
+                    prints={prints || []}
                     selected={overrideConfigs}
                     onChange={handleOverrideConfigsChange}
                   />

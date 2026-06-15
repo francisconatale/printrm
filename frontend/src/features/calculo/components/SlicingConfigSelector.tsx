@@ -1,8 +1,17 @@
 import React from 'react';
-import { SlicerConfigs } from '../../perfiles/types/perfiles.types';
+import { Perfil, FilamentProfile, PrintProfile } from '../../perfiles/types/perfiles.types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SlicingConfigSelectorProps {
-  configs: SlicerConfigs;
+  printers: Perfil[];
+  filaments: FilamentProfile[];
+  prints: PrintProfile[];
   selected: {
     print: string;
     filament: string;
@@ -11,42 +20,64 @@ interface SlicingConfigSelectorProps {
   onChange: (type: 'print' | 'filament' | 'printer', value: string) => void;
 }
 
-export const SlicingConfigSelector: React.FC<SlicingConfigSelectorProps> = ({ configs, selected, onChange }) => {
+export const SlicingConfigSelector: React.FC<SlicingConfigSelectorProps> = ({ 
+  printers = [], 
+  filaments = [], 
+  prints = [], 
+  selected, 
+  onChange 
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#fcfcfc] border border-[#e0e0e0] rounded-2xl p-4">
+      
+      {/* PRINT SETTINGS PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Print</label>
-        <select 
-          value={selected.print}
-          onChange={(e) => onChange('print', e.target.value)}
-          className="w-full bg-transparent studio-caption font-semibold outline-none"
-        >
-          <option value="">Default</option>
-          {configs.print.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Ajuste Impresión (Print)</label>
+        <Select value={selected.print} onValueChange={(val) => onChange('print', val)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccionar" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+            {prints.map(p => (
+              <SelectItem key={p.id} value={p.id}>{p.nombre} ({p.layerHeight}mm)</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {/* FILAMENT PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Filament</label>
-        <select 
-          value={selected.filament}
-          onChange={(e) => onChange('filament', e.target.value)}
-          className="w-full bg-transparent studio-caption font-semibold outline-none"
-        >
-          <option value="">Default</option>
-          {configs.filament.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Material (Filamento)</label>
+        <Select value={selected.filament} onValueChange={(val) => onChange('filament', val)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccionar" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+            {filaments.map(f => (
+              <SelectItem key={f.id} value={f.id}>{f.nombre} ({f.material})</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {/* PRINTER PROFILE SELECT */}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Printer</label>
-        <select 
-          value={selected.printer}
-          onChange={(e) => onChange('printer', e.target.value)}
-          className="w-full bg-transparent studio-caption font-semibold outline-none"
-        >
-          <option value="">Default</option>
-          {configs.printer.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Impresora (Printer)</label>
+        <Select value={selected.printer} onValueChange={(val) => onChange('printer', val)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Seleccionar" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__default__">-- Por Defecto --</SelectItem>
+            {printers.map(p => (
+              <SelectItem key={p.id} value={p.id}>{p.nombre} ({p.modeloImpresora})</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
     </div>
   );
 };

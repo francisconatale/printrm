@@ -7,15 +7,16 @@ import {
   BarChart, 
   Printer,
   Star,
-  TestTube2
+  Sliders
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
-export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports';
+export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports' | 'profiles';
 
 const NAV_ITEMS = [
   { icon: Star, label: 'Resumen', id: 'overview' },
   { icon: Printer, label: 'Cotizador', id: 'calculator' },
+  { icon: Sliders, label: 'Perfiles', id: 'profiles' },
   { icon: LayoutDashboard, label: 'Finanzas', id: 'dashboard' },
   { icon: List, label: 'Transacciones', id: 'transactions' },
   { icon: ArrowUpDown, label: 'Ingresos/Egresos', id: 'finance' },
@@ -68,4 +69,3 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
     </nav>
   );
 }
-

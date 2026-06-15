@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { StudioOverview } from './components/studio-overview'
+import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 
@@ -79,6 +80,8 @@ function App() {
         return <StudioOverview onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
       case 'calculator':
         return <CalculadoraView onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+      case 'profiles':
+        return <PerfilesDashboardView onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
       case 'dashboard':
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-[#7a7a7a]">Próximamente...</p></div>

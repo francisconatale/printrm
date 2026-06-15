@@ -4,15 +4,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Perfil, PerfilCreate } from '../types/perfiles.types';
 import { MODELOS_IMPRESORA } from '../data/modelos-impresora';
-import { useGetSlicerConfigs } from '../api/perfiles.api';
 
 const perfilSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(50),
   modeloImpresora: z.string().min(1),
   consumoW: z.number().min(0),
-  printConfig: z.string().optional(),
-  filamentConfig: z.string().optional(),
-  printerConfig: z.string().optional(),
+  vidaUtilHoras: z.number().min(1),
+  costoRepuestos: z.number().min(0),
+  nozzleDiameter: z.number().min(0.1, "Mínimo 0.1 mm").max(2.0, "Máximo 2.0 mm"),
+  bedShape: z.string().min(1, "La cama es obligatoria"),
+  maxPrintHeight: z.number().min(1, "Mínimo 1 mm"),
 });
 
 interface PerfilFormProps {
@@ -23,16 +24,17 @@ interface PerfilFormProps {
 }
 
 export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, onCancel, isLoading }) => {
-  const { data: slicerConfigs } = useGetSlicerConfigs();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<PerfilCreate>({
     resolver: zodResolver(perfilSchema),
     defaultValues: initialData || {
       nombre: '',
       modeloImpresora: 'Prusa MK4',
       consumoW: 120,
-      printConfig: '',
-      filamentConfig: '',
-      printerConfig: '',
+      vidaUtilHoras: 5000,
+      costoRepuestos: 25000,
+      nozzleDiameter: 0.4,
+      bedShape: '250x210',
+      maxPrintHeight: 220,
     }
   });
 
@@ -42,6 +44,27 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
     const modelo = MODELOS_IMPRESORA.find(m => m.nombre === selectedModelo);
     if (modelo && !initialData) {
       setValue('consumoW', modelo.consumoW);
+      setValue('vidaUtilHoras', modelo.vidaUtilHoras);
+      setValue('costoRepuestos', modelo.costoRepuestos);
+      setValue('nozzleDiameter', 0.4);
+      
+      // Default beds based on model
+      if (modelo.nombre.includes("Ender 3")) {
+        setValue('bedShape', '220x220');
+        setValue('maxPrintHeight', 250);
+      } else if (modelo.nombre.includes("MK4") || modelo.nombre.includes("MK3S")) {
+        setValue('bedShape', '250x210');
+        setValue('maxPrintHeight', 220);
+      } else if (modelo.nombre.includes("MINI")) {
+        setValue('bedShape', '180x180');
+        setValue('maxPrintHeight', 180);
+      } else if (modelo.nombre.includes("Bambu")) {
+        setValue('bedShape', '256x256');
+        setValue('maxPrintHeight', 256);
+      } else {
+        setValue('bedShape', '220x220');
+        setValue('maxPrintHeight', 250);
+      }
     }
   }, [selectedModelo, setValue, initialData]);
 
@@ -88,49 +111,70 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
             />
             <span className="absolute right-3 top-2 text-[10px] font-bold text-[#7a7a7a]">WATTS</span>
           </div>
+          {errors.consumoW && <p className="text-red-500 text-xs mt-1">{errors.consumoW.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Vida Útil (Horas)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              {...register('vidaUtilHoras', { valueAsNumber: true })}
+              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            />
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-[#7a7a7a]">HS</span>
+          </div>
+          {errors.vidaUtilHoras && <p className="text-red-500 text-xs mt-1">{errors.vidaUtilHoras.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Costo Repuestos ($)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              {...register('costoRepuestos', { valueAsNumber: true })}
+              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            />
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-[#7a7a7a]">ARS</span>
+          </div>
+          {errors.costoRepuestos && <p className="text-red-500 text-xs mt-1">{errors.costoRepuestos.message}</p>}
         </div>
 
         <div className="col-span-full border-b border-[#f0f0f0] pb-2 mt-4 mb-2">
-          <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Slicer Automático (.ini)</h3>
+          <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Hardware y Slicer</h3>
         </div>
 
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Configuración de Impresión</label>
-          <select 
-            {...register('printConfig')}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2"
-          >
-            <option value="">-- Seleccionar --</option>
-            {slicerConfigs?.print.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+          <label className="studio-caption font-semibold">Diámetro de Boquilla (mm)</label>
+          <input 
+            type="number"
+            step="0.1"
+            {...register('nozzleDiameter', { valueAsNumber: true })}
+            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            placeholder="Ej: 0.4"
+          />
+          {errors.nozzleDiameter && <p className="text-red-500 text-xs mt-1">{errors.nozzleDiameter.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Configuración de Filamento</label>
-          <select 
-            {...register('filamentConfig')}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2"
-          >
-            <option value="">-- Seleccionar --</option>
-            {slicerConfigs?.filament.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+          <label className="studio-caption font-semibold">Dimensiones Cama (Ancho x Alto, mm)</label>
+          <input 
+            {...register('bedShape')}
+            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            placeholder="Ej: 220x220"
+          />
+          {errors.bedShape && <p className="text-red-500 text-xs mt-1">{errors.bedShape.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Configuración de Impresora</label>
-          <select 
-            {...register('printerConfig')}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2"
-          >
-            <option value="">-- Seleccionar --</option>
-            {slicerConfigs?.printer.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+          <label className="studio-caption font-semibold">Altura Máxima Z (mm)</label>
+          <input 
+            type="number"
+            {...register('maxPrintHeight', { valueAsNumber: true })}
+            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            placeholder="Ej: 250"
+          />
+          {errors.maxPrintHeight && <p className="text-red-500 text-xs mt-1">{errors.maxPrintHeight.message}</p>}
         </div>
 
       </div>
