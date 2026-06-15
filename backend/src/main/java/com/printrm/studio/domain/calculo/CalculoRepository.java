@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,3 +10,4 @@ import java.util.UUID;
 public interface CalculoRepository extends JpaRepository<Calculo, UUID> {
     List<Calculo> findTop50ByOrderByTimestampDesc();
 }
+

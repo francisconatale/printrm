@@ -1,4 +1,4 @@
-package com.calc3d.domain.perfil;
+package com.printrm.studio.domain.perfil;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,3 +62,4 @@ public class Perfil {
     @Column(name = "printer_config")
     private String printerConfig;
 }
+

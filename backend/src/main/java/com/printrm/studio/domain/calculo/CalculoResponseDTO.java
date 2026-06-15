@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import lombok.*;
 
@@ -31,3 +31,4 @@ public class CalculoResponseDTO {
     private Double costoBase;
     private Double precioVenta;
 }
+

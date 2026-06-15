@@ -1,4 +1,4 @@
-package com.calc3d.domain.perfil;
+package com.printrm.studio.domain.perfil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,3 +30,4 @@ public class PerfilResponseDTO {
     private String filamentConfig;
     private String printerConfig;
 }
+

@@ -1,4 +1,4 @@
-package com.prusaslicer.wrapper.service;
+package com.printrm.studio.slicer;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -115,3 +115,4 @@ public class SlicerService {
         public void setFilamentUsedCm3(double filamentUsedCm3) { this.filamentUsedCm3 = filamentUsedCm3; }
     }
 }
+

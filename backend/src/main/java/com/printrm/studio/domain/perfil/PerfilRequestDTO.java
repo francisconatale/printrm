@@ -1,4 +1,4 @@
-package com.calc3d.domain.perfil;
+package com.printrm.studio.domain.perfil;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -42,3 +42,4 @@ public class PerfilRequestDTO {
     private String filamentConfig;
     private String printerConfig;
 }
+

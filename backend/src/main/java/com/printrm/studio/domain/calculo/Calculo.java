@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,3 +51,4 @@ public class Calculo {
     @Column(name = "precio_venta")
     private Double precioVenta;
 }
+

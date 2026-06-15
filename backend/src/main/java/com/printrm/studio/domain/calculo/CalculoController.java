@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/calculos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Permitiendo acceso desde el wrapper/frontend
 public class CalculoController {
     private final CalculoService calculoService;
 
@@ -38,3 +37,4 @@ public class CalculoController {
         calculoService.limpiarHistorial();
     }
 }
+

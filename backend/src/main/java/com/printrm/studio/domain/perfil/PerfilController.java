@@ -1,4 +1,4 @@
-package com.calc3d.domain.perfil;
+package com.printrm.studio.domain.perfil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/perfiles")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class PerfilController {
 
     private final PerfilService service;
@@ -51,3 +50,4 @@ public class PerfilController {
         service.delete(id);
     }
 }
+

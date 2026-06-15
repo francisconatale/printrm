@@ -1,4 +1,4 @@
-package com.prusaslicer.wrapper.config;
+package com.printrm.studio.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173") // Vite default port
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -22,3 +22,4 @@ public class CorsConfig {
         };
     }
 }
+

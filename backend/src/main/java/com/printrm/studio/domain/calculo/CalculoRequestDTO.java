@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -51,3 +51,4 @@ public class CalculoRequestDTO {
     @NotNull
     private Double precioVenta;
 }
+

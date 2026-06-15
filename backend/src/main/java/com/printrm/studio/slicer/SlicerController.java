@@ -1,6 +1,6 @@
-package com.prusaslicer.wrapper.controller;
+package com.printrm.studio.slicer;
 
-import com.prusaslicer.wrapper.service.SlicerService;
+import com.printrm.studio.slicer.SlicerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -72,3 +72,4 @@ public class SlicerController {
         }
     }
 }
+

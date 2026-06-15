@@ -1,4 +1,4 @@
-package com.prusaslicer.wrapper;
+package com.printrm.studio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -132,3 +132,4 @@ public class PrusaSlicerGenerator {
         return process.waitFor();
     }
 }
+

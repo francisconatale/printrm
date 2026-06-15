@@ -1,4 +1,4 @@
-package com.calc3d.domain.calculo;
+package com.printrm.studio.domain.calculo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -73,3 +73,4 @@ public class CalculoService {
                 .build();
     }
 }
+
