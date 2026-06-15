@@ -1,5 +1,6 @@
 package com.prusaslicer.wrapper.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,21 +13,25 @@ import java.util.Scanner;
 @Service
 public class SlicerService {
 
-    private static final String DEFAULT_EXE = "../bin/prusa-slicer-console.exe";
-    private static final String DEFAULT_OUTPUT_DIR = "../output/";
+    @Value("${studio.base-path}")
+    private String basePath;
+
+    private static final String BIN_DIR = "bin/";
+    private static final String DEFAULT_EXE = "prusa-slicer-console.exe";
+    private static final String DEFAULT_OUTPUT_DIR = "output/";
 
     public SlicingResult slice(String inputStl, String outputGcode, List<String> configPaths) throws IOException, InterruptedException {
-        File outputDir = new File(DEFAULT_OUTPUT_DIR);
+        File outputDir = new File(basePath + "/" + DEFAULT_OUTPUT_DIR);
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
 
         if (outputGcode == null || outputGcode.isEmpty()) {
             String baseName = new File(inputStl).getName().replaceAll("(?i)\\.stl$", "");
-            outputGcode = DEFAULT_OUTPUT_DIR + baseName + ".gcode";
+            outputGcode = basePath + "/" + DEFAULT_OUTPUT_DIR + baseName + ".gcode";
         }
 
-        int exitCode = runSlicer(DEFAULT_EXE, inputStl, outputGcode, configPaths);
+        int exitCode = runSlicer(basePath + "/" + BIN_DIR + DEFAULT_EXE, inputStl, outputGcode, configPaths);
 
         if (exitCode == 0) {
             return parseGCodeMetadata(outputGcode);

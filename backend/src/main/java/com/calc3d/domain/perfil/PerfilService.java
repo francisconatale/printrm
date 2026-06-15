@@ -1,6 +1,7 @@
 package com.calc3d.domain.perfil;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,9 @@ import java.util.stream.Collectors;
 public class PerfilService {
 
     private final PerfilRepository repository;
-    private static final String CONFIGS_PATH = "configs";
+    
+    @Value("${studio.base-path}")
+    private String basePath;
 
     public List<PerfilResponseDTO> findAll() {
         return repository.findAll().stream()
@@ -63,7 +66,7 @@ public class PerfilService {
     }
 
     private List<String> listIniFiles(String subDir) {
-        File dir = new File(CONFIGS_PATH + "/" + subDir);
+        File dir = new File(basePath + "/configs/" + subDir);
         if (!dir.exists() || !dir.isDirectory()) return Collections.emptyList();
         
         File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".ini"));

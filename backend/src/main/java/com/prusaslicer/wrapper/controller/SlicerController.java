@@ -2,6 +2,7 @@ package com.prusaslicer.wrapper.controller;
 
 import com.prusaslicer.wrapper.service.SlicerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,9 @@ public class SlicerController {
 
     @Autowired
     private SlicerService slicerService;
+    
+    @Value("${studio.base-path}")
+    private String basePath;
 
     private static final String UPLOAD_DIR = "temp-uploads/";
 
@@ -37,11 +41,11 @@ public class SlicerController {
 
         try {
             // Ensure upload directory exists
-            File uploadDir = new File(UPLOAD_DIR);
+            File uploadDir = new File(basePath + "/" + UPLOAD_DIR);
             if (!uploadDir.exists()) uploadDir.mkdirs();
 
             // Save uploaded STL
-            Path path = Paths.get(UPLOAD_DIR + file.getOriginalFilename());
+            Path path = Paths.get(basePath + "/" + UPLOAD_DIR + file.getOriginalFilename());
             Files.write(path, file.getBytes());
 
             // Resolve config paths
@@ -62,7 +66,7 @@ public class SlicerController {
 
     private void addConfigPath(List<String> list, String subDir, String name) {
         if (name != null && !name.isEmpty()) {
-            String fullPath = "../configs/" + subDir + name;
+            String fullPath = basePath + "/configs/" + subDir + name;
             if (!name.endsWith(".ini")) fullPath += ".ini";
             list.add(fullPath);
         }
