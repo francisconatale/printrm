@@ -4,25 +4,17 @@ import {
   Search, 
   ArrowUpRight,
   Printer,
-  ChevronRight,
-  Sun,
-  Moon
+  ChevronRight
 } from "lucide-react"
+import { StudioSubNav } from './layout/studio-sub-nav'
 
 export function StudioOverview({ onToggleTheme, isDark }: { onToggleTheme: () => void, isDark: boolean }) {
   return (
     <div className="flex flex-col w-full bg-white min-h-full">
-      {/* Dynamic Header */}
-      <header className="px-12 py-8 flex items-center justify-between border-b border-[#f0f0f0]">
-        <div className="flex items-center gap-4">
-           <button 
-             onClick={onToggleTheme}
-             className="size-10 flex items-center justify-center rounded-full bg-[#f5f5f7] border border-[#e0e0e0] hover:bg-[#e0e0e0] transition-colors"
-           >
-             {isDark ? <Moon size={18} /> : <Sun size={18} />}
-           </button>
-        </div>
-      </header>
+      <StudioSubNav
+        onToggleTheme={onToggleTheme}
+        isDark={isDark}
+      />
 
       <main className="flex flex-col">
         {/* Stats Tile - Grid of Cards */}

@@ -5,16 +5,17 @@ import {
   Users, 
   Package, 
   BarChart, 
-  Settings, 
   Printer,
-  Star
+  Star,
+  TestTube2
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
-export type ViewType = 'overview' | 'dashboard' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports';
+export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports';
 
 const NAV_ITEMS = [
   { icon: Star, label: 'Resumen', id: 'overview' },
+  { icon: Printer, label: 'Cotizador', id: 'calculator' },
   { icon: LayoutDashboard, label: 'Finanzas', id: 'dashboard' },
   { icon: List, label: 'Transacciones', id: 'transactions' },
   { icon: ArrowUpDown, label: 'Ingresos/Egresos', id: 'finance' },
@@ -34,9 +35,6 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       aria-label="Main navigation"
       className="flex h-full flex-col items-center gap-2 bg-[#f5f5f7] border-r border-[#e0e0e0] py-8 w-20 shrink-0"
     >
-      <div className="flex size-11 items-center justify-center rounded-full bg-black text-white mb-8">
-        <Printer className="size-5" />
-      </div>
 
       <ul className="flex flex-col items-center gap-4 w-full overflow-y-auto no-scrollbar">
         {NAV_ITEMS.map((item) => (
@@ -63,14 +61,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       </ul>
 
       <div className="mt-auto flex flex-col items-center gap-4">
-        <button
-          type="button"
-          aria-label="Configuración"
-          className="flex size-12 items-center justify-center rounded-full text-[#7a7a7a] transition-all hover:text-[#1d1d1f] hover:bg-black/[0.03] active:scale-90"
-        >
-          <Settings className="size-5" strokeWidth={1.5} />
-        </button>
-        <div className="mt-2 size-10 overflow-hidden rounded-full border border-[#e0e0e0] bg-white flex items-center justify-center text-[10px] font-semibold text-[#1d1d1f] studio-nav-link">
+        <div className="size-10 overflow-hidden rounded-full border border-[#e0e0e0] bg-white flex items-center justify-center text-[10px] font-semibold text-[#1d1d1f] studio-nav-link">
           FB
         </div>
       </div>

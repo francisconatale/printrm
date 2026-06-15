@@ -143,7 +143,7 @@ Para mantener la estética de alta gama y evitar la fatiga visual, se prohíben 
 
 - **La Exageración Visual:** Evitar indicadores de selección que utilicen bloques de color sólidos y vibrantes en elementos pequeños (como el sidebar). La selección debe ser sutil (cambios leves de fondo, indicadores de línea o variaciones de peso tipográfico).
 - **Abuso del Color de Acento:** No usar colores saturados (como el azul anterior) de forma masiva. El color debe ser un recurso escaso y sofisticado, preferiblemente tendiendo a una paleta monocromática (Ink/Black/White).
-- **Cromo Ruidoso:** Prohibido el uso de sombras en elementos de la interfaz (botones, cards, navs). La separación se logra mediante el espacio en blanco y bordes *hairline* de 1px.
+- **Cromo Ruidoso:** Prohibido el uso de sombras en elementos de la interfaz (botones, cards, navs) y el uso de **bordes punteados o discontinuos** (dashed/dotted). La separación se logra mediante el espacio en blanco y bordes *hairline* de 1px sólidos.
 - **Densidad de Marketing en Herramientas:** No mezclar layouts de "venta" (heros gigantes, frases aspiracionales) en áreas de trabajo o motores financieros. Las herramientas deben ser densas, funcionales y directas.
 
 ---
@@ -151,7 +151,8 @@ Para mantener la estética de alta gama y evitar la fatiga visual, se prohíben 
 ## Reglas de consistencia
 
 1. **Acento Monocromático:** Cualquier elemento que pida un click o atención debe usar el tono `Ink` (#1d1d1f) o variaciones de opacidad del mismo. El color saturado queda descartado para evitar fatiga visual.
-2. **Ritmo de Tiles:** Nunca colocar dos tiles del mismo color seguidos (ej: Blanco → Parchment → Oscuro).
+2. **Bordes Sólidos:** Todos los contenedores, zonas de carga y divisores deben usar líneas sólidas de 1px (`#e0e0e0`) o simplemente espacio en blanco. Nunca usar `border-dashed`.
+3. **Ritmo de Tiles:** Nunca colocar dos tiles del mismo color seguidos (ej: Blanco → Parchment → Oscuro).
 3. **Micro-interacción:** Todos los botones deben reaccionar con `transform: scale(0.95)` al ser presionados.
 4. **Cifras financieras:** Usar fuente mono solo si es estrictamente necesario para alineación en tablas densas; de lo contrario, preferir `body-strong`.
 5. **Sidebar visible:** El sidebar es la ancla de navegación; no se oculta ni se colapsa.

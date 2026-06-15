@@ -84,13 +84,7 @@ public class PerfilService {
                 .nombre(perfil.getNombre())
                 .creadoEn(perfil.getCreadoEn())
                 .actualizadoEn(perfil.getActualizadoEn())
-                .filamentoPorKg(perfil.getFilamentoPorKg())
-                .preciokWh(perfil.getPreciokWh())
                 .modeloImpresora(perfil.getModeloImpresora())
-                .consumoW(perfil.getConsumoW())
-                .vidaUtilHoras(perfil.getVidaUtilHoras())
-                .costoRepuestos(perfil.getCostoRepuestos())
-                .margenError(perfil.getMargenError())
                 .printConfig(perfil.getPrintConfig())
                 .filamentConfig(perfil.getFilamentConfig())
                 .printerConfig(perfil.getPrinterConfig())
@@ -100,13 +94,8 @@ public class PerfilService {
     private Perfil mapToEntity(PerfilRequestDTO dto) {
         return Perfil.builder()
                 .nombre(dto.getNombre())
-                .filamentoPorKg(dto.getFilamentoPorKg())
-                .preciokWh(dto.getPreciokWh())
                 .modeloImpresora(dto.getModeloImpresora())
                 .consumoW(dto.getConsumoW())
-                .vidaUtilHoras(dto.getVidaUtilHoras())
-                .costoRepuestos(dto.getCostoRepuestos())
-                .margenError(dto.getMargenError())
                 .printConfig(dto.getPrintConfig())
                 .filamentConfig(dto.getFilamentConfig())
                 .printerConfig(dto.getPrinterConfig())
@@ -115,13 +104,8 @@ public class PerfilService {
 
     private void updateEntity(Perfil perfil, PerfilRequestDTO dto) {
         perfil.setNombre(dto.getNombre());
-        perfil.setFilamentoPorKg(dto.getFilamentoPorKg());
-        perfil.setPreciokWh(dto.getPreciokWh());
         perfil.setModeloImpresora(dto.getModeloImpresora());
         perfil.setConsumoW(dto.getConsumoW());
-        perfil.setVidaUtilHoras(dto.getVidaUtilHoras());
-        perfil.setCostoRepuestos(dto.getCostoRepuestos());
-        perfil.setMargenError(dto.getMargenError());
         perfil.setPrintConfig(dto.getPrintConfig());
         perfil.setFilamentConfig(dto.getFilamentConfig());
         perfil.setPrinterConfig(dto.getPrinterConfig());

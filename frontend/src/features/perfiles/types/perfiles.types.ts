@@ -3,13 +3,8 @@ export interface Perfil {
   nombre: string;
   creadoEn: string;
   actualizadoEn: string;
-  filamentoPorKg: number;
-  preciokWh: number;
   modeloImpresora: string;
   consumoW: number;
-  vidaUtilHoras: number;
-  costoRepuestos: number;
-  margenError: number;
   printConfig?: string;
   filamentConfig?: string;
   printerConfig?: string;

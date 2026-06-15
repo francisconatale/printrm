@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { LoadingScreen } from './components/loading-screen'
-import { StudioDashboard } from './components/studio-dashboard'
+import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { StudioOverview } from './components/studio-overview'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
+
 
 function App() {
   const [isBackendReady, setIsBackendReady] = useState<boolean>(false)
   const [retryCount, setRetryCount] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
-  const [currentView, setCurrentView] = useState<ViewType>('dashboard')
+  const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [isDark, setIsDark] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') === 'dark' || 
@@ -76,9 +77,11 @@ function App() {
     switch (currentView) {
       case 'overview':
         return <StudioOverview onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+      case 'calculator':
+        return <CalculadoraView onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
       case 'dashboard':
       default:
-        return <StudioDashboard onToggleTheme={() => setIsDark(!isDark)} isDark={isDark} />
+        return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-[#7a7a7a]">Próximamente...</p></div>
     }
   }
 

@@ -17,13 +17,8 @@ public class PerfilResponseDTO {
     private String nombre;
     private LocalDateTime creadoEn;
     private LocalDateTime actualizadoEn;
-    private Double filamentoPorKg;
-    private Double preciokWh;
     private String modeloImpresora;
     private Double consumoW;
-    private Double vidaUtilHoras;
-    private Double costoRepuestos;
-    private Double margenError;
 
     // Slicer Configuration
     private String printConfig;

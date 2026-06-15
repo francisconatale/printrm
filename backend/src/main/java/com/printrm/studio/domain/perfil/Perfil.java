@@ -31,28 +31,12 @@ public class Perfil {
     @Column(name = "actualizado_en")
     private LocalDateTime actualizadoEn;
 
-    @Column(name = "filamento_por_kg")
-    private Double filamentoPorKg;
-
-    @Column(name = "precio_kwh")
-    private Double preciokWh;
-
     @Column(name = "modelo_impresora")
     private String modeloImpresora;
 
     @Column(name = "consumo_w")
     private Double consumoW;
 
-    @Column(name = "vida_util_horas")
-    private Double vidaUtilHoras;
-
-    @Column(name = "costo_repuestos")
-    private Double costoRepuestos;
-
-    @Column(name = "margen_error")
-    private Double margenError;
-
-    // Slicer Configuration
     @Column(name = "print_config")
     private String printConfig;
 
