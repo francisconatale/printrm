@@ -1,5 +1,5 @@
 {
-  "name": "prusaslicer-portable",
+  "name": "printrm-portable",
   "version": "1.0.0",
   "description": "Portable 3D Slicing App with React and Spring Boot",
   "main": "main.js",
@@ -21,7 +21,7 @@
     "wait-on": "^8.0.2"
   },
   "build": {
-    "appId": "com.prusaslicer.portable",
+    "appId": "com.printrm.portable",
     "win": {
       "target": "portable",
       "icon": "frontend/public/vite.svg"

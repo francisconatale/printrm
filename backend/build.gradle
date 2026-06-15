@@ -45,7 +45,7 @@ task stageApp(type: Copy) {
     // Copy the boot JAR into backend folder
     into("backend") {
         from(bootJar.archiveFile) {
-            rename { "prusaslicer-java-wrapper.jar" }
+            rename { "printrm-backend.jar" }
         }
     }
     

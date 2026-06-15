@@ -14,7 +14,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    title: "PrusaSlicer Portable",
+    title: "PrintRM Studio",
   });
 
   if (process.env.ELECTRON_START_URL) {
@@ -45,7 +45,7 @@ function startBackend() {
     });
   } else {
     console.log("Mode: Production");
-    jarPath = path.join(process.resourcesPath, 'backend', 'prusaslicer-java-wrapper.jar');
+    jarPath = path.join(process.resourcesPath, 'backend', 'printrm-backend.jar');
     jrePath = path.join(process.resourcesPath, 'backend', 'jre', 'bin', 'java.exe');
     
     console.log("Expected JRE at:", jrePath);
@@ -61,7 +61,7 @@ function startBackend() {
     if (!fs.existsSync(jarPath)) {
         console.error(`Backend JAR not found at ${jarPath}`);
         // Fallback for testing without full packaging
-        const localJar = path.join(__dirname, 'backend/build/staging/backend/prusaslicer-java-wrapper.jar');
+        const localJar = path.join(__dirname, 'backend/build/staging/backend/printrm-backend.jar');
         if (fs.existsSync(localJar)) {
             console.log("Found JAR in staging, using local path:", localJar);
             jarPath = localJar;

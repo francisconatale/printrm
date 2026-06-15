@@ -43,6 +43,9 @@ public class Perfil {
     @Column(name = "costo_repuestos")
     private Double costoRepuestos;
 
+    @Column(name = "filamento_por_kg")
+    private Double filamentoPorKg;
+
     @Column(name = "nozzle_diameter")
     private Double nozzleDiameter;
 

@@ -11,8 +11,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.prusaslicer.wrapper</groupId>
-    <artifactId>prusaslicer-java-wrapper</artifactId>
+    <groupId>com.printrm.studio</groupId>
+    <artifactId>printrm-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

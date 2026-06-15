@@ -20,7 +20,6 @@ public class AjustesService {
         if (!ajustesRepository.existsById(AJUSTES_ID)) {
             Ajustes defaultAjustes = Ajustes.builder()
                     .id(AJUSTES_ID)
-                    .filamentoPorKg(15000.0)
                     .preciokWh(50.0)
                     .margenError(10.0)
                     .build();
@@ -39,7 +38,6 @@ public class AjustesService {
                             .orElseGet(() -> {
                                 // Last resort: Hardcoded defaults to avoid 500
                                 return AjustesDTO.builder()
-                                        .filamentoPorKg(15000.0)
                                         .preciokWh(50.0)
                                         .margenError(10.0)
                                         .build();
@@ -53,7 +51,6 @@ public class AjustesService {
                 .orElseGet(() -> ajustesRepository.findAll().stream().findFirst()
                 .orElseGet(() -> Ajustes.builder().id(AJUSTES_ID).build()));
 
-        ajustes.setFilamentoPorKg(dto.getFilamentoPorKg());
         ajustes.setPreciokWh(dto.getPreciokWh());
         ajustes.setMargenError(dto.getMargenError());
 
@@ -63,7 +60,6 @@ public class AjustesService {
 
     private AjustesDTO mapToDTO(Ajustes ajustes) {
         return AjustesDTO.builder()
-                .filamentoPorKg(ajustes.getFilamentoPorKg())
                 .preciokWh(ajustes.getPreciokWh())
                 .margenError(ajustes.getMargenError())
                 .build();

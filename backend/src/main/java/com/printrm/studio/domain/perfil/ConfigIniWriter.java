@@ -21,7 +21,7 @@ public class ConfigIniWriter {
         String filePath = dirPath + "/" + printer.getPrinterConfig() + ".ini";
         
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
-            writer.println("; PrusaSlicer Printer Profile");
+            writer.println("; Printer Profile");
             writer.println("nozzle_diameter = " + (printer.getNozzleDiameter() != null ? printer.getNozzleDiameter() : 0.4));
             writer.println("max_print_height = " + (printer.getMaxPrintHeight() != null ? printer.getMaxPrintHeight() : 250));
             
@@ -53,7 +53,7 @@ public class ConfigIniWriter {
         String filePath = dirPath + "/" + filament.getFilamentConfig() + ".ini";
         
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
-            writer.println("; PrusaSlicer Filament Profile");
+            writer.println("; Filament Profile");
             writer.println("filament_colour = " + (filament.getColour() != null ? filament.getColour() : "#FF0000"));
             writer.println("filament_diameter = " + (filament.getDiameter() != null ? filament.getDiameter() : 1.75));
             writer.println("filament_density = " + (filament.getDensity() != null ? filament.getDensity() : 1.24));
@@ -70,7 +70,7 @@ public class ConfigIniWriter {
         String filePath = dirPath + "/" + print.getPrintConfig() + ".ini";
         
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
-            writer.println("; PrusaSlicer Print Profile");
+            writer.println("; Print Profile");
             writer.println("layer_height = " + (print.getLayerHeight() != null ? print.getLayerHeight() : 0.2));
             writer.println("perimeters = " + (print.getPerimeters() != null ? print.getPerimeters() : 3));
             

@@ -11,6 +11,7 @@ const perfilSchema = z.object({
   consumoW: z.number().min(0),
   vidaUtilHoras: z.number().min(1),
   costoRepuestos: z.number().min(0),
+  filamentoPorKg: z.number().min(0),
   nozzleDiameter: z.number().min(0.1, "Mínimo 0.1 mm").max(2.0, "Máximo 2.0 mm"),
   bedShape: z.string().min(1, "La cama es obligatoria"),
   maxPrintHeight: z.number().min(1, "Mínimo 1 mm"),
@@ -32,6 +33,7 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
       consumoW: 120,
       vidaUtilHoras: 5000,
       costoRepuestos: 25000,
+      filamentoPorKg: 15000,
       nozzleDiameter: 0.4,
       bedShape: '250x210',
       maxPrintHeight: 220,
@@ -138,6 +140,19 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
             <span className="absolute right-3 top-2 text-[10px] font-bold text-[#7a7a7a]">ARS</span>
           </div>
           {errors.costoRepuestos && <p className="text-red-500 text-xs mt-1">{errors.costoRepuestos.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Costo Filamento ($ / kg)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              {...register('filamentoPorKg', { valueAsNumber: true })}
+              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono"
+            />
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-[#7a7a7a]">ARS/KG</span>
+          </div>
+          {errors.filamentoPorKg && <p className="text-red-500 text-xs mt-1">{errors.filamentoPorKg.message}</p>}
         </div>
 
         <div className="col-span-full border-b border-[#f0f0f0] pb-2 mt-4 mb-2">

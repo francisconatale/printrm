@@ -21,15 +21,14 @@ export const useCalculo = (
     // Si no hay ajustes, usamos valores por defecto seguros para no bloquear el cálculo
     const config = ajustes || {
       preciokWh: 0,
-      filamentoPorKg: 0,
       margenError: 10
     };
 
     const tiempoTotalHoras = utils.calcularTiempo(input.horas, input.minutosAdicionales);
     const costoEnergia = utils.calcularCostoEnergia(printer.consumoW, tiempoTotalHoras, config.preciokWh);
     
-    // Filament cost is taken from the selected filament profile, falling back to global settings
-    const filamentoPorKg = filamentOverride ? filamentOverride.filamentoPorKg : config.filamentoPorKg;
+    // Filament cost: filament profile > printer profile > 0
+    const filamentoPorKg = filamentOverride ? filamentOverride.filamentoPorKg : (printer.filamentoPorKg || 0);
     const costoFilamento = utils.calcularCostoFilamento(input.gramos, filamentoPorKg);
     
     const costoDesgaste = utils.calcularCostoDesgaste(

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AjustesDTO {
-    private Double filamentoPorKg;
     private Double preciokWh;
     private Double margenError;
 }

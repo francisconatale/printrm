@@ -21,6 +21,7 @@ public class PerfilRequestDTO {
     private Double consumoW;
     private Double vidaUtilHoras;
     private Double costoRepuestos;
+    private Double filamentoPorKg;
 
     // Slicer fields
     private Double nozzleDiameter;

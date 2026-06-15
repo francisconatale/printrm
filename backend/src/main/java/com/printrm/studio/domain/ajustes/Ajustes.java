@@ -21,9 +21,6 @@ public class Ajustes {
     @Column(name = "actualizado_en")
     private LocalDateTime actualizadoEn;
 
-    @Column(name = "filamento_por_kg")
-    private Double filamentoPorKg;
-
     @Column(name = "precio_kwh")
     private Double preciokWh;
 

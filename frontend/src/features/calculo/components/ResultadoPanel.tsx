@@ -30,7 +30,6 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   const { ajustes, updateAjustes, isUpdating } = useAjustes();
   const [showInsumos, setShowInsumos] = React.useState(false);
   const [form, setForm] = React.useState<Ajustes>({
-    filamentoPorKg: 0,
     preciokWh: 0,
     margenError: 10,
   });
@@ -152,37 +151,26 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
         <div className="flex-1 overflow-y-auto space-y-5">
           {showSettings && (
             <>
-              <section>
-                <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1] mb-4">Costos de Energía y Material</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Filamento ($ / kg)</label>
-                    <input type="number" step="any" value={form.filamentoPorKg || ''}
-                      onChange={(e) => setForm(f => ({ ...f, filamentoPorKg: parseFloat(e.target.value) || 0 }))}
-                      className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
-                  </div>
-                  <div className="border-t border-[#e0e0e0]" />
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Costo Energía ($ / kWh)</label>
-                    <input type="number" step="any" value={form.preciokWh || ''}
-                      onChange={(e) => setForm(f => ({ ...f, preciokWh: parseFloat(e.target.value) || 0 }))}
-                      className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
-                  </div>
-                </div>
-              </section>
-
-              <div className="border-t border-[#e0e0e0] my-2" />
-
-              <section>
-                <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1] mb-4">Ajuste de Precisión</h3>
+              <div className="space-y-1">
+                <h3 className="text-[10px] font-bold uppercase text-[#a1a1a1]">Parámetros Globales (Electricidad)</h3>
+                <p className="text-[10px] text-[#7a7a7a]">Configuraciones de precio regionales y márgenes generales.</p>
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Margen de Error (%)</label>
+                  <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Precio Energía ($ / kWh)</label>
+                  <input type="number" step="any" value={form.preciokWh || ''}
+                    onChange={(e) => setForm(f => ({ ...f, preciokWh: parseFloat(e.target.value) || 0 }))}
+                    className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
+                </div>
+                <div className="border-t border-[#e0e0e0]" />
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Margen de Seguridad / Error (%)</label>
                   <input type="number" value={form.margenError || ''}
                     onChange={(e) => setForm(f => ({ ...f, margenError: parseFloat(e.target.value) || 0 }))}
                     className="w-full bg-transparent studio-caption font-semibold outline-none mt-1" placeholder="0" />
                   <p className="text-[10px] text-[#7a7a7a] leading-relaxed mt-1">Se aplica sobre el subtotal de costos antes del multiplicador.</p>
                 </div>
-              </section>
+              </div>
             </>
           )}
 
@@ -201,7 +189,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           {showSettings && (
             <button onClick={handleSaveSettings} disabled={isUpdating}
               className="w-full py-2 bg-[#f5f5f7] text-[#7a7a7a] rounded-full text-[11px] font-bold hover:bg-[#e0e0e0] active:scale-95 transition-all disabled:opacity-30">
-              {isUpdating ? 'Guardando...' : 'Guardar Ajustes'}
+              {isUpdating ? 'Guardando...' : 'Guardar Ajustes Globales'}
             </button>
           )}
         </div>

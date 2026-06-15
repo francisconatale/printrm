@@ -36,7 +36,7 @@ const formatCurrency = (value: number) => {
 };
 
 export const PerfilesDashboardView: React.FC<{ onToggleTheme: () => void, isDark: boolean }> = ({ onToggleTheme, isDark }) => {
-  const [activeTab, setActiveTab] = useState<'printers' | 'filaments' | 'prints'>('printers');
+  const [activeTab, setActiveTab] = useState<'printers' | 'filaments' | 'prints' | 'general'>('printers');
   
   // Modals state
   const [showPrinterModal, setShowPrinterModal] = useState(false);
@@ -213,6 +213,15 @@ export const PerfilesDashboardView: React.FC<{ onToggleTheme: () => void, isDark
             <Layers size={16} />
             Ajustes de Impresión
           </button>
+          <button
+            onClick={() => setActiveTab('general')}
+            className={`pb-4 studio-body-strong flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === 'general' ? 'border-[#1d1d1f] text-[#1d1d1f] font-semibold' : 'border-transparent text-[#7a7a7a] hover:text-[#1d1d1f]'
+            }`}
+          >
+            <Settings size={16} />
+            Ajustes Generales
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -315,43 +324,6 @@ export const PerfilesDashboardView: React.FC<{ onToggleTheme: () => void, isDark
           {activeTab === 'filaments' && (
             <div className="space-y-8">
               
-              {/* Ajustes Rápidos Generales */}
-              <div className="max-w-2xl border border-[#e0e0e0] rounded-2xl p-6 bg-[#fafafc] space-y-4">
-                <div>
-                  <h3 className="studio-tagline text-base text-[#1d1d1f]">Parámetros Globales (Electricidad)</h3>
-                  <p className="studio-body text-xs text-[#7a7a7a] mt-0.5">Configuraciones de precio regionales y márgenes generales.</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Precio Energía ($ / kWh)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      value={preciokWh}
-                      onChange={(e) => setPreciokWh(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono text-[14px]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Margen de Seguridad / Error (%)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      value={margenError}
-                      onChange={(e) => setMargenError(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono text-[14px]"
-                    />
-                  </div>
-                </div>
-                <button
-                  onClick={handleSaveAjustes}
-                  disabled={updatingAjustes}
-                  className="bg-black text-white hover:bg-black/90 active:scale-95 transition-all text-xs font-semibold rounded-full px-5 py-2 !w-full"
-                >
-                  {updatingAjustes ? 'Guardando...' : 'Guardar Ajustes Globales'}
-                </button>
-              </div>
-
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="studio-tagline">Perfiles de Filamento</h2>
@@ -531,6 +503,52 @@ export const PerfilesDashboardView: React.FC<{ onToggleTheme: () => void, isDark
             </div>
           )}
 
+          {/* TAB 4: GENERAL SETTINGS */}
+          {activeTab === 'general' && (
+            <div className="space-y-8">
+              <div>
+                <h2 className="studio-tagline">Ajustes Generales del Taller</h2>
+                <p className="studio-body text-xs text-[#7a7a7a] mt-0.5">Configuraciones de precio regionales y márgenes generales de cotización.</p>
+              </div>
+
+              <div className="max-w-2xl border border-[#e0e0e0] rounded-2xl p-6 bg-[#fafafc] space-y-4">
+                <div>
+                  <h3 className="studio-tagline text-base text-[#1d1d1f]">Parámetros Globales (Electricidad)</h3>
+                  <p className="studio-body text-xs text-[#7a7a7a] mt-0.5">Configurá el precio de la energía y el margen comercial de seguridad.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Precio Energía ($ / kWh)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={preciokWh}
+                      onChange={(e) => setPreciokWh(parseFloat(e.target.value) || 0)}
+                      className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono text-[14px]"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase text-[#7a7a7a]">Margen de Seguridad / Error (%)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={margenError}
+                      onChange={(e) => setMargenError(parseFloat(e.target.value) || 0)}
+                      className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono text-[14px]"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleSaveAjustes}
+                  disabled={updatingAjustes}
+                  className="bg-black text-white hover:bg-black/90 active:scale-95 transition-all text-xs font-semibold rounded-full px-5 py-2 !w-full"
+                >
+                  {updatingAjustes ? 'Guardando...' : 'Guardar Ajustes Globales'}
+                </button>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -629,7 +647,7 @@ export const PerfilesDashboardView: React.FC<{ onToggleTheme: () => void, isDark
                   {editingPrint ? 'Editar Ajuste' : 'Nuevo Ajuste'}
                 </h2>
                 <p className="studio-body text-[#7a7a7a] mt-2">
-                  Configurá las capas, perímetros y relleno para PrusaSlicer.
+                  Configurá las capas, perímetros y relleno para el motor de cálculo.
                 </p>
               </div>
             </div>

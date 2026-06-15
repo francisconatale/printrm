@@ -7,7 +7,8 @@ export interface Perfil {
   consumoW: number;
   vidaUtilHoras: number;
   costoRepuestos: number;
-  
+  filamentoPorKg: number;
+
   // Slicer settings
   nozzleDiameter: number;
   bedShape: string;

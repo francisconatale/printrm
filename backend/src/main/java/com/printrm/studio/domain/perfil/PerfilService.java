@@ -86,6 +86,7 @@ public class PerfilService {
                 .consumoW(perfil.getConsumoW())
                 .vidaUtilHoras(perfil.getVidaUtilHoras())
                 .costoRepuestos(perfil.getCostoRepuestos())
+                .filamentoPorKg(perfil.getFilamentoPorKg())
                 .nozzleDiameter(perfil.getNozzleDiameter())
                 .bedShape(perfil.getBedShape())
                 .maxPrintHeight(perfil.getMaxPrintHeight())
@@ -102,6 +103,7 @@ public class PerfilService {
                 .consumoW(dto.getConsumoW())
                 .vidaUtilHoras(dto.getVidaUtilHoras())
                 .costoRepuestos(dto.getCostoRepuestos())
+                .filamentoPorKg(dto.getFilamentoPorKg())
                 .nozzleDiameter(dto.getNozzleDiameter())
                 .bedShape(dto.getBedShape())
                 .maxPrintHeight(dto.getMaxPrintHeight())
@@ -117,6 +119,7 @@ public class PerfilService {
         perfil.setConsumoW(dto.getConsumoW());
         perfil.setVidaUtilHoras(dto.getVidaUtilHoras());
         perfil.setCostoRepuestos(dto.getCostoRepuestos());
+        perfil.setFilamentoPorKg(dto.getFilamentoPorKg());
         perfil.setNozzleDiameter(dto.getNozzleDiameter());
         perfil.setBedShape(dto.getBedShape());
         perfil.setMaxPrintHeight(dto.getMaxPrintHeight());
