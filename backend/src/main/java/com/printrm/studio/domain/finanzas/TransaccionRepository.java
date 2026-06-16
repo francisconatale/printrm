@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface TransaccionRepository extends JpaRepository<Transaccion, UUID> {
     List<Transaccion> findByTipo(Transaccion.TipoTransaccion tipo);
+    List<Transaccion> findAllByPedidoIdAndTipo(UUID pedidoId, Transaccion.TipoTransaccion tipo);
+    boolean existsByPedidoIdAndTipo(UUID pedidoId, Transaccion.TipoTransaccion tipo);
 }

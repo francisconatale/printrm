@@ -1,0 +1,28 @@
+package com.printrm.studio.domain.stock;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/productos")
+@RequiredArgsConstructor
+public class ProductoController {
+
+    private final ProductoService service;
+
+    @GetMapping
+    public List<Producto> getAll() {
+        return service.getAll();
+    }
+
+    @PostMapping
+    public Producto save(@RequestBody ProductoRequestDTO dto) {
+        return service.save(dto);
+    }
+
+    @PatchMapping("/{id}/stock")
+    public void updateStock(@PathVariable String id, @RequestParam Integer delta) {
+        service.updateStock(id, delta);
+    }
+}

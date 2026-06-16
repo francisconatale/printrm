@@ -29,6 +29,9 @@ public class ItemPedido {
     @Column(nullable = false)
     private Integer cantidad;
 
+    @Builder.Default
+    private Integer cantidadMerma = 0;
+
     @Column(nullable = false)
     private Double subtotal;
 

@@ -153,11 +153,11 @@ public class SlicerController {
                 tempConfigFile.delete();
             }
 
-            // Clean up temporary STL file
-            File stlFile = new File(path.toString());
-            if (stlFile.exists()) {
-                stlFile.delete();
-            }
+            // Clean up temporary STL file (kept for potential save to library)
+            // File stlFile = new File(path.toString());
+            // if (stlFile.exists()) {
+            //     stlFile.delete();
+            // }
 
             return ResponseEntity.ok(result);
 

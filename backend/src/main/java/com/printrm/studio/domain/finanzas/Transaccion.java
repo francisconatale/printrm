@@ -2,6 +2,9 @@ package com.printrm.studio.domain.finanzas;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -14,9 +17,23 @@ public class Transaccion {
     @Enumerated(EnumType.STRING)
     private TipoTransaccion tipo;
 
+    @Enumerated(EnumType.STRING)
+    private CategoriaTransaccion categoria;
+
     private Double monto;
+
+    private String descripcion;
+
+    private UUID pedidoId;
+
+    @CreationTimestamp
+    private LocalDateTime fecha;
     
     public enum TipoTransaccion {
         INGRESO, EGRESO, REEMBOLSO
+    }
+
+    public enum CategoriaTransaccion {
+        MATERIAL, ENERGIA, VENTA, MERMA, REPUESTO, OTRO
     }
 }

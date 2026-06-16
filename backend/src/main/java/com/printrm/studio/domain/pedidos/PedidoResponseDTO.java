@@ -10,5 +10,7 @@ public class PedidoResponseDTO {
     private String clienteNombre;
     private String estado;
     private Double total;
+    private Double montoPagado;
+    private Double saldoPendiente;
     private List<ItemPedidoResponseDTO> items;
 }

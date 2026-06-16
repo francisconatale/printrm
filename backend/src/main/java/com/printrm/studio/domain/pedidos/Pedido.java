@@ -37,6 +37,9 @@ public class Pedido {
 
     private Double total;
 
+    @Builder.Default
+    private Double montoPagado = 0.0;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
@@ -45,7 +48,7 @@ public class Pedido {
     private LocalDateTime fechaActualizacion;
 
     public enum EstadoPedido {
-        BORRADOR, COTIZADO, EN_PRODUCCION, ENTREGADO, CANCELADO
+        BORRADOR, COTIZADO, EN_PRODUCCION, ENTREGADO, CANCELADO, DEVUELTO
     }
 
     public void calcularTotal() {
