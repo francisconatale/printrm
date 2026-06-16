@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CalculoRequestDTO {
     @NotNull(message = "El ID del perfil es obligatorio")
     private UUID perfilId;
