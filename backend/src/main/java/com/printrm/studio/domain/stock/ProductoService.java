@@ -1,11 +1,11 @@
 package com.printrm.studio.domain.stock;
 
-import com.printrm.studio.domain.biblioteca.PiezaSTL;
-import com.printrm.studio.domain.biblioteca.PiezaSTLRepository;
+import com.printrm.studio.domain.biblioteca.PiezaSTLResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,12 +18,14 @@ public class ProductoService {
     private final PiezaSTLRepository piezaRepository;
     private final LoteRepository loteRepository;
 
-    public List<Producto> getAll() {
-        return repository.findAll();
+    public List<ProductoResponseDTO> getAll() {
+        return repository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Producto save(ProductoRequestDTO dto) {
+    public ProductoResponseDTO save(ProductoRequestDTO dto) {
         boolean isNew = dto.getId() == null;
         Producto producto = !isNew ? 
             repository.findById(UUID.fromString(dto.getId())).orElse(new Producto()) : 
@@ -52,7 +54,47 @@ public class ProductoService {
             addStock(saved.getId(), initialStock, 0.0); // Default cost 0 for initial stock if not specified
         }
 
-        return saved;
+        return mapToResponseDTO(saved);
+    }
+
+    private ProductoResponseDTO mapToResponseDTO(Producto p) {
+        return ProductoResponseDTO.builder()
+                .id(p.getId().toString())
+                .nombre(p.getNombre())
+                .descripcion(p.getDescripcion())
+                .cantidadStock(p.getCantidadStock())
+                .precioSugerido(p.getPrecioSugerido())
+                .creadoEn(p.getCreadoEn())
+                .actualizadoEn(p.getActualizadoEn())
+                .partes(p.getPartes().stream().map(this::mapPiezaToDTO).collect(Collectors.toList()))
+                .lotes(p.getLotes().stream()
+                        .filter(l -> l.getCantidadActual() > 0)
+                        .sorted(Comparator.comparing(Lote::getFechaCreacion))
+                        .map(l -> ProductoResponseDTO.LoteDTO.builder()
+                                .id(l.getId().toString())
+                                .cantidadActual(l.getCantidadActual())
+                                .costoUnitario(l.getCostoUnitario())
+                                .fechaCreacion(l.getFechaCreacion())
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    private PiezaSTLResponseDTO mapPiezaToDTO(PiezaSTL pieza) {
+        PiezaSTLResponseDTO dto = new PiezaSTLResponseDTO();
+        dto.setId(pieza.getId());
+        dto.setNombre(pieza.getNombre());
+        dto.setFilePath(pieza.getFilePath());
+        dto.setVolumenCm3(pieza.getVolumenCm3());
+        dto.setPesoGramos(pieza.getPesoGramos());
+        dto.setTiempoEstimado(pieza.getTiempoEstimado());
+        dto.setCostoBase(pieza.getCostoBase());
+        dto.setImagenBase64(pieza.getImagenBase64());
+        dto.setCreadoEn(pieza.getCreadoEn());
+        if (pieza.getPerfilPreferido() != null) dto.setPerfilImpresoraNombre(pieza.getPerfilPreferido().getNombre());
+        if (pieza.getFilamentoPreferido() != null) dto.setPerfilFilamentoNombre(pieza.getFilamentoPreferido().getNombre());
+        if (pieza.getImpresionPreferida() != null) dto.setPerfilImpresionNombre(pieza.getImpresionPreferida().getNombre());
+        return dto;
     }
 
     @Transactional
@@ -60,18 +102,26 @@ public class ProductoService {
         Producto producto = repository.findById(productoId)
             .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         
-        Lote lote = Lote.builder()
-            .producto(producto)
-            .cantidadOriginal(cantidad)
-            .cantidadActual(cantidad)
-            .costoUnitario(costo)
-            .build();
+        // Cost-Tiered FIFO: Check if we can merge with the latest active lot
+        Lote ultimoLote = loteRepository.findFirstByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionDesc(
+            productoId, 0);
         
-        loteRepository.save(lote);
+        if (ultimoLote != null && Math.abs(ultimoLote.getCostoUnitario() - costo) < 0.01) {
+            // Same cost, merge into existing lot
+            ultimoLote.setCantidadOriginal(ultimoLote.getCantidadOriginal() + cantidad);
+            ultimoLote.setCantidadActual(ultimoLote.getCantidadActual() + cantidad);
+            loteRepository.save(ultimoLote);
+        } else {
+            // Different cost or no active lot, create new one
+            Lote nuevoLote = Lote.builder()
+                .producto(producto)
+                .cantidadOriginal(cantidad)
+                .cantidadActual(cantidad)
+                .costoUnitario(costo)
+                .build();
+            loteRepository.save(nuevoLote);
+        }
         
-        // Update denormalized stock in Producto if necessary, 
-        // but wait, updateStock already does this? 
-        // Let's keep Producto.cantidadStock updated.
         producto.setCantidadStock(producto.getCantidadStock() + cantidad);
         repository.save(producto);
     }

@@ -57,6 +57,31 @@ class ProductoServiceFIFOTest {
     }
 
     @Test
+    @DisplayName("addStock() merges with latest lot if cost is the same")
+    void addStock_mergesSameCost() {
+        productoService.addStock(producto.getId(), 10, 50.0);
+        productoService.addStock(producto.getId(), 5, 50.0);
+        
+        Producto updated = productoRepository.findById(producto.getId()).orElseThrow();
+        assertThat(updated.getCantidadStock()).isEqualTo(15);
+        
+        List<Lote> lotes = loteRepository.findAll();
+        assertThat(lotes).hasSize(1);
+        assertThat(lotes.get(0).getCantidadOriginal()).isEqualTo(15);
+        assertThat(lotes.get(0).getCantidadActual()).isEqualTo(15);
+    }
+
+    @Test
+    @DisplayName("addStock() creates new lot if cost is different")
+    void addStock_createsNewLotIfCostDiffers() {
+        productoService.addStock(producto.getId(), 10, 50.0);
+        productoService.addStock(producto.getId(), 5, 60.0);
+        
+        List<Lote> lotes = loteRepository.findAll();
+        assertThat(lotes).hasSize(2);
+    }
+
+    @Test
     @DisplayName("updateStock with delta < 0 consumes from oldest lot first (FIFO)")
     void updateStock_consumesFIFO() throws InterruptedException {
         // Add first lot (oldest)

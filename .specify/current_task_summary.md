@@ -1,6 +1,10 @@
-# Estado de Tarea: Documentación del Gap 2 - Pagos Parciales / Señales [COMPLETADO]
+# Tarea: Definir tareas para el Sistema de Lotes FIFO
 
-Tareas:
-- [x] Documentar campos montoPagado y saldoPendiente en `.specify/specs/005-roadmap-phase-2/data-model.md`.
-- [x] Actualizar checklist de validación manual en `.specify/specs/005-roadmap-phase-2/frontend-roadmap.md` para cubrir devolución con seña.
-- [x] Registrar los cambios en CHANGELOG.md de la raíz.
+## Estado
+- [x] Investigar archivos involucrados en la implementación de Lotes FIFO.
+- [ ] Crear archivos de diseño (plan.md, spec.md) para la característica 006-fifo-inventory.
+- [ ] Generar tasks.md con las tareas marcadas como completadas.
+- [ ] Actualizar CHANGELOG.md.
+
+## Resumen
+Se están definiendo las tareas de implementación para el sistema de inventario por lotes (FIFO) que ya ha sido implementado. Se generará la documentación necesaria en `.specify/specs/006-fifo-inventory/` para mantener el historial del proyecto.

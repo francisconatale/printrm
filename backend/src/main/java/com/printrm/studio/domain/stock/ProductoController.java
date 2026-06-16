@@ -12,12 +12,12 @@ public class ProductoController {
     private final ProductoService service;
 
     @GetMapping
-    public List<Producto> getAll() {
+    public List<ProductoResponseDTO> getAll() {
         return service.getAll();
     }
 
     @PostMapping
-    public Producto save(@RequestBody ProductoRequestDTO dto) {
+    public ProductoResponseDTO save(@RequestBody ProductoRequestDTO dto) {
         return service.save(dto);
     }
 

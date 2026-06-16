@@ -33,6 +33,10 @@ public class Producto {
     @Builder.Default
     private List<PiezaSTL> partes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Lote> lotes = new ArrayList<>();
+
     @Column(nullable = false)
     @Builder.Default
     private Integer cantidadStock = 0;

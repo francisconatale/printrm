@@ -131,6 +131,7 @@ Implement a First-In, First-Out (FIFO) lot tracking system for products. This en
 - **FR-016**: If the oldest `Lote` is depleted before fulfilling the required quantity, the system MUST cascade the remaining deduction to the next oldest `Lote`.
 - **FR-017**: The total `cantidadStock` of a `Producto` MUST always equal the sum of the `cantidadActual` of all its active lots.
 - **FR-018**: The Frontend Catalog MUST display the cost of the oldest active lot as the current basis cost, or show a breakdown if multiple lots exist.
+- **FR-019**: The API MUST automatically resolve multi-lot stock consumption (e.g., fulfilling 7 units by consuming 6 from Lot A and 1 from Lot B) without requiring manual lot selection from the user.
 
 ## Technical Implementation
 
@@ -139,9 +140,13 @@ Implement a First-In, First-Out (FIFO) lot tracking system for products. This en
 - **LoteRepository**: Includes `findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc` for FIFO selection.
 
 ### Backend Logic (ProductoService)
-- **addStock(productoId, cantidad, costo)**: Creates a new lot and updates aggregated stock.
-- **consumeStock(producto, cantidad)**: Core FIFO logic that iterates through active lots and decrements `cantidadActual`.
+- **addStock(productoId, cantidad, costo)**: Creates a new lot or merges with the most recent active lot if the unit cost is identical (Cost-Tiered FIFO).
+- **consumeStock(producto, cantidad)**: Core FIFO logic that iterates through active lots and decrements `cantidadActual`. It handles cross-lot fulfillment automatically until the required quantity is met.
 - **updateStock(id, delta)**: Unified entry point for manual stock adjustments.
+
+### Order Integration (PedidoService)
+- **Automatic Fulfillment**: When an Order reaches a terminal state (e.g., `ENTREGADO`), the system triggers the automatic FIFO consumption logic, ensuring the correct financial cost is reflected in the inventory reduction.
+
 
 ### Frontend Integration
 - **API**: `useUpdateStock` supports optional `costo` parameter.

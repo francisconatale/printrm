@@ -6,4 +6,5 @@ import java.util.UUID;
 
 public interface LoteRepository extends JpaRepository<Lote, UUID> {
     List<Lote> findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc(UUID productoId, Integer cantidad);
+    Lote findFirstByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionDesc(UUID productoId, Integer cantidad);
 }

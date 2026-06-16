@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-16] - Definición de Tareas: Sistema de Lote FIFO
+### Descripción
+- Se definieron y documentaron las tareas de implementación para el Sistema de Lotes de Inventario FIFO, el cual ya se encuentra implementado en el código base.
+- Se crearon los archivos de diseño (`plan.md`, `spec.md`) y el listado de tareas (`tasks.md`) dentro de `.specify/specs/006-fifo-inventory/` para mantener la trazabilidad del desarrollo.
+- Se marcaron todas las tareas como completadas para reflejar el estado actual del proyecto.
+
+### Archivos Involucrados
+- [.specify/specs/006-fifo-inventory/plan.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/.specify/specs/006-fifo-inventory/plan.md)
+- [.specify/specs/006-fifo-inventory/spec.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/.specify/specs/006-fifo-inventory/spec.md)
+- [.specify/specs/006-fifo-inventory/tasks.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/.specify/specs/006-fifo-inventory/tasks.md)
+- [.specify/current_task_summary.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/.specify/current_task_summary.md)
+- [CHANGELOG.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/CHANGELOG.md)
+
 ## [2026-06-16] - Documentación del Gap 2: Pagos Parciales / Señales
 ### Descripción
 - Se documentaron en la especificación del modelo de datos los campos `montoPagado` y `saldoPendiente` dentro de la entidad `Pedido`.
