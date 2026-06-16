@@ -1,80 +1,55 @@
-# Tasks: Gestión de Clientes (CRM)
+# Tasks: Gestión Comercial, Stock & Finanzas
 
 **Input**: Design documents from `.specify/specs/005-roadmap-phase-2/`
 
-**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md (v2)
 
-## Format: `[ID] [P?] [Story] Description`
+## Phase 2: Foundational (Extended) 🏗️
 
-- **[P]**: Can run in parallel
-- **[Story]**: US1 (Create), US2 (Library), US3 (Agenda), US4 (Share)
-
-## Phase 1: Setup (Shared Infrastructure)
-
-- [x] T001 Create project structure for clientes feature in backend and frontend
-- [x] T002 Update build.gradle and package.json with needed dependencies (JPA, Three.js, etc.)
+- [x] T001 Implement `Cliente` Entity/Repo
+- [x] T002 Implement `Pedido` & `ItemPedido` Entities/Repos
+- [x] T003 Implement `Producto` Entity (Composed of `PiezaSTL`)
+- [x] T004 Implement `Transaccion` Entity with `REEMBOLSO` support
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites) 🏗️
+## Phase 3: User Story 1 - Flujo de Pedidos & CRM (Priority: P1) 🎯 MVP
 
-**Purpose**: Core data infrastructure.
-
-- [x] T003 [P] Implement `Cliente` JPA Entity in `backend/src/main/java/com/printrm/studio/domain/clientes/Cliente.java`
-- [x] T004 Implement `ClienteRepository` in `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteRepository.java`
-- [x] T005 [P] Implement `ClienteRequestDTO` and `ClienteResponseDTO`
-- [x] T006 Update `Calculo` entity in `backend/src/main/java/com/printrm/studio/domain/calculo/Calculo.java` to include `cliente_id` relationship
-
-**Checkpoint**: Foundation ready - CRM logic can now begin.
-
----
-
-## Phase 3: User Story 1 - Gestión de Clientes (Priority: P1) 🎯 MVP
-
-**Goal**: CRUD completo de clientes para organizar la base comercial.
+**Goal**: Crear pedidos vinculados a clientes y gestionar su ciclo de vida.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T007 [P] [US1] Integration test for Cliente CRUD in `backend/src/test/java/com/printrm/studio/domain/clientes/ClienteControllerTest.java`
-- [ ] T008 [P] [US1] Unit tests for client validation in `frontend/src/features/clientes/utils/clientes.test.ts`
+- [x] T005 [US1] Integration test for Order Lifecycle (Passed)
+- [x] T006 [US1] Integration test for Returns (DEVUELTO) and Balance consistency (Passed)
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Implement `ClienteService.java` with basic CRUD logic
-- [ ] T010 [US1] Implement `ClienteController.java` with REST endpoints (`/api/v1/clientes`)
-- [ ] T011 [P] [US1] Define `clientes.types.ts` and `clientes.api.ts` in `frontend/src/features/clientes/`
-- [ ] T012 [US1] Create `ClientesListView.tsx` following Studio design (0.5px borders)
-- [ ] T013 [US1] Implement `ClienteForm.tsx` modal for creation and editing
-- [ ] T014 [US1] Add "Clientes" navigation item to `Sidebar.tsx`
-
-**Checkpoint**: User Story 1 (CRM) fully functional.
+- [x] T007 [US1] PedidoService logic
+- [x] T008 [US1] Implement automatic Financial Triggers in `PedidoService`
+- [x] T008.1 [US1] Implement Idempotency Guard: Ensure Merma/Production expenses are only recorded once per item to avoid double-discounting.
+- [x] T009 [US1] UI: `ClientesListView.tsx` and `ClienteForm.tsx`
+- [x] T010 [US1] UI: `PedidosListView.tsx` and `PedidoDetalleView.tsx`
 
 ---
 
-## Phase 4: User Story 4 - Compartición de Presupuestos (Priority: P0)
+## Phase 4: User Story 2 - Biblioteca de Productos & Stock 📦
 
-**Goal**: Generar mensajes de WhatsApp profesionales desde el cotizador.
+**Goal**: Gestionar piezas en estantería (Stock) y productos de varias partes.
 
-### Tests for User Story 4 ⚠️
+- [x] T011 [US2] Backend: `ProductoController` and `ProductoService`
+- [x] T012 [US2] UI: `ProductosGalleryView.tsx` with stock counters
+- [x] T013 [US2] UI: `ComposicionProductoForm.tsx` (Select multiple STL parts)
 
-- [ ] T015 [P] [US4] Unit tests for WhatsApp message formatting in `frontend/src/features/exportacion/utils/whatsapp.test.ts`
+---
 
-### Implementation for User Story 4
+## Phase 5: User Story 3 - Negocio & Libro Diario 💰
 
-- [ ] T016 [P] [US4] Implement `whatsapp.utils.ts` for professional message formatting
-- [ ] T017 [US4] Add "WhatsApp" button to `ResultadoPanel.tsx`
-- [ ] T018 [US4] Integrate `Cliente` selection in `CalculadoraView.tsx` to include name in the message
+- [ ] T014 [US3] UI: `FinanzasDashboard.tsx` (Balance, Revenue, ROI)
+- [x] T015 [US3] UI: `RegistrarMermaModal.tsx` (Manually log failed prints)
 
 ---
 
 ## Phase N: Polish & Cross-Cutting Concerns
 
-- [ ] T016 [P] Visual Compliance Review: Verify hairline borders and monochromatic Ink accent in ClientesView
-- [ ] T017 Run quickstart.md validation scenarios
-
----
-
-## Dependencies & Execution Order
-
-1. **Phase 2 (Foundational)** is CRITICAL and blocks CRM/Calculation integration.
-2. **US1 (Clientes)** and **US4 (WhatsApp)** can be worked in parallel once Foundation is ready.
+- [ ] T016 Visual Review: Studio 0.5px Hairline adherence
+- [ ] T017 Run quickstart.md validation

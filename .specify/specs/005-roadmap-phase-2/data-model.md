@@ -2,43 +2,50 @@
 
 ## Entities
 
-### Cliente (CRM)
-- **id**: UUID (Primary Key)
-- **nombre**: String (Max 100, Required)
-- **email**: String (Optional, Email format)
-- **telefono**: String (Optional)
-- **notas**: Text (Optional)
-- **fechaCreacion**: LocalDateTime (Automatic)
-
-**Validation**:
-- `nombre` is mandatory for searching.
-- Unique index on `email` if provided.
-
-### PiezaSTL (Enhanced Library)
-- **id**: UUID (Primary Key)
-- **nombre**: String (Max 50, Required)
-- **filePath**: String (Path in storage)
-- **volumenCm3**: Double (Optional)
-- **pesoGramos**: Double (Optional)
-- **tiempoEstimado**: String (Format: "Xh Ym")
-- **perfilFilamentoId**: UUID (Foreign Key, Optional)
-- **fechaCreacion**: LocalDateTime
-
-**Relationships**:
-- Many-to-One with `FilamentProfile`.
-
-### CalculoHistorial (Unified History)
+### PiezaSTL (Parte)
 - **id**: UUID
-- **clienteId**: UUID (Foreign Key, Optional)
-- **piezaId**: UUID (Foreign Key, Optional)
-- **dataJson**: Text (Snapshot of all calculation inputs/outputs)
-- **fecha**: LocalDateTime
+- **nombre**: String
+- **dataJson**: Text (Metadatos de impresión)
+
+### Producto (Venta)
+- **id**: UUID
+- **nombre**: String
+- **descripcion**: Text
+- **partes**: List<PiezaSTL> (Relación Many-to-Many o One-to-Many)
+- **cantidadStock**: Integer (Unidades listas en estantería)
+- **precioSugerido**: Double
+
+### Pedido (Order)
+- **id**: UUID
+- **clienteId**: UUID (FK)
+- **estado**: Enum (BORRADOR, COTIZADO, EN_PRODUCCION, ENTREGADO, CANCELADO, DEVUELTO)
+- **total**: Double
+- **montoPagado**: Double (Monto total abonado hasta el momento, inicializado en 0.0)
+- **saldoPendiente**: Double (Campo calculado: `total - montoPagado`)
+
+### Transaccion (Finanzas)
+- **id**: UUID
+- **tipo**: Enum (INGRESO, EGRESO, REEMBOLSO)
+- **categoria**: Enum (MATERIAL, ENERGIA, VENTA, MERMA, OTRO)
+- **monto**: Double (En REEMBOLSO, el monto resta del balance total)
 
 ---
 
-## State Transitions
+## State Transitions & Financial Triggers
 
-### Calculation Flow
-1. **DRAFT**: Input provided, result shown in real-time.
-2. **PERSISTED**: User clicks "Guardar". Record created in `CalculoHistorial`.
-3. **ASSIGNED**: Calculation linked to a `Cliente`.
+### 1. Producción para Stock
+- **Acción**: El usuario marca "Imprimir para Stock".
+- **Trigger**: Crea Egreso (MATERIAL + ENERGIA) e incrementa `Producto.cantidadStock`.
+
+### 2. Venta Directa (de Stock)
+- **Acción**: El usuario vende un producto ya impreso.
+- **Trigger**: Crea Ingreso (VENTA) y decrementa `Producto.cantidadStock`. No genera egreso de material (ya se hizo al producirlo).
+
+### 3. Devolución (Post-Venta)
+- **Acción**: Pedido cambia a `DEVUELTO`.
+- **Trigger**: Crea Transacción tipo REEMBOLSO (resta monto). El stock incrementa +1 si el producto es recuperable.
+
+### 4. Merma (Fallo de Impresión)
+- **Acción**: El usuario registra un fallo.
+- **Trigger**: Crea Egreso (MERMA) por el material/luz perdidos. El stock NO incrementa.
+
