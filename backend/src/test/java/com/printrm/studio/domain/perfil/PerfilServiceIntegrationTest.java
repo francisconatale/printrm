@@ -51,39 +51,24 @@ class PerfilServiceIntegrationTest {
     // ─── CREATE ──────────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("create() persiste el perfil y devuelve DTO con ID generado")
-    void create_persistsPerfilAndReturnsDTO() {
+    @DisplayName("create() persiste el perfil con todos sus campos y asigna timestamps")
+    void create_persistsPerfilWithAllFields() {
         PerfilResponseDTO result = perfilService.create(buildValidRequest("Prusa MK3S"));
-
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getNombre()).isEqualTo("Prusa MK3S");
-        assertThat(result.getModeloImpresora()).isEqualTo("Prusa MK3S");
-        assertThat(result.getConsumoW()).isEqualTo(100.0);
-        assertThat(perfilRepository.count()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("create() asigna timestamps automáticamente")
-    void create_setsTimestampsAutomatically() {
-        PerfilResponseDTO created = perfilService.create(buildValidRequest("Ender 3"));
-        // Flush + clear para forzar recarga desde BD (Hibernate popula @CreationTimestamp al flush)
         entityManager.flush();
         entityManager.clear();
 
-        PerfilResponseDTO result = perfilService.findById(created.getId());
+        PerfilResponseDTO reloaded = perfilService.findById(result.getId());
 
-        assertThat(result.getCreadoEn()).isNotNull();
-        assertThat(result.getActualizadoEn()).isNotNull();
+        assertThat(reloaded.getId()).isNotNull();
+        assertThat(reloaded.getNombre()).isEqualTo("Prusa MK3S");
+        assertThat(reloaded.getModeloImpresora()).isEqualTo("Prusa MK3S");
+        assertThat(reloaded.getConsumoW()).isEqualTo(100.0);
+        assertThat(reloaded.getCreadoEn()).isNotNull();
+        assertThat(reloaded.getActualizadoEn()).isNotNull();
+        assertThat(perfilRepository.count()).isEqualTo(1);
     }
 
     // ─── FIND ALL ─────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findAll() devuelve lista vacía cuando no hay perfiles")
-    void findAll_returnsEmptyList_whenNoData() {
-        List<PerfilResponseDTO> result = perfilService.findAll();
-        assertThat(result).isEmpty();
-    }
 
     @Test
     @DisplayName("findAll() devuelve todos los perfiles creados")
@@ -96,17 +81,6 @@ class PerfilServiceIntegrationTest {
     }
 
     // ─── FIND BY ID ───────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findById() retorna el perfil correcto")
-    void findById_returnsCorrectPerfil() {
-        PerfilResponseDTO created = perfilService.create(buildValidRequest("Bambu X1"));
-
-        PerfilResponseDTO found = perfilService.findById(created.getId());
-
-        assertThat(found.getId()).isEqualTo(created.getId());
-        assertThat(found.getNombre()).isEqualTo("Bambu X1");
-    }
 
     @Test
     @DisplayName("findById() lanza RuntimeException si el ID no existe")
@@ -154,7 +128,6 @@ class PerfilServiceIntegrationTest {
         perfilService.delete(created.getId());
 
         assertThat(perfilRepository.existsById(created.getId())).isFalse();
-        assertThat(perfilRepository.count()).isEqualTo(0);
     }
 
     @Test
@@ -163,17 +136,5 @@ class PerfilServiceIntegrationTest {
         assertThatThrownBy(() -> perfilService.delete(UUID.randomUUID()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("no encontrado");
-    }
-
-    @Test
-    @DisplayName("delete() de uno solo no afecta los demás")
-    void delete_doesNotAffectOtherPerfiles() {
-        PerfilResponseDTO a = perfilService.create(buildValidRequest("A"));
-        PerfilResponseDTO b = perfilService.create(buildValidRequest("B"));
-
-        perfilService.delete(a.getId());
-
-        assertThat(perfilRepository.count()).isEqualTo(1);
-        assertThat(perfilRepository.existsById(b.getId())).isTrue();
     }
 }

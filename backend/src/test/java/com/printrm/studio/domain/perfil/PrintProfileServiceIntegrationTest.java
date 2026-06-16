@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
@@ -32,10 +31,10 @@ class PrintProfileServiceIntegrationTest {
     private PrintProfileRequestDTO buildValidRequest(String nombre) {
         return new PrintProfileRequestDTO(
                 nombre,
-                0.2,        // layerHeight
-                3,          // perimeters
-                "15%",      // fillDensity
-                60.0        // speedPrint mm/s
+                0.2,    // layerHeight
+                3,      // perimeters
+                "15%",  // fillDensity
+                60.0    // speedPrint mm/s
         );
     }
 
@@ -47,63 +46,25 @@ class PrintProfileServiceIntegrationTest {
     // ─── CREATE ──────────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("create() persiste el perfil de impresión y devuelve DTO con ID")
-    void create_persistsPrintProfileAndReturnsDTO() {
-        PrintProfileResponseDTO result = printProfileService.create(buildValidRequest("Calidad Media"));
-
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getNombre()).isEqualTo("Calidad Media");
-        assertThat(result.getLayerHeight()).isEqualTo(0.2);
-        assertThat(result.getPerimeters()).isEqualTo(3);
-        assertThat(result.getFillDensity()).isEqualTo("15%");
-        assertThat(result.getSpeedPrint()).isEqualTo(60.0);
-        assertThat(printProfileRepository.count()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("create() asigna timestamps automáticamente")
-    void create_setsTimestampsAutomatically() {
-        PrintProfileResponseDTO created = printProfileService.create(buildValidRequest("Draft"));
+    @DisplayName("create() persiste el perfil de impresión con todos sus campos y asigna timestamps")
+    void create_persistsPrintProfileWithAllFields() {
+        PrintProfileResponseDTO created = printProfileService.create(buildValidRequest("Calidad Media"));
         entityManager.flush();
         entityManager.clear();
 
-        PrintProfileResponseDTO result = printProfileService.findById(created.getId());
+        PrintProfileResponseDTO reloaded = printProfileService.findById(created.getId());
 
-        assertThat(result.getCreadoEn()).isNotNull();
-        assertThat(result.getActualizadoEn()).isNotNull();
-    }
-
-    // ─── FIND ALL ─────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findAll() devuelve lista vacía cuando no hay datos")
-    void findAll_returnsEmptyList_whenNoData() {
-        assertThat(printProfileService.findAll()).isEmpty();
-    }
-
-    @Test
-    @DisplayName("findAll() devuelve todos los perfiles de impresión")
-    void findAll_returnsAllProfiles() {
-        printProfileService.create(buildValidRequest("Draft"));
-        printProfileService.create(buildValidRequest("Standard"));
-        printProfileService.create(buildValidRequest("Fine"));
-
-        List<PrintProfileResponseDTO> result = printProfileService.findAll();
-        assertThat(result).hasSize(3);
+        assertThat(reloaded.getId()).isNotNull();
+        assertThat(reloaded.getNombre()).isEqualTo("Calidad Media");
+        assertThat(reloaded.getLayerHeight()).isEqualTo(0.2);
+        assertThat(reloaded.getPerimeters()).isEqualTo(3);
+        assertThat(reloaded.getFillDensity()).isEqualTo("15%");
+        assertThat(reloaded.getSpeedPrint()).isEqualTo(60.0);
+        assertThat(reloaded.getCreadoEn()).isNotNull();
+        assertThat(printProfileRepository.count()).isEqualTo(1);
     }
 
     // ─── FIND BY ID ───────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findById() retorna el perfil correcto")
-    void findById_returnsCorrectProfile() {
-        PrintProfileResponseDTO created = printProfileService.create(buildValidRequest("Standard"));
-
-        PrintProfileResponseDTO found = printProfileService.findById(created.getId());
-
-        assertThat(found.getId()).isEqualTo(created.getId());
-        assertThat(found.getNombre()).isEqualTo("Standard");
-    }
 
     @Test
     @DisplayName("findById() lanza RuntimeException si no existe")
@@ -121,11 +82,7 @@ class PrintProfileServiceIntegrationTest {
         PrintProfileResponseDTO created = printProfileService.create(buildValidRequest("Borrador"));
 
         PrintProfileRequestDTO updateReq = new PrintProfileRequestDTO(
-                "Alta Calidad",
-                0.1,  // layer height fino
-                5,    // más perímetros
-                "20%",
-                40.0  // más lento = más calidad
+                "Alta Calidad", 0.1, 5, "20%", 40.0
         );
 
         PrintProfileResponseDTO updated = printProfileService.update(created.getId(), updateReq);

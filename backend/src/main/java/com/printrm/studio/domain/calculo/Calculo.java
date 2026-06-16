@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.printrm.studio.domain.clientes.Cliente;
+
 @Entity
 @Table(name = "calculos")
 @Getter
@@ -18,6 +20,10 @@ public class Calculo {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

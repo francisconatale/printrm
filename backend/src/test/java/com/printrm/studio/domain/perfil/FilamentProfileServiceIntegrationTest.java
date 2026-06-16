@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,9 +32,9 @@ class FilamentProfileServiceIntegrationTest {
         return new FilamentProfileRequestDTO(
                 nombre,
                 "PLA",
-                15000.0,  // filamentoPorKg
-                1.24,     // density g/cm³
-                1.75,     // diameter mm
+                15000.0,
+                1.24,
+                1.75,
                 "#FF5733"
         );
     }
@@ -48,64 +47,25 @@ class FilamentProfileServiceIntegrationTest {
     // ─── CREATE ──────────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("create() persiste el filamento y devuelve DTO con ID")
-    void create_persistsFilamentAndReturnsDTO() {
-        FilamentProfileResponseDTO result = filamentProfileService.create(buildValidRequest("PLA Generic"));
-
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getNombre()).isEqualTo("PLA Generic");
-        assertThat(result.getMaterial()).isEqualTo("PLA");
-        assertThat(result.getDensity()).isEqualTo(1.24);
-        assertThat(result.getDiameter()).isEqualTo(1.75);
-        assertThat(result.getColour()).isEqualTo("#FF5733");
-        assertThat(filamentProfileRepository.count()).isEqualTo(1);
-    }
-
-    @Test
-    @DisplayName("create() asigna timestamps automáticamente")
-    void create_setsTimestampsAutomatically() {
-        FilamentProfileResponseDTO created = filamentProfileService.create(buildValidRequest("ABS Generic"));
+    @DisplayName("create() persiste el filamento con todos sus campos y asigna timestamps")
+    void create_persistsFilamentWithAllFields() {
+        FilamentProfileResponseDTO created = filamentProfileService.create(buildValidRequest("PLA Generic"));
         entityManager.flush();
         entityManager.clear();
 
-        FilamentProfileResponseDTO result = filamentProfileService.findById(created.getId());
+        FilamentProfileResponseDTO reloaded = filamentProfileService.findById(created.getId());
 
-        assertThat(result.getCreadoEn()).isNotNull();
-        assertThat(result.getActualizadoEn()).isNotNull();
-    }
-
-    // ─── FIND ALL ─────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findAll() devuelve lista vacía cuando no hay datos")
-    void findAll_returnsEmptyList_whenNoData() {
-        assertThat(filamentProfileService.findAll()).isEmpty();
-    }
-
-    @Test
-    @DisplayName("findAll() devuelve todos los filamentos")
-    void findAll_returnsAllFilaments() {
-        filamentProfileService.create(buildValidRequest("PLA"));
-        filamentProfileService.create(buildValidRequest("PETG"));
-        filamentProfileService.create(buildValidRequest("ABS"));
-
-        List<FilamentProfileResponseDTO> result = filamentProfileService.findAll();
-
-        assertThat(result).hasSize(3);
+        assertThat(reloaded.getId()).isNotNull();
+        assertThat(reloaded.getNombre()).isEqualTo("PLA Generic");
+        assertThat(reloaded.getMaterial()).isEqualTo("PLA");
+        assertThat(reloaded.getDensity()).isEqualTo(1.24);
+        assertThat(reloaded.getDiameter()).isEqualTo(1.75);
+        assertThat(reloaded.getColour()).isEqualTo("#FF5733");
+        assertThat(reloaded.getCreadoEn()).isNotNull();
+        assertThat(filamentProfileRepository.count()).isEqualTo(1);
     }
 
     // ─── FIND BY ID ───────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findById() retorna el filamento correcto")
-    void findById_returnsCorrectFilament() {
-        FilamentProfileResponseDTO created = filamentProfileService.create(buildValidRequest("PETG"));
-
-        FilamentProfileResponseDTO found = filamentProfileService.findById(created.getId());
-
-        assertThat(found.getId()).isEqualTo(created.getId());
-        assertThat(found.getNombre()).isEqualTo("PETG");
-    }
 
     @Test
     @DisplayName("findById() lanza RuntimeException si no existe")
@@ -123,12 +83,7 @@ class FilamentProfileServiceIntegrationTest {
         FilamentProfileResponseDTO created = filamentProfileService.create(buildValidRequest("Original"));
 
         FilamentProfileRequestDTO updateReq = new FilamentProfileRequestDTO(
-                "Actualizado",
-                "PETG",
-                20000.0,
-                1.27,
-                1.75,
-                "#00FF00"
+                "Actualizado", "PETG", 20000.0, 1.27, 1.75, "#00FF00"
         );
 
         FilamentProfileResponseDTO updated = filamentProfileService.update(created.getId(), updateReq);

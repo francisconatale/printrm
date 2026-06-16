@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PrintProfileService — Integration Tests" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-06-16T01:33:52" hostname="DESKTOP-EJ6HF1N" time="0.054">
+  <properties/>
+  <testcase name="update() lanza RuntimeException si el ID no existe" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.008"/>
+  <testcase name="update() modifica todos los campos correctamente" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.006"/>
+  <testcase name="create() persiste el perfil de impresión con todos sus campos y asigna timestamps" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.012"/>
+  <testcase name="findById() lanza RuntimeException si no existe" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.004"/>
+  <testcase name="delete() lanza RuntimeException al eliminar ID inexistente" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.008"/>
+  <testcase name="delete() elimina el perfil de impresión correctamente" classname="com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest" time="0.011"/>
+  <system-out><![CDATA[2026-06-16T09:33:52.800+08:00  INFO 32376 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest]: PrintProfileServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-06-16T09:33:52.801+08:00  INFO 32376 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest
+2026-06-16T09:33:52.807+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.809+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T09:33:52.814+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.821+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.822+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : insert into print_profiles (actualizado_en,creado_en,fill_density,layer_height,nombre,perimeters,print_config,speed_print,id) values (?,?,?,?,?,?,?,?,?)
+2026-06-16T09:33:52.826+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T09:33:52.829+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0
+2026-06-16T09:33:52.834+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.836+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T09:33:52.839+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.843+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T09:33:52.849+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T09:33:52.850+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : insert into print_profiles (actualizado_en,creado_en,fill_density,layer_height,nombre,perimeters,print_config,speed_print,id) values (?,?,?,?,?,?,?,?,?)
+2026-06-16T09:33:52.852+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T09:33:52.854+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : delete from print_profiles where id=?
+2026-06-16T09:33:52.855+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

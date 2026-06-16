@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FilamentProfileService — Integration Tests" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-06-16T01:33:52" hostname="DESKTOP-EJ6HF1N" time="0.084">
+  <properties/>
+  <testcase name="update() lanza RuntimeException si el ID no existe" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.011"/>
+  <testcase name="update() modifica correctamente todos los campos" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.01"/>
+  <testcase name="create() persiste el filamento con todos sus campos y asigna timestamps" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.018"/>
+  <testcase name="findById() lanza RuntimeException si no existe" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.008"/>
+  <testcase name="delete() elimina el filamento correctamente" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.019"/>
+  <testcase name="delete() lanza RuntimeException al eliminar ID inexistente" classname="com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest" time="0.009"/>
+  <system-out><![CDATA[2026-06-16T09:33:52.604+08:00  INFO 32376 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest]: FilamentProfileServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-06-16T09:33:52.620+08:00  INFO 32376 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.perfil.FilamentProfileServiceIntegrationTest
+2026-06-16T09:33:52.627+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.630+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0 where fp1_0.id=?
+2026-06-16T09:33:52.640+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.652+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.654+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : insert into filament_profiles (actualizado_en,colour,creado_en,density,diameter,filament_config,filamento_por_kg,material,nombre,id) values (?,?,?,?,?,?,?,?,?,?)
+2026-06-16T09:33:52.657+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0 where fp1_0.id=?
+2026-06-16T09:33:52.661+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from filament_profiles fp1_0
+2026-06-16T09:33:52.672+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.674+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0 where fp1_0.id=?
+2026-06-16T09:33:52.681+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.686+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : insert into filament_profiles (actualizado_en,colour,creado_en,density,diameter,filament_config,filamento_por_kg,material,nombre,id) values (?,?,?,?,?,?,?,?,?,?)
+2026-06-16T09:33:52.689+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from filament_profiles fp1_0 where fp1_0.id=?
+2026-06-16T09:33:52.692+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : delete from filament_profiles where id=?
+2026-06-16T09:33:52.692+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from filament_profiles fp1_0 where fp1_0.id=?
+2026-06-16T09:33:52.702+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select fp1_0.id,fp1_0.actualizado_en,fp1_0.colour,fp1_0.creado_en,fp1_0.density,fp1_0.diameter,fp1_0.filament_config,fp1_0.filamento_por_kg,fp1_0.material,fp1_0.nombre from filament_profiles fp1_0
+2026-06-16T09:33:52.705+08:00 DEBUG 32376 --- [    Test worker] org.hibernate.SQL                        : select count(*) from filament_profiles fp1_0 where fp1_0.id=?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

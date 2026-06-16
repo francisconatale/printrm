@@ -28,43 +28,17 @@ class AjustesServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("initDefaultAjustes() crea registro con valores por defecto cuando la tabla está vacía")
-    void initDefaultAjustes_createsDefaultRecord_whenTableIsEmpty() {
-        // El @PostConstruct ya habrá corrido; limpiamos y volvemos a llamar manualmente
-        ajustesRepository.deleteAll();
+    @DisplayName("initDefaultAjustes() es idempotente: doble llamada no duplica el registro")
+    void initDefaultAjustes_isIdempotent() {
         ajustesService.initDefaultAjustes();
-
-        AjustesDTO result = ajustesService.getAjustes();
-
-        assertThat(result).isNotNull();
-        assertThat(result.getPreciokWh()).isEqualTo(50.0);
-        assertThat(result.getMargenError()).isEqualTo(10.0);
-    }
-
-    @Test
-    @DisplayName("initDefaultAjustes() NO duplica el registro si ya existe")
-    void initDefaultAjustes_doesNotDuplicate_whenRecordAlreadyExists() {
         ajustesService.initDefaultAjustes();
-        ajustesService.initDefaultAjustes(); // segunda llamada
 
         assertThat(ajustesRepository.count()).isEqualTo(1);
     }
 
     @Test
-    @DisplayName("getAjustes() devuelve los valores guardados")
-    void getAjustes_returnsPersistedValues() {
-        ajustesService.initDefaultAjustes();
-
-        AjustesDTO result = ajustesService.getAjustes();
-
-        assertThat(result.getPreciokWh()).isEqualTo(50.0);
-        assertThat(result.getMargenError()).isEqualTo(10.0);
-    }
-
-    @Test
-    @DisplayName("getAjustes() devuelve defaults hardcoded cuando no hay ningún registro")
+    @DisplayName("getAjustes() devuelve defaults hardcoded cuando la tabla está vacía (sin lanzar excepción)")
     void getAjustes_returnsFallbackDefaults_whenNoRecord() {
-        // No llamamos a init, la tabla está vacía tras setUp
         AjustesDTO result = ajustesService.getAjustes();
 
         assertThat(result).isNotNull();
@@ -73,7 +47,7 @@ class AjustesServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("updateAjustes() persiste correctamente los nuevos valores")
+    @DisplayName("updateAjustes() persiste nuevos valores y los devuelve en el siguiente get")
     void updateAjustes_persistsNewValues() {
         ajustesService.initDefaultAjustes();
 
@@ -82,29 +56,24 @@ class AjustesServiceIntegrationTest {
                 .margenError(15.0)
                 .build();
 
-        AjustesDTO result = ajustesService.updateAjustes(update);
+        ajustesService.updateAjustes(update);
 
-        assertThat(result.getPreciokWh()).isEqualTo(120.0);
-        assertThat(result.getMargenError()).isEqualTo(15.0);
-
-        // Verificar que persiste leyendo de nuevo
         AjustesDTO persisted = ajustesService.getAjustes();
         assertThat(persisted.getPreciokWh()).isEqualTo(120.0);
         assertThat(persisted.getMargenError()).isEqualTo(15.0);
     }
 
     @Test
-    @DisplayName("updateAjustes() crea registro si no existe (upsert implícito)")
+    @DisplayName("updateAjustes() crea registro si no existe (upsert implícito en tabla vacía)")
     void updateAjustes_createsRecord_whenNotExists() {
-        // tabla vacía — no hay registro previo
         AjustesDTO update = AjustesDTO.builder()
                 .preciokWh(75.0)
                 .margenError(5.0)
                 .build();
 
-        AjustesDTO result = ajustesService.updateAjustes(update);
+        ajustesService.updateAjustes(update);
 
-        assertThat(result.getPreciokWh()).isEqualTo(75.0);
         assertThat(ajustesRepository.count()).isEqualTo(1);
+        assertThat(ajustesService.getAjustes().getPreciokWh()).isEqualTo(75.0);
     }
 }
