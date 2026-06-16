@@ -36,6 +36,10 @@ public class PiezaSTL {
     private Double pesoGramos;
     private String tiempoEstimado;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String imagenBase64;
+
     // Perfiles de preferencia (Opcionales)
     @ManyToOne
     @JoinColumn(name = "perfil_impresora_id")

@@ -31,16 +31,17 @@ public class PiezaSTLService {
                 .volumenCm3(dto.getVolumenCm3())
                 .pesoGramos(dto.getPesoGramos())
                 .tiempoEstimado(dto.getTiempoEstimado())
+                .imagenBase64(dto.getImagenBase64())
                 .build();
 
         if (dto.getPerfilImpresoraId() != null) {
-            pieza.setPerfilPreferido(perfilRepository.findById(dto.getPerfilImpresoraId()).orElse(null));
+            pieza.setPerfilPreferido(perfilRepository.findById(java.util.UUID.fromString(dto.getPerfilImpresoraId())).orElse(null));
         }
         if (dto.getPerfilFilamentoId() != null) {
-            pieza.setFilamentoPreferido(filamentRepository.findById(dto.getPerfilFilamentoId()).orElse(null));
+            pieza.setFilamentoPreferido(filamentRepository.findById(java.util.UUID.fromString(dto.getPerfilFilamentoId())).orElse(null));
         }
         if (dto.getPerfilImpresionId() != null) {
-            pieza.setImpresionPreferida(printRepository.findById(dto.getPerfilImpresionId()).orElse(null));
+            pieza.setImpresionPreferida(printRepository.findById(java.util.UUID.fromString(dto.getPerfilImpresionId())).orElse(null));
         }
 
         return mapToDTO(repository.save(pieza));
@@ -59,6 +60,7 @@ public class PiezaSTLService {
         dto.setVolumenCm3(pieza.getVolumenCm3());
         dto.setPesoGramos(pieza.getPesoGramos());
         dto.setTiempoEstimado(pieza.getTiempoEstimado());
+        dto.setImagenBase64(pieza.getImagenBase64());
         dto.setCreadoEn(pieza.getCreadoEn());
 
         if (pieza.getPerfilPreferido() != null) dto.setPerfilImpresoraNombre(pieza.getPerfilPreferido().getNombre());
