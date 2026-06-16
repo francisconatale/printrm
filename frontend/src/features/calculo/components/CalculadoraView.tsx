@@ -19,6 +19,7 @@ import {
 } from '../../perfiles/api/perfiles.api'
 import { useGuardarCalculo } from '../api/calculos.api'
 import { useSliceSTL } from '../api/slicer.api'
+import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
 
 export function CalculadoraView() {
@@ -77,6 +78,7 @@ export function CalculadoraView() {
   const { mutate: updatePerfil, isPending: isUpdating } = useUpdatePerfil();
   const { mutate: guardarCalculo, isPending: isSavingCalculo } = useGuardarCalculo();
   const { mutate: sliceSTL, isPending: isSlicing } = useSliceSTL();
+  const { mutate: guardarPieza, isPending: isSavingPieza } = useGuardarPieza();
 
   const handlePerfilSubmit = (data: any) => {
     console.log("StudioDashboard - Iniciando guardado de perfil:", { editingPerfil, data });
@@ -119,6 +121,28 @@ export function CalculadoraView() {
     guardarCalculo(snapshot, {
       onSuccess: () => {
         alert('Cálculo guardado en el historial');
+      }
+    });
+  };
+
+  const handleSaveToLibrary = () => {
+    if (!file || !resultado) return;
+
+    const canvas = document.querySelector('canvas');
+    const imagenBase64 = canvas ? canvas.toDataURL('image/png') : undefined;
+
+    guardarPieza({
+      nombre: file.name.replace('.stl', ''),
+      filePath: file.name, 
+      pesoGramos: resultado.gramos,
+      tiempoEstimado: `${resultado.horas}h ${resultado.minutosAdicionales}m`,
+      perfilImpresoraId: activePrinter?.id,
+      perfilFilamentoId: activeFilament?.id,
+      perfilImpresionId: overrideConfigs.print || undefined,
+      imagenBase64,
+    }, {
+      onSuccess: () => {
+        alert('Pieza guardada en la biblioteca');
       }
     });
   };
@@ -227,6 +251,8 @@ export function CalculadoraView() {
                     resultado={resultado}
                     onSave={handleSaveCalculo}
                     isSaving={isSavingCalculo}
+                    onSaveToLibrary={handleSaveToLibrary}
+                    isSavingToLibrary={isSavingPieza}
                     onAnalyze={handleAnalyze}
                     isAnalyzing={isAnalyzing || isSlicing}
                     hasFile={!!file}

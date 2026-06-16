@@ -23,9 +23,9 @@ const filamentSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(50),
   material: z.string().min(1, "El material es obligatorio"),
   filamentoPorKg: z.number().min(0, "Costo no puede ser negativo"),
-  density: z.number().min(0.1, "Densidad mínima 0.1").max(5.0, "Densidad máxima 5.0"),
-  diameter: z.number().min(0.5, "Diámetro mínimo 0.5 mm").max(5.0, "Diámetro máximo 5.0 mm"),
-  colour: z.string().min(4).max(7).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Debe ser un color hexadecimal válido"),
+  density: z.number().min(0.1, "Densidad m nima 0.1").max(5.0, "Densidad maxima 5.0"),
+  diameter: z.number().min(0.5, "Di metro m nimo 0.5 mm").max(5.0, "Diametro maximo 5.0 mm"),
+  colour: z.string().min(4).max(7).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Debe ser un color hexadecimal valido"),
 });
 
 interface FilamentProfileFormProps {
@@ -65,8 +65,8 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
   };
 
   return (
-    <form onSubmit={handleSubmit(onInternalSubmit)} className="flex flex-col h-full max-h-[80vh]">
-      <div className="flex-1 overflow-y-auto px-1 py-2 space-y-8">
+    <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-8">
+      
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
           <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mb-2 flex items-center gap-2">
             <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos del Filamento</h3>
@@ -120,7 +120,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
           </div>
 
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Densidad (g/cm³)</label>
+            <label className="studio-caption font-semibold">Densidad (g/cmÂ³ )</label>
             <input 
               type="number"
               step="0.01"
@@ -132,7 +132,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
           </div>
 
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Diámetro (mm)</label>
+            <label className="studio-caption font-semibold">Di metro (mm)</label>
             <input 
               type="number"
               step="0.01"
@@ -190,7 +190,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
             {errors.colour && <p className="text-red-500 text-xs mt-1">{errors.colour.message}</p>}
           </div>
         </div>
-      </div>
+      
 
       <div className="pt-6 pb-2 mt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4">
         <button 

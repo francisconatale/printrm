@@ -6,10 +6,10 @@ import { PrintProfile, PrintProfileCreate } from '../types/perfiles.types';
 
 const printSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(50),
-  layerHeight: z.number().min(0.05, "Mínimo 0.05 mm").max(1.2, "Máximo 1.2 mm"),
-  perimeters: z.number().min(1, "Mínimo 1 perímetro").max(10, "Máximo 10 perímetros"),
+  layerHeight: z.number().min(0.05, "Mï¿½nimo 0.05 mm").max(1.2, "Mï¿½ximo 1.2 mm"),
+  perimeters: z.number().min(1, "Mï¿½nimo 1 perï¿½metro").max(10, "Mï¿½ximo 10 perï¿½metros"),
   fillDensity: z.string().min(1, "Relleno obligatorio"),
-  speedPrint: z.number().min(5, "Velocidad mínima 5 mm/s").max(500, "Velocidad máxima 500 mm/s"),
+  speedPrint: z.number().min(5, "Velocidad mï¿½nima 5 mm/s").max(500, "Velocidad mï¿½xima 500 mm/s"),
 });
 
 interface PrintProfileFormProps {
@@ -47,7 +47,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
     <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
         <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mb-2">
-          <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos de Ajustes de Impresión</h3>
+          <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos de Ajustes de Impresiï¿½n</h3>
         </div>
 
         <div className="space-y-2">
@@ -55,7 +55,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
           <input 
             {...register('nombre')}
             className="w-full bg-background border border-border rounded-lg px-4 py-2"
-            placeholder="Ej: Calidad Estándar 0.2"
+            placeholder="Ej: Calidad Estï¿½ndar 0.2"
           />
           {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
         </div>
@@ -73,7 +73,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
         </div>
 
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Perímetros / Paredes</label>
+          <label className="studio-caption font-semibold">Perï¿½metros / Paredes</label>
           <input 
             type="number"
             {...register('perimeters', { valueAsNumber: true })}
@@ -94,7 +94,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
         </div>
 
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Velocidad de Impresión (mm/s)</label>
+          <label className="studio-caption font-semibold">Velocidad de Impresiï¿½n (mm/s)</label>
           <input 
             type="number"
             {...register('speedPrint', { valueAsNumber: true })}
@@ -106,7 +106,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
 
       </div>
 
-      <div className="sticky bottom-0 bg-background pt-6 pb-2 mt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4 z-20">
+      <div className="pt-6 pb-2 mt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4">
         <button 
           type="button"
           onClick={onCancel}

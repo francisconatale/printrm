@@ -14,6 +14,9 @@ describe('Clipboard Utils', () => {
           multiplicador: 3,
         },
         resultado: {
+          horas: 2,
+          minutosAdicionales: 30,
+          gramos: 50,
           tiempoTotalHoras: 2.5,
           costoEnergia: 50,
           costoFilamento: 200,

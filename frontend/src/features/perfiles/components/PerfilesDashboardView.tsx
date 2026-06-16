@@ -316,7 +316,7 @@ export const PerfilesDashboardView: React.FC = () => {
               title={currentConfig.title}
               description={currentConfig.description}
               newButtonText={currentConfig.newButtonText}
-              icon={currentConfig.icon}
+              icon={currentConfig.icon as any}
               label={currentConfig.label}
               isLoading={currentConfig.isLoading}
               hasItems={currentConfig.items.length > 0}
@@ -326,7 +326,7 @@ export const PerfilesDashboardView: React.FC = () => {
               }}
             >
               <ConfigTable
-                items={currentConfig.items}
+                items={currentConfig.items as any}
                 columns={currentConfig.columns as any}
                 onEdit={(item) => {
                   setEditingItem(item);

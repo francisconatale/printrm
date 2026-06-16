@@ -19,12 +19,12 @@ export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' 
 const NAV_ITEMS = [
   { icon: Star, label: 'Resumen', id: 'overview' },
   { icon: Printer, label: 'Cotizador', id: 'calculator' },
+  { icon: Package, label: 'Biblioteca STL', id: 'inventory' },
   { icon: Sliders, label: 'Perfiles', id: 'profiles' },
   { icon: LayoutDashboard, label: 'Finanzas', id: 'dashboard' },
   { icon: List, label: 'Transacciones', id: 'transactions' },
   { icon: ArrowUpDown, label: 'Ingresos/Egresos', id: 'finance' },
   { icon: Users, label: 'Clientes', id: 'customers' },
-  { icon: Package, label: 'Inventario', id: 'inventory' },
   { icon: BarChart, label: 'Reportes', id: 'reports' },
 ];
 

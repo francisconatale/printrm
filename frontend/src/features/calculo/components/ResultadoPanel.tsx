@@ -8,6 +8,8 @@ interface ResultadoPanelProps {
   resultado: ResultadoCalculo | null;
   onSave: () => void;
   isSaving?: boolean;
+  onSaveToLibrary?: () => void;
+  isSavingToLibrary?: boolean;
   onAnalyze?: () => void;
   isAnalyzing?: boolean;
   hasFile?: boolean;
@@ -24,8 +26,20 @@ const formatCurrency = (value: number) => {
 };
 
 export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
-  resultado, onSave, isSaving, onAnalyze, isAnalyzing, hasFile, hasAnalyzed,
-  insumosExtra = 0, onInsumosExtraChange, multiplicador = 3, onMultiplicadorChange, onReset,
+  resultado, 
+  onSave, 
+  isSaving, 
+  onSaveToLibrary, 
+  isSavingToLibrary, 
+  onAnalyze, 
+  isAnalyzing, 
+  hasFile, 
+  hasAnalyzed,
+  insumosExtra = 0, 
+  onInsumosExtraChange, 
+  multiplicador = 3, 
+  onMultiplicadorChange, 
+  onReset,
 }) => {
   const { ajustes, updateAjustes } = useAjustes();
   const [showInsumos, setShowInsumos] = React.useState(false);
@@ -146,6 +160,11 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           <button onClick={onSave} disabled={isSaving || resultado.subtotal === 0}
             className="studio-button-primary !w-full mt-6 !py-3 text-[13px] font-bold">
             {isSaving ? 'Guardando...' : 'Guardar en Historial'}
+          </button>
+
+          <button onClick={onSaveToLibrary} disabled={isSavingToLibrary || resultado.subtotal === 0}
+            className="studio-button-secondary-pill !w-full mt-3 !py-3 text-[13px] font-bold border-zinc-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800">
+            {isSavingToLibrary ? 'Guardando...' : 'Añadir a Biblioteca'}
           </button>
         </>
       ) : (

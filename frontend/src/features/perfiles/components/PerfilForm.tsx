@@ -75,131 +75,129 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
   };
 
   return (
-    <form onSubmit={handleSubmit(onInternalSubmit)} className="flex flex-col h-full max-h-[80vh]">
-      <div className="flex-1 overflow-y-auto px-1 py-2 space-y-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
-          <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mb-2 flex items-center gap-2">
-            <Monitor size={14} className="text-muted-foreground" />
-            <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos Generales</h3>
-          </div>
+    <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
+        <div className="col-span-full border-b border-border/50 pb-2 mb-2 flex items-center gap-2">
+          <Monitor size={14} className="text-muted-foreground" />
+          <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos Generales</h3>
+        </div>
 
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Nombre del Perfil</label>
-            <input 
-              {...register('nombre')}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-foreground outline-none transition-all"
-              placeholder="Ej: MK4 - Trabajo"
-            />
-            {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
-          </div>
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Nombre del Perfil</label>
+          <input 
+            {...register('nombre')}
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-foreground outline-none transition-all"
+            placeholder="Ej: MK4 - Trabajo"
+          />
+          {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
+        </div>
 
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Modelo de Impresora</label>
-            <div className="relative">
-              <select 
-                {...register('modeloImpresora')}
-                className="w-full bg-background border border-border rounded-lg px-4 py-2 appearance-none focus:ring-2 focus:ring-foreground outline-none"
-              >
-                {MODELOS_IMPRESORA.map(m => (
-                  <option key={m.nombre} value={m.nombre}>{m.nombre}</option>
-                ))}
-              </select>
-            </div>
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Modelo de Impresora</label>
+          <div className="relative">
+            <select 
+              {...register('modeloImpresora')}
+              className="w-full bg-background border border-border rounded-lg px-4 py-2 appearance-none focus:ring-2 focus:ring-foreground outline-none"
+            >
+              {MODELOS_IMPRESORA.map(m => (
+                <option key={m.nombre} value={m.nombre}>{m.nombre}</option>
+              ))}
+            </select>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Consumo Promedio (W)</label>
-            <div className="relative">
-              <input 
-                type="number"
-                {...register('consumoW', { valueAsNumber: true })}
-                className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              />
-              <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">WATTS</span>
-            </div>
-            {errors.consumoW && <p className="text-red-500 text-xs mt-1">{errors.consumoW.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Vida Útil (Horas)</label>
-            <div className="relative">
-              <input 
-                type="number"
-                {...register('vidaUtilHoras', { valueAsNumber: true })}
-                className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              />
-              <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">HS</span>
-            </div>
-            {errors.vidaUtilHoras && <p className="text-red-500 text-xs mt-1">{errors.vidaUtilHoras.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Costo Repuestos ($)</label>
-            <div className="relative">
-              <input 
-                type="number"
-                {...register('costoRepuestos', { valueAsNumber: true })}
-                className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              />
-              <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS</span>
-            </div>
-            {errors.costoRepuestos && <p className="text-red-500 text-xs mt-1">{errors.costoRepuestos.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Costo Filamento ($ / kg)</label>
-            <div className="relative">
-              <input 
-                type="number"
-                {...register('filamentoPorKg', { valueAsNumber: true })}
-                className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              />
-              <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS/KG</span>
-            </div>
-            {errors.filamentoPorKg && <p className="text-red-500 text-xs mt-1">{errors.filamentoPorKg.message}</p>}
-          </div>
-
-          <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mt-4 mb-2 flex items-center gap-2">
-            <Settings size={14} className="text-muted-foreground" />
-            <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Hardware y Slicer</h3>
-          </div>
-
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Diámetro de Boquilla (mm)</label>
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Consumo Promedio (W)</label>
+          <div className="relative">
             <input 
               type="number"
-              step="0.1"
-              {...register('nozzleDiameter', { valueAsNumber: true })}
+              {...register('consumoW', { valueAsNumber: true })}
               className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              placeholder="Ej: 0.4"
             />
-            {errors.nozzleDiameter && <p className="text-red-500 text-xs mt-1">{errors.nozzleDiameter.message}</p>}
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">WATTS</span>
           </div>
+          {errors.consumoW && <p className="text-red-500 text-xs mt-1">{errors.consumoW.message}</p>}
+        </div>
 
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Dimensiones Cama (Ancho x Alto, mm)</label>
-            <input 
-              {...register('bedShape')}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              placeholder="Ej: 220x220"
-            />
-            {errors.bedShape && <p className="text-red-500 text-xs mt-1">{errors.bedShape.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="studio-caption font-semibold">Altura Máxima Z (mm)</label>
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Vida Útil (Horas)</label>
+          <div className="relative">
             <input 
               type="number"
-              {...register('maxPrintHeight', { valueAsNumber: true })}
+              {...register('vidaUtilHoras', { valueAsNumber: true })}
               className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-              placeholder="Ej: 250"
             />
-            {errors.maxPrintHeight && <p className="text-red-500 text-xs mt-1">{errors.maxPrintHeight.message}</p>}
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">HS</span>
           </div>
+          {errors.vidaUtilHoras && <p className="text-red-500 text-xs mt-1">{errors.vidaUtilHoras.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Costo Repuestos ($)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              {...register('costoRepuestos', { valueAsNumber: true })}
+              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
+            />
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS</span>
+          </div>
+          {errors.costoRepuestos && <p className="text-red-500 text-xs mt-1">{errors.costoRepuestos.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Costo Filamento ($ / kg)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              {...register('filamentoPorKg', { valueAsNumber: true })}
+              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
+            />
+            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS/KG</span>
+          </div>
+          {errors.filamentoPorKg && <p className="text-red-500 text-xs mt-1">{errors.filamentoPorKg.message}</p>}
+        </div>
+
+        <div className="col-span-full border-b border-border/50 pb-2 mt-4 mb-2 flex items-center gap-2">
+          <Settings size={14} className="text-muted-foreground" />
+          <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Hardware y Slicer</h3>
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Diámetro de Boquilla (mm)</label>
+          <input 
+            type="number"
+            step="0.1"
+            {...register('nozzleDiameter', { valueAsNumber: true })}
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
+            placeholder="Ej: 0.4"
+          />
+          {errors.nozzleDiameter && <p className="text-red-500 text-xs mt-1">{errors.nozzleDiameter.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Dimensiones Cama (Ancho x Alto, mm)</label>
+          <input 
+            {...register('bedShape')}
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
+            placeholder="Ej: 220x220"
+          />
+          {errors.bedShape && <p className="text-red-500 text-xs mt-1">{errors.bedShape.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <label className="studio-caption font-semibold">Altura Máxima Z (mm)</label>
+          <input 
+            type="number"
+            {...register('maxPrintHeight', { valueAsNumber: true })}
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
+            placeholder="Ej: 250"
+          />
+          {errors.maxPrintHeight && <p className="text-red-500 text-xs mt-1">{errors.maxPrintHeight.message}</p>}
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background pt-6 pb-2 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4 z-20 mt-auto">
+      <div className="pt-6 pb-2 border-t border-border/50 flex flex-col sm:flex-row gap-4">
         <button 
           type="button"
           onClick={onCancel}
