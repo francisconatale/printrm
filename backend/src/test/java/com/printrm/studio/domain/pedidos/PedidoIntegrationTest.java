@@ -32,15 +32,15 @@ public class PedidoIntegrationTest {
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Juan Pérez").build());
 
         // 2. Setup: Simular dos cálculos (snapshots)
-        Calculo calcA = calculoRepository.save(Calculo.builder().precioVenta(100.0).build());
-        Calculo calcB = calculoRepository.save(Calculo.builder().precioVenta(50.0).build());
+        Calculo calcA = calculoRepository.save(Calculo.builder().costoBase(100.0).build());
+        Calculo calcB = calculoRepository.save(Calculo.builder().costoBase(50.0).build());
 
         // 3. Acción: Crear Pedido con 8 unidades de A y 2 de B
         PedidoRequestDTO request = new PedidoRequestDTO();
         request.setClienteId(cliente.getId());
         request.setItems(List.of(
-            new ItemPedidoRequestDTO(calcA.getId(), 8),
-            new ItemPedidoRequestDTO(calcB.getId(), 2)
+            new ItemPedidoRequestDTO(calcA.getId(), null, 8),
+            new ItemPedidoRequestDTO(calcB.getId(), null, 2)
         ));
 
         PedidoResponseDTO pedido = pedidoService.crearPedido(request);
@@ -56,10 +56,10 @@ public class PedidoIntegrationTest {
     public void testAjusteDeCantidadRecalculaTotal() {
         // 1. Setup: Pedido inicial con 8 unidades (8 * 100 = 800)
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Ana").build());
-        Calculo calc = calculoRepository.save(Calculo.builder().precioVenta(100.0).build());
+        Calculo calc = calculoRepository.save(Calculo.builder().costoBase(100.0).build());
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(cliente.getId(), 
-            List.of(new ItemPedidoRequestDTO(calc.getId(), 8))));
+            List.of(new ItemPedidoRequestDTO(calc.getId(), null, 8))));
         
         assertEquals(800.0, pedido.getTotal());
 
@@ -75,9 +75,9 @@ public class PedidoIntegrationTest {
     @Test
     public void testCancelarPedidoCambiaEstadoYPreservaDatos() {
         // 1. Setup: Crear pedido
-        Calculo calc = calculoRepository.save(Calculo.builder().precioVenta(100.0).build());
+        Calculo calc = calculoRepository.save(Calculo.builder().costoBase(100.0).build());
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
-            List.of(new ItemPedidoRequestDTO(calc.getId(), 1))));
+            List.of(new ItemPedidoRequestDTO(calc.getId(), null, 1))));
 
         // 2. Acción: Cancelar
         pedidoService.cambiarEstado(pedido.getId(), "CANCELADO");

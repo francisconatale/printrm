@@ -13,10 +13,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CalculoController {
     private final CalculoService calculoService;
+    private final CostCalculationService costCalculationService;
 
     @GetMapping
     public List<CalculoResponseDTO> getHistorial() {
         return calculoService.getHistorial();
+    }
+
+    @PostMapping("/calculate")
+    public CostCalculationResult calculateCost(@RequestBody CalculoRequestDTO request) {
+        return costCalculationService.calculateCost(
+            request.getGramos(),
+            request.getHoras(),
+            request.getMinutosAdicionales(),
+            request.getInsumosExtra(),
+            request.getPerfilId(),
+            null // Standard filament logic can be extended if needed
+        );
     }
 
     @PostMapping
@@ -37,4 +50,3 @@ public class CalculoController {
         calculoService.limpiarHistorial();
     }
 }
-

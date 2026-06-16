@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Producto } from '../types/stock.types';
 import { STLPreview } from '../../biblioteca/components/STLPreview';
-import { Plus, Minus, Package, Tag, MoreVertical, Trash2, Coins, ListFilter } from 'lucide-react';
+import { Plus, Minus, Package, MoreVertical, Trash2, Coins, ListFilter } from 'lucide-react';
 import { useUpdateStock } from '../api/productos.api';
 import {
   DropdownMenu,
@@ -23,8 +23,8 @@ const formatCurrency = (value: number) => {
 export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }) => {
   const { mutate: updateStock } = useUpdateStock();
   const [isLotesModalOpen, setIsLotesModalOpen] = useState(false);
-
-  // Calculate total production cost from parts for new lots
+  
+  // PRODUCTION COST: Aggregate of parts' costoBase (calculated centraly in the backend)
   const currentProductionCost = React.useMemo(() => {
     return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
   }, [producto.partes]);
@@ -46,10 +46,12 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
             <span className="text-[10px] font-bold text-zinc-800">{producto.cantidadStock} EN STOCK</span>
           </div>
 
-          {/* Cost Info Overlay */}
+          {/* Cost Info Overlay (Centralized Backend logic) */}
           <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 shadow-sm flex items-center gap-2 text-white">
             <Coins size={10} className="text-zinc-300" />
-            <span className="text-[9px] font-bold tracking-tight uppercase">Producción: {formatCurrency(currentProductionCost)}</span>
+            <span className="text-[9px] font-bold tracking-tight uppercase" title="Costo calculado centralmente por la API">
+              Costo Fab: {formatCurrency(currentProductionCost)}
+            </span>
           </div>
 
           {/* Lots Breakdown Indicator (Clickable) */}
@@ -60,7 +62,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
                 setIsLotesModalOpen(true);
               }}
               className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold hover:bg-white hover:text-black transition-all group/btn shadow-lg"
-              title="Ver desglose de inventario"
+              title="Ver desglose de inventario (FIFO)"
             >
               <ListFilter size={12} className="group-hover/btn:rotate-180 transition-transform duration-500" />
               <span>{producto.lotes.length} {producto.lotes.length === 1 ? 'Lote' : 'Lotes'}</span>
@@ -115,7 +117,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
                 <Minus size={14} />
               </button>
               <button 
-                onClick={() => updateStock({ id: producto.id, delta: 1, costo: currentProductionCost })}
+                onClick={() => updateStock({ id: producto.id, delta: 1 })}
                 className="size-8 rounded-full hover:bg-white flex items-center justify-center transition-colors shadow-sm"
               >
                 <Plus size={14} />
@@ -133,4 +135,3 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
     </>
   );
 };
-

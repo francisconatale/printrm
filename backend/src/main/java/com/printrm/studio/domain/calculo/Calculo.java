@@ -42,19 +42,14 @@ public class Calculo {
     private Double gramos;
     @Column(name = "insumos_extra")
     private Double insumosExtra;
-    private Double multiplicador;
 
     // Result fields
     @Column(name = "costo_energia")
     private Double costoEnergia;
     @Column(name = "costo_filamento")
     private Double costoFilamento;
-    @Column(name = "costo_desgaste")
-    private Double costoDesgaste;
     private Double subtotal;
     @Column(name = "costo_base")
     private Double costoBase;
-    @Column(name = "precio_venta")
-    private Double precioVenta;
 }
 

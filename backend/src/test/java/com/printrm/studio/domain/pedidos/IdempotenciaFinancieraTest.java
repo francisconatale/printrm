@@ -30,11 +30,11 @@ public class IdempotenciaFinancieraTest {
         Calculo calc = calculoRepository.save(Calculo.builder()
                 .costoEnergia(10.0)
                 .costoFilamento(90.0)
-                .precioVenta(400.0)
+                .costoBase(400.0)
                 .build());
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
-                List.of(new ItemPedidoRequestDTO(calc.getId(), 1))));
+                List.of(new ItemPedidoRequestDTO(calc.getId(), null, 1))));
 
         // 2. Acción: Iniciar producción (debería generar egresos por separado)
         pedidoService.cambiarEstado(pedido.getId(), "EN_PRODUCCION");

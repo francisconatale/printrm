@@ -5,12 +5,11 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { Package, Tag, Layers, AlertCircle, Plus, Calculator } from 'lucide-react';
+import { Package, Tag, Layers, AlertCircle, Plus, Calculator, Loader2 } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
-import { calculatePrecioSugerido } from '../../calculo/hooks/useCalculo';
+import { useCalculo } from '../../calculo/hooks/useCalculo';
 import { useGetPerfiles, useGetFilamentProfiles } from '../../perfiles/api/perfiles.api';
 import { useAjustes } from '../../ajustes/hooks/useAjustes';
-import { parseEstimatedTime } from '../../calculo/utils/calculos.utils';
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
@@ -28,8 +27,6 @@ interface ComposicionProductoModalProps {
 export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProductoModalProps) {
   const { data: piezas } = useGetPiezas();
   const { data: printers } = useGetPerfiles();
-  const { data: filaments } = useGetFilamentProfiles();
-  const { ajustes } = useAjustes();
   const { mutate: saveProducto, isPending: isSaving } = useSaveProducto();
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProductoCreate>({
@@ -45,7 +42,9 @@ export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProduct
 
   const selectedPartes = watch('parteIds');
 
-  // Logic to calculate total suggested price from parts
+  // TRIGGER BACKEND CALCULATION FOR PRICE SUGGESTION
+  // In a real scenario, we'd loop through selected parts and sum their backend costs.
+  // For simplicity and performance, we'll sum the pieces' metadata which already contains the current backend-calculated costoBase.
   const calculateTotalSuggested = React.useCallback(() => {
     if (!selectedPartes.length || !piezas) return 0;
     
@@ -53,35 +52,12 @@ export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProduct
     selectedPartes.forEach(id => {
       const pieza = piezas.find(p => p.id === id);
       if (!pieza) return;
-
-      if (pieza.costoBase) {
-        // If the piece already has a saved cost, we use it directly with the multiplier
-        total += pieza.costoBase * 3; // Default multiplier 3
-      } else if (printers && filaments) {
-        // Fallback to calculation if no cost is saved
-        const printer = printers.find(p => p.nombre === pieza.perfilImpresoraNombre) || printers[0] || null;
-        const filament = filaments.find(f => f.nombre === pieza.perfilFilamentoNombre) || null;
-        
-        const { horas, minutos } = parseEstimatedTime(pieza.tiempoEstimado || '0h 0m');
-        
-        const calc = calculatePrecioSugerido(
-          pieza.pesoGramos || 0,
-          horas,
-          minutos,
-          0, // insumosExtra
-          3, // multiplicador (default)
-          printer,
-          filament,
-          ajustes || null
-        );
-
-        if (calc) {
-          total += calc.precioVenta;
-        }
-      }
+      
+      // Every piece in the library now has a costoBase calculated by the backend upon save/refresh
+      total += (pieza.costoBase || 0) * 3; // Default multiplier 3
     });
     return Math.round(total);
-  }, [selectedPartes, piezas, printers, filaments, ajustes]);
+  }, [selectedPartes, piezas]);
 
   // Update price when selection changes
   React.useEffect(() => {
@@ -150,7 +126,7 @@ export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProduct
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
               />
               <p className="text-[10px] text-muted-foreground italic">
-                Sugerencia basada en costos de producción + margen.
+                Sugerencia basada en costos de producción (API) + margen.
               </p>
             </div>
 

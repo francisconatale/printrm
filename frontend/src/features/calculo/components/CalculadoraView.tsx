@@ -57,7 +57,6 @@ export function CalculadoraView() {
     minutosAdicionales: 0,
     gramos: 0,
     insumosExtra: 0,
-    multiplicador: 3
   });
 
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
@@ -71,7 +70,8 @@ export function CalculadoraView() {
     return filaments?.find(f => f.id === overrideConfigs.filament) || null;
   }, [filaments, overrideConfigs.filament]);
 
-  const resultado = useCalculo(piezaInput, activePrinter, activeFilament);
+  const calculationQuery = useCalculo(piezaInput, activePrinter, activeFilament);
+  const resultado = calculationQuery.data;
   
   const [showPerfilModal, setShowPerfilModal] = React.useState(false);
   const [editingPerfil, setEditingPerfil] = React.useState<Perfil | null>(null);
@@ -138,7 +138,6 @@ export function CalculadoraView() {
       filePath: file.name, 
       pesoGramos: resultado.gramos,
       tiempoEstimado: `${resultado.horas}h ${resultado.minutosAdicionales}m`,
-      costoBase: resultado.costoBase,
       perfilImpresoraId: activePrinter?.id,
       perfilFilamentoId: activeFilament?.id,
       perfilImpresionId: overrideConfigs.print || undefined,
@@ -261,8 +260,6 @@ export function CalculadoraView() {
                     hasAnalyzed={hasAnalyzed}
                     insumosExtra={piezaInput.insumosExtra}
                     onInsumosExtraChange={(v) => setPiezaInput(prev => ({ ...prev, insumosExtra: v }))}
-                    multiplicador={piezaInput.multiplicador}
-                    onMultiplicadorChange={(v) => setPiezaInput(prev => ({ ...prev, multiplicador: v }))}
                     onReset={handleResetAnalysis}
                   />
                 </div>

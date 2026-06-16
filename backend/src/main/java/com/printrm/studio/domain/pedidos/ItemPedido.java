@@ -44,7 +44,7 @@ public class ItemPedido {
         if (producto != null && cantidad != null) {
             this.subtotal = (producto.getPrecioSugerido() != null ? producto.getPrecioSugerido() : 0.0) * cantidad;
         } else if (calculo != null && cantidad != null) {
-            this.subtotal = (calculo.getPrecioVenta() != null ? calculo.getPrecioVenta() : 0.0) * cantidad;
+            this.subtotal = (calculo.getCostoBase() != null ? calculo.getCostoBase() : 0.0) * cantidad;
         }
     }
 }

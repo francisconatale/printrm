@@ -1,6 +1,12 @@
 package com.printrm.studio.domain.stock;
 
+import com.printrm.studio.domain.ajustes.AjustesDTO;
+import com.printrm.studio.domain.ajustes.AjustesService;
+import com.printrm.studio.domain.biblioteca.PiezaSTL;
+import com.printrm.studio.domain.biblioteca.PiezaSTLRepository;
 import com.printrm.studio.domain.biblioteca.PiezaSTLResponseDTO;
+import com.printrm.studio.domain.calculo.CostCalculationResult;
+import com.printrm.studio.domain.calculo.CostCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +23,8 @@ public class ProductoService {
     private final ProductoRepository repository;
     private final PiezaSTLRepository piezaRepository;
     private final LoteRepository loteRepository;
+    private final CostCalculationService costCalculationService;
+    private final AjustesService ajustesService;
 
     public List<ProductoResponseDTO> getAll() {
         return repository.findAll().stream()
@@ -51,7 +59,7 @@ public class ProductoService {
         Producto saved = repository.save(producto);
 
         if (isNew && initialStock > 0) {
-            addStock(saved.getId(), initialStock, 0.0); // Default cost 0 for initial stock if not specified
+            updateStock(saved.getId().toString(), initialStock); 
         }
 
         return mapToResponseDTO(saved);
@@ -132,8 +140,24 @@ public class ProductoService {
             .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         
         if (delta > 0) {
-            // If adding stock without specifying cost, we assume 0.0 or could take last lot's cost
-            addStock(producto.getId(), delta, 0.0);
+            // DYNAMIC CALCULATION: Recalculate cost based on current settings for the new lot
+            Double totalCost = 0.0;
+            AjustesDTO ajustes = ajustesService.getAjustes();
+            
+            for (PiezaSTL pieza : producto.getPartes()) {
+                CostCalculationResult res = costCalculationService.calculate(
+                    pieza.getPesoGramos(),
+                    parseHours(pieza.getTiempoEstimado()),
+                    parseMinutes(pieza.getTiempoEstimado()),
+                    0.0,
+                    pieza.getPerfilPreferido(),
+                    pieza.getFilamentoPreferido(),
+                    ajustes
+                );
+                totalCost += res.getCostoBase();
+            }
+            
+            addStock(producto.getId(), delta, totalCost);
         } else if (delta < 0) {
             consumeStock(producto, Math.abs(delta));
         }
@@ -164,6 +188,22 @@ public class ProductoService {
 
         producto.setCantidadStock(producto.getCantidadStock() - cantidadAConsumir);
         repository.save(producto);
+    }
+
+    private Integer parseHours(String time) {
+        if (time == null) return 0;
+        try {
+            String h = time.split("h")[0].trim();
+            return Integer.parseInt(h);
+        } catch (Exception e) { return 0; }
+    }
+
+    private Integer parseMinutes(String time) {
+        if (time == null || !time.contains("h")) return 0;
+        try {
+            String m = time.split("h")[1].replace("m", "").trim();
+            return Integer.parseInt(m);
+        } catch (Exception e) { return 0; }
     }
 
     @Transactional

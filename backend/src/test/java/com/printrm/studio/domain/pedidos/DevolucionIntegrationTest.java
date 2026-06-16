@@ -36,8 +36,8 @@ public class DevolucionIntegrationTest {
     public void testDevolucionDePedidoGeneraReembolsoYConsistenciaDeBalance() {
         // 1. Setup: Cliente y un Pedido ENTREGADO (que generó un Ingreso de $800)
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Cliente Devolución").build());
-        Calculo calc = calculoRepository.save(Calculo.builder().precioVenta(800.0).build());
-        PedidoRequestDTO request = new PedidoRequestDTO(cliente.getId(), List.of(new ItemPedidoRequestDTO(calc.getId(), 1)));
+        Calculo calc = calculoRepository.save(Calculo.builder().costoBase(800.0).build());
+        PedidoRequestDTO request = new PedidoRequestDTO(cliente.getId(), List.of(new ItemPedidoRequestDTO(calc.getId(), null, 1)));
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(request);
         pedidoService.cambiarEstado(pedido.getId(), "ENTREGADO");

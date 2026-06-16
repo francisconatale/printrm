@@ -8,6 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAjustes } from '../../ajustes/hooks/useAjustes';
+import { useGetPerfiles, useGetFilamentProfiles } from '../../perfiles/api/perfiles.api';
+import { calculatePrecioSugerido } from '../../calculo/hooks/useCalculo';
+import { parseEstimatedTime } from '../../calculo/utils/calculos.utils';
 
 interface STLCardProps {
   pieza: PiezaSTL;
@@ -48,8 +52,8 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }
           </div>
         )}
 
-        {/* Cost Badge */}
-        {pieza.costoBase && (
+        {/* Dynamic Cost Badge (Calculated by Backend) */}
+        {pieza.costoBase && pieza.costoBase > 0 && (
           <div className="absolute top-3 left-3 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
             <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
             <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>

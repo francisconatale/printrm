@@ -30,13 +30,10 @@ public class CalculoService {
                 .minutosAdicionales(request.getMinutosAdicionales() != null ? request.getMinutosAdicionales() : 0)
                 .gramos(request.getGramos())
                 .insumosExtra(request.getInsumosExtra() != null ? request.getInsumosExtra() : 0.0)
-                .multiplicador(request.getMultiplicador())
                 .costoEnergia(request.getCostoEnergia())
                 .costoFilamento(request.getCostoFilamento())
-                .costoDesgaste(request.getCostoDesgaste())
                 .subtotal(request.getSubtotal())
                 .costoBase(request.getCostoBase())
-                .precioVenta(request.getPrecioVenta())
                 .build();
 
         Calculo saved = calculoRepository.save(calculo);
@@ -63,14 +60,10 @@ public class CalculoService {
                 .minutosAdicionales(entity.getMinutosAdicionales())
                 .gramos(entity.getGramos())
                 .insumosExtra(entity.getInsumosExtra())
-                .multiplicador(entity.getMultiplicador())
                 .costoEnergia(entity.getCostoEnergia())
                 .costoFilamento(entity.getCostoFilamento())
-                .costoDesgaste(entity.getCostoDesgaste())
                 .subtotal(entity.getSubtotal())
                 .costoBase(entity.getCostoBase())
-                .precioVenta(entity.getPrecioVenta())
                 .build();
     }
 }
-

@@ -55,10 +55,6 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
             <span className="studio-caption text-muted-foreground">Costo Filamento</span>
             <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoFilamento)}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="studio-caption text-muted-foreground">Desgaste Máquina</span>
-            <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoDesgaste)}</span>
-          </div>
 
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1.5">
@@ -81,26 +77,8 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
           </div>
 
           <div className="flex justify-between items-center border-t border-[var(--border-subtle)] pt-4">
-            <span className="studio-caption text-foreground font-bold">Costo Base</span>
-            <span className="studio-caption font-bold text-foreground">{formatCurrency(resultado.costoBase)}</span>
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-[var(--border-subtle)] flex flex-col items-center">
-            <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2">Precio Sugerido</p>
-            <p className="text-4xl font-bold tracking-tight text-foreground mb-2">
-              {formatCurrency(resultado.precioVenta)}
-            </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/20">
-              <button onClick={() => {
-                const vals = [2, 3, 4, 5];
-                const idx = vals.indexOf(multiplicador);
-                onMultiplicadorChange?.(vals[(idx + 1) % vals.length]);
-              }} className="size-4 rounded-full hover:bg-muted/30 flex items-center justify-center transition-colors"
-                title="Ajustar multiplicador de ganancia">
-                <Percent size={9} className="text-muted-foreground" />
-              </button>
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Markup: {multiplicador}x</span>
-            </div>
+            <span className="studio-caption text-foreground font-bold">Costo Base Final</span>
+            <span className="text-xl font-bold text-foreground font-mono">{formatCurrency(resultado.costoBase)}</span>
           </div>
         </div>
       </div>

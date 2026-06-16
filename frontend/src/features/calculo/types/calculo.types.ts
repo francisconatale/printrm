@@ -3,7 +3,6 @@ export interface PiezaInput {
   minutosAdicionales: number;
   gramos: number;
   insumosExtra: number;       // ARS
-  multiplicador: number;      // default 3
 }
 
 export interface ResultadoCalculo {
@@ -30,7 +29,6 @@ export interface CalculoSnapshot {
   minutosAdicionales: number;
   gramos: number;
   insumosExtra: number;
-  multiplicador: number;
 
   // Results
   costoEnergia: number;
@@ -38,6 +36,5 @@ export interface CalculoSnapshot {
   costoDesgaste: number;
   subtotal: number;
   costoBase: number;
-  precioVenta: number;
 }
 

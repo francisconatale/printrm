@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [2026-06-16] - Reestructuración y Profundización del Conocimiento en mis-specs/
+### Descripción
+- Se reestructuró de forma modular la base de conocimiento local en el directorio `mis-specs/` para evitar la mezcla de contextos y la superficialidad de la información.
+- Se crearon documentos maestros hiper-detallados con datos técnicos reales extraídos del código:
+  - `DISEÑO.md`: Detalla la Constitución de diseño visual, paleta cromática, escala tipográfica de Inter y JetBrains Mono, límites de sombras y feedback interactivo.
+  - `NEGOCIO_FINANZAS.md`: Detalla el funcionamiento de la lógica de inventario FIFO por lotes (fusión de lotes, cálculo de costos dinámicos, consumo secuencial), el ciclo de vida de los pedidos con triggers de balance y el blindaje en reembolsos de pagos parciales/señas.
+  - `ARQUITECTURA_TECNOLOGICA.md`: Detalla el stack tecnológico backend/frontend/desktop, base de datos local SQLite con Hibernate y el pipeline de empaquetado portátil para Windows.
+  - `FLUJOS_OPERATIVOS.md`: Detalla el pipeline de slicing 3D mediante invocación local de PrusaSlicer CLI, parseo del G-Code y pipeline de renderizado 3D mediante WebGL.
+  - `MODELO_DATOS.md`: Mapea exhaustivamente la relación entre todas las entidades del sistema (JPA/SQLite), detallando multiplicidades, llaves foráneas y el tipo de acoplamiento. Incluye un diagrama lógico en formato Mermaid y el esquema relacional detallado de todos los campos en notación estándar `Tabla(campo1 [PK], campo2 [FK], ...)`.
+  - `SUITE_TESTS.md`: Detalla los comandos de ejecución rápida para la suite de pruebas del backend (JUnit 5 / Spring Boot) y frontend (Vitest), listando exhaustivamente las lógicas de negocio testeadas (inventario FIFO, blindaje financiero, mermas contables) y la descripción del flujo integrador de punta a punta con su diagrama secuencial Mermaid.
+- Se actualizó `CONOCIMIENTO.md` como el índice modular de orquestación de estos submódulos.
+
+### Archivos Involucrados
+- [mis-specs/CONOCIMIENTO.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/CONOCIMIENTO.md)
+- [mis-specs/DISEÑO.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/DISE%C3%91O.md)
+- [mis-specs/NEGOCIO_FINANZAS.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/NEGOCIO_FINANZAS.md)
+- [mis-specs/ARQUITECTURA_TECNOLOGICA.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/ARQUITECTURA_TECNOLOGICA.md)
+- [mis-specs/FLUJOS_OPERATIVOS.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/FLUJOS_OPERATIVOS.md)
+- [mis-specs/MODELO_DATOS.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/MODELO_DATOS.md)
+- [mis-specs/SUITE_TESTS.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/mis-specs/SUITE_TESTS.md)
+- [.specify/current_task_summary.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/.specify/current_task_summary.md)
+- [CHANGELOG.md](file:///c:/Users/franc/OneDrive/Desktop/printrm/CHANGELOG.md)
+
 ## [2026-06-16] - Definición de Tareas: Sistema de Lote FIFO
 ### Descripción
 - Se definieron y documentaron las tareas de implementación para el Sistema de Lotes de Inventario FIFO, el cual ya se encuentra implementado en el código base.

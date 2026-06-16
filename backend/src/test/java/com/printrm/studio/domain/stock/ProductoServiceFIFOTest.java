@@ -28,7 +28,7 @@ class ProductoServiceFIFOTest {
     @Autowired
     private LoteRepository loteRepository;
 
-    private Producto producto;
+    private ProductoResponseDTO producto;
 
     @BeforeEach
     void setUp() {
@@ -44,9 +44,9 @@ class ProductoServiceFIFOTest {
     @Test
     @DisplayName("addStock() creates a new lot and updates total stock")
     void addStock_createsLot() {
-        productoService.addStock(producto.getId(), 10, 50.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 10, 50.0);
         
-        Producto updated = productoRepository.findById(producto.getId()).orElseThrow();
+        Producto updated = productoRepository.findById(UUID.fromString(producto.getId())).orElseThrow();
         assertThat(updated.getCantidadStock()).isEqualTo(10);
         
         List<Lote> lotes = loteRepository.findAll();
@@ -59,10 +59,10 @@ class ProductoServiceFIFOTest {
     @Test
     @DisplayName("addStock() merges with latest lot if cost is the same")
     void addStock_mergesSameCost() {
-        productoService.addStock(producto.getId(), 10, 50.0);
-        productoService.addStock(producto.getId(), 5, 50.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 10, 50.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 5, 50.0);
         
-        Producto updated = productoRepository.findById(producto.getId()).orElseThrow();
+        Producto updated = productoRepository.findById(UUID.fromString(producto.getId())).orElseThrow();
         assertThat(updated.getCantidadStock()).isEqualTo(15);
         
         List<Lote> lotes = loteRepository.findAll();
@@ -74,8 +74,8 @@ class ProductoServiceFIFOTest {
     @Test
     @DisplayName("addStock() creates new lot if cost is different")
     void addStock_createsNewLotIfCostDiffers() {
-        productoService.addStock(producto.getId(), 10, 50.0);
-        productoService.addStock(producto.getId(), 5, 60.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 10, 50.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 5, 60.0);
         
         List<Lote> lotes = loteRepository.findAll();
         assertThat(lotes).hasSize(2);
@@ -85,22 +85,22 @@ class ProductoServiceFIFOTest {
     @DisplayName("updateStock with delta < 0 consumes from oldest lot first (FIFO)")
     void updateStock_consumesFIFO() throws InterruptedException {
         // Add first lot (oldest)
-        productoService.addStock(producto.getId(), 10, 10.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 10, 10.0);
         Thread.sleep(100); // Ensure different timestamps if precision is low
         // Add second lot
-        productoService.addStock(producto.getId(), 20, 20.0);
+        productoService.addStock(UUID.fromString(producto.getId()), 20, 20.0);
 
         // Total stock should be 30
-        assertThat(productoRepository.findById(producto.getId()).get().getCantidadStock()).isEqualTo(30);
+        assertThat(productoRepository.findById(UUID.fromString(producto.getId())).get().getCantidadStock()).isEqualTo(30);
 
         // Consume 15 units
         // It should consume 10 from the first lot and 5 from the second lot
-        productoService.updateStock(producto.getId().toString(), -15);
+        productoService.updateStock(producto.getId(), -15);
 
-        Producto updated = productoRepository.findById(producto.getId()).get();
+        Producto updated = productoRepository.findById(UUID.fromString(producto.getId())).get();
         assertThat(updated.getCantidadStock()).isEqualTo(15);
 
-        List<Lote> lotes = loteRepository.findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc(producto.getId(), -1);
+        List<Lote> lotes = loteRepository.findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc(UUID.fromString(producto.getId()), -1);
         // We look for all lots to check their actual quantity
         
         // Note: findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc(id, 0) only returns lots with stock > 0
@@ -122,7 +122,7 @@ class ProductoServiceFIFOTest {
     @Test
     @DisplayName("updateStock with delta > 0 adds a new lot")
     void updateStock_positiveDeltaAddsLot() {
-        productoService.updateStock(producto.getId().toString(), 5);
+        productoService.updateStock(producto.getId(), 5);
         
         List<Lote> lotes = loteRepository.findAll();
         assertThat(lotes).hasSize(1);

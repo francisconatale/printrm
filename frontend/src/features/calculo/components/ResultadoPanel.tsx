@@ -18,8 +18,6 @@ interface ResultadoPanelProps {
   hasAnalyzed?: boolean;
   insumosExtra?: number;
   onInsumosExtraChange?: (v: number) => void;
-  multiplicador?: number;
-  onMultiplicadorChange?: (v: number) => void;
   onReset?: () => void;
 }
 
@@ -35,8 +33,6 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   hasAnalyzed,
   insumosExtra = 0, 
   onInsumosExtraChange, 
-  multiplicador = 3, 
-  onMultiplicadorChange, 
   onReset,
 }) => {
   const { ajustes, updateAjustes } = useAjustes();
@@ -78,8 +74,6 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           resultado={resultado}
           insumosExtra={insumosExtra}
           onInsumosExtraChange={onInsumosExtraChange}
-          multiplicador={multiplicador}
-          onMultiplicadorChange={onMultiplicadorChange}
           onSave={onSave}
           isSaving={isSaving}
           onSaveToLibrary={onSaveToLibrary}

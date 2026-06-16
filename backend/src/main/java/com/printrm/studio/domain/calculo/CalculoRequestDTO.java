@@ -32,22 +32,13 @@ public class CalculoRequestDTO {
     @Min(value = 0, message = "Los insumos extra no pueden ser negativos")
     private Double insumosExtra;
 
-    @NotNull(message = "El multiplicador es obligatorio")
-    @Min(value = 1, message = "El multiplicador debe ser al menos 1")
-    private Double multiplicador;
-
     // Precalculated results from frontend
     @NotNull
     private Double costoEnergia;
     @NotNull
     private Double costoFilamento;
     @NotNull
-    private Double costoDesgaste;
-    @NotNull
     private Double subtotal;
     @NotNull
     private Double costoBase;
-    @NotNull
-    private Double precioVenta;
 }
-

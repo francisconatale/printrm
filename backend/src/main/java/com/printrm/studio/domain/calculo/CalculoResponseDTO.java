@@ -21,14 +21,10 @@ public class CalculoResponseDTO {
     private Integer minutosAdicionales;
     private Double gramos;
     private Double insumosExtra;
-    private Double multiplicador;
 
     // Results
     private Double costoEnergia;
     private Double costoFilamento;
-    private Double costoDesgaste;
     private Double subtotal;
     private Double costoBase;
-    private Double precioVenta;
 }
-

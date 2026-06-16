@@ -37,13 +37,10 @@ class CalculoServiceIntegrationTest {
         dto.setMinutosAdicionales(30);
         dto.setGramos(50.0);
         dto.setInsumosExtra(100.0);
-        dto.setMultiplicador(3.0);
         dto.setCostoEnergia(45.0);
         dto.setCostoFilamento(750.0);
-        dto.setCostoDesgaste(200.0);
         dto.setSubtotal(995.0);
         dto.setCostoBase(1094.5);
-        dto.setPrecioVenta(3283.5);
         return dto;
     }
 
@@ -73,10 +70,8 @@ class CalculoServiceIntegrationTest {
         assertThat(saved.getGramos()).isEqualTo(50.0);
         assertThat(saved.getCostoEnergia()).isEqualTo(45.0);
         assertThat(saved.getCostoFilamento()).isEqualTo(750.0);
-        assertThat(saved.getCostoDesgaste()).isEqualTo(200.0);
         assertThat(saved.getSubtotal()).isEqualTo(995.0);
         assertThat(saved.getCostoBase()).isEqualTo(1094.5);
-        assertThat(saved.getPrecioVenta()).isEqualTo(3283.5);
     }
 
     @Test
