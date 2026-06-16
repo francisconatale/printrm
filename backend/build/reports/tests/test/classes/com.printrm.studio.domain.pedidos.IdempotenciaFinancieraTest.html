@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - IdempotenciaFinancieraTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>IdempotenciaFinancieraTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.printrm.studio.domain.pedidos.html">com.printrm.studio.domain.pedidos</a> &gt; IdempotenciaFinancieraTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.038s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testEvitarDobleDescuentoAlRegistrarMerma()</td>
+<td class="success">0.038s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2026-06-16T11:22:27.224+08:00  INFO 28724 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest]: IdempotenciaFinancieraTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-06-16T11:22:27.227+08:00  INFO 28724 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest
+2026-06-16T11:22:27.235+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=? limit ?
+Hibernate: select t1_0.id from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=? limit ?
+2026-06-16T11:22:27.238+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into calculos (cliente_id,costo_base,costo_desgaste,costo_energia,costo_filamento,gramos,horas,insumos_extra,minutos_adicionales,multiplicador,perfil_id,perfil_nombre,precio_venta,subtotal,timestamp,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: insert into calculos (cliente_id,costo_base,costo_desgaste,costo_energia,costo_filamento,gramos,horas,insumos_extra,minutos_adicionales,multiplicador,perfil_id,perfil_nombre,precio_venta,subtotal,timestamp,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+2026-06-16T11:22:27.240+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into pedidos (cliente_id,estado,fecha_actualizacion,fecha_creacion,monto_pagado,total,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into pedidos (cliente_id,estado,fecha_actualizacion,fecha_creacion,monto_pagado,total,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.241+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into items_pedido (calculo_id,cantidad,cantidad_merma,pedido_id,subtotal,id) values (?,?,?,?,?,?)
+Hibernate: insert into items_pedido (calculo_id,cantidad,cantidad_merma,pedido_id,subtotal,id) values (?,?,?,?,?,?)
+2026-06-16T11:22:27.242+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.242+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.243+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : update pedidos set cliente_id=?,estado=?,fecha_actualizacion=?,monto_pagado=?,total=? where id=?
+Hibernate: update pedidos set cliente_id=?,estado=?,fecha_actualizacion=?,monto_pagado=?,total=? where id=?
+2026-06-16T11:22:27.244+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+2026-06-16T11:22:27.250+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=?
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=?
+2026-06-16T11:22:27.254+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.256+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.257+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : update items_pedido set calculo_id=?,cantidad=?,cantidad_merma=?,pedido_id=?,subtotal=? where id=?
+Hibernate: update items_pedido set calculo_id=?,cantidad=?,cantidad_merma=?,pedido_id=?,subtotal=? where id=?
+2026-06-16T11:22:27.258+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+2026-06-16T11:22:27.261+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.5</a> at Jun 16, 2026, 11:22:27 AM</p>
+</div>
+</div>
+</body>
+</html>

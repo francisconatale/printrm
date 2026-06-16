@@ -40,4 +40,25 @@ public class PedidoController {
     public void updateStatus(@PathVariable String id, @RequestParam String estado) {
         service.cambiarEstado(id, estado);
     }
+
+    @PostMapping("/{id}/pagos")
+    public PedidoResponseDTO registrarPago(
+            @PathVariable String id,
+            @RequestBody PagoRequest request) {
+        return service.registrarPago(id, request.getMonto(), request.getDescripcion());
+    }
+
+    @PostMapping("/{pedidoId}/items/{itemId}/merma")
+    public void registrarMerma(
+            @PathVariable String pedidoId,
+            @PathVariable String itemId,
+            @RequestParam Integer unidadesFallidas) {
+        service.registrarMerma(pedidoId, itemId, unidadesFallidas);
+    }
+
+    @lombok.Data
+    public static class PagoRequest {
+        private Double monto;
+        private String descripcion;
+    }
 }

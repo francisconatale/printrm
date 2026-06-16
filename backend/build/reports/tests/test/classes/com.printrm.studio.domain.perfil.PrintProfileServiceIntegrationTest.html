@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - PrintProfileService — Integration Tests</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>PrintProfileService — Integration Tests</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.printrm.studio.domain.perfil.html">com.printrm.studio.domain.perfil</a> &gt; PrintProfileServiceIntegrationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">6</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.062s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">create() persiste el perfil de impresión con todos sus campos y asigna timestamps</td>
+<td class="success">create_persistsPrintProfileWithAllFields()</td>
+<td class="success">0.015s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">delete() elimina el perfil de impresión correctamente</td>
+<td class="success">delete_removesProfileFromDB()</td>
+<td class="success">0.012s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">delete() lanza RuntimeException al eliminar ID inexistente</td>
+<td class="success">delete_throwsException_whenNotFound()</td>
+<td class="success">0.010s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">findById() lanza RuntimeException si no existe</td>
+<td class="success">findById_throwsException_whenNotFound()</td>
+<td class="success">0.007s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">update() modifica todos los campos correctamente</td>
+<td class="success">update_modifiesAllFields()</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">update() lanza RuntimeException si el ID no existe</td>
+<td class="success">update_throwsException_whenNotFound()</td>
+<td class="success">0.010s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2026-06-16T11:22:27.543+08:00  INFO 28724 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest]: PrintProfileServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-06-16T11:22:27.544+08:00  INFO 28724 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.perfil.PrintProfileServiceIntegrationTest
+2026-06-16T11:22:27.550+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.552+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T11:22:27.560+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.570+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.572+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into print_profiles (actualizado_en,creado_en,fill_density,layer_height,nombre,perimeters,print_config,speed_print,id) values (?,?,?,?,?,?,?,?,?)
+2026-06-16T11:22:27.575+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T11:22:27.578+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0
+2026-06-16T11:22:27.584+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.586+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T11:22:27.594+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.597+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T11:22:27.605+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select pp1_0.id,pp1_0.actualizado_en,pp1_0.creado_en,pp1_0.fill_density,pp1_0.layer_height,pp1_0.nombre,pp1_0.perimeters,pp1_0.print_config,pp1_0.speed_print from print_profiles pp1_0
+2026-06-16T11:22:27.607+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into print_profiles (actualizado_en,creado_en,fill_density,layer_height,nombre,perimeters,print_config,speed_print,id) values (?,?,?,?,?,?,?,?,?)
+2026-06-16T11:22:27.609+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+2026-06-16T11:22:27.611+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : delete from print_profiles where id=?
+2026-06-16T11:22:27.611+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from print_profiles pp1_0 where pp1_0.id=?
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.5</a> at Jun 16, 2026, 11:22:27 AM</p>
+</div>
+</div>
+</body>
+</html>

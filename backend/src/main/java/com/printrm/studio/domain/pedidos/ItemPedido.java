@@ -1,6 +1,7 @@
 package com.printrm.studio.domain.pedidos;
 
 import com.printrm.studio.domain.calculo.Calculo;
+import com.printrm.studio.domain.stock.Producto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +24,11 @@ public class ItemPedido {
     private Pedido pedido;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "calculo_id", nullable = false)
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calculo_id")
     private Calculo calculo;
 
     @Column(nullable = false)
@@ -36,8 +41,10 @@ public class ItemPedido {
     private Double subtotal;
 
     public void calcularSubtotal() {
-        if (calculo != null && cantidad != null) {
-            this.subtotal = calculo.getPrecioVenta() * cantidad;
+        if (producto != null && cantidad != null) {
+            this.subtotal = (producto.getPrecioSugerido() != null ? producto.getPrecioSugerido() : 0.0) * cantidad;
+        } else if (calculo != null && cantidad != null) {
+            this.subtotal = (calculo.getPrecioVenta() != null ? calculo.getPrecioVenta() : 0.0) * cantidad;
         }
     }
 }

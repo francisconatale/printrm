@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-06-16T03:22:27" hostname="DESKTOP-EJ6HF1N" time="0.038">
+  <properties/>
+  <testcase name="testEvitarDobleDescuentoAlRegistrarMerma()" classname="com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest" time="0.038"/>
+  <system-out><![CDATA[2026-06-16T11:22:27.224+08:00  INFO 28724 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest]: IdempotenciaFinancieraTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-06-16T11:22:27.227+08:00  INFO 28724 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest
+2026-06-16T11:22:27.235+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=? limit ?
+Hibernate: select t1_0.id from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=? limit ?
+2026-06-16T11:22:27.238+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into calculos (cliente_id,costo_base,costo_desgaste,costo_energia,costo_filamento,gramos,horas,insumos_extra,minutos_adicionales,multiplicador,perfil_id,perfil_nombre,precio_venta,subtotal,timestamp,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+Hibernate: insert into calculos (cliente_id,costo_base,costo_desgaste,costo_energia,costo_filamento,gramos,horas,insumos_extra,minutos_adicionales,multiplicador,perfil_id,perfil_nombre,precio_venta,subtotal,timestamp,id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+2026-06-16T11:22:27.240+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into pedidos (cliente_id,estado,fecha_actualizacion,fecha_creacion,monto_pagado,total,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into pedidos (cliente_id,estado,fecha_actualizacion,fecha_creacion,monto_pagado,total,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.241+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into items_pedido (calculo_id,cantidad,cantidad_merma,pedido_id,subtotal,id) values (?,?,?,?,?,?)
+Hibernate: insert into items_pedido (calculo_id,cantidad,cantidad_merma,pedido_id,subtotal,id) values (?,?,?,?,?,?)
+2026-06-16T11:22:27.242+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.242+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.243+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : update pedidos set cliente_id=?,estado=?,fecha_actualizacion=?,monto_pagado=?,total=? where id=?
+Hibernate: update pedidos set cliente_id=?,estado=?,fecha_actualizacion=?,monto_pagado=?,total=? where id=?
+2026-06-16T11:22:27.244+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+2026-06-16T11:22:27.250+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=?
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0 where t1_0.pedido_id=? and t1_0.tipo=?
+2026-06-16T11:22:27.254+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.256+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+Hibernate: insert into transacciones (categoria,descripcion,fecha,monto,pedido_id,tipo,id) values (?,?,?,?,?,?,?)
+2026-06-16T11:22:27.257+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : update items_pedido set calculo_id=?,cantidad=?,cantidad_merma=?,pedido_id=?,subtotal=? where id=?
+Hibernate: update items_pedido set calculo_id=?,cantidad=?,cantidad_merma=?,pedido_id=?,subtotal=? where id=?
+2026-06-16T11:22:27.258+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+2026-06-16T11:22:27.261+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+Hibernate: select t1_0.id,t1_0.categoria,t1_0.descripcion,t1_0.fecha,t1_0.monto,t1_0.pedido_id,t1_0.tipo from transacciones t1_0
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

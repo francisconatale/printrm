@@ -6,6 +6,9 @@ import com.printrm.studio.domain.calculo.Calculo;
 import com.printrm.studio.domain.calculo.CalculoRepository;
 import com.printrm.studio.domain.finanzas.Transaccion;
 import com.printrm.studio.domain.finanzas.TransaccionRepository;
+import com.printrm.studio.domain.stock.Producto;
+import com.printrm.studio.domain.stock.ProductoRepository;
+import com.printrm.studio.domain.stock.ProductoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class PedidoService {
     private final ClienteRepository clienteRepository;
     private final CalculoRepository calculoRepository;
     private final TransaccionRepository transaccionRepository;
+    private final ProductoRepository productoRepository;
+    private final ProductoService productoService;
 
     @Transactional
     public PedidoResponseDTO crearPedido(PedidoRequestDTO request) {
@@ -41,15 +46,22 @@ public class PedidoService {
 
         if (request.getItems() != null) {
             for (ItemPedidoRequestDTO itemDto : request.getItems()) {
-                Calculo calculo = calculoRepository.findById(itemDto.getCalculoId())
-                        .orElseThrow(() -> new RuntimeException("Cálculo no encontrado: " + itemDto.getCalculoId()));
-                
                 ItemPedido item = ItemPedido.builder()
                         .pedido(savedPedido)
-                        .calculo(calculo)
                         .cantidad(itemDto.getCantidad())
                         .cantidadMerma(0)
                         .build();
+
+                if (itemDto.getProductoId() != null) {
+                    Producto prod = productoRepository.findById(itemDto.getProductoId())
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + itemDto.getProductoId()));
+                    item.setProducto(prod);
+                } else if (itemDto.getCalculoId() != null) {
+                    Calculo calculo = calculoRepository.findById(itemDto.getCalculoId())
+                            .orElseThrow(() -> new RuntimeException("Cálculo no encontrado: " + itemDto.getCalculoId()));
+                    item.setCalculo(calculo);
+                }
+                
                 item.calcularSubtotal();
                 itemRepository.save(item);
                 savedPedido.getItems().add(item);
@@ -86,17 +98,28 @@ public class PedidoService {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
+        Pedido.EstadoPedido anterior = pedido.getEstado();
         pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
 
         if ("ENTREGADO".equals(nuevoEstado)) {
             registrarIngresoPorVenta(pedido);
+            actualizarStockPorPedido(pedido, -1); // Descontar stock
         } else if ("DEVUELTO".equals(nuevoEstado)) {
             registrarReembolso(pedido);
+            actualizarStockPorPedido(pedido, 1); // Reponer stock
         } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
             registrarGastoProduccion(pedido);
         }
         
         repository.save(pedido);
+    }
+
+    private void actualizarStockPorPedido(Pedido pedido, int multiplicador) {
+        for (ItemPedido item : pedido.getItems()) {
+            if (item.getProducto() != null) {
+                productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad() * multiplicador);
+            }
+        }
     }
 
     @Transactional
@@ -110,37 +133,30 @@ public class PedidoService {
         item.setCantidadMerma(item.getCantidadMerma() + unidadesFallidas);
         itemRepository.save(item);
 
-        // Lógica de No Doble Descuento:
-        // Buscamos si ya existe el gasto de producción para este pedido.
         List<Transaccion> egresos = transaccionRepository.findAllByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.EGRESO);
         
         if (!egresos.isEmpty()) {
-            // Reclasificamos estadísticamente:
-            // Tomamos una parte del monto de los egresos actuales y los movemos a la categoría MERMA
             Calculo calc = item.getCalculo();
-            double costoPorUnidad = calc.getCostoEnergia() + calc.getCostoFilamento();
-            double montoAReclasificar = costoPorUnidad * unidadesFallidas;
+            if (calc != null) {
+                double costoPorUnidad = calc.getCostoEnergia() + calc.getCostoFilamento();
+                double montoAReclasificar = costoPorUnidad * unidadesFallidas;
 
-            // Para simplificar, creamos una transacción de ajuste que NO cambia el balance total
-            // Ajuste 1: Restamos del gasto de material (ponemos un positivo para compensar el negativo)
-            transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.EGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                .monto(montoAReclasificar) 
-                .pedidoId(pedido.getId())
-                .descripcion("Reclasificación por Merma (Ajuste Material)")
-                .build());
+                transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
+                    .monto(montoAReclasificar) 
+                    .pedidoId(pedido.getId())
+                    .descripcion("Reclasificación por Merma (Ajuste Material)")
+                    .build());
 
-            // Ajuste 2: Sumamos a la categoría MERMA (ponemos el negativo real)
-            transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.EGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.MERMA)
-                .monto(montoAReclasificar * -1)
-                .pedidoId(pedido.getId())
-                .descripcion("Estadística Merma: " + unidadesFallidas + " unidades de " + calc.getPerfilNombre())
-                .build());
-            
-            // El balance total sigue igual: (+X) + (-X) = 0 cambio neto.
+                transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.MERMA)
+                    .monto(montoAReclasificar * -1)
+                    .pedidoId(pedido.getId())
+                    .descripcion("Estadística Merma: " + unidadesFallidas + " unidades de " + calc.getPerfilNombre())
+                    .build());
+            }
         }
     }
 
@@ -168,22 +184,23 @@ public class PedidoService {
 
         for (ItemPedido item : pedido.getItems()) {
             Calculo calc = item.getCalculo();
-            
-            transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.EGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                .monto(calc.getCostoFilamento() * item.getCantidad() * -1)
-                .pedidoId(pedido.getId())
-                .descripcion("Material: " + calc.getPerfilNombre())
-                .build());
+            if (calc != null) {
+                transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
+                    .monto(calc.getCostoFilamento() * item.getCantidad() * -1)
+                    .pedidoId(pedido.getId())
+                    .descripcion("Material: " + calc.getPerfilNombre())
+                    .build());
 
-            transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.EGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.ENERGIA)
-                .monto(calc.getCostoEnergia() * item.getCantidad() * -1)
-                .pedidoId(pedido.getId())
-                .descripcion("Energía: " + calc.getPerfilNombre())
-                .build());
+                transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.ENERGIA)
+                    .monto(calc.getCostoEnergia() * item.getCantidad() * -1)
+                    .pedidoId(pedido.getId())
+                    .descripcion("Energía: " + calc.getPerfilNombre())
+                    .build());
+            }
         }
     }
 
@@ -198,12 +215,15 @@ public class PedidoService {
         boolean yaRegistrado = transaccionRepository.existsByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.REEMBOLSO);
         if (yaRegistrado) return;
 
-        transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
-                .monto(pedido.getTotal() * -1)
-                .pedidoId(pedido.getId())
-                .descripcion("Reembolso por devolución")
-                .build());
+        if (pedido.getMontoPagado() > 0) {
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
+                    .categoria(Transaccion.CategoriaTransaccion.VENTA)
+                    .monto(pedido.getMontoPagado() * -1)
+                    .pedidoId(pedido.getId())
+                    .descripcion("Reembolso total de dinero cobrado: $" + pedido.getMontoPagado())
+                    .build());
+        }
     }
 
     public List<PedidoResponseDTO> getAll() {
@@ -230,6 +250,17 @@ public class PedidoService {
             ItemPedidoResponseDTO itemDto = new ItemPedidoResponseDTO();
             itemDto.setId(item.getId().toString());
             itemDto.setCantidad(item.getCantidad());
+            itemDto.setCantidadMerma(item.getCantidadMerma());
+            
+            if (item.getProducto() != null) {
+                itemDto.setProductoId(item.getProducto().getId().toString());
+                itemDto.setProductoNombre(item.getProducto().getNombre());
+                itemDto.setPerfilNombre(item.getProducto().getNombre());
+            } else if (item.getCalculo() != null) {
+                itemDto.setCalculoId(item.getCalculo().getId().toString());
+                itemDto.setPerfilNombre(item.getCalculo() != null ? item.getCalculo().getPerfilNombre() : "Cotización");
+            }
+            
             itemDto.setSubtotal(item.getSubtotal());
             return itemDto;
         }).collect(Collectors.toList()));

@@ -173,4 +173,51 @@ class PiezaSTLServiceIntegrationTest {
 
         assertThat(piezaSTLRepository.existsById(saved.getId())).isFalse();
     }
+
+    // ─── FILE PERSISTENCE & COLLISION RESOLUTION ──────────────────────────────
+
+    @org.springframework.beans.factory.annotation.Value("${studio.base-path}")
+    private String basePath;
+
+    @Test
+    @DisplayName("save() con archivo existente en temp-uploads lo mueve a saved-uploads y resuelve colisiones si ya existe")
+    void save_movesFileAndResolvesCollision() throws java.io.IOException {
+        String currentBasePath = basePath != null ? basePath : ".";
+        java.io.File tempDir = new java.io.File(currentBasePath + "/temp-uploads");
+        if (!tempDir.exists()) tempDir.mkdirs();
+        java.io.File savedDir = new java.io.File(currentBasePath + "/saved-uploads");
+        if (!savedDir.exists()) savedDir.mkdirs();
+
+        // 1. Setup existing files
+        String fileName = "test_pieza.stl";
+        java.io.File tempFile = new java.io.File(tempDir, fileName);
+        java.nio.file.Files.write(tempFile.toPath(), "temp file content".getBytes());
+
+        // Create a pre-existing file in saved-uploads to trigger collision resolution
+        java.io.File existingSavedFile = new java.io.File(savedDir, fileName);
+        java.nio.file.Files.write(existingSavedFile.toPath(), "saved file content".getBytes());
+
+        // 2. Call save
+        PiezaSTLRequestDTO req = buildMinimalRequest("pieza_con_archivo");
+        req.setFilePath(fileName);
+
+        PiezaSTLResponseDTO result = piezaSTLService.save(req);
+
+        // 3. Assertions
+        assertThat(result.getFilePath()).isNotEqualTo(fileName);
+        assertThat(result.getFilePath()).startsWith("test_pieza_");
+        assertThat(result.getFilePath()).endsWith(".stl");
+
+        // Verify the temp file was moved (doesn't exist in temp-uploads anymore)
+        assertThat(tempFile.exists()).isFalse();
+
+        // Verify the file was moved to saved-uploads with the resolved name
+        java.io.File resolvedSavedFile = new java.io.File(savedDir, result.getFilePath());
+        assertThat(resolvedSavedFile.exists()).isTrue();
+        assertThat(java.nio.file.Files.readString(resolvedSavedFile.toPath())).isEqualTo("temp file content");
+
+        // Clean up
+        resolvedSavedFile.delete();
+        existingSavedFile.delete();
+    }
 }

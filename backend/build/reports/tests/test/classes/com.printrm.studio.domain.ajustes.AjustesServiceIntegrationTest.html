@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - AjustesService — Integration Tests</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>AjustesService — Integration Tests</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.printrm.studio.domain.ajustes.html">com.printrm.studio.domain.ajustes</a> &gt; AjustesServiceIntegrationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.617s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">getAjustes() devuelve defaults hardcoded cuando la tabla está vacía (sin lanzar excepción)</td>
+<td class="success">getAjustes_returnsFallbackDefaults_whenNoRecord()</td>
+<td class="success">0.009s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">initDefaultAjustes() es idempotente: doble llamada no duplica el registro</td>
+<td class="success">initDefaultAjustes_isIdempotent()</td>
+<td class="success">0.582s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">updateAjustes() crea registro si no existe (upsert implícito en tabla vacía)</td>
+<td class="success">updateAjustes_createsRecord_whenNotExists()</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">updateAjustes() persiste nuevos valores y los devuelve en el siguiente get</td>
+<td class="success">updateAjustes_persistsNewValues()</td>
+<td class="success">0.015s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>11:22:17.517 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest]: AjustesServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+11:22:17.691 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-06-16T11:22:18.140+08:00  INFO 28724 --- [    Test worker] c.p.s.d.a.AjustesServiceIntegrationTest  : Starting AjustesServiceIntegrationTest using Java 17.0.17 with PID 28724 (started by franc in C:\Users\franc\OneDrive\Desktop\printrm\backend)
+2026-06-16T11:22:18.141+08:00  INFO 28724 --- [    Test worker] c.p.s.d.a.AjustesServiceIntegrationTest  : The following 1 profile is active: &quot;test&quot;
+2026-06-16T11:22:19.037+08:00  INFO 28724 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-16T11:22:19.110+08:00  INFO 28724 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 64 ms. Found 11 JPA repository interfaces.
+2026-06-16T11:22:19.925+08:00  INFO 28724 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-16T11:22:20.016+08:00  INFO 28724 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-06-16T11:22:20.068+08:00  INFO 28724 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-06-16T11:22:20.466+08:00  INFO 28724 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-16T11:22:20.502+08:00  INFO 28724 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-06-16T11:22:20.667+08:00  INFO 28724 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@7fac18dc
+2026-06-16T11:22:20.668+08:00  INFO 28724 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-06-16T11:22:21.829+08:00  INFO 28724 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-16T11:22:21.844+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists ajustes
+2026-06-16T11:22:21.846+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists calculos
+2026-06-16T11:22:21.847+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists clientes
+2026-06-16T11:22:21.847+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists filament_profiles
+2026-06-16T11:22:21.847+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists items_pedido
+2026-06-16T11:22:21.847+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists pedidos
+2026-06-16T11:22:21.847+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists perfiles
+2026-06-16T11:22:21.848+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists piezas_stl
+2026-06-16T11:22:21.848+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists print_profiles
+2026-06-16T11:22:21.848+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists producto_partes
+2026-06-16T11:22:21.848+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists productos
+2026-06-16T11:22:21.849+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : drop table if exists transacciones
+2026-06-16T11:22:21.853+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table ajustes (margen_error float, precio_kwh float, actualizado_en timestamp, id bigint not null, primary key (id))
+2026-06-16T11:22:21.857+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table calculos (costo_base float, costo_desgaste float, costo_energia float, costo_filamento float, gramos float, horas integer, insumos_extra float, minutos_adicionales integer, multiplicador float, precio_venta float, subtotal float, timestamp timestamp not null, cliente_id blob, id blob not null, perfil_id blob, perfil_nombre varchar(255), primary key (id))
+2026-06-16T11:22:21.861+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table clientes (fecha_creacion timestamp not null, id blob not null, email varchar(255), nombre varchar(255) not null, notas TEXT, telefono varchar(255), primary key (id))
+2026-06-16T11:22:21.866+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table filament_profiles (density float, diameter float, filamento_por_kg float, colour varchar(7), actualizado_en timestamp, creado_en timestamp, id blob not null, material varchar(20), nombre varchar(50) not null, filament_config varchar(255), primary key (id))
+2026-06-16T11:22:21.869+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table items_pedido (cantidad integer not null, cantidad_merma integer, subtotal float not null, calculo_id blob not null, id blob not null, pedido_id blob not null, primary key (id))
+2026-06-16T11:22:21.875+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table pedidos (monto_pagado float, total float, fecha_actualizacion timestamp, fecha_creacion timestamp not null, cliente_id blob, id blob not null, estado varchar(255) not null check (estado in ('BORRADOR','COTIZADO','EN_PRODUCCION','ENTREGADO','CANCELADO','DEVUELTO')), primary key (id))
+2026-06-16T11:22:21.879+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table perfiles (consumo_w float, costo_repuestos float, filamento_por_kg float, max_print_height float, nozzle_diameter float, vida_util_horas float, actualizado_en timestamp, creado_en timestamp, id blob not null, nombre varchar(50) not null, bed_shape varchar(255), filament_config varchar(255), modelo_impresora varchar(255), print_config varchar(255), printer_config varchar(255), primary key (id))
+2026-06-16T11:22:21.883+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table piezas_stl (peso_gramos float, volumen_cm3 float, actualizado_en timestamp, creado_en timestamp, perfil_filamento_id blob, perfil_impresion_id blob, perfil_impresora_id blob, file_path varchar(255) not null, id varchar(255) not null, imagen_base64 TEXT, nombre varchar(255) not null, tiempo_estimado varchar(255), primary key (id))
+2026-06-16T11:22:21.888+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table print_profiles (layer_height float, perimeters integer, speed_print float, actualizado_en timestamp, creado_en timestamp, fill_density varchar(10), id blob not null, nombre varchar(50) not null, print_config varchar(255), primary key (id))
+2026-06-16T11:22:21.892+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table producto_partes (producto_id blob not null, pieza_id varchar(255) not null)
+2026-06-16T11:22:21.897+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table productos (cantidad_stock integer not null, precio_sugerido float, actualizado_en timestamp, creado_en timestamp, id blob not null, descripcion TEXT, nombre varchar(255) not null, primary key (id))
+2026-06-16T11:22:21.901+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : create table transacciones (monto float, fecha timestamp, id blob not null, pedido_id blob, categoria varchar(255) check (categoria in ('MATERIAL','ENERGIA','VENTA','MERMA','REPUESTO','OTRO')), descripcion varchar(255), tipo varchar(255) check (tipo in ('INGRESO','EGRESO','REEMBOLSO')), primary key (id))
+2026-06-16T11:22:21.909+08:00  INFO 28724 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-16T11:22:22.870+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:22.913+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:22.954+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into ajustes (actualizado_en,margen_error,precio_kwh,id) values (?,?,?,?)
+2026-06-16T11:22:23.791+08:00  WARN 28724 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-16T11:22:24.591+08:00  INFO 28724 --- [    Test worker] c.p.s.d.a.AjustesServiceIntegrationTest  : Started AjustesServiceIntegrationTest in 6.749 seconds (process running for 8.072)
+2026-06-16T11:22:25.131+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+2026-06-16T11:22:25.144+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : delete from ajustes where id=?
+2026-06-16T11:22:25.146+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.147+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.149+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into ajustes (actualizado_en,margen_error,precio_kwh,id) values (?,?,?,?)
+2026-06-16T11:22:25.149+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.152+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0
+2026-06-16T11:22:25.228+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+2026-06-16T11:22:25.230+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : delete from ajustes where id=?
+2026-06-16T11:22:25.231+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.232+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.244+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+2026-06-16T11:22:25.246+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : delete from ajustes where id=?
+2026-06-16T11:22:25.247+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+2026-06-16T11:22:25.248+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0 where a1_0.id=?
+2026-06-16T11:22:25.249+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : insert into ajustes (actualizado_en,margen_error,precio_kwh,id) values (?,?,?,?)
+2026-06-16T11:22:25.250+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select count(*) from ajustes a1_0
+2026-06-16T11:22:25.255+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+2026-06-16T11:22:25.259+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : delete from ajustes where id=?
+2026-06-16T11:22:25.260+08:00 DEBUG 28724 --- [    Test worker] org.hibernate.SQL                        : select a1_0.id,a1_0.actualizado_en,a1_0.margen_error,a1_0.precio_kwh from ajustes a1_0
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.5</a> at Jun 16, 2026, 11:22:27 AM</p>
+</div>
+</div>
+</body>
+</html>

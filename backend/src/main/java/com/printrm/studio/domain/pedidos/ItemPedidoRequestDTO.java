@@ -10,5 +10,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ItemPedidoRequestDTO {
     private UUID calculoId;
+    private UUID productoId;
     private Integer cantidad;
 }
