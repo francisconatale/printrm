@@ -11,6 +11,7 @@ public class PiezaSTLResponseDTO {
     private Double volumenCm3;
     private Double pesoGramos;
     private String tiempoEstimado;
+    private Double costoBase;
     private String imagenBase64;
     
     private String perfilImpresoraNombre;

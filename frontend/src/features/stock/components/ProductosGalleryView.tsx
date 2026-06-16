@@ -1,14 +1,17 @@
 import React from 'react';
-import { useGetProductos } from '../api/productos.api';
+import { useGetProductos, useDeleteProducto } from '../api/productos.api';
 import { ProductoCard } from './ProductoCard';
 import { ComposicionProductoModal } from './ComposicionProductoModal';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Plus, Search, Loader2, PackageSearch } from 'lucide-react';
+import { ConfirmModal } from '../../../components/ui/confirm-modal';
 
 export function ProductosGalleryView() {
   const { data: productos, isLoading } = useGetProductos();
+  const { mutate: deleteProducto } = useDeleteProducto();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [deleteProductId, setDeleteProductId] = React.useState<string | null>(null);
 
   const filteredProductos = React.useMemo(() => {
     if (!productos) return [];
@@ -60,7 +63,11 @@ export function ProductosGalleryView() {
           ) : filteredProductos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in duration-700">
               {filteredProductos.map((prod) => (
-                <ProductoCard key={prod.id} producto={prod} />
+                <ProductoCard 
+                  key={prod.id} 
+                  producto={prod} 
+                  onDelete={(id) => setDeleteProductId(id)}
+                />
               ))}
             </div>
           ) : (
@@ -81,6 +88,22 @@ export function ProductosGalleryView() {
       <ComposicionProductoModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={deleteProductId !== null}
+        onClose={() => setDeleteProductId(null)}
+        onConfirm={() => {
+          if (deleteProductId) {
+            deleteProducto(deleteProductId);
+            setDeleteProductId(null);
+          }
+        }}
+        title="Eliminar Producto"
+        description="¿Estás seguro de que quieres eliminar este producto del catálogo? Las piezas STL asociadas no se borrarán."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isDestructive={true}
       />
     </div>
   );

@@ -1,19 +1,31 @@
 import React from 'react';
 import { Producto } from '../types/stock.types';
 import { STLPreview } from '../../biblioteca/components/STLPreview';
-import { Plus, Minus, Package, Tag } from 'lucide-react';
+import { Plus, Minus, Package, Tag, MoreVertical, Trash2, Coins } from 'lucide-react';
 import { useUpdateStock } from '../api/productos.api';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ProductoCardProps {
   producto: Producto;
+  onDelete: (id: string) => void;
 }
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value);
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const ProductoCard: React.FC<ProductoCardProps> = ({ producto }) => {
+export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }) => {
   const { mutate: updateStock } = useUpdateStock();
+
+  // Calculate total production cost from parts for new lots
+  const currentProductionCost = React.useMemo(() => {
+    return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
+  }, [producto.partes]);
 
   // If product has parts, use the first one for preview
   const firstPartUrl = `/test-cube.stl`; 
@@ -29,6 +41,30 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto }) => {
         <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/30 shadow-sm flex items-center gap-2">
           <Package size={12} className="text-zinc-500" />
           <span className="text-[10px] font-bold text-zinc-800">{producto.cantidadStock} EN STOCK</span>
+        </div>
+
+        {/* Cost Info Overlay */}
+        <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 shadow-sm flex items-center gap-2 text-white">
+          <Coins size={10} className="text-zinc-300" />
+          <span className="text-[9px] font-bold tracking-tight uppercase">Producción: {formatCurrency(currentProductionCost)}</span>
+        </div>
+
+        {/* Options Menu */}
+        <div className="absolute top-4 right-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-2 rounded-full bg-white/70 backdrop-blur-md border border-white/30 shadow-sm hover:bg-white transition-colors">
+              <MoreVertical size={14} className="text-zinc-600" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem 
+                onClick={() => onDelete(producto.id)}
+                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <Trash2 size={14} className="mr-2" />
+                Eliminar Producto
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -61,7 +97,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto }) => {
               <Minus size={14} />
             </button>
             <button 
-              onClick={() => updateStock({ id: producto.id, delta: 1 })}
+              onClick={() => updateStock({ id: producto.id, delta: 1, costo: currentProductionCost })}
               className="size-8 rounded-full hover:bg-white flex items-center justify-center transition-colors shadow-sm"
             >
               <Plus size={14} />

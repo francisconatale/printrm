@@ -35,6 +35,7 @@ public class PiezaSTL {
     private Double volumenCm3;
     private Double pesoGramos;
     private String tiempoEstimado;
+    private Double costoBase;
 
     @Lob
     @Column(columnDefinition = "TEXT")

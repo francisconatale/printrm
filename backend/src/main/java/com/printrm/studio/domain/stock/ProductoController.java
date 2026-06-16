@@ -22,7 +22,19 @@ public class ProductoController {
     }
 
     @PatchMapping("/{id}/stock")
-    public void updateStock(@PathVariable String id, @RequestParam Integer delta) {
-        service.updateStock(id, delta);
+    public void updateStock(
+            @PathVariable String id, 
+            @RequestParam Integer delta,
+            @RequestParam(required = false) Double costo) {
+        if (delta > 0 && costo != null) {
+            service.addStock(java.util.UUID.fromString(id), delta, costo);
+        } else {
+            service.updateStock(id, delta);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        service.delete(id);
     }
 }

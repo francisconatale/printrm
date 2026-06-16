@@ -85,8 +85,66 @@ As a user, I want the UI to follow a consistent 8pt grid and minimal color palet
 - **SC-003**: The color distribution matches the 95/4/1 rule (visually verified).
 - **SC-004**: Zero layout shifts when switching between navigation states.
 
+---
+
+# Feature Specification: Cost Storage and Price Suggestion
+
+**Status**: Implemented
+**Last Updated**: 2026-06-16
+
+## Functional Requirements
+
+- **FR-008**: The STL Library MUST store the `costoBase` (production cost) calculated at the time of saving from the calculator.
+- **FR-009**: The STL Library UI MUST display the saved production cost for each piece.
+- **FR-010**: The Product Composition Modal MUST automatically suggest a price based on the sum of the `costoBase` of all selected components.
+- **FR-011**: Price suggestion MUST prefer the stored `costoBase` if available, decoupling it from current dynamic printer/adjustment changes.
+- **FR-012**: If a component lacks a saved `costoBase`, the system MUST fallback to a dynamic calculation using the active printer/material profiles.
+
+## Technical Implementation
+
+- **Backend**: Added `costoBase` (Double) to `PiezaSTL` entity and related DTOs.
+- **Frontend**: Refactored calculation engine to expose `calculatePrecioSugerido` as a pure function for reuse in non-hook contexts.
+- **Data Flow**: `ResultadoCalculo` (from Calculator) -> `PiezaSTLCreate` -> `PiezaSTL` (Database) -> `ProductoCompositionModal` (Price Suggestion).
+
+
 ## Assumptions
 
 - **Desktop-First**: Mobile responsiveness is secondary and will be handled via simple overflow or basic stacking for this phase.
 - **Framework**: Implementation will use React (Frontend) as per project stack.
 - **Styling**: Tailwind CSS will be configured with custom `0.5px` border utilities and the Slate/Indigo palette.
+
+---
+
+# Feature Specification: FIFO Inventory Lot System
+
+**Status**: Implemented
+**Last Updated**: 2026-06-16
+
+## Objective
+Implement a First-In, First-Out (FIFO) lot tracking system for products. This ensures precise traceability of production costs and accurate profit margin calculations upon sale, accounting for historical cost fluctuations (e.g., changes in filament price or energy costs over time).
+
+## Functional Requirements
+
+- **FR-013**: The system MUST create a new `Lote` (Lot/Batch) entity every time stock is added to a `Producto`.
+- **FR-014**: Each `Lote` MUST record its `cantidadOriginal`, `cantidadActual`, `costoUnitario` (at the time of creation), and `fechaCreacion`.
+- **FR-015**: When stock is reduced (manually or via a Sale/Pedido), the system MUST consume inventory from the oldest active `Lote` first (FIFO logic).
+- **FR-016**: If the oldest `Lote` is depleted before fulfilling the required quantity, the system MUST cascade the remaining deduction to the next oldest `Lote`.
+- **FR-017**: The total `cantidadStock` of a `Producto` MUST always equal the sum of the `cantidadActual` of all its active lots.
+- **FR-018**: The Frontend Catalog MUST display the cost of the oldest active lot as the current basis cost, or show a breakdown if multiple lots exist.
+
+## Technical Implementation
+
+### Backend Data Model
+- **Lote Entity**: Created with fields for product association, quantities, unit cost, and creation date.
+- **LoteRepository**: Includes `findByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionAsc` for FIFO selection.
+
+### Backend Logic (ProductoService)
+- **addStock(productoId, cantidad, costo)**: Creates a new lot and updates aggregated stock.
+- **consumeStock(producto, cantidad)**: Core FIFO logic that iterates through active lots and decrements `cantidadActual`.
+- **updateStock(id, delta)**: Unified entry point for manual stock adjustments.
+
+### Frontend Integration
+- **API**: `useUpdateStock` supports optional `costo` parameter.
+- **UI**: `ProductoCard` automatically passes the current calculated production cost when clicking the `+` button, ensuring new lots have accurate costs.
+- **Visuals**: Added "Producción" cost badge to the product preview.
+

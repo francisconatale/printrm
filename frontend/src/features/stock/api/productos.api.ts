@@ -30,8 +30,22 @@ export const useSaveProducto = () => {
 export const useUpdateStock = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, delta }: { id: string, delta: number }) => {
-      await axios.patch(`${API_URL}/${id}/stock?delta=${delta}`);
+    mutationFn: async ({ id, delta, costo }: { id: string, delta: number, costo?: number }) => {
+      let url = `${API_URL}/${id}/stock?delta=${delta}`;
+      if (costo !== undefined) url += `&costo=${costo}`;
+      await axios.patch(url);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['productos'] });
+    }
+  });
+};
+
+export const useDeleteProducto = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`${API_URL}/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productos'] });

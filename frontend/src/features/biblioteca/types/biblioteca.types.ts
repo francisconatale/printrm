@@ -5,6 +5,7 @@ export interface PiezaSTL {
   volumenCm3?: number;
   pesoGramos?: number;
   tiempoEstimado?: string;
+  costoBase?: number;
   
   perfilImpresoraNombre?: string;
   perfilFilamentoNombre?: string;
@@ -20,6 +21,7 @@ export interface PiezaSTLCreate {
   volumenCm3?: number;
   pesoGramos?: number;
   tiempoEstimado?: string;
+  costoBase?: number;
   
   perfilImpresoraId?: string;
   perfilFilamentoId?: string;

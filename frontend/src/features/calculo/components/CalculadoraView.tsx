@@ -138,6 +138,7 @@ export function CalculadoraView() {
       filePath: file.name, 
       pesoGramos: resultado.gramos,
       tiempoEstimado: `${resultado.horas}h ${resultado.minutosAdicionales}m`,
+      costoBase: resultado.costoBase,
       perfilImpresoraId: activePrinter?.id,
       perfilFilamentoId: activeFilament?.id,
       perfilImpresionId: overrideConfigs.print || undefined,

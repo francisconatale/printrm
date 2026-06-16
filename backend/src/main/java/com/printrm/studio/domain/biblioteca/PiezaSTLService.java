@@ -67,6 +67,7 @@ public class PiezaSTLService {
                 .volumenCm3(dto.getVolumenCm3())
                 .pesoGramos(dto.getPesoGramos())
                 .tiempoEstimado(dto.getTiempoEstimado())
+                .costoBase(dto.getCostoBase())
                 .imagenBase64(dto.getImagenBase64())
                 .build();
 
@@ -96,6 +97,7 @@ public class PiezaSTLService {
         dto.setVolumenCm3(pieza.getVolumenCm3());
         dto.setPesoGramos(pieza.getPesoGramos());
         dto.setTiempoEstimado(pieza.getTiempoEstimado());
+        dto.setCostoBase(pieza.getCostoBase());
         dto.setImagenBase64(pieza.getImagenBase64());
         dto.setCreadoEn(pieza.getCreadoEn());
 

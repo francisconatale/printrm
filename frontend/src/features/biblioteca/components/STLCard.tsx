@@ -15,6 +15,10 @@ interface STLCardProps {
   onCalculate: (pieza: PiezaSTL) => void;
 }
 
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
+};
+
 export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }) => {
   const [hovered, setHovered] = useState(false);
   
@@ -41,6 +45,14 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 animate-in fade-in duration-300">
             <Box size={48} strokeWidth={1} />
+          </div>
+        )}
+
+        {/* Cost Badge */}
+        {pieza.costoBase && (
+          <div className="absolute top-3 left-3 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
+            <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
+            <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>
           </div>
         )}
 
