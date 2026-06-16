@@ -42,7 +42,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
     if (ajustes) setForm(ajustes);
   }, [ajustes]);
 
-  const hasResult = hasAnalyzed && resultado && (resultado.horas > 0 || resultado.gramos > 0);
+  const hasResult = !!resultado && (resultado.horas > 0 || resultado.gramos > 0);
 
   const handleAnalyzeAndSave = () => {
     updateAjustes(form);
@@ -54,7 +54,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
       <div className="flex items-center justify-between mb-6 border-b border-[var(--border-subtle)] pb-4">
         <span className="text-[10px] font-bold uppercase text-muted-foreground">Análisis de Producción</span>
         <div className="flex items-center gap-2">
-          {ajustes && hasResult && (
+          {ajustes && hasResult && !isAnalyzing && (
             <span className="text-[10px] font-bold bg-muted/30 px-2 py-1 rounded text-muted-foreground">
               ERROR: {ajustes.margenError}%
             </span>
@@ -69,7 +69,12 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
         </div>
       </div>
 
-      {hasResult && resultado ? (
+      {isAnalyzing ? (
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-muted-foreground py-12">
+          <div className="size-8 border-2 border-foreground/10 border-t-foreground rounded-full animate-spin" />
+          <span className="text-[13px] font-semibold tracking-tight">Calculando costos...</span>
+        </div>
+      ) : hasResult && resultado ? (
         <ResultadosBreakdown
           resultado={resultado}
           insumosExtra={insumosExtra}

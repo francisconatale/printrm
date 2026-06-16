@@ -15,6 +15,8 @@ public class CalculoRequestDTO {
     @NotNull(message = "El ID del perfil es obligatorio")
     private UUID perfilId;
 
+    private UUID filamentId;
+
     @NotBlank(message = "El nombre del perfil es obligatorio")
     private String perfilNombre;
 

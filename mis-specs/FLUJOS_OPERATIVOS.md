@@ -37,18 +37,19 @@ graph TD
 
 ---
 
-## 🧮 2. Reactividad en el Frontend: `useCalculo`
+## 🧮 2. Reactividad y Cálculo Centralizado (Backend)
 
-Una vez que el frontend recibe la respuesta con el peso en gramos y el tiempo en horas y minutos del slicer, el hook personalizado `useCalculo` realiza los cálculos de costos de forma local con funciones puras actualizando la interfaz en menos de 200ms ante cualquier cambio del usuario.
+Anteriormente, el frontend calculaba los costos localmente. Por decisión arquitectónica, el motor de cálculo se centralizó en el **Backend (`CostCalculationService`)** para actuar como la única fuente de verdad, asegurando que todos los catálogos y lotes usen siempre las mismas variables globales.
 
-### Fórmulas del Hook:
-*   `TiempoTotalHoras = Horas + (Minutos / 60)`
-*   `CostoEnergia = (ConsumoWatts / 1000) * TiempoTotalHoras * CostoKwh`
-*   `CostoFilamento = (Gramos / 1000) * CostoFilamentoKg`
-*   `CostoDesgaste = (CostoAmortizacionImpresora / VidaUtilHoras) * TiempoTotalHoras`
-*   `Subtotal = CostoEnergia + CostoFilamento + CostoDesgaste + InsumosExtra`
-*   `CostoBase = Subtotal * (1 + MargenError / 100)`
-*   `PrecioVenta = CostoBase * Multiplicador`
+### Flujo de Cálculo Dinámico:
+1.  **Cotización Rápida**: El hook `useCalculo` en el frontend ahora envía los datos físicos (peso, tiempo) y el ID del material al endpoint `POST /api/v1/calculos/calculate`.
+2.  **Transparencia de Costos**: El servidor responde con un desglose técnico puramente enfocado en la producción (Material, Energía, Insumos Extra). Se eliminaron conceptos comerciales (multiplicadores de venta y desgaste de máquina) de esta capa base para simplificar la contabilidad.
+3.  **Fórmulas del Motor (Backend)**:
+    *   `TiempoTotalHoras = Horas + (Minutos / 60)`
+    *   `CostoEnergia = (ConsumoWatts / 1000) * TiempoTotalHoras * PrecioKwhGlobal`
+    *   `CostoFilamento = (Gramos / 1000) * PrecioFilamentoKg`
+    *   `Subtotal = CostoEnergia + CostoFilamento + InsumosExtra`
+    *   `CostoBaseFinal = Subtotal * (1 + MargenErrorGlobal / 100)`
 
 ---
 

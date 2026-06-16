@@ -26,14 +26,9 @@ export const AjustesGlobalesForm: React.FC<AjustesGlobalesFormProps> = ({
 
       <AjustesFormFields value={form} onChange={onChange} />
 
-      {isAnalyzing ? (
-        <div className="flex items-center justify-center gap-3 text-muted-foreground py-6">
-          <div className="size-5 border-2 border-foreground/10 border-t-foreground rounded-full animate-spin" />
-          <span className="text-[13px] font-semibold">Analizando modelo...</span>
-        </div>
-      ) : hasFile ? (
-        <button onClick={onAnalyze} disabled={isAnalyzing}
-          className="w-full py-3 bg-primary text-white rounded-full text-[13px] font-bold hover:opacity-85 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+      {hasFile && !isAnalyzing ? (
+        <button onClick={onAnalyze}
+          className="w-full py-3 bg-primary text-white rounded-full text-[13px] font-bold hover:opacity-85 active:scale-95 transition-all">
           Analizar modelo
         </button>
       ) : null}

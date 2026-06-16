@@ -71,7 +71,7 @@ export function CalculadoraView() {
   }, [filaments, overrideConfigs.filament]);
 
   const calculationQuery = useCalculo(piezaInput, activePrinter, activeFilament);
-  const resultado = calculationQuery.data;
+  const resultado = calculationQuery.data || null;
   
   const [showPerfilModal, setShowPerfilModal] = React.useState(false);
   const [editingPerfil, setEditingPerfil] = React.useState<Perfil | null>(null);
@@ -255,7 +255,7 @@ export function CalculadoraView() {
                     onSaveToLibrary={handleSaveToLibrary}
                     isSavingToLibrary={isSavingPieza}
                     onAnalyze={handleAnalyze}
-                    isAnalyzing={isAnalyzing || isSlicing}
+                    isAnalyzing={isAnalyzing || isSlicing || calculationQuery.isLoading}
                     hasFile={!!file}
                     hasAnalyzed={hasAnalyzed}
                     insumosExtra={piezaInput.insumosExtra}

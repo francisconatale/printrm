@@ -20,8 +20,9 @@ Un lote representa una entrada de stock para un producto específico, con su pro
 1.  **Ingreso de Stock (`addStock`)**:
     *   **Fusión de Lotes (Cost-Tiered)**: Al ingresar nuevas unidades, el sistema busca el último lote activo del producto. Si el costo del lote nuevo difiere por menos de `0.01` respecto del costo del último lote, los lotes **se fusionan** sumando las cantidades originales y actuales para evitar saturación de la base de datos.
     *   Si no hay lotes activos o el costo es diferente, se crea un registro de `Lote` nuevo.
-2.  **Cálculo Dinámico de Costo al Incrementar Stock (`updateStock`)**:
-    *   Si el usuario incrementa el stock de un producto terminado (por ejemplo, desde el frontend al marcar "Imprimir para stock"), el backend recalcula automáticamente el `costoUnitario` sumando los costos de filamento y energía de todas sus partes (`PiezaSTL`) según los perfiles asignados y los ajustes fijos de tarifas actuales.
+2.  **Cálculo Centralizado Dinámico (`CostCalculationService`)**:
+    *   **Filosofía**: La Biblioteca STL es un repositorio estrictamente técnico (peso en gramos, tiempo estimado, perfiles). No almacena precios ni costos estáticos.
+    *   **Fabricación ("En Vivo")**: Cuando el usuario incrementa el stock de un producto terminado (tocando `+`), el **Backend** calcula el costo de producción en ese exacto milisegundo utilizando el motor central (`CostCalculationService`). Suma los costos de filamento y energía de todas sus partes (`PiezaSTL`) aplicando las tarifas actuales de los **Ajustes Globales**. El nuevo `Lote` se sella con este precio de mercado actual.
 3.  **Consumo de Stock (`consumeStock`)**:
     *   Al cambiar el estado de un pedido a `ENTREGADO`, el sistema recupera todos los lotes con `cantidadActual > 0` ordenados por `fechaCreacion` ascendente (el más viejo primero).
     *   Se consume la cantidad necesaria de forma secuencial (en cascada) disminuyendo la `cantidadActual` de cada lote hasta completar la demanda del pedido.

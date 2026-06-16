@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAjustes } from '../../ajustes/hooks/useAjustes';
 import { useGetPerfiles, useGetFilamentProfiles } from '../../perfiles/api/perfiles.api';
-import { calculatePrecioSugerido } from '../../calculo/hooks/useCalculo';
 import { parseEstimatedTime } from '../../calculo/utils/calculos.utils';
 
 interface STLCardProps {

@@ -19,7 +19,7 @@ export const useCalculo = (
       const response = await apiClient.post<ResultadoCalculo>('/v1/calculos/calculate', {
         ...input,
         perfilId: activePrinterId,
-        // Backend can be extended to accept filamentId if needed
+        filamentId: filamentOverride?.id,
       });
       return response.data;
     },

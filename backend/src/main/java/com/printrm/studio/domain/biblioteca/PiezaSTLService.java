@@ -1,5 +1,9 @@
 package com.printrm.studio.domain.biblioteca;
 
+import com.printrm.studio.domain.ajustes.AjustesDTO;
+import com.printrm.studio.domain.ajustes.AjustesService;
+import com.printrm.studio.domain.calculo.CostCalculationResult;
+import com.printrm.studio.domain.calculo.CostCalculationService;
 import com.printrm.studio.domain.perfil.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,13 +24,16 @@ public class PiezaSTLService {
     private final PerfilRepository perfilRepository;
     private final FilamentProfileRepository filamentRepository;
     private final PrintProfileRepository printRepository;
+    private final CostCalculationService costCalculationService;
+    private final AjustesService ajustesService;
 
     @Value("${studio.base-path}")
     private String basePath;
 
     public List<PiezaSTLResponseDTO> getAll() {
+        AjustesDTO ajustes = ajustesService.getAjustes();
         return repository.findAllByOrderByCreadoEnDesc().stream()
-                .map(this::mapToDTO)
+                .map(pieza -> mapToDTO(pieza, ajustes))
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +88,7 @@ public class PiezaSTLService {
             pieza.setImpresionPreferida(printRepository.findById(java.util.UUID.fromString(dto.getPerfilImpresionId())).orElse(null));
         }
 
-        return mapToDTO(repository.save(pieza));
+        return mapToDTO(repository.save(pieza), ajustesService.getAjustes());
     }
 
     @Transactional
@@ -89,7 +96,7 @@ public class PiezaSTLService {
         repository.deleteById(id);
     }
 
-    private PiezaSTLResponseDTO mapToDTO(PiezaSTL pieza) {
+    private PiezaSTLResponseDTO mapToDTO(PiezaSTL pieza, AjustesDTO ajustes) {
         PiezaSTLResponseDTO dto = new PiezaSTLResponseDTO();
         dto.setId(pieza.getId());
         dto.setNombre(pieza.getNombre());
@@ -97,13 +104,32 @@ public class PiezaSTLService {
         dto.setVolumenCm3(pieza.getVolumenCm3());
         dto.setPesoGramos(pieza.getPesoGramos());
         dto.setTiempoEstimado(pieza.getTiempoEstimado());
-        dto.setCostoBase(pieza.getCostoBase());
         dto.setImagenBase64(pieza.getImagenBase64());
         dto.setCreadoEn(pieza.getCreadoEn());
 
         if (pieza.getPerfilPreferido() != null) dto.setPerfilImpresoraNombre(pieza.getPerfilPreferido().getNombre());
         if (pieza.getFilamentoPreferido() != null) dto.setPerfilFilamentoNombre(pieza.getFilamentoPreferido().getNombre());
         if (pieza.getImpresionPreferida() != null) dto.setPerfilImpresionNombre(pieza.getImpresionPreferida().getNombre());
+
+        // Dynamic cost calculation
+        int horas = 0;
+        int minutos = 0;
+        if (pieza.getTiempoEstimado() != null && pieza.getTiempoEstimado().contains("h")) {
+            try {
+                String[] parts = pieza.getTiempoEstimado().split("h");
+                horas = Integer.parseInt(parts[0].trim());
+                if (parts.length > 1) {
+                    minutos = Integer.parseInt(parts[1].replace("m", "").trim());
+                }
+            } catch (Exception ignored) {}
+        }
+
+        CostCalculationResult calc = costCalculationService.calculate(
+            pieza.getPesoGramos(), horas, minutos, 0.0, 
+            pieza.getPerfilPreferido(), pieza.getFilamentoPreferido(), ajustes
+        );
+
+        dto.setCostoBase(calc != null ? calc.getCostoBase() : 0.0);
 
         return dto;
     }

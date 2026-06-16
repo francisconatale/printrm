@@ -96,12 +96,25 @@ public class ProductoService {
         dto.setVolumenCm3(pieza.getVolumenCm3());
         dto.setPesoGramos(pieza.getPesoGramos());
         dto.setTiempoEstimado(pieza.getTiempoEstimado());
-        dto.setCostoBase(pieza.getCostoBase());
         dto.setImagenBase64(pieza.getImagenBase64());
         dto.setCreadoEn(pieza.getCreadoEn());
         if (pieza.getPerfilPreferido() != null) dto.setPerfilImpresoraNombre(pieza.getPerfilPreferido().getNombre());
         if (pieza.getFilamentoPreferido() != null) dto.setPerfilFilamentoNombre(pieza.getFilamentoPreferido().getNombre());
         if (pieza.getImpresionPreferida() != null) dto.setPerfilImpresionNombre(pieza.getImpresionPreferida().getNombre());
+        
+        // Dynamic cost calculation
+        AjustesDTO ajustes = ajustesService.getAjustes();
+        CostCalculationResult calc = costCalculationService.calculate(
+            pieza.getPesoGramos(), 
+            parseHours(pieza.getTiempoEstimado()), 
+            parseMinutes(pieza.getTiempoEstimado()), 
+            0.0, 
+            pieza.getPerfilPreferido(), 
+            pieza.getFilamentoPreferido(), 
+            ajustes
+        );
+        dto.setCostoBase(calc != null ? calc.getCostoBase() : 0.0);
+        
         return dto;
     }
 

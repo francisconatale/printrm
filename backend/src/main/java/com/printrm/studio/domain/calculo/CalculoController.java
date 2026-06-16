@@ -28,7 +28,7 @@ public class CalculoController {
             request.getMinutosAdicionales(),
             request.getInsumosExtra(),
             request.getPerfilId(),
-            null // Standard filament logic can be extended if needed
+            request.getFilamentId()
         );
     }
 
