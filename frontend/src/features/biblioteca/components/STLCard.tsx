@@ -18,9 +18,7 @@ interface STLCardProps {
 export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }) => {
   const [hovered, setHovered] = useState(false);
   
-  // In a real scenario, this URL would come from the backend file server
-  // For now we assume the filePath is a local path or a test-cube.stl in public
-  const stlUrl = `/test-cube.stl`; 
+  const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`; 
 
   return (
     <div 

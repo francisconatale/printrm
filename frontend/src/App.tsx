@@ -4,6 +4,7 @@ import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { StudioOverview } from './components/studio-overview'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
+import { ClientesListView } from './features/clientes/components/ClientesListView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
@@ -29,6 +30,8 @@ function App() {
         return <PerfilesDashboardView />
       case 'inventory':
         return <PiezasGalleryView />
+      case 'customers':
+        return <ClientesListView />
       case 'dashboard':
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>
