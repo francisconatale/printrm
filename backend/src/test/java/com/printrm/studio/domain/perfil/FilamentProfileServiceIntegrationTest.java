@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.perfil;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class FilamentProfileServiceIntegrationTest {
 
     @Autowired
     private FilamentProfileRepository filamentProfileRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private FilamentProfileRequestDTO buildValidRequest(String nombre) {
         return new FilamentProfileRequestDTO(
@@ -60,7 +64,11 @@ class FilamentProfileServiceIntegrationTest {
     @Test
     @DisplayName("create() asigna timestamps automáticamente")
     void create_setsTimestampsAutomatically() {
-        FilamentProfileResponseDTO result = filamentProfileService.create(buildValidRequest("ABS Generic"));
+        FilamentProfileResponseDTO created = filamentProfileService.create(buildValidRequest("ABS Generic"));
+        entityManager.flush();
+        entityManager.clear();
+
+        FilamentProfileResponseDTO result = filamentProfileService.findById(created.getId());
 
         assertThat(result.getCreadoEn()).isNotNull();
         assertThat(result.getActualizadoEn()).isNotNull();

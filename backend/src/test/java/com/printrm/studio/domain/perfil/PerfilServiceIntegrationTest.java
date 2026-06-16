@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.perfil;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ class PerfilServiceIntegrationTest {
 
     @Autowired
     private PerfilRepository perfilRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private PerfilRequestDTO buildValidRequest(String nombre) {
         PerfilRequestDTO dto = new PerfilRequestDTO();
@@ -61,7 +65,12 @@ class PerfilServiceIntegrationTest {
     @Test
     @DisplayName("create() asigna timestamps automáticamente")
     void create_setsTimestampsAutomatically() {
-        PerfilResponseDTO result = perfilService.create(buildValidRequest("Ender 3"));
+        PerfilResponseDTO created = perfilService.create(buildValidRequest("Ender 3"));
+        // Flush + clear para forzar recarga desde BD (Hibernate popula @CreationTimestamp al flush)
+        entityManager.flush();
+        entityManager.clear();
+
+        PerfilResponseDTO result = perfilService.findById(created.getId());
 
         assertThat(result.getCreadoEn()).isNotNull();
         assertThat(result.getActualizadoEn()).isNotNull();
