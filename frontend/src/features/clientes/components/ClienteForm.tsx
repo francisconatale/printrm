@@ -21,7 +21,7 @@ interface ClienteFormProps {
 }
 
 export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit, onCancel, isLoading }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<ClienteCreate | ClienteUpdate>({
+  const { register, handleSubmit, formState: { errors } } = useForm<ClienteCreate>({
     resolver: zodResolver(clienteSchema),
     defaultValues: initialData || {
       nombre: '',
@@ -31,7 +31,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
     }
   });
 
-  const onInternalSubmit = (data: ClienteCreate | ClienteUpdate) => {
+  const onInternalSubmit = (data: ClienteCreate) => {
     onSubmit(data);
   };
 
@@ -41,7 +41,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
       description="Gestioná la información de tus contactos comerciales."
       isOpen={true}
       onClose={onCancel}
-      className="max-w-2xl"
+      size="2xl"
     >
       <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-6 pt-4">
         

@@ -31,7 +31,7 @@ export const useUpdateCliente = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (cliente: ClienteUpdate) => {
-      const { data } = await axios.post(API_URL, cliente);
+      const { data } = await axios.put(`${API_URL}/${cliente.id}`, cliente);
       return data;
     },
     onSuccess: () => {

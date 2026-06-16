@@ -7,22 +7,23 @@ import {
   BarChart, 
   Printer,
   Star,
-  Sliders
+  Sliders,
+  ClipboardList
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from '../ui/theme-toggle';
 
-export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'reports' | 'profiles';
+export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles';
 
 const NAV_ITEMS = [
   { icon: Star, label: 'Resumen', id: 'overview' },
   { icon: Printer, label: 'Cotizador', id: 'calculator' },
   { icon: Package, label: 'Biblioteca STL', id: 'inventory' },
+  { icon: List, label: 'Catálogo Stock', id: 'stock' },
+  { icon: ArrowUpDown, label: 'Pedidos / Ventas', id: 'orders' },
   { icon: Users, label: 'Clientes', id: 'customers' },
   { icon: Sliders, label: 'Perfiles', id: 'profiles' },
-  { icon: LayoutDashboard, label: 'Finanzas', id: 'dashboard' },
-  { icon: List, label: 'Transacciones', id: 'transactions' },
-  { icon: ArrowUpDown, label: 'Ingresos/Egresos', id: 'finance' },
+  { icon: LayoutDashboard, label: 'Finanzas', id: 'finance' },
   { icon: BarChart, label: 'Reportes', id: 'reports' },
 ];
 

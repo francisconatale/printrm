@@ -5,6 +5,9 @@ import { StudioOverview } from './components/studio-overview'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
 import { ClientesListView } from './features/clientes/components/ClientesListView'
+import { PedidosListView } from './features/pedidos/components/PedidosListView'
+import { ProductosGalleryView } from './features/stock/components/ProductosGalleryView'
+import { LibroDiarioView } from './features/finanzas/components/LibroDiarioView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
@@ -30,8 +33,14 @@ function App() {
         return <PerfilesDashboardView />
       case 'inventory':
         return <PiezasGalleryView />
+      case 'stock':
+        return <ProductosGalleryView />
       case 'customers':
         return <ClientesListView />
+      case 'orders':
+        return <PedidosListView />
+      case 'finance':
+        return <LibroDiarioView />
       case 'dashboard':
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>

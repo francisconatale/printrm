@@ -10,9 +10,9 @@ import { Cliente } from '../types/clientes.types';
 
 export function ClientesListView() {
   const { data: clientes, isLoading } = useGetClientes();
-  const { mutate: createCliente } = useCreateCliente();
-  const { mutate: updateCliente } = useUpdateCliente();
-  const { mutate: deleteCliente } = useDeleteCliente();
+  const { mutate: createCliente, isPending: isCreating } = useCreateCliente();
+  const { mutate: updateCliente, isPending: isUpdating } = useUpdateCliente();
+  const { mutate: deleteCliente, isPending: isDeleting } = useDeleteCliente();
 
   const [showFormModal, setShowFormModal] = React.useState(false);
   const [editingCliente, setEditingCliente] = React.useState<Cliente | null>(null);
@@ -29,10 +29,13 @@ export function ClientesListView() {
     );
   }, [clientes, searchTerm]);
 
-  const handleClienteSubmit = (data: Cliente) => {
+  const handleClienteSubmit = (data: any) => {
     if (editingCliente) {
       updateCliente({ ...data, id: editingCliente.id }, {
-        onSuccess: () => setShowFormModal(false)
+        onSuccess: () => {
+          setShowFormModal(false);
+          setEditingCliente(null);
+        }
       });
     } else {
       createCliente(data, {
@@ -43,9 +46,14 @@ export function ClientesListView() {
 
   const handleDelete = (id: string) => {
     deleteCliente(id, {
-      onSuccess: () => setShowConfirmModal(false)
+      onSuccess: () => {
+        setShowConfirmModal(false);
+        setClienteToDelete(null);
+      }
     });
   };
+
+  const isMutationLoading = isCreating || isUpdating;
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
@@ -101,7 +109,7 @@ export function ClientesListView() {
               </div>
             </div>
           ) : (
-            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-border/50">
                 <thead className="bg-muted/10">
                   <tr>
@@ -115,33 +123,37 @@ export function ClientesListView() {
                 </thead>
                 <tbody className="divide-y divide-border/50">
                   {filteredClientes.map((cliente) => (
-                    <tr key={cliente.id} className="hover:bg-muted/5 transition-colors">
+                    <tr key={cliente.id} className="hover:bg-muted/5 transition-colors group">
                       <td className="px-6 py-4 whitespace-nowrap text-sm studio-body-strong text-foreground">{cliente.nombre}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden sm:table-cell">{cliente.email || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden md:table-cell">{cliente.telefono || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground truncate max-w-xs hidden lg:table-cell">{cliente.notas || '-'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">{format(new Date(cliente.fechaCreacion), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end gap-3">
-                        <button 
-                          onClick={() => {
-                            setEditingCliente(cliente);
-                            setShowFormModal(true);
-                          }}
-                          className="text-primary-foreground hover:text-primary transition-colors"
-                          title="Editar Cliente"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setClienteToDelete(cliente);
-                            setShowConfirmModal(true);
-                          }}
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                          title="Eliminar Cliente"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">
+                        {cliente.fechaCreacion ? format(new Date(cliente.fechaCreacion), 'dd/MM/yyyy', { locale: es }) : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button 
+                            onClick={() => {
+                              setEditingCliente(cliente);
+                              setShowFormModal(true);
+                            }}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            title="Editar Cliente"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setClienteToDelete(cliente);
+                              setShowConfirmModal(true);
+                            }}
+                            className="text-muted-foreground hover:text-red-500 transition-colors"
+                            title="Eliminar Cliente"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -160,20 +172,23 @@ export function ClientesListView() {
             setShowFormModal(false);
             setEditingCliente(null);
           }}
-          isLoading={false} // Adjust with actual loading state from mutations
+          isLoading={isMutationLoading}
         />
       )}
 
       {showConfirmModal && (
         <ConfirmModal
           isOpen={true}
-          onClose={() => setShowConfirmModal(false)}
+          onClose={() => {
+            setShowConfirmModal(false);
+            setClienteToDelete(null);
+          }}
           onConfirm={() => handleDelete(clienteToDelete!.id)}
           title="Eliminar Cliente"
           description={`¿Estás seguro de que quieres eliminar a "${clienteToDelete?.nombre}"? Esta acción no se puede deshacer.`}
-          confirmText="Eliminar"
+          confirmText={isDeleting ? "Eliminando..." : "Eliminar"}
           cancelText="Cancelar"
-          confirmButtonClassName="bg-red-600 hover:bg-red-700"
+          isDestructive={true}
         />
       )}
     </div>

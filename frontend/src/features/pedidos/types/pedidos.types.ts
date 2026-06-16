@@ -20,7 +20,8 @@ export interface Pedido {
 }
 
 export interface ItemPedidoRequest {
-  calculoId: string;
+  calculoId?: string;
+  productoId?: string;
   cantidad: number;
 }
 
