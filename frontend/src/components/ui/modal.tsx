@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { useModalOverlay } from '../../hooks/useModalOverlay';
 
 interface ModalProps {
   isOpen: boolean;
@@ -19,19 +20,8 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   size = '2xl',
 }) => {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleEscape);
-    }
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isOpen, onClose]);
+  useModalOverlay(isOpen, onClose);
+
 
   if (!isOpen) return null;
 

@@ -23,9 +23,9 @@ const filamentSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(50),
   material: z.string().min(1, "El material es obligatorio"),
   filamentoPorKg: z.number().min(0, "Costo no puede ser negativo"),
-  density: z.number().min(0.1, "Densidad m nima 0.1").max(5.0, "Densidad maxima 5.0"),
-  diameter: z.number().min(0.5, "Di metro m nimo 0.5 mm").max(5.0, "Diametro maximo 5.0 mm"),
-  colour: z.string().min(4).max(7).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Debe ser un color hexadecimal valido"),
+  density: z.number().min(0.1, "Densidad mínima 0.1").max(5.0, "Densidad máxima 5.0"),
+  diameter: z.number().min(0.5, "Diámetro mínimo 0.5 mm").max(5.0, "Diámetro máximo 5.0 mm"),
+  colour: z.string().min(4).max(7).regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Debe ser un color hexadecimal válido"),
 });
 
 interface FilamentProfileFormProps {
@@ -120,7 +120,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
           </div>
 
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Densidad (g/cm³ )</label>
+            <label className="studio-caption font-semibold">Densidad (g/cm³)</label>
             <input 
               type="number"
               step="0.01"
@@ -132,7 +132,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
           </div>
 
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Di metro (mm)</label>
+            <label className="studio-caption font-semibold">Diámetro (mm)</label>
             <input 
               type="number"
               step="0.01"

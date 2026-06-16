@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '../../../lib/api-client';
 import { PiezaSTL, PiezaSTLCreate } from '../types/biblioteca.types';
 
-const API_URL = 'http://localhost:8080/api/v1/biblioteca';
+const API_URL = '/v1/biblioteca';
 
 export const useGetPiezas = () => {
   return useQuery<PiezaSTL[]>({
     queryKey: ['piezas-stl'],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await apiClient.get<PiezaSTL[]>(API_URL);
       return data;
     }
   });
@@ -18,7 +18,7 @@ export const useGuardarPieza = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (pieza: PiezaSTLCreate) => {
-      const { data } = await axios.post(API_URL, pieza);
+      const { data } = await apiClient.post<PiezaSTL>(API_URL, pieza);
       return data;
     },
     onSuccess: () => {
@@ -31,7 +31,7 @@ export const useEliminarPieza = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      await axios.delete(`${API_URL}/${id}`);
+      await apiClient.delete(`${API_URL}/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['piezas-stl'] });

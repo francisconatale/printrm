@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '../../../lib/api-client';
 import { CalculoSnapshot } from '../types/calculo.types';
 
-const API_URL = 'http://localhost:8080/api/v1/calculos';
+const API_URL = '/v1/calculos';
 
 export const useGetHistorial = () => {
   return useQuery<CalculoSnapshot[]>({
     queryKey: ['historial'],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await apiClient.get<CalculoSnapshot[]>(API_URL);
       return data;
     },
   });
@@ -17,8 +17,8 @@ export const useGetHistorial = () => {
 export const useGuardarCalculo = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (snapshot: any) => {
-      const { data } = await axios.post(API_URL, snapshot);
+    mutationFn: async (snapshot: CalculoSnapshot) => {
+      const { data } = await apiClient.post<CalculoSnapshot>(API_URL, snapshot);
       return data;
     },
     onSuccess: () => {
@@ -31,7 +31,7 @@ export const useLimpiarHistorial = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      await axios.delete(API_URL);
+      await apiClient.delete(API_URL);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['historial'] });

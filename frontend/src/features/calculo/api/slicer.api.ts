@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '../../../lib/api-client';
 
-const API_URL = 'http://localhost:8080/api/slice';
+const API_URL = '/slice';
 
 interface SliceRequest {
   file: File;
@@ -26,7 +26,7 @@ export const useSliceSTL = () => {
       if (filamentConfig) formData.append('filamentConfig', filamentConfig);
       if (printerConfig) formData.append('printerConfig', printerConfig);
 
-      const { data } = await axios.post<SlicingResult>(API_URL, formData);
+      const { data } = await apiClient.post<SlicingResult>(API_URL, formData);
       return data;
     },
   });

@@ -3,6 +3,7 @@ import { useAjustes } from '../../ajustes/hooks/useAjustes';
 import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo';
 import { Perfil, FilamentProfile } from '../../perfiles/types/perfiles.types';
 import { PiezaInput, ResultadoCalculo } from '../types/calculo.types';
+import { MODELOS_IMPRESORA } from '../../perfiles/data/modelos-impresora';
 import * as utils from '../utils/calculos.utils';
 
 export const useCalculo = (
@@ -18,6 +19,13 @@ export const useCalculo = (
     const printer = printerOverride || perfilActivo;
     if (!printer) return null;
 
+    // Fallback values from model data if missing in profile
+    const modeloData = MODELOS_IMPRESORA.find(m => m.nombre === printer.modeloImpresora) || MODELOS_IMPRESORA[MODELOS_IMPRESORA.length - 1];
+    
+    const consumoW = printer.consumoW ?? modeloData.consumoW;
+    const vidaUtilHoras = printer.vidaUtilHoras ?? modeloData.vidaUtilHoras;
+    const costoRepuestos = printer.costoRepuestos ?? modeloData.costoRepuestos;
+
     // Si no hay ajustes, usamos valores por defecto seguros para no bloquear el cálculo
     const config = ajustes || {
       preciokWh: 0,
@@ -25,15 +33,15 @@ export const useCalculo = (
     };
 
     const tiempoTotalHoras = utils.calcularTiempo(input.horas, input.minutosAdicionales);
-    const costoEnergia = utils.calcularCostoEnergia(printer.consumoW, tiempoTotalHoras, config.preciokWh);
+    const costoEnergia = utils.calcularCostoEnergia(consumoW, tiempoTotalHoras, config.preciokWh);
     
     // Filament cost: filament profile > printer profile > 0
     const filamentoPorKg = filamentOverride ? filamentOverride.filamentoPorKg : (printer.filamentoPorKg || 0);
     const costoFilamento = utils.calcularCostoFilamento(input.gramos, filamentoPorKg);
     
     const costoDesgaste = utils.calcularCostoDesgaste(
-      printer.costoRepuestos || 0,
-      printer.vidaUtilHoras || 1,
+      costoRepuestos,
+      vidaUtilHoras || 1,
       tiempoTotalHoras
     );
     

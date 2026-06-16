@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Settings, 
   Printer, 
@@ -19,7 +19,6 @@ import {
   useUpdatePrintProfile,
   useDeletePrintProfile
 } from '../api/perfiles.api';
-import { useAjustes } from '../../ajustes/hooks/useAjustes';
 import { PerfilForm } from './PerfilForm';
 import { FilamentProfileForm } from './FilamentProfileForm';
 import { PrintProfileForm } from './PrintProfileForm';
@@ -29,18 +28,13 @@ import { Modal } from '../../../components/ui/modal';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { ConfigTable, ColumnDef } from '../../../components/ui/config-table';
 import { ConfigSection } from '../../../components/ui/config-section';
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value);
-};
+import { formatCurrency } from '../../../lib/utils';
+import { AjustesSeccion } from '../../ajustes/components/AjustesSeccion';
 
 // --- Column Definitions ---
 const printerColumns: ColumnDef<Perfil>[] = [
   { header: 'Nombre', className: 'font-sans font-semibold text-[14px]', render: (p) => p.nombre },
   { header: 'Modelo', className: 'font-sans text-muted-foreground', render: (p) => p.modeloImpresora },
-  { header: 'Consumo', className: 'text-right', render: (p) => `${p.consumoW} W` },
-  { header: 'Vida Útil', className: 'text-right', render: (p) => `${(p.vidaUtilHoras || 0).toLocaleString()} hs` },
-  { header: 'Repuestos', className: 'text-right', render: (p) => formatCurrency(p.costoRepuestos || 0) },
   { header: 'Boquilla', className: 'text-right', render: (p) => `${p.nozzleDiameter || 0.4} mm` },
   { header: 'Cama (X x Y)', className: 'text-right', render: (p) => p.bedShape || '220x220' },
   { header: 'Altura Z', className: 'text-right', render: (p) => `${p.maxPrintHeight || 250} mm` },
@@ -96,31 +90,7 @@ export const PerfilesDashboardView: React.FC = () => {
   const printUpdate = useUpdatePrintProfile();
   const printDelete = useDeletePrintProfile();
 
-  // Ajustes API
-  const { ajustes, updateAjustes, isUpdating: updatingAjustes } = useAjustes();
-  const [preciokWh, setPreciokWh] = useState<number>(0);
-  const [margenError, setMargenError] = useState<number>(0);
 
-  useEffect(() => {
-    if (ajustes) {
-      setPreciokWh(ajustes.preciokWh);
-      setMargenError(ajustes.margenError);
-    }
-  }, [ajustes]);
-
-  const handleSaveAjustes = () => {
-    if (ajustes) {
-      updateAjustes({
-        ...ajustes,
-        preciokWh,
-        margenError
-      }, {
-        onSuccess: () => {
-          alert('Configuración general guardada correctamente.');
-        }
-      });
-    }
-  };
 
   // Config Root Registry definition
   const configs = useMemo(() => {
@@ -267,49 +237,7 @@ export const PerfilesDashboardView: React.FC = () => {
         {/* Tab Content */}
         <div className="pt-4">
           {activeTab === 'general' ? (
-            /* GENERAL SETTINGS TAB */
-            <div className="space-y-8">
-              <div>
-                <h2 className="studio-tagline">Ajustes Generales del Taller</h2>
-                <p className="studio-body text-xs text-muted-foreground mt-0.5">Configuraciones de precio regionales y márgenes generales de cotización.</p>
-              </div>
-
-              <div className="max-w-2xl border border-border rounded-2xl p-6 bg-muted/20 space-y-4">
-                <div>
-                  <h3 className="studio-tagline text-base text-foreground">Parámetros Globales (Electricidad)</h3>
-                  <p className="studio-body text-xs text-muted-foreground mt-0.5">Configurá el precio de la energía y el margen comercial de seguridad.</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-muted-foreground">Precio Energía ($ / kWh)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      value={preciokWh}
-                      onChange={(e) => setPreciokWh(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono text-[14px]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-muted-foreground">Margen de Seguridad / Error (%)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      value={margenError}
-                      onChange={(e) => setMargenError(parseFloat(e.target.value) || 0)}
-                      className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono text-[14px]"
-                    />
-                  </div>
-                </div>
-                <button
-                  onClick={handleSaveAjustes}
-                  disabled={updatingAjustes}
-                  className="bg-primary text-white hover:opacity-85 active:scale-95 transition-all text-xs font-semibold rounded-full px-5 py-2 !w-full"
-                >
-                  {updatingAjustes ? 'Guardando...' : 'Guardar Ajustes Globales'}
-                </button>
-              </div>
-            </div>
+            <AjustesSeccion />
           ) : currentConfig ? (
             /* DYNAMIC PROFILES TAB */
             <ConfigSection

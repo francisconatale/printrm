@@ -58,3 +58,24 @@ export function calcularPrecioVenta(
 ): number {
   return costoBase * multiplicador;
 }
+
+/**
+ * Parsea una cadena de tiempo estimado (ej. "2h 30m", "45m", "3h") y retorna horas y minutos.
+ */
+export function parseEstimatedTime(estimatedTime: string): { horas: number; minutos: number } {
+  let horas = 0;
+  let minutos = 0;
+  
+  const hourMatch = estimatedTime.match(/(\d+)h/);
+  if (hourMatch) {
+    horas = parseInt(hourMatch[1], 10);
+  }
+  
+  const minuteMatch = estimatedTime.match(/(\d+)m/);
+  if (minuteMatch) {
+    minutos = parseInt(minuteMatch[1], 10);
+  }
+  
+  return { horas, minutos };
+}
+

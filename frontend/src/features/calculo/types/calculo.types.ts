@@ -20,16 +20,24 @@ export interface ResultadoCalculo {
 }
 
 export interface CalculoSnapshot {
-  id: string;
-  timestamp: string;            // ISO 8601
+  id?: string;
+  timestamp?: string;            // ISO 8601
   perfilId: string;
-  perfilNombre: string;         // snapshot — independiente del perfil actual
-  input: {
-    horas: number;
-    minutosAdicionales: number;
-    gramos: number;
-    insumosExtra: number;
-    multiplicador: number;
-  };
-  resultado: ResultadoCalculo;
+  perfilNombre: string;          // snapshot — independiente del perfil actual
+
+  // Inputs
+  horas: number;
+  minutosAdicionales: number;
+  gramos: number;
+  insumosExtra: number;
+  multiplicador: number;
+
+  // Results
+  costoEnergia: number;
+  costoFilamento: number;
+  costoDesgaste: number;
+  subtotal: number;
+  costoBase: number;
+  precioVenta: number;
 }
+

@@ -3,11 +3,14 @@ import { useGetPiezas, useEliminarPieza } from '../api/biblioteca.api';
 import { STLCard } from './STLCard';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Search, PackageOpen, Loader2 } from 'lucide-react';
+import { ConfirmModal } from '../../../components/ui/confirm-modal';
+import { PiezaSTL } from '../types/biblioteca.types';
 
 export function PiezasGalleryView() {
   const { data: piezas, isLoading } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [deletePieceId, setDeletePieceId] = React.useState<string | null>(null);
 
   const filteredPiezas = React.useMemo(() => {
     if (!piezas) return [];
@@ -17,7 +20,7 @@ export function PiezasGalleryView() {
     );
   }, [piezas, searchTerm]);
 
-  const handleCalculate = (pieza: any) => {
+  const handleCalculate = (pieza: PiezaSTL) => {
     // Logic to navigate to calculator with this piece
     console.log("Calcular costo para:", pieza.nombre);
     alert(`Próximamente: Cargando ${pieza.nombre} en el cotizador...`);
@@ -61,9 +64,7 @@ export function PiezasGalleryView() {
                 <STLCard 
                   key={pieza.id} 
                   pieza={pieza} 
-                  onDelete={(id) => {
-                    if (confirm('¿Estás seguro de eliminar esta pieza?')) eliminarPieza(id);
-                  }}
+                  onDelete={(id) => setDeletePieceId(id)}
                   onCalculate={handleCalculate}
                 />
               ))}
@@ -82,6 +83,22 @@ export function PiezasGalleryView() {
 
         </div>
       </main>
+
+      <ConfirmModal
+        isOpen={deletePieceId !== null}
+        onClose={() => setDeletePieceId(null)}
+        onConfirm={() => {
+          if (deletePieceId) {
+            eliminarPieza(deletePieceId);
+            setDeletePieceId(null);
+          }
+        }}
+        title="Eliminar Pieza"
+        description="¿Estás seguro de que quieres eliminar esta pieza de la biblioteca? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isDestructive={true}
+      />
     </div>
   );
 }

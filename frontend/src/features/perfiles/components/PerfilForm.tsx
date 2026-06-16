@@ -9,10 +9,6 @@ import { Save, X, Settings, Monitor } from 'lucide-react';
 const perfilSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(50),
   modeloImpresora: z.string().min(1),
-  consumoW: z.number().min(0),
-  vidaUtilHoras: z.number().min(1),
-  costoRepuestos: z.number().min(0),
-  filamentoPorKg: z.number().min(0),
   nozzleDiameter: z.number().min(0.1, "Mínimo 0.1 mm").max(2.0, "Máximo 2.0 mm"),
   bedShape: z.string().min(1, "La cama es obligatoria"),
   maxPrintHeight: z.number().min(1, "Mínimo 1 mm"),
@@ -25,16 +21,14 @@ interface PerfilFormProps {
   isLoading?: boolean;
 }
 
+type PerfilFormValues = z.infer<typeof perfilSchema>;
+
 export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, onCancel, isLoading }) => {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<PerfilCreate>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<PerfilFormValues>({
     resolver: zodResolver(perfilSchema),
     defaultValues: initialData || {
       nombre: '',
       modeloImpresora: 'Prusa MK4',
-      consumoW: 120,
-      vidaUtilHoras: 5000,
-      costoRepuestos: 25000,
-      filamentoPorKg: 15000,
       nozzleDiameter: 0.4,
       bedShape: '250x210',
       maxPrintHeight: 220,
@@ -46,9 +40,6 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
   React.useEffect(() => {
     const modelo = MODELOS_IMPRESORA.find(m => m.nombre === selectedModelo);
     if (modelo && !initialData) {
-      setValue('consumoW', modelo.consumoW);
-      setValue('vidaUtilHoras', modelo.vidaUtilHoras);
-      setValue('costoRepuestos', modelo.costoRepuestos);
       setValue('nozzleDiameter', 0.4);
       
       if (modelo.nombre.includes("Ender 3")) {
@@ -70,8 +61,14 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
     }
   }, [selectedModelo, setValue, initialData]);
 
-  const onInternalSubmit = (data: PerfilCreate) => {
-    onSubmit(data);
+  const onInternalSubmit = (data: PerfilFormValues) => {
+    onSubmit({
+      ...data,
+      consumoW: initialData?.consumoW ?? 350,
+      vidaUtilHoras: initialData?.vidaUtilHoras ?? 8000,
+      costoRepuestos: initialData?.costoRepuestos ?? 45000,
+      filamentoPorKg: initialData?.filamentoPorKg ?? 15000,
+    });
   };
 
   return (
@@ -104,58 +101,6 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
               ))}
             </select>
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="studio-caption font-semibold">Consumo Promedio (W)</label>
-          <div className="relative">
-            <input 
-              type="number"
-              {...register('consumoW', { valueAsNumber: true })}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-            />
-            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">WATTS</span>
-          </div>
-          {errors.consumoW && <p className="text-red-500 text-xs mt-1">{errors.consumoW.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="studio-caption font-semibold">Vida Útil (Horas)</label>
-          <div className="relative">
-            <input 
-              type="number"
-              {...register('vidaUtilHoras', { valueAsNumber: true })}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-            />
-            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">HS</span>
-          </div>
-          {errors.vidaUtilHoras && <p className="text-red-500 text-xs mt-1">{errors.vidaUtilHoras.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="studio-caption font-semibold">Costo Repuestos ($)</label>
-          <div className="relative">
-            <input 
-              type="number"
-              {...register('costoRepuestos', { valueAsNumber: true })}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-            />
-            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS</span>
-          </div>
-          {errors.costoRepuestos && <p className="text-red-500 text-xs mt-1">{errors.costoRepuestos.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="studio-caption font-semibold">Costo Filamento ($ / kg)</label>
-          <div className="relative">
-            <input 
-              type="number"
-              {...register('filamentoPorKg', { valueAsNumber: true })}
-              className="w-full bg-background border border-border rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-foreground outline-none"
-            />
-            <span className="absolute right-3 top-2 text-[10px] font-bold text-muted-foreground">ARS/KG</span>
-          </div>
-          {errors.filamentoPorKg && <p className="text-red-500 text-xs mt-1">{errors.filamentoPorKg.message}</p>}
         </div>
 
         <div className="col-span-full border-b border-border/50 pb-2 mt-4 mb-2 flex items-center gap-2">

@@ -21,6 +21,7 @@ import { useGuardarCalculo } from '../api/calculos.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
+import { parseEstimatedTime } from '../utils/calculos.utils'
 
 export function CalculadoraView() {
   const { perfilActivo } = usePerfilActivo();
@@ -30,6 +31,7 @@ export function CalculadoraView() {
 
   const [file, setFile] = React.useState<File | null>(null);
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   // Set default values when profiles are loaded
   React.useEffect(() => {
@@ -128,7 +130,7 @@ export function CalculadoraView() {
   const handleSaveToLibrary = () => {
     if (!file || !resultado) return;
 
-    const canvas = document.querySelector('canvas');
+    const canvas = canvasRef.current;
     const imagenBase64 = canvas ? canvas.toDataURL('image/png') : undefined;
 
     guardarPieza({
@@ -170,12 +172,10 @@ export function CalculadoraView() {
       },
       {
         onSuccess: (result) => {
-          const match = (result.estimatedTime || '').match(/(\d+)h\s*(\d+)m/);
-          const hours = match ? parseInt(match[1]) : 0;
-          const minutes = match ? parseInt(match[2]) : 0;
+          const { horas, minutos } = parseEstimatedTime(result.estimatedTime || '');
           handleSlicingComplete({
-            horas: hours,
-            minutos: minutes,
+            horas,
+            minutos,
             gramos: result.filamentUsedG || 0,
           });
         },
@@ -225,6 +225,7 @@ export function CalculadoraView() {
                   onFileChange={setFile}
                   isSlicing={isAnalyzing || isSlicing}
                   onReset={handleResetAnalysis}
+                  canvasRef={canvasRef}
                 />
 
                 <div className="pt-8 border-t border-[var(--border-subtle)]">

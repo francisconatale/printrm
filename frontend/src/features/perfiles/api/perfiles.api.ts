@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { apiClient } from '../../../lib/api-client';
 import { 
   Perfil, 
   PerfilCreate, 
@@ -13,166 +13,85 @@ import {
   SlicerConfigs 
 } from '../types/perfiles.types';
 
-const API_URL = 'http://localhost:8080/api/v1/perfiles';
-const FILAMENT_API_URL = 'http://localhost:8080/api/v1/filament-profiles';
-const PRINT_API_URL = 'http://localhost:8080/api/v1/print-profiles';
+const API_URL = '/v1/perfiles';
+const FILAMENT_API_URL = '/v1/filament-profiles';
+const PRINT_API_URL = '/v1/print-profiles';
 
-// --- PRINTER PROFILES (PERFILES) ---
-
-export const useGetPerfiles = () => {
-  return useQuery<Perfil[]>({
-    queryKey: ['perfiles'],
-    queryFn: async () => {
-      const { data } = await axios.get(API_URL);
-      return data;
+// Helper for generating standard CRUD hooks
+function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
+  queryKey: string,
+  url: string
+) {
+  return {
+    useGet: () => useQuery<T[]>({
+      queryKey: [queryKey],
+      queryFn: async () => {
+        const { data } = await apiClient.get<T[]>(url);
+        return data;
+      },
+    }),
+    useCreate: () => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: async (newItem: TCreate) => {
+          const { data } = await apiClient.post<T>(url, newItem);
+          return data;
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [queryKey] });
+        },
+      });
     },
-  });
-};
+    useUpdate: () => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: async ({ id, ...updates }: TUpdate & { id: string }) => {
+          const { data } = await apiClient.put<T>(`${url}/${id}`, updates);
+          return data;
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [queryKey] });
+        },
+      });
+    },
+    useDelete: () => {
+      const queryClient = useQueryClient();
+      return useMutation({
+        mutationFn: async (id: string) => {
+          await apiClient.delete(`${url}/${id}`);
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: [queryKey] });
+        },
+      });
+    },
+  };
+}
+
+const printerHooks = createCrudHooks<Perfil, PerfilCreate, PerfilUpdate>('perfiles', API_URL);
+export const useGetPerfiles = printerHooks.useGet;
+export const useCreatePerfil = printerHooks.useCreate;
+export const useUpdatePerfil = printerHooks.useUpdate;
+export const useDeletePerfil = printerHooks.useDelete;
 
 export const useGetSlicerConfigs = () => {
   return useQuery<SlicerConfigs>({
     queryKey: ['slicer-configs'],
     queryFn: async () => {
-      const { data } = await axios.get(`${API_URL}/configs`);
+      const { data } = await apiClient.get<SlicerConfigs>(`${API_URL}/configs`);
       return data;
     },
   });
 };
 
-export const useCreatePerfil = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (newPerfil: PerfilCreate) => {
-      const { data } = await axios.post(API_URL, newPerfil);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['perfiles'] });
-    },
-  });
-};
+const filamentHooks = createCrudHooks<FilamentProfile, FilamentProfileCreate, FilamentProfileUpdate>('filament-profiles', FILAMENT_API_URL);
+export const useGetFilamentProfiles = filamentHooks.useGet;
+export const useCreateFilamentProfile = filamentHooks.useCreate;
+export const useUpdateFilamentProfile = filamentHooks.useUpdate;
+export const useDeleteFilamentProfile = filamentHooks.useDelete;
 
-export const useUpdatePerfil = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: PerfilUpdate & { id: string }) => {
-      const { data } = await axios.put(`${API_URL}/${id}`, updates);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['perfiles'] });
-    },
-  });
-};
-
-export const useDeletePerfil = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await axios.delete(`${API_URL}/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['perfiles'] });
-    },
-  });
-};
-
-// --- FILAMENT PROFILES ---
-
-export const useGetFilamentProfiles = () => {
-  return useQuery<FilamentProfile[]>({
-    queryKey: ['filament-profiles'],
-    queryFn: async () => {
-      const { data } = await axios.get(FILAMENT_API_URL);
-      return data;
-    },
-  });
-};
-
-export const useCreateFilamentProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (newProfile: FilamentProfileCreate) => {
-      const { data } = await axios.post(FILAMENT_API_URL, newProfile);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filament-profiles'] });
-    },
-  });
-};
-
-export const useUpdateFilamentProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: FilamentProfileUpdate & { id: string }) => {
-      const { data } = await axios.put(`${FILAMENT_API_URL}/${id}`, updates);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filament-profiles'] });
-    },
-  });
-};
-
-export const useDeleteFilamentProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await axios.delete(`${FILAMENT_API_URL}/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filament-profiles'] });
-    },
-  });
-};
-
-// --- PRINT PROFILES ---
-
-export const useGetPrintProfiles = () => {
-  return useQuery<PrintProfile[]>({
-    queryKey: ['print-profiles'],
-    queryFn: async () => {
-      const { data } = await axios.get(PRINT_API_URL);
-      return data;
-    },
-  });
-};
-
-export const useCreatePrintProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (newProfile: PrintProfileCreate) => {
-      const { data } = await axios.post(PRINT_API_URL, newProfile);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['print-profiles'] });
-    },
-  });
-};
-
-export const useUpdatePrintProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: PrintProfileUpdate & { id: string }) => {
-      const { data } = await axios.put(`${PRINT_API_URL}/${id}`, updates);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['print-profiles'] });
-    },
-  });
-};
-
-export const useDeletePrintProfile = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await axios.delete(`${PRINT_API_URL}/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['print-profiles'] });
-    },
-  });
-};
+const printHooks = createCrudHooks<PrintProfile, PrintProfileCreate, PrintProfileUpdate>('print-profiles', PRINT_API_URL);
+export const useGetPrintProfiles = printHooks.useGet;
+export const useCreatePrintProfile = printHooks.useCreate;
+export const useUpdatePrintProfile = printHooks.useUpdate;
+export const useDeletePrintProfile = printHooks.useDelete;
