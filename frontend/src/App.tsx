@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { HistorialView } from './features/calculo/components/HistorialView'
-import { StudioOverview } from './components/studio-overview'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
 import { ClientesListView } from './features/clientes/components/ClientesListView'
@@ -32,8 +31,6 @@ function App() {
 
   const renderView = () => {
     switch (currentView) {
-      case 'overview':
-        return <StudioOverview />
       case 'calculator':
         return <CalculadoraView initialData={historyData} />
       case 'history':

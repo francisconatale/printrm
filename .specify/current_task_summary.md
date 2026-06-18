@@ -1,10 +1,12 @@
-# Tarea Actual: T019 - Bugfix SQLite CHECK constraint en transacciones
+# Tarea Actual: Remover Vista de Resumen (Overview) del Frontend
 
 ## Estado
-- [x] Backend: Corregir el constraint CHECK de la tabla `transacciones` en `studio.db` para admitir la categoría `REPUESTO` (T019).
+- [x] Frontend: Eliminar la opción "Resumen" (`overview`) de la barra de navegación lateral y quitar la vista `StudioOverview` del renderizado.
+- [x] Frontend: Eliminar el archivo de componente `studio-overview.tsx` si ya no es utilizado.
 - [x] Actualizar el archivo `CHANGELOG.md`.
 
 ## Archivos involucrados
-- `backend/studio.db`
+- `frontend/src/components/layout/sidebar.tsx`
+- `frontend/src/App.tsx`
+- `frontend/src/components/studio-overview.tsx`
 - `CHANGELOG.md`
-

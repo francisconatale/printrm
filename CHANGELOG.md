@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-18] - Remover Vista de Resumen (Overview) del Frontend
+### Descripción
+- **Frontend (UI):** Se eliminó la sección de "Resumen" (`overview`) del panel de navegación lateral y de la lógica de renderizado principal en `App.tsx`.
+- Se eliminó el componente no utilizado `studio-overview.tsx` del proyecto para limpiar la base de código.
+
+### Archivos Involucrados
+- `frontend/src/components/layout/sidebar.tsx` (modificado)
+- `frontend/src/App.tsx` (modificado)
+- `frontend/src/components/studio-overview.tsx` (eliminado)
+- `CHANGELOG.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+
 ## [2026-06-18] - Bugfix SQLite CHECK constraint en transacciones (T019)
 ### Descripción
 - **Backend (Base de Datos):** Se realizó la migración del esquema en la base de datos `studio.db` de desarrollo para actualizar el constraint `CHECK` de la columna `categoria` en la tabla `transacciones`. Ahora admite la categoría `'REPUESTO'`, además de las ya existentes (`'MATERIAL'`, `'ENERGIA'`, `'VENTA'`, `'MERMA'`, `'OTRO'`).
