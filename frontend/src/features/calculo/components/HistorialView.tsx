@@ -5,7 +5,13 @@ import { useClearHistorial } from '../api/historial.api';
 import { Trash2 } from 'lucide-react';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
 
-export function HistorialView() {
+import { CalculoSnapshot } from '../types/calculo.types';
+
+interface HistorialViewProps {
+  onSelect?: (item: CalculoSnapshot) => void;
+}
+
+export function HistorialView({ onSelect }: HistorialViewProps) {
   const { mutate: clearHistorial, isPending } = useClearHistorial();
   const [showConfirm, setShowConfirm] = React.useState(false);
 
@@ -34,7 +40,7 @@ export function HistorialView() {
               </button>
             </div>
 
-            <HistorialTable />
+            <HistorialTable onSelect={onSelect} />
 
           </div>
         </section>

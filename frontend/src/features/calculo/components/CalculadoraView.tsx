@@ -22,8 +22,13 @@ import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
 import { parseEstimatedTime } from '../utils/calculos.utils'
+import { CalculoSnapshot } from '../types/calculo.types'
 
-export function CalculadoraView() {
+interface CalculadoraViewProps {
+  initialData?: CalculoSnapshot | null;
+}
+
+export function CalculadoraView({ initialData }: CalculadoraViewProps) {
   const { perfilActivo } = usePerfilActivo();
   const { data: printers } = useGetPerfiles();
   const { data: filaments } = useGetFilamentProfiles();
@@ -33,31 +38,31 @@ export function CalculadoraView() {
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  // Set default values when profiles are loaded
-  React.useEffect(() => {
-    if (perfilActivo && !overrideConfigs.printer) {
-      setOverrideConfigs(prev => ({ ...prev, printer: perfilActivo.id }));
-    }
-  }, [perfilActivo, overrideConfigs.printer]);
-
-  React.useEffect(() => {
-    if (filaments && filaments.length > 0 && !overrideConfigs.filament) {
-      setOverrideConfigs(prev => ({ ...prev, filament: filaments[0].id }));
-    }
-  }, [filaments, overrideConfigs.filament]);
-
-  React.useEffect(() => {
-    if (prints && prints.length > 0 && !overrideConfigs.print) {
-      setOverrideConfigs(prev => ({ ...prev, print: prints[0].id }));
-    }
-  }, [prints, overrideConfigs.print]);
-
   const [piezaInput, setPiezaInput] = React.useState<PiezaInput>({
     horas: 0,
     minutosAdicionales: 0,
     gramos: 0,
     insumosExtra: 0,
   });
+
+  // Hydrate from initialData if provided
+  React.useEffect(() => {
+    if (initialData) {
+      setPiezaInput({
+        horas: initialData.horas,
+        minutosAdicionales: initialData.minutosAdicionales,
+        gramos: initialData.gramos,
+        insumosExtra: initialData.insumosExtra,
+      });
+      // Optionally override printer if it matches one of ours
+      if (initialData.perfilId) {
+        setOverrideConfigs(prev => ({ ...prev, printer: initialData.perfilId }));
+      }
+      setHasAnalyzed(true);
+    }
+  }, [initialData]);
+
+  // Set default values when profiles are loaded
 
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [hasAnalyzed, setHasAnalyzed] = React.useState(false);

@@ -13,25 +13,31 @@ import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
+import { CalculoSnapshot } from './features/calculo/types/calculo.types'
 
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
+  const [historyData, setHistoryData] = useState<CalculoSnapshot | null>(null)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
   }
 
+  const handleSelectFromHistory = (data: CalculoSnapshot) => {
+    setHistoryData(data)
+    setCurrentView('calculator')
+  }
 
   const renderView = () => {
     switch (currentView) {
       case 'overview':
         return <StudioOverview />
       case 'calculator':
-        return <CalculadoraView />
+        return <CalculadoraView initialData={historyData} />
       case 'history':
-        return <HistorialView />
+        return <HistorialView onSelect={handleSelectFromHistory} />
       case 'profiles':
         return <PerfilesDashboardView />
       case 'inventory':

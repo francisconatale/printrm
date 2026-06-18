@@ -1,13 +1,18 @@
 import React from 'react';
-import { Trash2, Download, Copy, MessageCircle, Clock, Package } from 'lucide-react';
+import { Trash2, Download, Copy, MessageCircle, Clock, Package, Play } from 'lucide-react';
 import { useGetHistorial, useDeleteCalculo } from '../api/historial.api';
 import { formatCurrency } from '../../../lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { generateSummaryText, copyToClipboard, shareWhatsApp, downloadCSV } from '../utils/export.utils';
 import { useAjustes } from '../../ajustes/hooks/useAjustes';
+import { CalculoSnapshot } from '../types/calculo.types';
 
-export function HistorialTable() {
+interface HistorialTableProps {
+  onSelect?: (item: CalculoSnapshot) => void;
+}
+
+export function HistorialTable({ onSelect }: HistorialTableProps) {
   const { data: historial, isLoading } = useGetHistorial();
   const { mutate: deleteCalculo } = useDeleteCalculo();
   const { ajustes } = useAjustes();
@@ -86,6 +91,15 @@ export function HistorialTable() {
               </td>
               <td className="px-6 py-4 text-right">
                 <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {onSelect && (
+                    <button
+                      onClick={() => onSelect(item)}
+                      className="p-2 hover:bg-primary/10 rounded-lg transition-all text-primary"
+                      title="Cargar en calculadora"
+                    >
+                      <Play size={14} fill="currentColor" />
+                    </button>
+                  )}
                   <button
                     onClick={() => handleCopy(item)}
                     className={`p-2 rounded-lg transition-all ${copiedId === item.id ? 'bg-green-500/10 text-green-600' : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'}`}
