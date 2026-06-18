@@ -50,13 +50,14 @@ export function HistorialView({ onSelect }: HistorialViewProps) {
         isOpen={showConfirm}
         onClose={() => setShowConfirm(false)}
         onConfirm={() => {
-          clearHistorial();
-          setShowConfirm(false);
+          clearHistorial(undefined, {
+            onSuccess: () => setShowConfirm(false)
+          });
         }}
         title="¿Limpiar historial?"
         description="Esta acción eliminará todos los cálculos guardados de forma permanente. No se puede deshacer."
         confirmText="Limpiar todo"
-        variant="destructive"
+        isDestructive
         isLoading={isPending}
       />
     </div>

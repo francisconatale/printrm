@@ -49,7 +49,7 @@
 ### Implementation
 - [x] T011 [P] [US11] Implement `csv.utils.ts` (Simplified in `export.utils.ts`)
 - [x] T012 [US11] Add "Export CSV" action to UI
-- [ ] T013 [US12] Implement `LimpiarHistorialModal.tsx` for confirmation
+- [x] T013 [US12] Implement `LimpiarHistorialModal.tsx` for confirmation (Using `ConfirmModal.tsx`)
 
 ---
 

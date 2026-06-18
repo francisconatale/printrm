@@ -12,6 +12,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   isDestructive?: boolean;
+  isLoading?: boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -23,6 +24,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
   isDestructive = false,
+  isLoading = false,
 }) => {
   useModalOverlay(isOpen, onClose);
 
@@ -49,14 +51,15 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {cancelText}
           </button>
           <button 
+            disabled={isLoading}
             onClick={() => {
               onConfirm();
-              onClose();
             }} 
-            className={`rounded-full px-5 py-2 text-xs font-semibold transition-all order-2 text-white ${
+            className={`rounded-full px-5 py-2 text-xs font-semibold transition-all order-2 text-white flex items-center gap-2 ${
               isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:opacity-85'
-            }`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
+            {isLoading && <div className="size-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />}
             {confirmText}
           </button>
         </div>
