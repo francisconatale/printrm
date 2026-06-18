@@ -1,9 +1,10 @@
-# Tarea Actual: T018 Filtros de Logs de Backend Human-Friendly (US3)
+# Tarea Actual: T019 - Bugfix SQLite CHECK constraint en transacciones
 
 ## Estado
-- [x] Backend: Configurar `application.properties` para definir formato de consola compacto, reducir ruido de frameworks a `WARN`, y truncar excepciones a 5 líneas con `%wEx{5}`.
-- [x] Actualizar el archivo `CHANGELOG.md`.
+- [ ] Backend: Corregir el constraint CHECK de la tabla `transacciones` en `studio.db` para admitir la categoría `REPUESTO` (T019).
+- [ ] Actualizar el archivo `CHANGELOG.md`.
 
 ## Archivos involucrados
-- `backend/src/main/resources/application.properties`
+- `backend/studio.db`
 - `CHANGELOG.md`
+
