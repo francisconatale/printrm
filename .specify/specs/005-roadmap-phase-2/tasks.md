@@ -44,7 +44,7 @@
 
 ## Phase 5: User Story 3 - Negocio & Libro Diario 💰
 
-- [ ] T014 [US3] UI: `FinanzasDashboard.tsx` (Balance, Revenue, ROI)
+- [x] T014 [US3] UI: `FinanzasDashboard.tsx` (Balance, Revenue, ROI)
 - [x] T015 [US3] UI: `RegistrarMermaModal.tsx` (Manually log failed prints)
 
 ---

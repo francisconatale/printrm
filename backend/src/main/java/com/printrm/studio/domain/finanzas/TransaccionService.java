@@ -20,4 +20,10 @@ public class TransaccionService {
                 .mapToDouble(Transaccion::getMonto)
                 .sum();
     }
+
+    public Transaccion create(Transaccion transaccion) {
+        transaccion.setId(null);
+        transaccion.setFecha(null);
+        return repository.save(transaccion);
+    }
 }

@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [2026-06-18] - Dashboard Financiero y Transacciones Manuales (T014)
+### Descripción
+- **Backend (Finanzas):** Se añadió el endpoint `POST` en `TransaccionController` y el método `create` en `TransaccionService` para permitir el guardado persistente en SQLite de ingresos y egresos registrados manualmente.
+- **Frontend (Finanzas):**
+  - Se implementó la mutación `useCreateTransaccion` en `finanzas.api.ts` usando TanStack Query para invalidar y refrescar automáticamente el balance y las transacciones al crear una nueva.
+  - Se implementó el componente `TransactionForm.tsx` (modal) para registrar transacciones con validación de montos positivos y mapeo automático del signo del monto en base al tipo (egresos negativos, ingresos positivos).
+  - Se implementó `FinanzasDashboard.tsx` con soporte para métricas clave (Balance Neto, Ingresos Netos, Gastos Totales y ROI), gráficos mensuales de tendencia y un gráfico de barras para la distribución de gastos por categoría (Materiales, Energía, Repuestos, Mermas y Otros) con compensación matemática de ajustes de merma.
+  - Se actualizó `LibroDiarioView.tsx` para incluir navegación por pestañas (Dashboard y Libro Diario) e integrar los nuevos componentes.
+  - Se marcó la tarea `T014` como completada en `tasks.md`.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/finanzas/TransaccionController.java` (modificado)
+- `backend/src/main/java/com/printrm/studio/domain/finanzas/TransaccionService.java` (modificado)
+- `frontend/src/features/finanzas/api/finanzas.api.ts` (modificado)
+- `frontend/src/features/finanzas/components/FinanzasDashboard.tsx` (creado)
+- `frontend/src/features/finanzas/components/LibroDiarioView.tsx` (modificado)
+- `frontend/src/features/finanzas/components/TransactionForm.tsx` (creado)
+- `.specify/specs/005-roadmap-phase-2/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+
 ## [2026-06-18] - Skill de Revisión Automática de Tareas
 ### Descripción
 - Se creó una skill personalizada (`revisar_tareas`) para automatizar el análisis y la presentación de listas de tareas pendientes basadas en los checklists del directorio `.specify/`.
