@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2026-06-18] - Skill de Revisión Automática de Tareas
+### Descripción
+- Se creó una skill personalizada (`revisar_tareas`) para automatizar el análisis y la presentación de listas de tareas pendientes basadas en los checklists del directorio `.specify/`.
+
+### Archivos Involucrados
+- `.agents/skills/revisar_tareas/SKILL.md` (creado)
+- `.specify/current_task_summary.md` (modificado)
+
 ## [2026-06-18] - Exportación Simplificada y Compartición (003-historial-exportacion)
 ### Descripción
 - Se implementaron las utilidades de exportación y compartición solicitadas en el módulo de historial.

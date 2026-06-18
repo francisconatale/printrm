@@ -1,12 +1,9 @@
-# Tarea Actual: T013 - Confirmación de limpieza de historial
+# Tarea Actual: Crear Skill de Revisión de Tareas
 
 ## Estado
-- [x] Utilizar `ConfirmModal.tsx` en `HistorialView.tsx`.
-- [x] Mejorar `ConfirmModal.tsx` para soportar estados de carga (`isLoading`).
-- [x] Corregir bugs visuales y de props en `ConfirmModal`.
-- [x] Commitear implementación automáticamente.
+- [ ] Definir la estructura y el contenido de la skill en `.agents/skills/revisar_tareas/SKILL.md`.
+- [ ] Actualizar el archivo `CHANGELOG.md`.
 
 ## Archivos involucrados
-- `frontend/src/components/ui/confirm-modal.tsx`
-- `frontend/src/features/calculo/components/HistorialView.tsx`
-- `.specify/specs/003-historial-exportacion/tasks.md`
+- `.agents/skills/revisar_tareas/SKILL.md`
+- `CHANGELOG.md`
