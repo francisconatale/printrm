@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [2026-06-18] - Logs de Spring Boot Human-Friendly (T018)
+### Descripción
+- **Backend (Logging):** Se reconfiguró `application.properties` para definir un formato de consola altamente legible (`logging.pattern.console`), que simplifica el timestamp (`HH:mm:ss.SSS`), colorea dinámicamente los niveles y nombres de logger, y limita las trazas de excepciones Java a un máximo de 5 líneas (`%wEx{5}`) para facilitar la identificación de errores de negocio.
+- Se silenciaron los logs de depuración SQL y de binding de Hibernate.
+- Se elevaron los niveles mínimos de log de frameworks como Spring Web, Hibernate, Tomcat y SQLite a `WARN` para evitar saturar la consola con trazas del ciclo de vida interno.
+
+### Archivos Involucrados
+- `backend/src/main/resources/application.properties` (modificado)
+- `.specify/specs/005-roadmap-phase-2/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+
 ## [2026-06-18] - Dashboard Financiero y Transacciones Manuales (T014)
 ### Descripción
 - **Backend (Finanzas):** Se añadió el endpoint `POST` en `TransaccionController` y el método `create` en `TransaccionService` para permitir el guardado persistente en SQLite de ingresos y egresos registrados manualmente.
