@@ -36,7 +36,7 @@
 **Goal**: Visual review of past calculations.
 
 ### Implementation
-- [ ] T008 [P] [US8] Define `historial.api.ts` with TanStack Query hooks (`useGetHistorial`, `useDeleteHistory`)
+- [x] T008 [P] [US8] Define `historial.api.ts` with TanStack Query hooks (`useGetHistorial`, `useDeleteHistory`)
 - [ ] T009 [US8] Create `HistorialTable.tsx` using 1px Hairline separation and Mono fonts for ARS
 - [ ] T010 [US8] Implement "Load Previous Calculation" logic to hydrate the motor from history
 
