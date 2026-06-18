@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-18] - Bugfix SQLite CHECK constraint en transacciones (T019)
+### Descripción
+- **Backend (Base de Datos):** Se realizó la migración del esquema en la base de datos `studio.db` de desarrollo para actualizar el constraint `CHECK` de la columna `categoria` en la tabla `transacciones`. Ahora admite la categoría `'REPUESTO'`, además de las ya existentes (`'MATERIAL'`, `'ENERGIA'`, `'VENTA'`, `'MERMA'`, `'OTRO'`).
+- La migración se realizó conservando todos los datos existentes mediante una estrategia limpia (renombrar tabla a temporal, crear nueva tabla con constraint actualizado, copiar los datos de vuelta y eliminar la tabla temporal).
+- Se validó el correcto funcionamiento de la migración confirmando inserciones con la nueva categoría.
+
+### Archivos Involucrados
+- `backend/studio.db` (modificado)
+- `CHANGELOG.md` (modificado)
+- `.specify/specs/005-roadmap-phase-2/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+
 ## [2026-06-18] - Logs de Spring Boot Human-Friendly (T018)
 ### Descripción
 - **Backend (Logging):** Se reconfiguró `application.properties` para definir un formato de consola altamente legible (`logging.pattern.console`), que simplifica el timestamp (`HH:mm:ss.SSS`), colorea dinámicamente los niveles y nombres de logger, y limita las trazas de excepciones Java a un máximo de 5 líneas (`%wEx{5}`) para facilitar la identificación de errores de negocio.

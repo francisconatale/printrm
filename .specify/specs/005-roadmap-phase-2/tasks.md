@@ -54,5 +54,6 @@
 - [ ] T016 Visual Review: Studio 0.5px Hairline adherence
 - [ ] T017 Run quickstart.md validation
 - [x] T018 [US3] Backend/Electron: Human-friendly backend logging filters and stack-trace truncation
-- [ ] T019 [US3] Bugfix SQLite CHECK constraint en transacciones para admitir REPUESTO
+- [x] T019 [US3] Bugfix SQLite CHECK constraint en transacciones para admitir REPUESTO
+
 
