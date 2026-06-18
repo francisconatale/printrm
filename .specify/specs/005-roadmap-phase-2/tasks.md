@@ -53,3 +53,4 @@
 
 - [ ] T016 Visual Review: Studio 0.5px Hairline adherence
 - [ ] T017 Run quickstart.md validation
+- [ ] T018 [US3] Backend/Electron: Human-friendly backend logging filters and stack-trace truncation
