@@ -1,7 +1,8 @@
 import React from 'react';
-import { Plus, Percent } from 'lucide-react';
+import { Plus, Copy, MessageCircle, Download, Check } from 'lucide-react';
 import { ResultadoCalculo } from '../types/calculo.types';
 import { formatCurrency } from '../../../lib/utils';
+import { generateSummaryText, copyToClipboard, shareWhatsApp, downloadCSV } from '../utils/export.utils';
 
 interface ResultadosBreakdownProps {
   resultado: ResultadoCalculo;
@@ -13,6 +14,7 @@ interface ResultadosBreakdownProps {
   isSaving?: boolean;
   onSaveToLibrary?: () => void;
   isSavingToLibrary?: boolean;
+  perfilNombre?: string;
 }
 
 export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
@@ -20,13 +22,32 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
   insumosExtra = 0,
   onInsumosExtraChange,
   multiplicador = 3,
-  onMultiplicadorChange,
   onSave,
   isSaving,
   onSaveToLibrary,
   isSavingToLibrary,
+  perfilNombre = 'Perfil Estándar'
 }) => {
   const [showInsumos, setShowInsumos] = React.useState(false);
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = async () => {
+    const text = generateSummaryText(perfilNombre, resultado, multiplicador, insumosExtra);
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleWhatsApp = () => {
+    const text = generateSummaryText(perfilNombre, resultado, multiplicador, insumosExtra);
+    shareWhatsApp(text);
+  };
+
+  const handleCSV = () => {
+    downloadCSV(perfilNombre, resultado, multiplicador, insumosExtra);
+  };
 
   return (
     <>
@@ -80,6 +101,45 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
             <span className="studio-caption text-foreground font-bold">Costo Base Final</span>
             <span className="text-xl font-bold text-foreground font-mono">{formatCurrency(resultado.costoBase)}</span>
           </div>
+        </div>
+
+        {/* Acciones Rápidas - Exportación */}
+        <div className="pt-6 mt-2 grid grid-cols-3 gap-2 border-t border-[var(--border-subtle)] border-dashed">
+          <button 
+            onClick={handleCopy}
+            className="flex flex-col items-center justify-center py-3 rounded-xl border border-border hover:bg-muted/30 transition-all gap-1.5"
+            title="Copiar resumen"
+          >
+            {copied ? (
+              <>
+                <Check size={14} className="text-green-600" />
+                <span className="text-[10px] font-bold uppercase text-green-600">¡Copiado!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={14} className="text-muted-foreground" />
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">Copiar</span>
+              </>
+            )}
+          </button>
+          
+          <button 
+            onClick={handleWhatsApp}
+            className="flex flex-col items-center justify-center py-3 rounded-xl border border-border hover:bg-muted/30 transition-all gap-1.5"
+            title="Compartir por WhatsApp"
+          >
+            <MessageCircle size={14} className="text-muted-foreground" />
+            <span className="text-[10px] font-bold uppercase text-muted-foreground">WhatsApp</span>
+          </button>
+
+          <button 
+            onClick={handleCSV}
+            className="flex flex-col items-center justify-center py-3 rounded-xl border border-border hover:bg-muted/30 transition-all gap-1.5"
+            title="Exportar CSV"
+          >
+            <Download size={14} className="text-muted-foreground" />
+            <span className="text-[10px] font-bold uppercase text-muted-foreground">CSV</span>
+          </button>
         </div>
       </div>
 

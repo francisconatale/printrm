@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## [2026-06-18] - Exportación Simplificada y Compartición (003-historial-exportacion)
+### Descripción
+- Se implementaron las utilidades de exportación y compartición solicitadas en el módulo de historial.
+- **Utilidades de Exportación (`export.utils.ts`):**
+    - Generación de resumen de presupuesto en texto plano con separadores visuales.
+    - Función de copiado al portapapeles con soporte para contextos seguros e inseguros (fallback).
+    - Integración con la API de WhatsApp para envío directo de presupuestos.
+    - Generación de archivos CSV con metadatos completos y codificación UTF-8 BOM para compatibilidad con Excel.
+- **Integración UI:**
+    - Se agregaron botones de "Copiar", "WhatsApp" y "CSV" en el componente `ResultadosBreakdown`.
+    - Se implementó feedback visual transitorio ("¡Copiado!") tras la acción de portapapeles.
+    - Se inyectaron dinámicamente el `perfilNombre` y el `multiplicador` desde el estado global al panel de resultados para asegurar exportaciones precisas.
+- Se actualizó el archivo de tareas de la especificación `003-historial-exportacion` marcando los hitos de backend (ya existentes) y los nuevos hitos de frontend como completados.
+
+### Archivos Involucrados
+- `frontend/src/features/calculo/utils/export.utils.ts` (creado)
+- `frontend/src/features/calculo/components/ResultadosBreakdown.tsx` (modificado)
+- `frontend/src/features/calculo/components/ResultadoPanel.tsx` (modificado)
+- `.specify/specs/003-historial-exportacion/tasks.md` (modificado)
+
+## [2026-06-18] - Reparación del entorno de desarrollo
+### Descripción
+- Se instalaron las dependencias del frontend que estaban ausentes, permitiendo la ejecución de Vite.
+- Se restauró el archivo `gradle-wrapper.jar` en el backend, el cual era necesario para ejecutar el wrapper de Gradle y estaba ausente.
+- Se verificó la ejecución exitosa de ambos servicios (frontend y backend) mediante el comando `npm run dev:web`.
+
+### Archivos Involucrados
+- `frontend/node_modules/` (creado/poblado)
+- `backend/gradle/wrapper/gradle-wrapper.jar` (restaurado)
+- `.specify/current_task_summary.md` (actualizado)
+
 ## [2026-06-16] - Reestructuración y Profundización del Conocimiento en mis-specs/
 ### Descripción
 - Se reestructuró de forma modular la base de conocimiento local en el directorio `mis-specs/` para evitar la mezcla de contextos y la superficialidad de la información.

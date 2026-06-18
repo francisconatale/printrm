@@ -5,6 +5,7 @@ import { useAjustes } from '../../ajustes/hooks/useAjustes';
 import { Ajustes, DEFAULT_AJUSTES } from '../../ajustes/types/ajustes.types';
 import { ResultadosBreakdown } from './ResultadosBreakdown';
 import { AjustesGlobalesForm } from './AjustesGlobalesForm';
+import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo';
 
 interface ResultadoPanelProps {
   resultado: ResultadoCalculo | null;
@@ -36,6 +37,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   onReset,
 }) => {
   const { ajustes, updateAjustes } = useAjustes();
+  const { perfilActivo } = usePerfilActivo();
   const [form, setForm] = React.useState<Ajustes>(DEFAULT_AJUSTES);
 
   React.useEffect(() => {
@@ -83,6 +85,8 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           isSaving={isSaving}
           onSaveToLibrary={onSaveToLibrary}
           isSavingToLibrary={isSavingToLibrary}
+          perfilNombre={perfilActivo?.nombre || 'Perfil Estándar'}
+          multiplicador={ajustes?.multiplicador || 3}
         />
       ) : (
         <AjustesGlobalesForm

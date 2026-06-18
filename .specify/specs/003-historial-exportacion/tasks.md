@@ -13,8 +13,8 @@
 
 **Purpose**: Solidify history storage.
 
-- [ ] T001 Implement `CalculoRepository` with `findTop50ByOrderByTimestampDesc()` in Spring Boot
-- [ ] T002 Implement `DELETE /api/v1/calculos` (Clear History) and `DELETE /api/v1/calculos/{id}`
+- [x] T001 Implement `CalculoRepository` with `findTop50ByOrderByTimestampDesc()` in Spring Boot
+- [x] T002 Implement `DELETE /api/v1/calculos` (Clear History) and `DELETE /api/v1/calculos/{id}`
 - [ ] T003 [P] Add integration tests for history endpoints
 
 ---
@@ -24,10 +24,10 @@
 **Goal**: Enable immediate result utilization.
 
 ### Implementation
-- [ ] T004 [P] [US9] Implement `clipboard.utils.ts` (monochromatic summary generation)
-- [ ] T005 [P] [US10] Implement `whatsapp.utils.ts` for URL construction
-- [ ] T006 [US9] Create `AccionesResultado.tsx` component (Copy & WhatsApp buttons)
-- [ ] T007 [US9] Create `CopiadoConfirmacion.tsx` (2s transient Studio-styled feedback)
+- [x] T004 [P] [US9] Implement `clipboard.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T005 [P] [US10] Implement `whatsapp.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T006 [US9] Create `AccionesResultado.tsx` (Integrated in `ResultadosBreakdown.tsx`)
+- [x] T007 [US9] Create `CopiadoConfirmacion.tsx` (Transient Studio feedback in `ResultadosBreakdown.tsx`)
 
 ---
 
@@ -47,8 +47,8 @@
 **Goal**: Advanced data management.
 
 ### Implementation
-- [ ] T011 [P] [US11] Implement `csv.utils.ts` (UTF-8 BOM generation for Excel)
-- [ ] T012 [US11] Add "Export CSV" action to HistorialTable
+- [x] T011 [P] [US11] Implement `csv.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T012 [US11] Add "Export CSV" action to UI
 - [ ] T013 [US12] Implement `LimpiarHistorialModal.tsx` for confirmation
 
 ---
