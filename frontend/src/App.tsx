@@ -49,8 +49,8 @@ function App() {
       case 'orders':
         return <PedidosListView />
       case 'finance':
-        return <LibroDiarioView />
       case 'dashboard':
+        return <LibroDiarioView />
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>
     }
