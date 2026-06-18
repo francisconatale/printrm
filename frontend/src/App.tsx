@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
+import { HistorialView } from './features/calculo/components/HistorialView'
 import { StudioOverview } from './components/studio-overview'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
@@ -29,6 +30,8 @@ function App() {
         return <StudioOverview />
       case 'calculator':
         return <CalculadoraView />
+      case 'history':
+        return <HistorialView />
       case 'profiles':
         return <PerfilesDashboardView />
       case 'inventory':

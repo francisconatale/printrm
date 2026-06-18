@@ -36,5 +36,6 @@ export interface CalculoSnapshot {
   costoDesgaste: number;
   subtotal: number;
   costoBase: number;
+  precioVenta: number;
 }
 

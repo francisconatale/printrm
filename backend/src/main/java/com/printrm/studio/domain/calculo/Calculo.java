@@ -51,5 +51,8 @@ public class Calculo {
     private Double subtotal;
     @Column(name = "costo_base")
     private Double costoBase;
+
+    @Column(name = "precio_venta")
+    private Double precioVenta;
 }
 

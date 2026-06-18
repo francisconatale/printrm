@@ -117,7 +117,8 @@ export function CalculadoraView() {
       perfilId: perfilActivo.id,
       perfilNombre: perfilActivo.nombre,
       ...piezaInput,
-      ...resultado
+      ...resultado,
+      precioVenta: resultado.precioVenta
     };
 
     guardarCalculo(snapshot, {

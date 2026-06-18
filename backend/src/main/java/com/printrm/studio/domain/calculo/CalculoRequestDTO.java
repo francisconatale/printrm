@@ -43,4 +43,6 @@ public class CalculoRequestDTO {
     private Double subtotal;
     @NotNull
     private Double costoBase;
+    @NotNull
+    private Double precioVenta;
 }

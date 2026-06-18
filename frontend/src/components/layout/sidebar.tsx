@@ -8,16 +8,17 @@ import {
   Printer,
   Star,
   Sliders,
-  ClipboardList
+  Clock
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from '../ui/theme-toggle';
 
-export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles';
+export type ViewType = 'overview' | 'dashboard' | 'calculator' | 'history' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles';
 
 const NAV_ITEMS = [
   { icon: Star, label: 'Resumen', id: 'overview' },
   { icon: Printer, label: 'Cotizador', id: 'calculator' },
+  { icon: Clock, label: 'Historial', id: 'history' },
   { icon: Package, label: 'Biblioteca STL', id: 'inventory' },
   { icon: List, label: 'Catálogo Stock', id: 'stock' },
   { icon: ArrowUpDown, label: 'Pedidos / Ventas', id: 'orders' },

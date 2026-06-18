@@ -27,4 +27,5 @@ public class CalculoResponseDTO {
     private Double costoFilamento;
     private Double subtotal;
     private Double costoBase;
+    private Double precioVenta;
 }

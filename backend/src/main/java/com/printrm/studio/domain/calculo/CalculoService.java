@@ -34,6 +34,7 @@ public class CalculoService {
                 .costoFilamento(request.getCostoFilamento())
                 .subtotal(request.getSubtotal())
                 .costoBase(request.getCostoBase())
+                .precioVenta(request.getPrecioVenta())
                 .build();
 
         Calculo saved = calculoRepository.save(calculo);
@@ -64,6 +65,7 @@ public class CalculoService {
                 .costoFilamento(entity.getCostoFilamento())
                 .subtotal(entity.getSubtotal())
                 .costoBase(entity.getCostoBase())
+                .precioVenta(entity.getPrecioVenta())
                 .build();
     }
 }
