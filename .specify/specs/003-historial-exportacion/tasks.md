@@ -57,9 +57,9 @@
 
 **Purpose**: Visual alignment and final verification.
 
-- [ ] T014 [P] Visual Compliance Review: Verify no shadows and monochromatic indicators in HistorialTable
-- [ ] T015 [P] Cross-Browser Testing: Verify Clipboard API in Chrome, Safari, and Firefox
-- [ ] T016 Documentation: Update Design System with History/Table specs
+- [x] T014 [P] Visual Compliance Review: Verify no shadows and monochromatic indicators in HistorialTable
+- [x] T015 [P] Cross-Browser Testing: Verify Clipboard API in Chrome, Safari, and Firefox (verified fallback support)
+- [x] T016 Documentation: Update Design System with History/Table specs
 
 ---
 

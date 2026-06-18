@@ -154,6 +154,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 8. Progress tracking and error handling:
    - Report progress after each completed task
+   - **MANDATORY COMMIT**: After each completed task (ID ej. T001), you MUST perform a git commit with the message `feat: [Task ID] - [Brief Description]`.
    - Halt execution if any non-parallel task fails
    - For parallel tasks [P], continue with successful tasks, report failed ones
    - Provide clear error messages with context for debugging

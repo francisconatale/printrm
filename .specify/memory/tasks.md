@@ -1,51 +1,47 @@
-# Tasks: Core App Shell and Layout
+# Tasks: Historial y Exportación
 
-**Input**: Design documents from `.specify/specs/001-core-app-shell/`
+**Input**: Design documents from `.specify/specs/003-historial-exportacion/`
 
-**Prerequisites**: plan.md, spec.md
+**Prerequisites**: plan.md, spec.md, Studio Constitution v3.1.0, 002-motor-de-calculo (for data)
 
-## Format: `[ID] [P?] [Story] Description`
+## Phase 1: Setup (Backend Persistence)
 
-- **[P]**: Can run in parallel
-- **[Story]**: US1 (Shell), US2 (Sidebar), US3 (Visuals)
+**Purpose**: Solidify history storage.
 
-## Phase 1: Design System Setup
-
-**Purpose**: Establish the visual tokens and global styles.
-
-- [x] T001 [P] [US3] Configure Tailwind colors and border widths in `frontend/tailwind.config.js` (add slate/indigo palettes and `0.5` border weight).
-- [x] T002 [P] [US3] Update `frontend/src/index.css` to enforce Inter font, 400/500 weights only, and set global border default to `0.5px`.
-- [x] T003 [P] [US3] Define CSS variables for spacing and radii in `frontend/src/index.css` (radius-xl: 16px, radius-lg: 12px).
-
-## Phase 2: Foundational Components
-
-**Purpose**: Create the structural shell elements.
-
-- [x] T004 [US1] Create `frontend/src/components/layout/app-shell.tsx` with the `slate-100` background and `radius-xl` Super-Card container.
-- [x] T005 [US2] Create `frontend/src/components/layout/sidebar.tsx` with a fixed `240px` width and the Indigo-500 logo area.
-- [x] T006 [US2] Implement navigation items in `sidebar.tsx` with hover and active states (white bg + 0.5px border for active).
-
-## Phase 3: Integration
-
-**Purpose**: Assemble the shell and integrate with the existing app logic.
-
-- [x] T007 [US1] Update `frontend/src/App.tsx` to wrap the application content with the new `AppShell`.
-- [x] T008 [US2] Integrate the `Sidebar` into the `AppShell` layout.
-- [x] T009 [US1] Adjust `frontend/src/components/dashboard.tsx` to ensure it renders correctly within the new layout padding (space-8 / 32px).
-
-## Phase 4: Polish & Compliance
-
-**Purpose**: Final audit and refinements.
-
-- [x] T010 [P] Visual Compliance Review: Audit all borders in the dev server to ensure they are exactly `0.5px`.
-- [x] T011 [P] Spacing Audit: Verify that all margins and paddings in the shell are multiples of 8 (or 4).
-- [x] T012 [P] Color Check: Confirm distribution matches 95% Slate, 4% Semantic, 1% Indigo.
+- [x] T001 Implement `CalculoRepository` with `findTop50ByOrderByTimestampDesc()` in Spring Boot
+- [x] T002 Implement `DELETE /api/v1/calculos` (Clear History) and `DELETE /api/v1/calculos/{id}`
+- [ ] T003 [P] Add integration tests for history endpoints
 
 ---
 
-## Dependencies & Execution Order
+## Phase 2: User Story 9 & 10 - Fast Sharing 🎯 MVP
 
-1. **Phase 1** (T001-T003) must be completed first to provide the styling tokens.
-2. **Phase 2** (T004-T006) depends on Phase 1 tokens.
-3. **Phase 3** (T007-T009) integrates the components created in Phase 2.
-4. **Phase 4** (T010-T012) is the final validation.
+**Goal**: Enable immediate result utilization.
+
+### Implementation
+- [x] T004 [P] [US9] Implement `clipboard.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T005 [P] [US10] Implement `whatsapp.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T006 [US9] Create `AccionesResultado.tsx` (Integrated in `ResultadosBreakdown.tsx`)
+- [x] T007 [US9] Create `CopiadoConfirmacion.tsx` (Transient Studio feedback in `ResultadosBreakdown.tsx`)
+
+---
+
+## Phase 3: User Story 8 - History Dashboard
+
+**Goal**: Visual review of past calculations.
+
+### Implementation
+- [ ] T008 [P] [US8] Define `historial.api.ts` with TanStack Query hooks (`useGetHistorial`, `useDeleteHistory`)
+- [ ] T009 [US8] Create `HistorialTable.tsx` using 1px Hairline separation and Mono fonts for ARS
+- [ ] T010 [US8] Implement "Load Previous Calculation" logic to hydrate the motor from history
+
+---
+
+## Phase 4: User Story 11 & 12 - Export & Cleanup
+
+**Goal**: Advanced data management.
+
+### Implementation
+- [x] T011 [P] [US11] Implement `csv.utils.ts` (Simplified in `export.utils.ts`)
+- [x] T012 [US11] Add "Export CSV" action to UI
+- [ ] T013 [US12] Implement `LimpiarHistorialModal.tsx` for confirmation
