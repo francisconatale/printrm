@@ -1,0 +1,584 @@
+@startuml PrintRM Backend - UML Completo
+!theme plain
+
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam packageFontSize 13
+skinparam packageFontStyle bold
+skinparam classFontSize 10
+skinparam classAttributeFontSize 9
+skinparam stereotypeFontSize 9
+skinparam arrowThickness 1.5
+
+hide empty members
+
+' ============================================================
+' ESTEREOTIPOS
+' ============================================================
+entity "<<Entity>>" as entityStereo
+entity "<<Service>>" as serviceStereo
+entity "<<Controller>>" as controllerStereo
+entity "<<Repository>>" as repoStereo
+
+' ============================================================
+' PACKAGE: AJUSTES (Settings)
+' ============================================================
+package "ajustes" #FFF8E7 {
+  class "Ajustes" as Ajustes <<Entity>> {
+    + id: Long (PK, 1)
+    + preciokWh: Double
+    + margenError: Double
+    + actualizadoEn: LocalDateTime
+  }
+
+  class "AjustesRepository" as AjustesRepository <<Repository>> {
+    + findById(): Optional<Ajustes>
+  }
+
+  class "AjustesService" as AjustesService <<Service>> {
+    + getAjustes(): AjustesDTO
+    + updateAjustes(dto): AjustesDTO
+    - initDefaultAjustes(): void
+  }
+
+  class "AjustesController" as AjustesController <<Controller>> {
+    + GET /api/ajustes
+    + PUT /api/ajustes
+  }
+
+  class "AjustesDTO" as AjustesDTO <<DTO>> {
+    + preciokWh: Double
+    + margenError: Double
+  }
+
+  AjustesController --> AjustesService : usa
+  AjustesService --> AjustesRepository : usa
+  AjustesService ..> AjustesDTO : crea
+  AjustesRepository ..> Ajustes : CRUD
+}
+
+' ============================================================
+' PACKAGE: PERFIL (Profiles)
+' ============================================================
+package "perfil" #E8F0FE {
+  class "Perfil" as Perfil <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + modeloImpresora: String
+    + consumoW: Double
+    + vidaUtilHoras: Double
+    + costoRepuestos: Double
+    + filamentoPorKg: Double
+    + nozzleDiameter: Double
+    + bedShape: String
+    + maxPrintHeight: Double
+    + printConfig: String
+    + filamentConfig: String
+    + printerConfig: String
+  }
+
+  class "FilamentProfile" as FilamentProfile <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + material: String
+    + filamentoPorKg: Double
+    + density: Double
+    + diameter: Double
+    + colour: String
+    + filamentConfig: String
+  }
+
+  class "PrintProfile" as PrintProfile <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + layerHeight: Double
+    + perimeters: Integer
+    + fillDensity: String
+    + speedPrint: Double
+    + printConfig: String
+  }
+
+  class "PerfilRepository" as PerfilRepository <<Repository>>
+  class "FilamentProfileRepository" as FilamentProfileRepository <<Repository>>
+  class "PrintProfileRepository" as PrintProfileRepository <<Repository>>
+
+  class "PerfilService" as PerfilService <<Service>> {
+    + CRUD perfiles
+    + getSlicerConfigs(): Map
+  }
+
+  class "FilamentProfileService" as FilamentProfileService <<Service>> {
+    + CRUD filament profiles
+  }
+
+  class "PrintProfileService" as PrintProfileService <<Service>> {
+    + CRUD print profiles
+  }
+
+  class "PerfilController" as PerfilController <<Controller>> {
+    + GET/POST/PUT/DELETE /api/v1/perfiles
+    + GET /api/v1/perfiles/configs
+  }
+
+  class "FilamentProfileController" as FilamentProfileController <<Controller>> {
+    + GET/POST/PUT/DELETE /api/v1/filament-profiles
+  }
+
+  class "PrintProfileController" as PrintProfileController <<Controller>> {
+    + GET/POST/PUT/DELETE /api/v1/print-profiles
+  }
+
+  class "ConfigIniWriter" as ConfigIniWriter <<Component>> {
+    + writePrinterIni(perfil): void
+    + writeFilamentIni(profile): void
+    + writePrintIni(profile): void
+  }
+
+  PerfilController --> PerfilService
+  FilamentProfileController --> FilamentProfileService
+  PrintProfileController --> PrintProfileService
+  PerfilService --> PerfilRepository
+  FilamentProfileService --> FilamentProfileRepository
+  PrintProfileService --> PrintProfileRepository
+  PerfilService --> ConfigIniWriter : escribe .ini
+}
+
+' ============================================================
+' PACKAGE: BIBLIOTECA (STL Parts Library)
+' ============================================================
+package "biblioteca" #E8F8E8 {
+  class "PiezaSTL" as PiezaSTL <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + filePath: String
+    + volumenCm3: Double
+    + pesoGramos: Double
+    + tiempoEstimado: String
+    + costoBase: Double
+    + imagenBase64: TEXT
+  }
+
+  class "PiezaSTLRepository" as PiezaSTLRepository <<Repository>>
+
+  class "PiezaSTLService" as PiezaSTLService <<Service>> {
+    + getAll(): List<PiezaSTLResponseDTO>
+    + save(request, file): PiezaSTLResponseDTO
+    + delete(id): void
+  }
+
+  class "PiezaSTLController" as PiezaSTLController <<Controller>> {
+    + GET /api/v1/biblioteca
+    + POST /api/v1/biblioteca
+    + DELETE /api/v1/biblioteca/{id}
+    + GET /api/v1/biblioteca/files/{filename}
+  }
+
+  class "PiezaSTLRequestDTO" as PiezaSTLRequestDTO <<DTO>>
+  class "PiezaSTLResponseDTO" as PiezaSTLResponseDTO <<DTO>>
+
+  PiezaSTLController --> PiezaSTLService
+  PiezaSTLService --> PiezaSTLRepository
+  PiezaSTLService ..> PiezaSTLResponseDTO
+  PiezaSTLService ..> CostCalculationService : usa »
+  PiezaSTLService ..> AjustesService : usa »
+
+  ' FK relationships
+  PiezaSTL --> Perfil : perfilImpresora
+  PiezaSTL --> FilamentProfile : perfilFilamento
+  PiezaSTL --> PrintProfile : perfilImpresion
+}
+
+' ============================================================
+' PACKAGE: CALCULO (Cost Calculation)
+' ============================================================
+package "calculo" #FFF0F0 {
+  class "Calculo" as Calculo <<Entity>> {
+    + id: UUID (PK)
+    + horas: Integer
+    + minutosAdicionales: Integer
+    + gramos: Double
+    + insumosExtra: Double
+    + costoEnergia: Double
+    + costoFilamento: Double
+    + subtotal: Double
+    + costoBase: Double
+    + precioVenta: Double
+    + perfilId: UUID
+    + perfilNombre: String
+  }
+
+  class "CalculoRepository" as CalculoRepository <<Repository>>
+
+  class "CalculoService" as CalculoService <<Service>> {
+    + getHistorial(): List<CalculoResponseDTO>
+    + guardarCalculo(request): CalculoResponseDTO
+    + eliminarCalculo(id): void
+    + limpiarHistorial(): void
+  }
+
+  class "CostCalculationService" as CostCalculationService <<Service>> {
+    + calcularCosto(request): CostCalculationResult
+  }
+
+  class "CostCalculationResult" as CostCalculationResult <<DTO>> {
+    + costoEnergia: Double
+    + costoFilamento: Double
+    + subtotal: Double
+    + costoBase: Double
+    + precioVenta: Double
+  }
+
+  class "CalculoController" as CalculoController <<Controller>> {
+    + GET /api/v1/calculos
+    + POST /api/v1/calculos/calculate
+    + POST /api/v1/calculos
+    + DELETE /api/v1/calculos/{id}
+    + DELETE /api/v1/calculos
+  }
+
+  CalculoController --> CalculoService
+  CalculoController --> CostCalculationService : calculate
+  CalculoService --> CalculoRepository
+  CostCalculationService --> AjustesService : obtiene config
+  CostCalculationService --> PerfilRepository : consumoW
+  CostCalculationService --> FilamentProfileRepository : precio/kg
+
+  Calculo --> Cliente : cliente (opcional)
+}
+
+' ============================================================
+' PACKAGE: CLIENTES (Customers)
+' ============================================================
+package "clientes" #F3E8FF {
+  class "Cliente" as Cliente <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + email: String
+    + telefono: String
+    + notas: Text
+  }
+
+  class "ClienteRepository" as ClienteRepository <<Repository>>
+
+  class "ClienteService" as ClienteService <<Service>> {
+    + CRUD completo
+  }
+
+  class "ClienteController" as ClienteController <<Controller>> {
+    + GET/POST/PUT/DELETE /api/v1/clientes
+  }
+
+  class "ClienteRequestDTO" as ClienteRequestDTO <<DTO>>
+  class "ClienteResponseDTO" as ClienteResponseDTO <<DTO>>
+
+  ClienteController --> ClienteService
+  ClienteService --> ClienteRepository
+}
+
+' ============================================================
+' PACKAGE: STOCK (Inventory)
+' ============================================================
+package "stock" #FFF8DC {
+  class "Producto" as Producto <<Entity>> {
+    + id: UUID (PK)
+    + nombre: String
+    + descripcion: Text
+    + cantidadStock: Integer
+    + precioSugerido: Double
+  }
+
+  class "Lote" as Lote <<Entity>> {
+    + id: UUID (PK)
+    + cantidadOriginal: Integer
+    + cantidadActual: Integer
+    + costoUnitario: Double
+  }
+
+  class "ProductoRepository" as ProductoRepository <<Repository>>
+  class "LoteRepository" as LoteRepository <<Repository>>
+
+  class "ProductoService" as ProductoService <<Service>> {
+    + getAll(): List<ProductoResponseDTO>
+    + save(producto, partes): ProductoResponseDTO
+    + delete(id): void
+    + addStock(id, delta, costo): void
+    + updateStock(id, delta): void
+    + consumeStock(id, cantidad): void
+  }
+
+  class "ProductoController" as ProductoController <<Controller>> {
+    + GET /api/v1/productos
+    + POST /api/v1/productos
+    + PATCH /api/v1/productos/{id}/stock
+    + DELETE /api/v1/productos/{id}
+  }
+
+  class "ProductoResponseDTO" as ProductoResponseDTO <<DTO>>
+
+  ProductoController --> ProductoService
+  ProductoService --> ProductoRepository
+  ProductoService --> LoteRepository : FIFO
+  ProductoService --> PiezaSTLRepository : partes
+  ProductoService --> CostCalculationService : costos
+  ProductoService --> AjustesService : settings
+
+  Producto "1" *--> "many" Lote : lotes FIFO
+  Producto "many" --> "many" PiezaSTL : producto_partes
+}
+
+' ============================================================
+' PACKAGE: FINANZAS (Finance)
+' ============================================================
+package "finanzas" #E0F7FA {
+  class "Transaccion" as Transaccion <<Entity>> {
+    + id: UUID (PK)
+    + tipo: TipoTransaccion  (INGRESO/EGRESO/REEMBOLSO)
+    + categoria: CategoriaTransaccion
+    + monto: Double
+    + descripcion: String
+    + pedidoId: UUID
+  }
+
+  class "TransaccionRepository" as TransaccionRepository <<Repository>> {
+    + findByPedidoIdAndTipo(): boolean
+    + sumAllMontos(): Double
+  }
+
+  class "TransaccionService" as TransaccionService <<Service>> {
+    + getAll(): List
+    + getBalance(): Double
+    + create(request): Transaccion
+  }
+
+  class "TransaccionController" as TransaccionController <<Controller>> {
+    + GET /api/v1/transacciones
+    + GET /api/v1/transacciones/balance
+    + POST /api/v1/transacciones
+  }
+
+  TransaccionController --> TransaccionService
+  TransaccionService --> TransaccionRepository
+}
+
+' ============================================================
+' PACKAGE: PEDIDOS (Orders)
+' ============================================================
+package "pedidos" #FFE0E0 {
+  class "Pedido" as Pedido <<Entity>> {
+    + id: UUID (PK)
+    + estado: EstadoPedido
+    + total: Double
+    + montoPagado: Double
+    + saldoPendiente: Double
+  }
+
+  class "ItemPedido" as ItemPedido <<Entity>> {
+    + id: UUID (PK)
+    + cantidad: Integer
+    + cantidadMerma: Integer
+    + subtotal: Double
+  }
+
+  class "PedidoRepository" as PedidoRepository <<Repository>>
+  class "ItemPedidoRepository" as ItemPedidoRepository <<Repository>>
+
+  class "PedidoService" as PedidoService <<Service>> {
+    + crearPedido(request): PedidoResponseDTO
+    + cambiarEstado(id, estado): void
+    + registrarPago(id, monto): void
+    + registrarMerma(pedidoId, itemId): void
+    + getPedido(id): PedidoResponseDTO
+  }
+
+  class "VentaService" as VentaService <<Service>> {
+    + registrarVenta(pedido): void
+    + registrarConsumoStock(items): void
+  }
+
+  class "PedidoController" as PedidoController <<Controller>> {
+    + GET /api/v1/pedidos
+    + GET /api/v1/pedidos/{id}
+    + POST /api/v1/pedidos
+    + PATCH /api/v1/pedidos/{id}/estado
+    + PATCH /api/v1/pedidos/{id}/items/{itemId}
+    + POST /api/v1/pedidos/{id}/pagos
+    + POST /api/v1/pedidos/{pedidoId}/items/{itemId}/merma
+  }
+
+  PedidoController --> PedidoService
+  PedidoService --> PedidoRepository
+  PedidoService --> ItemPedidoRepository
+  PedidoService --> ClienteRepository
+  PedidoService --> CalculoRepository
+  PedidoService --> TransaccionRepository
+  PedidoService --> ProductoRepository
+  PedidoService --> OrdenProduccionRepository
+  PedidoService --> VentaService : consume stock
+  PedidoService --> ProductoService : update stock
+  VentaService --> ProductoService : consume FIFO
+  VentaService --> TransaccionRepository : registra ingreso
+
+  Pedido "1" --> "many" ItemPedido : items
+  Pedido --> Cliente : cliente
+  ItemPedido --> Producto : producto (nullable)
+  ItemPedido --> Calculo : calculo (nullable)
+}
+
+' ============================================================
+' PACKAGE: PRODUCCION (Production Orders)
+' ============================================================
+package "produccion" #FFE8CC {
+  class "OrdenProduccion" as OrdenProduccion <<Entity>> {
+    + id: UUID (PK)
+    + tipo: TipoProduccion (INTERNA/EXTERNA)
+    + estado: EstadoProduccion
+    + cantidad: Integer
+    + costoEstimado: Double
+    + proveedor: String
+  }
+
+  class "OrdenProduccionRepository" as OrdenProduccionRepository <<Repository>>
+
+  class "OrdenProduccionService" as OrdenProduccionService <<Service>> {
+    + crearOrdenVinculada(request): OrdenProduccionResponseDTO
+    + crearOrdenIndependiente(request): OrdenProduccionResponseDTO
+    + cambiarEstado(id, estado): void
+    - procesarFinalizacionOrden(orden): void
+  }
+
+  class "OrdenProduccionController" as OrdenProduccionController <<Controller>> {
+    + GET /api/v1/produccion/ordenes
+    + GET /api/v1/produccion/ordenes/{id}
+    + POST /api/v1/produccion/ordenes/vinculada
+    + POST /api/v1/produccion/ordenes/independiente
+    + PATCH /api/v1/produccion/ordenes/{id}/estado
+  }
+
+  OrdenProduccionController --> OrdenProduccionService
+  OrdenProduccionService --> OrdenProduccionRepository
+  OrdenProduccionService --> ItemPedidoRepository
+  OrdenProduccionService --> ProductoRepository
+  OrdenProduccionService --> ProductoService : addStock
+  OrdenProduccionService --> TransaccionRepository
+  OrdenProduccionService --> AjustesService : settings
+  OrdenProduccionService --> CostCalculationService : costos
+
+  OrdenProduccion --> ItemPedido : itemPedido (nullable)
+  OrdenProduccion --> Producto : producto (nullable)
+}
+
+' ============================================================
+' PACKAGE: SLICER
+' ============================================================
+package "slicer" #F5F5F5 {
+  class "SlicerService" as SlicerService <<Service>> {
+    + slice(file, configs): SlicingResult
+    - parseGcode(file): SlicingResult
+  }
+
+  class "SlicerController" as SlicerController <<Controller>> {
+    + POST /api/slice
+  }
+
+  class "SlicingResult" as SlicingResult <<DTO>> {
+    + estimatedPrintingTime: String
+    + filamentUsedG: Double
+    + filamentUsedCm3: Double
+  }
+
+  class "PrusaSlicerGenerator" as PrusaSlicerGenerator {
+    + main(args): void
+  }
+
+  SlicerController --> SlicerService
+  SlicerController --> ConfigIniWriter : genera .ini
+  SlicerService ..> SlicingResult : parsea G-code
+  SlicerService --> PerfilRepository
+  SlicerService --> FilamentProfileRepository
+  SlicerService --> PrintProfileRepository
+}
+
+' ============================================================
+' PACKAGE: INFRASTRUCTURE
+' ============================================================
+package "infraestructura" #F0F0F0 {
+  class "StudioApplication" as StudioApplication {
+    + main(args): void
+  }
+
+  class "CorsConfig" as CorsConfig <<Configuration>> {
+    + corsFilter(): CorsFilter
+  }
+
+  class "HealthController" as HealthController <<Controller>> {
+    + GET /api/health
+  }
+}
+
+' ============================================================
+' RELACIONES ENTRE PAQUETES (SERVICE DEPENDENCIES)
+' ============================================================
+
+note top of AjustesService
+  **Singleton** id=1
+  Defaults: precioKWh=50,
+  margenError=10
+  Inicializa via @PostConstruct
+end note
+
+note top of CostCalculationService
+  **Motor de cálculo**
+  costoEnergia = (consumoW/1000)
+    * horas * precioKWh
+  costoFilamento = (gramos/1000)
+    * precioPorKg
+  costoBase = subtotal
+    * (1 + margenError/100)
+end note
+
+note top of ProductoService
+  **Inventario FIFO**
+  Lotes con mismo costo
+  (+/- 0.01) se fusionan.
+  consumeStock() siempre
+  toma del lote más antiguo.
+end note
+
+note top of PedidoService
+  **Máquina de estados**
+  BORRADOR → COTIZADO → CONFIRMADO →
+  EN_PRODUCCION → LISTO_PARA_ENTREGAR →
+  ENTREGADO
+  Cada transición de estado
+  dispara efectos financieros.
+end note
+
+note top of OrdenProduccionService
+  Al completar/recepcionar:
+  1. Incrementa stock
+     (ProductoService.addStock)
+  2. Registra EGRESO por
+     materiales + energía
+     o costo proveedor externo
+end note
+
+' ============================================================
+' LEYENDA
+' ============================================================
+legend top
+  <<Entity>> = JPA Entity (tabla en SQLite)
+  <<Service>> = @Service (lógica de negocio)
+  <<Controller>> = @RestController (API REST)
+  <<Repository>> = @Repository (acceso a datos)
+  <<DTO>> = Data Transfer Object
+  <<Component>> = @Component
+  <<Configuration>> = @Configuration
+
+  -->  = Dependencia directa (inyección)
+  ..>  = Dependencia indirecta / uso
+  --   = Asociación JPA
+  *--> = Composición
+endlegend
+
+@enduml
