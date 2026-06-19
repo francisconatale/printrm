@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Servicio de Producción OrdenProduccionService (T005)
+### Descripción
+- **Backend (Producción):** Se creó e implementó `OrdenProduccionService.java` que permite el alta de órdenes de producción vinculadas a ítems de pedidos y la creación de órdenes de producción independientes para stock propio de reposición.
+- Se flexibilizó la columna `producto_id` de la entidad `OrdenProduccion.java` haciéndola nullable para permitir piezas a medida cotizadas vía cálculos.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccion.java` (modificado)
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionService.java` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Servicio de Venta Centralizado VentaService (T004)
 ### Descripción
 - **Backend (Ventas/Finanzas):** Se creó la clase `VentaService.java` en `com.printrm.studio.domain.pedidos`. Centraliza la lógica de registrar una venta procesando en un único flujo atómico:
