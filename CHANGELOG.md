@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2026-06-19] - Botones de Transición de Estado de Órdenes en la Agenda (T013)
+### Descripción
+- **Frontend (Producción):** Se agregaron botones de acción dinámicos en las tarjetas de las órdenes de producción dentro de la Agenda para avanzar el estado:
+  - "Iniciar": Transiciona la orden de `COLA` a `IMPRIMIENDO` (internas) o `ENVIADO_PROVEEDOR` (externas).
+  - "Completar" / "Recibir": Transiciona la orden a `COMPLETADO` (internas) o `RECIBIDO_PROVEEDOR` (externas).
+  - "Cancelar": Cancela la orden de producción activa (`CANCELADO`), quitándola del flujo de producción.
+- Se vinculó cada transición con el hook de mutación `useUpdateEstadoOrden` de React Query, invalidando las queries del catálogo de stock, pedidos y balance financiero de forma automática para asegurar que la vista refleje los cambios en tiempo real.
+
+### Archivos Involucrados
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Modal para Crear Órdenes de Stock Independientes (T012)
 ### Descripción
 - **Frontend (Producción):** Se implementó `CrearOrdenIndependienteModal.tsx` para la creación de órdenes de producción desvinculadas de pedidos (para stock general de reposición propia).

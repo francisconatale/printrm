@@ -1,4 +1,4 @@
-# Tarea Actual: Modal de Creación de Orden de Stock (T012)
+# Tarea Actual: Botones de Transición de Estado en Agenda (T013)
 
 ## Estado
 - [x] Crear la entidad `OrdenProduccion.java` con sus enums y relaciones (T001).
@@ -15,9 +15,10 @@
 - [x] Crear el modal de creación de orden de producción vinculada para piezas faltantes y conectarlo con la API (T010).
 - [x] Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (T011).
 - [x] Crear el modal de creación de orden de producción independiente para reponer stock propio (T012).
-- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T012.
+- [x] Agregar botones en la Agenda para avanzar el estado de las órdenes de producción (T013).
+- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T013.
 
 ## Archivos involucrados
-- `frontend/src/features/produccion/components/CrearOrdenIndependienteModal.tsx`
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx`
 - `CHANGELOG.md`
 - `.specify/current_task_summary.md`

@@ -19,7 +19,7 @@
 ## Phase 4: Frontend - Agenda de Producción (React)
 - [x] T011 Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (Para Cliente vs. Para Stock).
 - [x] T012 Implementar formulario en la Agenda de Producción para crear órdenes independientes (para stock propio) y conectarlo con la API.
-- [ ] T013 Agregar botones en la Agenda para avanzar el estado de las órdenes de producción.
+- [x] T013 Agregar botones en la Agenda para avanzar el estado de las órdenes de producción.
 
 ## Phase 5: Testing & Verification
 - [ ] T014 Escribir pruebas unitarias e integración para `VentaService`, `PedidoService` (cálculo dinámico y entrega) y `OrdenProduccionService` (ingreso de stock y egresos).
