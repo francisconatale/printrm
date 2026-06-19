@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Servicio de Venta Centralizado VentaService (T004)
+### Descripción
+- **Backend (Ventas/Finanzas):** Se creó la clase `VentaService.java` en `com.printrm.studio.domain.pedidos`. Centraliza la lógica de registrar una venta procesando en un único flujo atómico:
+  1. El consumo de stock físico del inventario mediante la lógica FIFO de `ProductoService.updateStock`.
+  2. El registro contable de la transacción de ingresos (tipo `INGRESO`, categoría `VENTA`) en el libro diario a través de `TransaccionRepository`.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/VentaService.java` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Cálculo Dinámico de Faltantes y Mapeo en PedidoResponseDTO (T003)
 ### Descripción
 - **Backend (Pedidos):** Se modificó `ItemPedidoResponseDTO.java` para incluir la cantidad disponible en stock (`stockDisponible`), la cantidad faltante (`cantidadFaltante`) y las órdenes de producción asociadas (`ordenesProduccion`).
