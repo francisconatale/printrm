@@ -8,12 +8,13 @@ import {
   Printer,
   Star,
   Sliders,
-  Clock
+  Clock,
+  Hammer
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from '../ui/theme-toggle';
 
-export type ViewType = 'dashboard' | 'calculator' | 'history' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles';
+export type ViewType = 'dashboard' | 'calculator' | 'history' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles' | 'production';
 
 const NAV_ITEMS = [
   { icon: Printer, label: 'Cotizador', id: 'calculator' },
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { icon: Package, label: 'Biblioteca STL', id: 'inventory' },
   { icon: List, label: 'Catálogo Stock', id: 'stock' },
   { icon: ArrowUpDown, label: 'Pedidos / Ventas', id: 'orders' },
+  { icon: Hammer, label: 'Producción', id: 'production' },
   { icon: Users, label: 'Clientes', id: 'customers' },
   { icon: Sliders, label: 'Perfiles', id: 'profiles' },
   { icon: LayoutDashboard, label: 'Finanzas', id: 'finance' },

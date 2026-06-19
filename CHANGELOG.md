@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2026-06-19] - Vista de Agenda de Producción (T011)
+### Descripción
+- **Frontend (Producción):** Se implementó la pantalla de visualización "Agenda de Producción" (`AgendaProduccionView.tsx`), que organiza las órdenes de producción en columnas tipo Kanban según su estado actual: "En Cola", "En Proceso" y "Completadas".
+- Se agregaron filtros rápidos por tipo de orden (Todas / Para Cliente / Stock de Reposición) y un buscador de texto interactivo por producto, cliente o proveedor.
+- Se integró la nueva vista en la barra de navegación lateral (`sidebar.tsx`) con un nuevo ícono de herramienta/martillo (`Hammer`) y en el enrutamiento central de la aplicación (`App.tsx`).
+
+### Archivos Involucrados
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx` (creado)
+- `frontend/src/components/layout/sidebar.tsx` (modificado)
+- `frontend/src/App.tsx` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Modal de Orden de Producción Vinculada (T010)
 ### Descripción
 - **Frontend (Pedidos/Producción):** Se implementó `CrearOrdenVinculadaModal.tsx` para permitir mandar a fabricar las piezas faltantes de un pedido de manera directa desde la pantalla del detalle del mismo.

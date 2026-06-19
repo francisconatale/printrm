@@ -17,7 +17,7 @@
 - [x] T010 Crear el modal de creación de orden de producción vinculada para piezas faltantes y conectarlo con la API.
 
 ## Phase 4: Frontend - Agenda de Producción (React)
-- [ ] T011 Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (Para Cliente vs. Para Stock).
+- [x] T011 Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (Para Cliente vs. Para Stock).
 - [ ] T012 Implementar formulario en la Agenda de Producción para crear órdenes independientes (para stock propio) y conectarlo con la API.
 - [ ] T013 Agregar botones en la Agenda para avanzar el estado de las órdenes de producción.
 

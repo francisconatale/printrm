@@ -1,4 +1,4 @@
-# Tarea Actual: Crear el Modal de Orden de Producción Vinculada (T010)
+# Tarea Actual: Vista de Agenda de Producción (T011)
 
 ## Estado
 - [x] Crear la entidad `OrdenProduccion.java` con sus enums y relaciones (T001).
@@ -13,9 +13,12 @@
 - [x] Crear la clase controladora `OrdenProduccionController.java` exponiendo los endpoints (T008).
 - [x] Modificar `PedidoDetalleView.tsx` en el frontend para calcular e informar en pantalla la cantidad en stock, en producción y el faltante neto (T009).
 - [x] Crear el modal de creación de orden de producción vinculada para piezas faltantes y conectarlo con la API (T010).
-- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T010.
+- [x] Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (T011).
+- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T011.
 
 ## Archivos involucrados
-- `frontend/src/features/pedidos/components/CrearOrdenVinculadaModal.tsx`
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx`
+- `frontend/src/components/layout/sidebar.tsx`
+- `frontend/src/App.tsx`
 - `CHANGELOG.md`
 - `.specify/current_task_summary.md`

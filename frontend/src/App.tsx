@@ -8,6 +8,7 @@ import { ClientesListView } from './features/clientes/components/ClientesListVie
 import { PedidosListView } from './features/pedidos/components/PedidosListView'
 import { ProductosGalleryView } from './features/stock/components/ProductosGalleryView'
 import { LibroDiarioView } from './features/finanzas/components/LibroDiarioView'
+import { AgendaProduccionView } from './features/produccion/components/AgendaProduccionView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
@@ -45,6 +46,8 @@ function App() {
         return <ClientesListView />
       case 'orders':
         return <PedidosListView />
+      case 'production':
+        return <AgendaProduccionView />
       case 'finance':
       case 'dashboard':
         return <LibroDiarioView />
