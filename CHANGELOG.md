@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Alta de Stock y Egresos Contables al Finalizar Producción (T006)
+### Descripción
+- **Backend (Producción):** Se implementó el método `procesarFinalizacionOrden` en `OrdenProduccionService.java` que gestiona de manera automatizada:
+  1. **Alta de Stock:** Da de alta el stock físico al completarse/recibirse la orden (FIFO). Para órdenes externas, define el costo unitario basándose en el costo cobrado por el proveedor.
+  2. **Registro Contable de Egresos:** Si la orden está vinculada a un pedido, registra en finanzas el egreso correspondiente. Si es externa, registra el costo real de tercerización. Si es interna, calcula y registra el desgaste teórico estimado de filamento y energía basándose en el cálculo del producto o de la cotización original.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionService.java` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Servicio de Producción OrdenProduccionService (T005)
 ### Descripción
 - **Backend (Producción):** Se creó e implementó `OrdenProduccionService.java` que permite el alta de órdenes de producción vinculadas a ítems de pedidos y la creación de órdenes de producción independientes para stock propio de reposición.
