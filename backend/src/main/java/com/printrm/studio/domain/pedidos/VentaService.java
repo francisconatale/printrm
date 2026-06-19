@@ -24,16 +24,23 @@ public class VentaService {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + productoId));
 
-        // 1. Consume las piezas físicamente del stock usando lotes FIFO (updateStock con delta negativo)
-        productoService.updateStock(productoId.toString(), -cantidad);
+        // 1. Consume las piezas físicamente del stock
+        registrarConsumoStock(productoId, cantidad);
 
-        // 2. Registra el ingreso contable en finanzas
-        transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.INGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.VENTA)
-                .monto(precioUnitario * cantidad)
-                .pedidoId(pedidoId)
-                .descripcion("Venta de " + cantidad + " unidades de " + producto.getNombre())
-                .build());
+        // 2. Registra el ingreso contable en finanzas si el precio es mayor a 0
+        if (precioUnitario > 0.0) {
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.INGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.VENTA)
+                    .monto(precioUnitario * cantidad)
+                    .pedidoId(pedidoId)
+                    .descripcion("Venta de " + cantidad + " unidades de " + producto.getNombre())
+                    .build());
+        }
+    }
+
+    @Transactional
+    public void registrarConsumoStock(UUID productoId, int cantidad) {
+        productoService.updateStock(productoId.toString(), -cantidad);
     }
 }

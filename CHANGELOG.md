@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2026-06-19] - Integración de Venta y Validación de Stock en Entrega de Pedido (T007)
+### Descripción
+- **Backend (Pedidos):** Se modificó la lógica en `PedidoService.java` para que al pasar un pedido a estado `ENTREGADO` se ejecuten los siguientes controles y delegaciones:
+  1. **Validación de Stock Real:** Verifica en el inventario físico que haya stock suficiente para cada producto antes de entregar el pedido. Si falta stock, arroja una excepción detallada.
+  2. **Descuento de Stock Centralizado:** Delega el consumo de stock FIFO en `ventaService.registrarConsumoStock` por cada ítem.
+  3. **Cobro de Saldo Restante:** Liquida y registra contablemente en el libro diario el ingreso del saldo remanente pendiente de cobro.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Alta de Stock y Egresos Contables al Finalizar Producción (T006)
 ### Descripción
 - **Backend (Producción):** Se implementó el método `procesarFinalizacionOrden` en `OrdenProduccionService.java` que gestiona de manera automatizada:

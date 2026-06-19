@@ -31,6 +31,7 @@ public class PedidoService {
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
     private final OrdenProduccionRepository ordenProduccionRepository;
+    private final VentaService ventaService;
 
     @Transactional
     public PedidoResponseDTO crearPedido(PedidoRequestDTO request) {
@@ -105,24 +106,40 @@ public class PedidoService {
         pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
 
         if ("ENTREGADO".equals(nuevoEstado)) {
+            // 1. Validar stock real disponible para todos los ítems de tipo producto
+            for (ItemPedido item : pedido.getItems()) {
+                if (item.getProducto() != null) {
+                    int stockDisponible = item.getProducto().getCantidadStock();
+                    if (stockDisponible < item.getCantidad()) {
+                        throw new RuntimeException("Stock insuficiente para entregar el producto: " + item.getProducto().getNombre() 
+                                + " (Requerido: " + item.getCantidad() + ", Disponible: " + stockDisponible + ")");
+                    }
+                }
+            }
+
+            // 2. Descontar stock usando VentaService
+            for (ItemPedido item : pedido.getItems()) {
+                if (item.getProducto() != null) {
+                    ventaService.registrarConsumoStock(item.getProducto().getId(), item.getCantidad());
+                }
+            }
+
+            // 3. Registrar cobro final de saldo restante
             registrarIngresoPorVenta(pedido);
-            actualizarStockPorPedido(pedido, -1); // Descontar stock
+
         } else if ("DEVUELTO".equals(nuevoEstado)) {
             registrarReembolso(pedido);
-            actualizarStockPorPedido(pedido, 1); // Reponer stock
+            // Reponer stock
+            for (ItemPedido item : pedido.getItems()) {
+                if (item.getProducto() != null) {
+                    productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad());
+                }
+            }
         } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
             registrarGastoProduccion(pedido);
         }
         
         repository.save(pedido);
-    }
-
-    private void actualizarStockPorPedido(Pedido pedido, int multiplicador) {
-        for (ItemPedido item : pedido.getItems()) {
-            if (item.getProducto() != null) {
-                productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad() * multiplicador);
-            }
-        }
     }
 
     @Transactional
