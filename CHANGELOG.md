@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## [2026-06-19] - Diseño de Especificación para Flujo Dinámico de Pedidos, Stock y Fabricación
+### Descripción
+- **Diseño del Sistema (SpecKit):** Se definió el diseño modular unificado en `.specify/specs/007-flujo-pedidos-fabricacion/spec.md`, el plan técnico `.specify/specs/007-flujo-pedidos-fabricacion/plan.md` y las tareas de implementación `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md`.
+- **Dinamicidad en Tiempo de Ejecución:** Para evitar inconsistencias por la volatilidad del inventario físico, se eliminó la persistencia de stock asignado en la entidad `ItemPedido`. Los faltantes de stock se calculan dinámicamente en tiempo de ejecución al consultar el pedido.
+- Al detectar un faltante dinámico, el sistema permite generar una `OrdenProduccion` asociada de forma sencilla. Al completarse la orden, ingresa stock al producto de forma normal (FIFO) y el faltante dinámico se reduce en la próxima consulta. El stock real se consume de forma definitiva solo en el momento de la entrega del pedido.
+- **Órdenes de Reposición (Para Stock):** Se agregó soporte en el diseño para órdenes de producción independientes (sin vinculación a un pedido de cliente) para permitir fabricar piezas directamente para stock.
+- **Transacción Contable al Entregar:** Se asoció de forma explícita la entrega de pedido con el registro de la venta en finanzas. Al pasar a `ENTREGADO`, se liquida y registra el cobro del saldo pendiente como una transacción de ingreso vinculada al pedido.
+- **Servicio de Venta Centralizado:** Se introdujo la definición detallada de `VentaService.java` en el plan, especificando su firma en Java y lógica transaccional para descontar stock (FIFO) y registrar el ingreso contable simultáneamente. La entrega de pedidos delega directamente en este servicio.
+- **Egresos por Producción:** Al completarse la producción, se registran egresos contables (de materiales/energía si es interna, o del costo cobrado por el proveedor de outsourcing si es externa/tercerizada), asegurando que la rentabilidad del pedido en el libro diario sea matemáticamente exacta.
+
+### Archivos Involucrados
+- `.specify/specs/007-flujo-pedidos-fabricacion/spec.md` (creado/modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/plan.md` (creado/modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (creado/modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-18] - Remover Vista de Resumen (Overview) del Frontend
 ### Descripción
 - **Frontend (UI):** Se eliminó la sección de "Resumen" (`overview`) del panel de navegación lateral y de la lógica de renderizado principal en `App.tsx`.

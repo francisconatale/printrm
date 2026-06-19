@@ -1,12 +1,13 @@
-# Tarea Actual: Remover Vista de Resumen (Overview) del Frontend
+# Tarea Actual: Diseñar y Planificar el Flujo de Pedidos, Stock y Fabricación
 
 ## Estado
-- [x] Frontend: Eliminar la opción "Resumen" (`overview`) de la barra de navegación lateral y quitar la vista `StudioOverview` del renderizado.
-- [x] Frontend: Eliminar el archivo de componente `studio-overview.tsx` si ya no es utilizado.
-- [x] Actualizar el archivo `CHANGELOG.md`.
+- [ ] Crear especificación `.specify/specs/007-flujo-pedidos-fabricacion/spec.md` detallando el flujo comercial y la relación de entidades.
+- [ ] Crear plan de implementación `.specify/specs/007-flujo-pedidos-fabricacion/plan.md` especificando la arquitectura técnica.
+- [ ] Crear lista de tareas `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` con los pasos para el desarrollo.
+- [ ] Crear un nuevo commit con el prefijo `plan:` tras finalizar el diseño del plan.
 
 ## Archivos involucrados
-- `frontend/src/components/layout/sidebar.tsx`
-- `frontend/src/App.tsx`
-- `frontend/src/components/studio-overview.tsx`
-- `CHANGELOG.md`
+- `.specify/specs/007-flujo-pedidos-fabricacion/spec.md`
+- `.specify/specs/007-flujo-pedidos-fabricacion/plan.md`
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md`
+- `.specify/current_task_summary.md`
