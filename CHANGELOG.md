@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-19] - Modal para Crear Órdenes de Stock Independientes (T012)
+### Descripción
+- **Frontend (Producción):** Se implementó `CrearOrdenIndependienteModal.tsx` para la creación de órdenes de producción desvinculadas de pedidos (para stock general de reposición propia).
+- El formulario permite al usuario seleccionar el producto del catálogo (consumiendo la API `/api/v1/productos` vía `useGetProductos`), elegir la cantidad, y definir si la producción es interna o externa (con proveedor y costo estimado).
+- Se vinculó el modal con el botón "+ Nueva Orden de Stock" en la cabecera de la Agenda de Producción.
+
+### Archivos Involucrados
+- `frontend/src/features/produccion/components/CrearOrdenIndependienteModal.tsx` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Vista de Agenda de Producción (T011)
 ### Descripción
 - **Frontend (Producción):** Se implementó la pantalla de visualización "Agenda de Producción" (`AgendaProduccionView.tsx`), que organiza las órdenes de producción en columnas tipo Kanban según su estado actual: "En Cola", "En Proceso" y "Completadas".
