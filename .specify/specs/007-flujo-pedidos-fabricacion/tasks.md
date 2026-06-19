@@ -1,7 +1,6 @@
 # Tasks: Flujo Dinámico de Pedidos, Stock y Fabricación
 
-## Phase 1: Backend Foundations & Entities (Java)
-- [x] T001 Crear la entidad `OrdenProduccion.java` con relación `@ManyToOne` nullable hacia `ItemPedido` y su repositorio `OrdenProduccionRepository.java` en `backend/src/main/java/com/printrm/studio/domain/produccion/`.
+## Phase 1: Backend Foundations & Entities (Java- [x] T001 Crear la entidad `OrdenProduccion.java` con relación `@ManyToOne` nullable hacia `ItemPedido` y su repositorio `OrdenProduccionRepository.java` en `backend/src/main/java/com/printrm/studio/domain/produccion/`.
 - [x] T002 Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java`.
 
 ## Phase 2: Business Logic & Services (Backend)
@@ -23,4 +22,5 @@
 
 ## Phase 5: Testing & Verification
 - [ ] T014 Escribir pruebas unitarias e integración para `VentaService`, `PedidoService` (cálculo dinámico y entrega) y `OrdenProduccionService` (ingreso de stock y egresos).
-- [ ] T015 Realizar pruebas de flujo completo: Crear pedido -> Ver faltante -> Mandar a fabricar -> Completar orden en Agenda -> Verificar stock ingresado y egreso -> Entregar pedido -> Verificar venta registrada e ingreso final.
+- [ ] T015 Realizar pruebas de flujo completo: Crear pedido -> Ver faltante -> Mandar a fabricar -> Completar orden en Agenda -> Verificar stock ingresado y egreso -> Entregar pedido -> Verificar venta registrada e ingreso final. pedido.
+>>>>>>> e9a7373b3f47b4b97e285e0eca3d0e47b7d2a5c0

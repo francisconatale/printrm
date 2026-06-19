@@ -11,8 +11,8 @@
 - [x] Implementar alta de stock FIFO y registro de egresos (outsourcing o costo de insumos teóricos) al finalizar órdenes en `OrdenProduccionService.java` (T006).
 - [x] Modificar la lógica de entrega en `PedidoService.java` para delegar el descuento de stock e ingresos en `VentaService.registrarVenta` al pasar el pedido a `ENTREGADO` (T007).
 - [x] Crear la clase controladora `OrdenProduccionController.java` exponiendo los endpoints (T008).
-- [ ] Modificar `PedidoDetalleView.tsx` en el frontend para calcular e informar en pantalla la cantidad en stock, en producción y el faltante neto (T009).
-- [ ] Registrar en el `CHANGELOG.md` y realizar commit atómico para T009.
+- [x] Modificar `PedidoDetalleView.tsx` en el frontend para calcular e informar en pantalla la cantidad en stock, en producción y el faltante neto (T009).
+- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T009.
 
 ## Archivos involucrados
 - `frontend/src/features/pedidos/components/PedidoDetalleView.tsx`

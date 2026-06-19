@@ -12,12 +12,14 @@ import {
   Truck,
   History,
   Loader2,
-  FileText
+  FileText,
+  RefreshCcw
 } from 'lucide-react';
 import { format } from 'date-fns/format';
 import { es } from 'date-fns/locale/es';
 import { RegistrarPagoModal } from './RegistrarPagoModal';
 import { RegistrarMermaModal } from './RegistrarMermaModal';
+import { CrearOrdenVinculadaModal } from './CrearOrdenVinculadaModal';
 
 interface PedidoDetalleViewProps {
   pedidoId: string;
@@ -34,7 +36,10 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
   
   const [showPagoModal, setShowPagoModal] = React.useState(false);
   const [showMermaModal, setShowMermaModal] = React.useState(false);
+  const [showFabricarModal, setShowFabricarModal] = React.useState(false);
   const [selectedItemId, setSelectedItemId] = React.useState<string | null>(null);
+  const [selectedItemName, setSelectedItemName] = React.useState<string>('');
+  const [selectedItemFaltante, setSelectedItemFaltante] = React.useState<number>(0);
 
   if (isLoading || !pedido) {
     return (
@@ -97,6 +102,47 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                           <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
                             {item.cantidad} UNIDADES {item.cantidadMerma > 0 && `• ${item.cantidadMerma} FALLIDAS`}
                           </p>
+
+                          {/* Stock & Production Metrics */}
+                          {(item.productoId || item.calculoId) && (
+                            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                              <span>Stock actual: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
+                              {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
+                                <span>En producción: <strong className="text-foreground">
+                                  {item.ordenesProduccion.reduce((acc, o) => ['COLA', 'IMPRIMIENDO', 'ENVIADO_PROVEEDOR'].includes(o.estado) ? acc + o.cantidad : acc, 0)}
+                                </strong></span>
+                              )}
+                              {(item.cantidadFaltante ?? 0) > 0 ? (
+                                <span className="text-amber-600 font-semibold flex items-center gap-1">
+                                  Faltante neto: <strong>{item.cantidadFaltante}</strong>
+                                </span>
+                              ) : (
+                                <span className="text-emerald-600 font-semibold">Listo para entregar</span>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Related production orders (traza) */}
+                          {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
+                            <div className="mt-3 space-y-1.5 pl-2 border-l-2 border-muted/40">
+                              <p className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Historial de Fabricación</p>
+                              {item.ordenesProduccion.map((op) => (
+                                <div key={op.id} className="text-[11px] flex items-center gap-2">
+                                  <span className="font-medium text-foreground">x{op.cantidad} {op.tipo === 'INTERNA' ? 'Interna' : `Externa (${op.proveedor})`}</span>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
+                                    op.estado === 'COLA' ? 'bg-zinc-100 border-zinc-200 text-zinc-700' :
+                                    op.estado === 'IMPRIMIENDO' ? 'bg-blue-50 border-blue-100 text-blue-700' :
+                                    op.estado === 'COMPLETADO' || op.estado === 'RECIBIDO_PROVEEDOR' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' :
+                                    op.estado === 'CANCELADO' ? 'bg-red-50 border-red-100 text-red-700' :
+                                    'bg-amber-50 border-amber-100 text-amber-700' // ENVIADO_PROVEEDOR
+                                  }`}>
+                                    {op.estado === 'RECIBIDO_PROVEEDOR' ? 'RECIBIDO' : op.estado}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -104,6 +150,19 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                         <div className="text-right">
                           <p className="text-[10px] text-muted-foreground uppercase font-bold">Subtotal</p>
                           <p className="text-sm font-mono font-bold">{formatCurrency(item.subtotal)}</p>
+                          {(item.cantidadFaltante ?? 0) > 0 && (
+                            <button
+                              onClick={() => {
+                                setSelectedItemId(item.id);
+                                setSelectedItemName(item.perfilNombre);
+                                setSelectedItemFaltante(item.cantidadFaltante ?? 0);
+                                setShowFabricarModal(true);
+                              }}
+                              className="mt-2 text-[10px] font-bold uppercase tracking-wider bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-3 py-1 rounded-full transition-all"
+                            >
+                              Mandar a Fabricar
+                            </button>
+                          )}
                         </div>
                         
                         <button 
@@ -130,13 +189,25 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                       onClick={() => handleStatusChange('COTIZADO')}
                       className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'COTIZADO' ? 'bg-zinc-100 border-zinc-200' : 'hover:bg-zinc-50 border-transparent'}`}
                     >
-                      <History size={14} /> Marcar como Cotizado
+                      <History size={14} /> Cotizado
+                    </button>
+                    <button 
+                      onClick={() => handleStatusChange('CONFIRMADO')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'CONFIRMADO' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'hover:bg-indigo-50/50 border-transparent text-indigo-600'}`}
+                    >
+                      <CheckCircle2 size={14} /> Confirmar Pedido
                     </button>
                     <button 
                       onClick={() => handleStatusChange('EN_PRODUCCION')}
                       className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'EN_PRODUCCION' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'hover:bg-blue-50/50 border-transparent text-blue-600'}`}
                     >
                       <Truck size={14} /> Iniciar Producción
+                    </button>
+                    <button 
+                      onClick={() => handleStatusChange('LISTO_PARA_ENTREGAR')}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'LISTO_PARA_ENTREGAR' ? 'bg-teal-50 text-teal-700 border-teal-100' : 'hover:bg-teal-50/50 border-transparent text-teal-600'}`}
+                    >
+                      <Package size={14} /> Listo para Entregar
                     </button>
                     <button 
                       onClick={() => handleStatusChange('ENTREGADO')}
@@ -223,6 +294,17 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
         }}
         pedidoId={pedido.id}
         itemId={selectedItemId || ''}
+      />
+
+      <CrearOrdenVinculadaModal
+        isOpen={showFabricarModal}
+        onClose={() => {
+          setShowFabricarModal(false);
+          setSelectedItemId(null);
+        }}
+        itemPedidoId={selectedItemId || ''}
+        perfilNombre={selectedItemName}
+        cantidadRecomendada={selectedItemFaltante}
       />
     </div>
   );

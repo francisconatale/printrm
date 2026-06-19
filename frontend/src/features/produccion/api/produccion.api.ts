@@ -1,0 +1,62 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { OrdenProduccion, OrdenProduccionRequest, EstadoProduccion } from '../types/produccion.types';
+
+const API_URL = 'http://localhost:8080/api/v1/produccion/ordenes';
+
+export const useGetOrdenesProduccion = () => {
+  return useQuery<OrdenProduccion[]>({
+    queryKey: ['ordenesProduccion'],
+    queryFn: async () => {
+      const { data } = await axios.get(API_URL);
+      return data;
+    }
+  });
+};
+
+export const useCreateOrdenVinculada = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (orden: OrdenProduccionRequest) => {
+      const { data } = await axios.post(`${API_URL}/vinculada`, orden);
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['ordenesProduccion'] });
+      queryClient.invalidateQueries({ queryKey: ['pedidos'] });
+      if (variables.itemPedidoId) {
+        queryClient.invalidateQueries({ queryKey: ['pedidos'] });
+      }
+    }
+  });
+};
+
+export const useCreateOrdenIndependiente = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (orden: OrdenProduccionRequest) => {
+      const { data } = await axios.post(`${API_URL}/independiente`, orden);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ordenesProduccion'] });
+      queryClient.invalidateQueries({ queryKey: ['productos'] });
+    }
+  });
+};
+
+export const useUpdateEstadoOrden = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, estado }: { id: string; estado: EstadoProduccion }) => {
+      const { data } = await axios.patch(`${API_URL}/${id}/estado?estado=${estado}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ordenesProduccion'] });
+      queryClient.invalidateQueries({ queryKey: ['pedidos'] });
+      queryClient.invalidateQueries({ queryKey: ['productos'] });
+      queryClient.invalidateQueries({ queryKey: ['transacciones'] });
+    }
+  });
+};

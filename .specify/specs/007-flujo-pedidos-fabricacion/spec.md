@@ -18,11 +18,11 @@ Como comerciante, quiero poder crear órdenes de producción de forma independie
 
 ### US5: Cierre de Producción, Impacto en Inventario y Registro de Gastos (Prioridad: P1)
 Como comerciante, quiero que al completarse una orden de producción:
-1. El stock físico del producto se incremente de forma automática (FIFO).
+1. El stock físico del producto se incremente de forma automática (lote FIFO), reduciendo de inmediato los faltantes dinámicos de los pedidos pendientes.
 2. Se registren los egresos correspondientes en el libro diario de finanzas (el costo cobrado por el proveedor de outsourcing si es externa, o el desgaste estimado de filamento y energía si es interna).
 
 ### US6: Entrega de Pedido con Lógica de Venta Centralizada (Prioridad: P1)
-Como comerciante, quiero que al confirmarse la entrega de un pedido (estado `ENTREGADO`), el sistema ejecute la lógica de venta de forma centralizada: valide el stock real disponible, lo descuente (FIFO), registre el ingreso contable por la venta en finanzas, y liquide el saldo cobrado al cliente.
+Como comerciante, quiero que al confirmarse la entrega de un pedido (estado `ENTREGADO`), el sistema ejecute la lógica de venta de forma centralizada. Esto debe ocurrir de forma condicional al stock real: el pedido solo se entregará si en ese momento hay stock real disponible para cubrir todos sus ítems. Al entregarse, se consume definitivamente dicho stock (FIFO), se registra el ingreso contable por la venta en finanzas y se liquida el saldo restante pendiente de cobro del cliente.
 
 ---
 
@@ -39,8 +39,8 @@ $$\text{Faltante Neto a Producir} = \max(0, Q_{\text{pedido}} - Q_{\text{stock}}
 
 ### B. Vinculación Opcional en Producción
 La entidad `OrdenProduccion` tiene un campo `itemPedido` opcional (nullable):
-1. **Vinculada a Pedido (`itemPedido != null`):** Nace del detalle de un pedido de un cliente para cubrir un faltante. Al completarse, impacta en el stock y calcula los gastos de esa orden en el pedido original.
-2. **Independiente (`itemPedido == null`):** Creada manualmente por el usuario desde el panel de producción para reabastecer stock propio.
+1. **Vinculada a Pedido (`itemPedido != null`):** Nace del detalle de un pedido de un cliente para cubrir un faltante. Al completarse, impacta en el stock (lote FIFO) y registra los egresos/gastos de esa orden.
+2. **Independiente (`itemPedido == null`):** Creada manualmente por el usuario desde el panel de producción para reabastecer stock propio. Al completarse, añade un lote FIFO de stock al producto.
 
 ### C. Entrega del Pedido y Transacción de Venta
 Al marcar un pedido como `ENTREGADO`, la acción se asocia directamente a una venta real del negocio:

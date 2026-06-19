@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [2026-06-19] - Visualizar Stock, Producción y Faltantes en el Detalle del Pedido (T009)
+### Descripción
+- **Frontend (Pedidos):** Se modificó `PedidoDetalleView.tsx` y `pedidos.types.ts` para mostrar dinámicamente el stock real disponible, la cantidad en producción, y el faltante neto de cada ítem del pedido.
+- Se agregó visualización del historial de órdenes de producción vinculadas a cada ítem (traza de fabricación) con sus respectivos estados actualizados.
+- Se agregaron los nuevos estados `CONFIRMADO` y `LISTO_PARA_ENTREGAR` a la barra de acciones de estado del pedido y a `EstadoBadge.tsx`.
+
+### Archivos Involucrados
+- `frontend/src/features/pedidos/types/pedidos.types.ts` (modificado)
+- `frontend/src/features/pedidos/components/EstadoBadge.tsx` (modificado)
+- `frontend/src/features/pedidos/components/PedidoDetalleView.tsx` (modificado)
+- `frontend/src/features/produccion/types/produccion.types.ts` (creado)
+- `frontend/src/features/produccion/api/produccion.api.ts` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Endpoints REST en OrdenProduccionController (T008)
 ### Descripción
 - **Backend (Producción):** Se creó e implementó `OrdenProduccionController.java` exponiendo la API REST bajo el path `/api/v1/produccion/ordenes`.

@@ -1,11 +1,26 @@
-export type EstadoPedido = 'BORRADOR' | 'COTIZADO' | 'EN_PRODUCCION' | 'ENTREGADO' | 'CANCELADO' | 'DEVUELTO';
+export type EstadoPedido = 'BORRADOR' | 'COTIZADO' | 'CONFIRMADO' | 'EN_PRODUCCION' | 'LISTO_PARA_ENTREGAR' | 'ENTREGADO' | 'CANCELADO' | 'DEVUELTO';
+
+export interface OrdenProduccionResumen {
+  id: string;
+  cantidad: number;
+  tipo: 'INTERNA' | 'EXTERNA';
+  estado: 'COLA' | 'IMPRIMIENDO' | 'COMPLETADO' | 'ENVIADO_PROVEEDOR' | 'RECIBIDO_PROVEEDOR' | 'CANCELADO';
+  proveedor?: string;
+  costoEstimado?: number;
+}
 
 export interface ItemPedido {
   id: string;
   calculoId: string;
+  productoId?: string;
+  productoNombre?: string;
+  perfilNombre: string;
   cantidad: number;
   cantidadMerma: number;
   subtotal: number;
+  stockDisponible?: number;
+  cantidadFaltante?: number;
+  ordenesProduccion?: OrdenProduccionResumen[];
 }
 
 export interface Pedido {
