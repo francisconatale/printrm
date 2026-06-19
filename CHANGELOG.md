@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Entidad OrdenProduccion y Repositorio (T001)
+### Descripción
+- **Backend (Producción):** Se implementó la entidad JPA `OrdenProduccion.java` con soporte para vinculación opcional (`nullable`) a un `ItemPedido` (permitiendo órdenes tanto para clientes como para stock propio de reposición).
+- Se creó la interfaz de repositorio `OrdenProduccionRepository.java` con métodos de consulta por estado, por ítem de pedido y por producto.
+- Se validó la compilación exitosa del backend con las nuevas clases.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccion.java` (creado)
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionRepository.java` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Diseño de Especificación para Flujo Dinámico de Pedidos, Stock y Fabricación
 ### Descripción
 - **Diseño del Sistema (SpecKit):** Se definió el diseño modular unificado en `.specify/specs/007-flujo-pedidos-fabricacion/spec.md`, el plan técnico `.specify/specs/007-flujo-pedidos-fabricacion/plan.md` y las tareas de implementación `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md`.

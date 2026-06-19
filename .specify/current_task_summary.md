@@ -1,13 +1,13 @@
-# Tarea Actual: Diseñar y Planificar el Flujo de Pedidos, Stock y Fabricación
+# Tarea Actual: Implementar Cambios de Estado en Pedido (T002)
 
 ## Estado
-- [ ] Crear especificación `.specify/specs/007-flujo-pedidos-fabricacion/spec.md` detallando el flujo comercial y la relación de entidades.
-- [ ] Crear plan de implementación `.specify/specs/007-flujo-pedidos-fabricacion/plan.md` especificando la arquitectura técnica.
-- [ ] Crear lista de tareas `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` con los pasos para el desarrollo.
-- [ ] Crear un nuevo commit con el prefijo `plan:` tras finalizar el diseño del plan.
+- [x] Crear la entidad `OrdenProduccion.java` con sus enums y relaciones (T001).
+- [x] Crear `OrdenProduccionRepository.java` (T001).
+- [ ] Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java` (T002).
+- [ ] Validar compilación del backend.
+- [ ] Registrar en el `CHANGELOG.md` y realizar commit atómico para T002.
 
 ## Archivos involucrados
-- `.specify/specs/007-flujo-pedidos-fabricacion/spec.md`
-- `.specify/specs/007-flujo-pedidos-fabricacion/plan.md`
-- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/Pedido.java`
+- `CHANGELOG.md`
 - `.specify/current_task_summary.md`

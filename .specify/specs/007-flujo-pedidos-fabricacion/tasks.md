@@ -1,7 +1,7 @@
 # Tasks: Flujo Dinámico de Pedidos, Stock y Fabricación
 
 ## Phase 1: Backend Foundations & Entities (Java)
-- [ ] T001 Crear la entidad `OrdenProduccion.java` con relación `@ManyToOne` nullable hacia `ItemPedido` y su repositorio `OrdenProduccionRepository.java` en `backend/src/main/java/com/printrm/studio/domain/produccion/`.
+- [x] T001 Crear la entidad `OrdenProduccion.java` con relación `@ManyToOne` nullable hacia `ItemPedido` y su repositorio `OrdenProduccionRepository.java` en `backend/src/main/java/com/printrm/studio/domain/produccion/`.
 - [ ] T002 Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java`.
 
 ## Phase 2: Business Logic & Services (Backend)
