@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Modal de Orden de Producción Vinculada (T010)
+### Descripción
+- **Frontend (Pedidos/Producción):** Se implementó `CrearOrdenVinculadaModal.tsx` para permitir mandar a fabricar las piezas faltantes de un pedido de manera directa desde la pantalla del detalle del mismo.
+- Se agregó soporte para seleccionar el tipo de orden (interna o externa) y la cantidad a fabricar (por defecto, el faltante neto del ítem).
+- Se habilitaron campos adicionales de proveedor y costo estimado para las órdenes de producción de tipo externo.
+- Se integró el modal con el botón "Mandar a Fabricar" en `PedidoDetalleView.tsx` y se conectó con el servicio API correspondiente.
+
+### Archivos Involucrados
+- `frontend/src/features/pedidos/components/CrearOrdenVinculadaModal.tsx` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Visualizar Stock, Producción y Faltantes en el Detalle del Pedido (T009)
 ### Descripción
 - **Frontend (Pedidos):** Se modificó `PedidoDetalleView.tsx` y `pedidos.types.ts` para mostrar dinámicamente el stock real disponible, la cantidad en producción, y el faltante neto de cada ítem del pedido.

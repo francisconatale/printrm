@@ -1,4 +1,4 @@
-# Tarea Actual: Visualizar Stock y Faltantes en el Detalle del Pedido (T009)
+# Tarea Actual: Crear el Modal de Orden de Producción Vinculada (T010)
 
 ## Estado
 - [x] Crear la entidad `OrdenProduccion.java` con sus enums y relaciones (T001).
@@ -12,9 +12,10 @@
 - [x] Modificar la lógica de entrega en `PedidoService.java` para delegar el descuento de stock e ingresos en `VentaService.registrarVenta` al pasar el pedido a `ENTREGADO` (T007).
 - [x] Crear la clase controladora `OrdenProduccionController.java` exponiendo los endpoints (T008).
 - [x] Modificar `PedidoDetalleView.tsx` en el frontend para calcular e informar en pantalla la cantidad en stock, en producción y el faltante neto (T009).
-- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T009.
+- [x] Crear el modal de creación de orden de producción vinculada para piezas faltantes y conectarlo con la API (T010).
+- [x] Registrar en el `CHANGELOG.md` y realizar commit atómico para T010.
 
 ## Archivos involucrados
-- `frontend/src/features/pedidos/components/PedidoDetalleView.tsx`
+- `frontend/src/features/pedidos/components/CrearOrdenVinculadaModal.tsx`
 - `CHANGELOG.md`
 - `.specify/current_task_summary.md`
