@@ -10,7 +10,7 @@
 - [x] T005 Crear `OrdenProduccionService.java` con soporte para crear órdenes vinculadas a pedidos y órdenes independientes (para stock propio).
 - [x] T006 Implementar en `OrdenProduccionService` el flujo de finalización de órdenes: alta de stock (lote FIFO) y registro contable de egresos (costo cobrado por proveedor si es externa, o insumos si es interna).
 - [x] T007 Modificar la lógica de entrega en `PedidoService` para validar stock real y delegar el consumo y registro de ingresos en `VentaService.registrarVenta`, liquidando el cobro restante.
-- [ ] T008 Crear `OrdenProduccionController.java` expeliendo endpoints para la creación y gestión del estado de las órdenes de producción.
+- [x] T008 Crear `OrdenProduccionController.java` expeliendo endpoints para la creación y gestión del estado de las órdenes de producción.
 
 ## Phase 3: Frontend - Detalle de Pedido (React)
 - [ ] T009 Modificar `PedidoDetalleView.tsx` para calcular e informar en pantalla la cantidad en stock, en producción y el faltante neto de cada ítem de tipo producto.

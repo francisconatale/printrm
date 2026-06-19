@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2026-06-19] - Endpoints REST en OrdenProduccionController (T008)
+### Descripción
+- **Backend (Producción):** Se creó e implementó `OrdenProduccionController.java` exponiendo la API REST bajo el path `/api/v1/produccion/ordenes`.
+- Se crearon DTOs `OrdenProduccionRequestDTO.java` y `OrdenProduccionResponseDTO.java` para aislar las capas y prevenir problemas de Lazy Loading en el mapeo de relaciones JPA.
+- Endpoints soportados: listado completo (`GET`), detalle individual (`GET`), creación vinculada a pedido (`POST /vinculada`), creación para stock propio (`POST /independiente`), y cambio de estado transaccional con impacto en inventario y finanzas (`PATCH /{id}/estado`).
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionRequestDTO.java` (creado)
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionResponseDTO.java` (creado)
+- `backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccionController.java` (creado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Integración de Venta y Validación de Stock en Entrega de Pedido (T007)
 ### Descripción
 - **Backend (Pedidos):** Se modificó la lógica en `PedidoService.java` para que al pasar un pedido a estado `ENTREGADO` se ejecuten los siguientes controles y delegaciones:
