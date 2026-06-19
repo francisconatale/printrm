@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [2026-06-19] - Estados de Pedido LISTO_PARA_ENTREGAR y CONFIRMADO (T002)
+### Descripción
+- **Backend (Pedidos):** Se agregaron los estados `CONFIRMADO` y `LISTO_PARA_ENTREGAR` al enumerado `EstadoPedido` en la entidad `Pedido.java` para dar soporte al nuevo ciclo de vida de los pedidos que requieren fabricación de faltantes.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/Pedido.java` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Entidad OrdenProduccion y Repositorio (T001)
 ### Descripción
 - **Backend (Producción):** Se implementó la entidad JPA `OrdenProduccion.java` con soporte para vinculación opcional (`nullable`) a un `ItemPedido` (permitiendo órdenes tanto para clientes como para stock propio de reposición).

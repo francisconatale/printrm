@@ -2,7 +2,7 @@
 
 ## Phase 1: Backend Foundations & Entities (Java)
 - [x] T001 Crear la entidad `OrdenProduccion.java` con relación `@ManyToOne` nullable hacia `ItemPedido` y su repositorio `OrdenProduccionRepository.java` en `backend/src/main/java/com/printrm/studio/domain/produccion/`.
-- [ ] T002 Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java`.
+- [x] T002 Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java`.
 
 ## Phase 2: Business Logic & Services (Backend)
 - [ ] T003 Modificar `PedidoService.java` y `PedidoResponseDTO` para calcular dinámicamente la cantidad faltante de stock y listar las órdenes asociadas para cada ítem.

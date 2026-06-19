@@ -48,7 +48,7 @@ public class Pedido {
     private LocalDateTime fechaActualizacion;
 
     public enum EstadoPedido {
-        BORRADOR, COTIZADO, EN_PRODUCCION, ENTREGADO, CANCELADO, DEVUELTO
+        BORRADOR, COTIZADO, CONFIRMADO, EN_PRODUCCION, LISTO_PARA_ENTREGAR, ENTREGADO, CANCELADO, DEVUELTO
     }
 
     public void calcularTotal() {
