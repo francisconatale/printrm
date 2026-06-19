@@ -12,4 +12,20 @@ public class ItemPedidoResponseDTO {
     private Integer cantidad;
     private Integer cantidadMerma;
     private Double subtotal;
+    private Integer stockDisponible;
+    private Integer cantidadFaltante;
+    private java.util.List<OrdenProduccionResumenDTO> ordenesProduccion;
+
+    @Data
+    @lombok.Builder
+    @lombok.NoArgsConstructor
+    @lombok.AllArgsConstructor
+    public static class OrdenProduccionResumenDTO {
+        private String id;
+        private Integer cantidad;
+        private String tipo;
+        private String estado;
+        private String proveedor;
+        private Double costoEstimado;
+    }
 }

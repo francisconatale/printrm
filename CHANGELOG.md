@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2026-06-19] - Cálculo Dinámico de Faltantes y Mapeo en PedidoResponseDTO (T003)
+### Descripción
+- **Backend (Pedidos):** Se modificó `ItemPedidoResponseDTO.java` para incluir la cantidad disponible en stock (`stockDisponible`), la cantidad faltante (`cantidadFaltante`) y las órdenes de producción asociadas (`ordenesProduccion`).
+- Se actualizó el mapeador `mapToDTO` en `PedidoService.java` para inyectar `OrdenProduccionRepository` y calcular dinámicamente estos campos en tiempo de ejecución para cada ítem, resolviendo de forma segura la volatilidad del inventario físico.
+- Se validó la compilación del backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java` (modificado)
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java` (modificado)
+- `.specify/specs/007-flujo-pedidos-fabricacion/tasks.md` (modificado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Estados de Pedido LISTO_PARA_ENTREGAR y CONFIRMADO (T002)
 ### Descripción
 - **Backend (Pedidos):** Se agregaron los estados `CONFIRMADO` y `LISTO_PARA_ENTREGAR` al enumerado `EstadoPedido` en la entidad `Pedido.java` para dar soporte al nuevo ciclo de vida de los pedidos que requieren fabricación de faltantes.

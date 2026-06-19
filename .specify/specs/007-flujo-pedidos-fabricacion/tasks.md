@@ -5,7 +5,7 @@
 - [x] T002 Agregar estados `LISTO_PARA_ENTREGAR` y `CONFIRMADO` al enum `EstadoPedido` en `Pedido.java`.
 
 ## Phase 2: Business Logic & Services (Backend)
-- [ ] T003 Modificar `PedidoService.java` y `PedidoResponseDTO` para calcular dinámicamente la cantidad faltante de stock y listar las órdenes asociadas para cada ítem.
+- [x] T003 Modificar `PedidoService.java` y `PedidoResponseDTO` para calcular dinámicamente la cantidad faltante de stock y listar las órdenes asociadas para cada ítem.
 - [ ] T004 Crear el servicio `VentaService.java` centralizando la lógica de venta: consumo de stock (FIFO) y registro contable de ingresos contables.
 - [ ] T005 Crear `OrdenProduccionService.java` con soporte para crear órdenes vinculadas a pedidos y órdenes independientes (para stock propio).
 - [ ] T006 Implementar en `OrdenProduccionService` el flujo de finalización de órdenes: alta de stock (lote FIFO) y registro contable de egresos (costo cobrado por proveedor si es externa, o insumos si es interna).

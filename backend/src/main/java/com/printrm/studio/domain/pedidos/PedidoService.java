@@ -9,6 +9,8 @@ import com.printrm.studio.domain.finanzas.TransaccionRepository;
 import com.printrm.studio.domain.stock.Producto;
 import com.printrm.studio.domain.stock.ProductoRepository;
 import com.printrm.studio.domain.stock.ProductoService;
+import com.printrm.studio.domain.produccion.OrdenProduccion;
+import com.printrm.studio.domain.produccion.OrdenProduccionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ public class PedidoService {
     private final TransaccionRepository transaccionRepository;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
+    private final OrdenProduccionRepository ordenProduccionRepository;
 
     @Transactional
     public PedidoResponseDTO crearPedido(PedidoRequestDTO request) {
@@ -251,17 +254,63 @@ public class PedidoService {
             itemDto.setId(item.getId().toString());
             itemDto.setCantidad(item.getCantidad());
             itemDto.setCantidadMerma(item.getCantidadMerma());
+            itemDto.setSubtotal(item.getSubtotal());
             
+            List<OrdenProduccion> ordenes = ordenProduccionRepository.findByItemPedidoId(item.getId());
+            itemDto.setOrdenesProduccion(ordenes.stream().map(o -> ItemPedidoResponseDTO.OrdenProduccionResumenDTO.builder()
+                .id(o.getId().toString())
+                .cantidad(o.getCantidad())
+                .tipo(o.getTipo().name())
+                .estado(o.getEstado().name())
+                .proveedor(o.getProveedor())
+                .costoEstimado(o.getCostoEstimado())
+                .build()).collect(Collectors.toList()));
+
             if (item.getProducto() != null) {
                 itemDto.setProductoId(item.getProducto().getId().toString());
                 itemDto.setProductoNombre(item.getProducto().getNombre());
                 itemDto.setPerfilNombre(item.getProducto().getNombre());
+                
+                int stockTotal = item.getProducto().getCantidadStock();
+                itemDto.setStockDisponible(stockTotal);
+                
+                int cantidadProducida = ordenes.stream()
+                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.RECIBIDO_PROVEEDOR)
+                    .mapToInt(OrdenProduccion::getCantidad)
+                    .sum();
+                
+                int cantidadEnProduccion = ordenes.stream()
+                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COLA 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR)
+                    .mapToInt(OrdenProduccion::getCantidad)
+                    .sum();
+                
+                int faltante = Math.max(0, item.getCantidad() - stockTotal - cantidadProducida - cantidadEnProduccion);
+                itemDto.setCantidadFaltante(faltante);
             } else if (item.getCalculo() != null) {
                 itemDto.setCalculoId(item.getCalculo().getId().toString());
-                itemDto.setPerfilNombre(item.getCalculo() != null ? item.getCalculo().getPerfilNombre() : "Cotización");
+                itemDto.setPerfilNombre(item.getCalculo().getPerfilNombre() != null ? item.getCalculo().getPerfilNombre() : "Cotización");
+                itemDto.setStockDisponible(0);
+                
+                int cantidadProducida = ordenes.stream()
+                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.RECIBIDO_PROVEEDOR)
+                    .mapToInt(OrdenProduccion::getCantidad)
+                    .sum();
+                
+                int cantidadEnProduccion = ordenes.stream()
+                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COLA 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO 
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR)
+                    .mapToInt(OrdenProduccion::getCantidad)
+                    .sum();
+
+                int faltante = Math.max(0, item.getCantidad() - cantidadProducida - cantidadEnProduccion);
+                itemDto.setCantidadFaltante(faltante);
             }
             
-            itemDto.setSubtotal(item.getSubtotal());
             return itemDto;
         }).collect(Collectors.toList()));
         return dto;
