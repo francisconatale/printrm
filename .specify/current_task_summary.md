@@ -1,20 +1,20 @@
-# Estado de Tarea: Biblioteca de Piezas / STL Library (T001 - T010)
+# Estado de Tarea: Plan de Migración de Colores
 
 ## Objetivo
-Implementar la especificación completa para la biblioteca de piezas STL, abarcando Phase 1, Phase 2, y Phase 3.
+Implementar una sola fuente de verdad para colores utilizando Shadcn como base, eliminando valores hardcodeados para lograr un dark mode funcional en todo el proyecto.
 
 ## Tareas
-- [ ] T001: Implement PiezaSTL Entity in Backend (Name, FilePath, Metadata)
-- [ ] T002: Create PiezaController for basic CRUD
-- [ ] T003: Design STLCard.tsx following Studio layout
-- [ ] T004: Create PiezasGalleryView.tsx with responsive grid
-- [ ] T005: Setup @react-three/fiber and @react-three/drei in frontend
-- [ ] T006: Implement STLPreview.tsx (3D viewer)
-- [ ] T007: Optimize preview rendering (lazy loading, cleanup)
-- [ ] T008: Add "Save to Library" action after successful calculation
-- [ ] T009: Implement "Calculate from Library" to trigger Slicer Motor / Calculator
-- [ ] T010: Add search and filtering in gallery
+- [ ] Fase 1: Actualizar `index.css` con nuevos tokens de color.
+- [ ] Fase 2: Realizar reemplazos globales de colores, textos, bordes y radios en componentes.
+- [ ] Fase 3: Ajustar componentes específicos (toasts, chips activos, botones).
+- [ ] Fase 4: Limpiar `studio-theme.css` convirtiendo Studio tokens a alias de Shadcn y eliminando duplicados.
+- [ ] Fase 5: Realizar verificación final y pruebas de compilación/Dark Mode.
 
 ## Archivos Involucrados
-- `C:/Users/franc/OneDrive/Desktop/printrm/.specify/specs/004-biblioteca-stl/tasks.md`
-- `C:/Users/franc/OneDrive/Desktop/printrm/.specify/current_task_summary.md`
+- `.specify/current_task_summary.md`
+- `frontend/src/index.css`
+- `frontend/src/components/layout/app-shell.tsx`
+- `frontend/src/features/stock/components/ComposicionProductoModal.tsx`
+- `frontend/src/features/calculo/components/ResultadoPanel.tsx`
+- `frontend/src/features/stock/components/ProductoCard.tsx`
+- (Otros archivos del frontend que requieran reemplazos)
