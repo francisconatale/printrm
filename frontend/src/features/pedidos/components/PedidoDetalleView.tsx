@@ -188,45 +188,57 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                   </span>
                 </div>
 
-                <div className="divide-y divide-zinc-100 dark:divide-border/30">
-                  {pedido.items.map((item) => (
-                    <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
-                      <div className="flex items-start gap-3.5">
-                        <div className="size-11 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
-                          <Package size={18} />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-semibold text-foreground leading-snug">{item.perfilNombre}</p>
-                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                            <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
-                              {item.cantidad} U.
-                            </span>
-                            {item.cantidadEntregada > 0 && (
-                              <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
-                                {item.cantidadEntregada} ENTREGADAS
+                  {pedido.items.map((item) => {
+                    const fabricadas = item.ordenesProduccion?.reduce((acc, o) => o.estado === 'COMPLETADO' ? acc + o.cantidad : acc, 0) ?? 0;
+                    const enProceso = item.ordenesProduccion?.reduce((acc, o) => ['COLA', 'IMPRIMIENDO'].includes(o.estado) ? acc + o.cantidad : acc, 0) ?? 0;
+                    return (
+                      <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                        <div className="flex items-start gap-3.5">
+                          <div className="size-11 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
+                            <Package size={18} />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold text-foreground leading-snug">{item.perfilNombre}</p>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                              <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                                {item.cantidad} U.
                               </span>
-                            )}
-                            {item.cantidadMerma > 0 && (
-                              <span className="text-red-500 bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
-                                {item.cantidadMerma} FALLIDAS
-                              </span>
-                            )}
-                            {item.productoId && (
-                              <>
-                                {(item.cantidadFaltante ?? 0) > 0 ? (
-                                  <span className="text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
-                                    FALTAN {item.cantidadFaltante} U.
-                                  </span>
-                                ) : (
-                                  <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
-                                    LISTO
-                                  </span>
-                                )}
-                              </>
-                            )}
+                              {fabricadas > 0 && (
+                                <span className="text-blue-600 bg-blue-50 dark:bg-blue-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                  {fabricadas} FABRICADAS
+                                </span>
+                              )}
+                              {enProceso > 0 && (
+                                <span className="text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                  {enProceso} EN FABRICACIÓN
+                                </span>
+                              )}
+                              {item.cantidadEntregada > 0 && (
+                                <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                  {item.cantidadEntregada} ENTREGADAS
+                                </span>
+                              )}
+                              {item.cantidadMerma > 0 && (
+                                <span className="text-red-500 bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                  {item.cantidadMerma} FALLIDAS
+                                </span>
+                              )}
+                              {item.productoId && (
+                                <>
+                                  {(item.cantidadFaltante ?? 0) > 0 ? (
+                                    <span className="text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                      FALTAN {item.cantidadFaltante} U.
+                                    </span>
+                                  ) : (
+                                    <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                      LISTO
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-dashed border-zinc-100">
                         <div className="text-left sm:text-right">
