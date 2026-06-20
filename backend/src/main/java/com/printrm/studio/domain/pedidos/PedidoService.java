@@ -112,6 +112,9 @@ public class PedidoService {
         Pedido.EstadoPedido anterior = pedido.getEstado();
 
         if ("ENTREGADO".equals(nuevoEstado)) {
+            if (anterior == Pedido.EstadoPedido.ENTREGADO) {
+                throw new IllegalStateException("Este pedido ya fue entregado.");
+            }
             boolean yaEntregadoCompletamente = true;
             for (ItemPedido item : pedido.getItems()) {
                 int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;

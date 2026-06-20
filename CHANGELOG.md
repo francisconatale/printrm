@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [2026-06-21] - Rediseño estilo iPhone de PedidoDetalleView y validación de estado
+### Descripción
+- **Frontend (Pedidos):**
+  - Se rediseñó la vista `PedidoDetalleView.tsx` siguiendo estándares estéticos de iOS/iPhone: se implementó un encabezado limpio tipo tarjeta, una barra de progreso del flujo de trabajo, una barra de completado de pago y se organizó la gestión de estados destacando el siguiente paso recomendado en un panel interactivo premium.
+- **Backend (Pedidos):**
+  - Se modificó `PedidoService.java` para comprobar explícitamente si el pedido ya está en estado `ENTREGADO` antes de procesar cambios a ese mismo estado, arrojando una excepción clara si se intenta entregar de nuevo.
+### Archivos Involucrados
+- [PedidoDetalleView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/PedidoDetalleView.tsx)
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+
 ## [2026-06-21] - Control de doble entrega e idempotencia en Pedidos
 ### Descripción
 - **Backend (Pedidos):** 

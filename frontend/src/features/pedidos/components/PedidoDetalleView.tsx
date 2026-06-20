@@ -12,8 +12,11 @@ import {
   Truck,
   History,
   Loader2,
-  FileText,
-  RefreshCcw
+  RefreshCcw,
+  Calendar,
+  User,
+  CreditCard,
+  ChevronRight
 } from 'lucide-react';
 import { format } from 'date-fns/format';
 import { es } from 'date-fns/locale/es';
@@ -62,109 +65,204 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
     updateEstado({ id: pedido.id, estado: nuevoEstado });
   };
 
+  // Lifecycle steps for workflow timeline
+  const workflowSteps = [
+    { key: 'COTIZADO', label: 'Cotizado' },
+    { key: 'CONFIRMADO', label: 'Confirmado' },
+    { key: 'EN_PRODUCCION', label: 'Producción' },
+    { key: 'LISTO_PARA_ENTREGAR', label: 'Listo' },
+    { key: 'ENTREGADO', label: 'Entregado' },
+  ];
+
+  const currentStepIndex = workflowSteps.findIndex(s => s.key === pedido.estado);
+  const isTerminalState = ['CANCELADO', 'DEVUELTO'].includes(pedido.estado);
+
+  // Logical next state
+  const getNextStep = (estado: string) => {
+    switch (estado) {
+      case 'COTIZADO':
+        return { estado: 'CONFIRMADO', label: 'Confirmar Pedido', icon: <CheckCircle2 size={16} />, className: 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm' };
+      case 'CONFIRMADO':
+        return { estado: 'EN_PRODUCCION', label: 'Iniciar Producción', icon: <Truck size={16} />, className: 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' };
+      case 'EN_PRODUCCION':
+        return { estado: 'LISTO_PARA_ENTREGAR', label: 'Listo para Entregar', icon: <Package size={16} />, className: 'bg-teal-600 hover:bg-teal-700 text-white shadow-sm' };
+      case 'LISTO_PARA_ENTREGAR':
+        return { estado: 'ENTREGADO', label: 'Entregar y Cobrar Saldo', icon: <CheckCircle2 size={16} />, className: 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' };
+      default:
+        return null;
+    }
+  };
+
+  const nextStep = getNextStep(pedido.estado);
+  const paymentProgress = pedido.total > 0 ? Math.min(100, (pedido.montoPagado / pedido.total) * 100) : 0;
+
   return (
-    <div className="flex flex-col w-full bg-background min-h-full animate-in fade-in duration-500">
+    <div className="flex flex-col w-full bg-[#fbfbfd] dark:bg-background min-h-full animate-in fade-in duration-300">
       <StudioSubNav />
 
-      <main className="flex-1 px-8 md:px-12 py-10 overflow-y-auto custom-scrollbar">
-        <div className="max-w-[1200px] mx-auto space-y-10">
+      <main className="flex-1 px-4 md:px-8 py-6 overflow-y-auto custom-scrollbar">
+        <div className="max-w-[1100px] mx-auto space-y-6">
           
-          {/* Top Navigation & Status */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex flex-col gap-2">
-              <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium" aria-label="Breadcrumb">
-                <button onClick={onBack} className="hover:text-foreground transition-colors">Pedidos</button>
-                <span aria-hidden="true">/</span>
-                <span className="text-foreground">Detalle del Pedido</span>
-              </nav>
-              <button 
-                onClick={onBack}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-              >
-                <div className="size-8 rounded-full bg-muted/20 flex items-center justify-center group-hover:bg-muted/40">
-                  <ArrowLeft size={16} aria-hidden="true" />
-                </div>
-                <span className="text-sm font-medium">Volver al listado</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Estado Actual</span>
+          {/* Breadcrumb & Navigation */}
+          <div className="flex items-center justify-between">
+            <button 
+              onClick={onBack}
+              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors group cursor-pointer text-sm font-medium"
+            >
+              <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
+              <span>Volver a Pedidos</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Estado:</span>
               <EstadoBadge estado={pedido.estado} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
-            {/* Left Column: Order Content */}
-            <div className="lg:col-span-8 space-y-8">
-              <div className="space-y-1">
-                <h1 className="studio-display-md !text-4xl tracking-tight">Pedido #{pedido.id.substring(0, 8)}</h1>
-                <p className="studio-body text-muted-foreground">Solicitado por <span className="text-foreground font-semibold">{pedido.clienteNombre}</span></p>
+          {/* iOS Style Glass/Card Header */}
+          <div className="bg-white dark:bg-card border border-zinc-200/60 dark:border-border/50 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                  Pedido #{pedido.id.substring(0, 8).toUpperCase()}
+                </h1>
               </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                  <User size={15} className="text-muted-foreground" />
+                  {pedido.clienteNombre}
+                </span>
+                <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                <span className="flex items-center gap-1.5">
+                  <Calendar size={15} />
+                  Creado el {format(new Date(pedido.fechaCreacion), "dd 'de' MMMM, yyyy", { locale: es })}
+                </span>
+              </div>
+            </div>
 
-              {/* Items List */}
-              <div className="space-y-4">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Ítems del Presupuesto</h3>
-                <div className="space-y-3">
-                  {pedido.items.map((item) => (
-                    <div key={item.id} className="bg-card border border-border/50 p-5 rounded-2xl flex items-center justify-between group">
-                      <div className="flex items-center gap-4">
-                        <div className="size-12 rounded-xl bg-muted/20 flex items-center justify-center text-muted-foreground">
-                          <Package size={20} />
+            {/* Workflow Progress Timeline */}
+            {!isTerminalState && (
+              <div className="flex items-center w-full md:w-auto md:max-w-md pt-2 md:pt-0">
+                <div className="flex items-center justify-between w-full relative">
+                  {workflowSteps.map((step, idx) => {
+                    const isCompleted = idx <= currentStepIndex;
+                    const isCurrent = idx === currentStepIndex;
+                    return (
+                      <React.Fragment key={step.key}>
+                        {idx > 0 && (
+                          <div className={`flex-1 h-0.5 mx-1 md:mx-2 rounded-full transition-all ${
+                            idx <= currentStepIndex ? 'bg-primary' : 'bg-zinc-200 dark:bg-zinc-800'
+                          }`} />
+                        )}
+                        <div className="flex flex-col items-center relative group">
+                          <div className={`size-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
+                            isCurrent ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110' :
+                            isCompleted ? 'bg-primary text-primary-foreground' : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-muted-foreground'
+                          }`}>
+                            {isCompleted && !isCurrent ? '✓' : idx + 1}
+                          </div>
+                          <span className={`absolute -bottom-5 text-[9px] font-semibold whitespace-nowrap tracking-tight transition-colors ${
+                            isCurrent ? 'text-primary' : 'text-muted-foreground'
+                          }`}>
+                            {step.label}
+                          </span>
                         </div>
-                        <div>
-                          <p className="studio-body-strong">{item.perfilNombre}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
-                            {item.cantidad} UNIDADES {item.cantidadEntregada > 0 && `• ${item.cantidadEntregada} ENTREGADAS`} {item.cantidadMerma > 0 && `• ${item.cantidadMerma} FALLIDAS`}
-                          </p>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
-                          {/* Stock & Production Metrics */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            
+            {/* Left Column: Items (Span 2) */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Order Items Section */}
+              <div className="bg-white dark:bg-card border border-zinc-200/60 dark:border-border/50 rounded-3xl p-6 shadow-sm space-y-5">
+                <div className="flex items-center justify-between border-b border-zinc-100 dark:border-border/30 pb-3">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Artículos en Presupuesto</h3>
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-zinc-100 dark:bg-zinc-950 rounded-full text-muted-foreground">
+                    {pedido.items.length} {pedido.items.length === 1 ? 'Ítem' : 'Ítems'}
+                  </span>
+                </div>
+
+                <div className="divide-y divide-zinc-100 dark:divide-border/30">
+                  {pedido.items.map((item) => (
+                    <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                      <div className="flex items-start gap-3.5">
+                        <div className="size-11 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-100 dark:border-zinc-800/80 flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
+                          <Package size={18} />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold text-foreground leading-snug">{item.perfilNombre}</p>
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                            <span className="font-bold text-muted-foreground uppercase tracking-wider text-[10px]">
+                              {item.cantidad} U.
+                            </span>
+                            {item.cantidadEntregada > 0 && (
+                              <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                {item.cantidadEntregada} ENTREGADAS
+                              </span>
+                            )}
+                            {item.cantidadMerma > 0 && (
+                              <span className="text-red-500 bg-red-50 dark:bg-red-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                {item.cantidadMerma} FALLIDAS
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Stock & Fab Metrics */}
                           {item.productoId && (
-                            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                              <span>Stock actual: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
+                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground pt-1">
+                              <span>Stock: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
                               {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
-                                <span>En producción: <strong className="text-foreground">
+                                <span>En cola/fab: <strong className="text-foreground">
                                   {item.ordenesProduccion.reduce((acc, o) => ['COLA', 'IMPRIMIENDO'].includes(o.estado) ? acc + o.cantidad : acc, 0)}
                                 </strong></span>
                               )}
                               {(item.cantidadFaltante ?? 0) > 0 ? (
-                                <span className="text-amber-600 font-semibold flex items-center gap-1">
-                                  Faltante neto: <strong>{item.cantidadFaltante}</strong>
+                                <span className="text-amber-600 dark:text-amber-500 font-semibold flex items-center gap-0.5">
+                                  Faltante: <strong>{item.cantidadFaltante}</strong>
                                 </span>
                               ) : (
-                                <span className="text-emerald-600 font-semibold">Listo para entregar</span>
+                                <span className="text-emerald-600 dark:text-emerald-500 font-semibold">Listo</span>
                               )}
                             </div>
                           )}
 
-                          {/* Related production orders (traza) */}
+                          {/* Related production history (traza) */}
                           {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
-                            <div className="mt-3 space-y-1.5 pl-2 border-l-2 border-muted/40">
+                            <div className="mt-2 space-y-1 pl-2 border-l-2 border-zinc-200 dark:border-zinc-800">
                               <p className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Historial de Fabricación</p>
-                              {item.ordenesProduccion.map((op) => (
-                                <div key={op.id} className="text-[11px] flex items-center gap-2">
-                                  <span className="font-medium text-foreground">x{op.cantidad}</span>
-                                  <span className="text-muted-foreground">•</span>
-                                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
-                                    op.estado === 'COLA' ? 'bg-zinc-100 border-zinc-200 text-zinc-700' :
-                                    op.estado === 'IMPRIMIENDO' ? 'bg-blue-50 border-blue-100 text-blue-700' :
-                                    op.estado === 'COMPLETADO' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' :
-                                    'bg-red-50 border-red-100 text-red-700'
-                                  }`}>
-                                    {op.estado}
-                                  </span>
-                                </div>
-                              ))}
+                              <div className="flex flex-wrap gap-1.5">
+                                {item.ordenesProduccion.map((op) => (
+                                  <div key={op.id} className="text-[10px] flex items-center gap-1 bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-1.5 py-0.5 rounded">
+                                    <span className="font-medium text-foreground">x{op.cantidad}</span>
+                                    <span className={`font-bold text-[8px] uppercase ${
+                                      op.estado === 'COLA' ? 'text-zinc-500' :
+                                      op.estado === 'IMPRIMIENDO' ? 'text-blue-500' :
+                                      op.estado === 'COMPLETADO' ? 'text-emerald-500' :
+                                      'text-red-500'
+                                    }`}>
+                                      {op.estado}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
-                          <p className="text-[10px] text-muted-foreground uppercase font-bold">Subtotal</p>
-                          <p className="text-sm font-mono font-bold">{formatCurrency(item.subtotal)}</p>
+                      <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-dashed border-zinc-100">
+                        <div className="text-left sm:text-right">
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Subtotal</p>
+                          <p className="text-sm font-semibold font-mono">{formatCurrency(item.subtotal)}</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
                           {(item.cantidadFaltante ?? 0) > 0 && (
                             <button
                               onClick={() => {
@@ -173,124 +271,191 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                                 setSelectedItemFaltante(item.cantidadFaltante ?? 0);
                                 setShowFabricarModal(true);
                               }}
-                              className="mt-2 text-[10px] font-bold uppercase tracking-wider bg-black text-white hover:bg-zinc-800 dark:bg-background dark:text-black dark:hover:bg-zinc-200 px-3 py-1 rounded-full transition-all"
+                              className="text-[10px] font-bold uppercase tracking-wider bg-black hover:bg-zinc-800 dark:bg-zinc-100 dark:text-black dark:hover:bg-zinc-200 text-white px-3 py-1.5 rounded-full transition-colors cursor-pointer"
                             >
-                              Mandar a Fabricar
+                              Fabricar
                             </button>
                           )}
+                          <button 
+                            onClick={() => {
+                              setSelectedItemId(item.id);
+                              setShowMermaModal(true);
+                            }}
+                            className="size-8 rounded-full border border-zinc-200 dark:border-border flex items-center justify-center text-muted-foreground hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-500 hover:border-red-100 dark:hover:border-red-900/50 transition-colors cursor-pointer"
+                            title="Registrar Fallo/Merma"
+                          >
+                            <AlertTriangle size={14} />
+                          </button>
                         </div>
-                        
-                        <button 
-                          onClick={() => {
-                            setSelectedItemId(item.id);
-                            setShowMermaModal(true);
-                          }}
-                          className="size-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all opacity-0 group-hover:opacity-100"
-                          title="Registrar Fallo/Merma"
-                        >
-                          <AlertTriangle size={14} />
-                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Action Toolbar */}
-              <div className="pt-8 border-t border-border/40">
-                 <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a] mb-6">Gestión de Estados</h3>
-                 <div className="flex flex-wrap gap-3">
-                    <button 
-                      onClick={() => handleStatusChange('COTIZADO')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'COTIZADO' ? 'bg-zinc-100 border-zinc-200' : 'hover:bg-zinc-50 border-transparent'}`}
-                    >
-                      <History size={14} /> Cotizado
-                    </button>
-                    <button 
-                      onClick={() => handleStatusChange('CONFIRMADO')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'CONFIRMADO' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'hover:bg-indigo-50/50 border-transparent text-indigo-600'}`}
-                    >
-                      <CheckCircle2 size={14} /> Confirmar Pedido
-                    </button>
-                    <button 
-                      onClick={() => handleStatusChange('EN_PRODUCCION')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'EN_PRODUCCION' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'hover:bg-blue-50/50 border-transparent text-blue-600'}`}
-                    >
-                      <Truck size={14} /> Iniciar Producción
-                    </button>
-                    <button 
-                      onClick={() => handleStatusChange('LISTO_PARA_ENTREGAR')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'LISTO_PARA_ENTREGAR' ? 'bg-teal-50 text-teal-700 border-teal-100' : 'hover:bg-teal-50/50 border-transparent text-teal-600'}`}
-                    >
-                      <Package size={14} /> Listo para Entregar
-                    </button>
-                    <button 
-                      disabled={pedido.estado === 'ENTREGADO'}
-                      onClick={() => handleStatusChange('ENTREGADO')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'ENTREGADO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 opacity-60 cursor-not-allowed' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100'}`}
-                    >
-                      <CheckCircle2 size={14} /> {pedido.estado === 'ENTREGADO' ? 'Entregado' : 'Entregar y Cobrar Saldo'}
-                    </button>
-                    <button 
-                      disabled={pedido.estado === 'DEVUELTO'}
-                      onClick={() => handleStatusChange('DEVUELTO')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'DEVUELTO' ? 'bg-amber-50 text-amber-700 border-amber-100 opacity-60 cursor-not-allowed' : 'text-amber-600 hover:bg-amber-50 border-transparent'}`}
-                    >
-                      <RefreshCcw size={14} /> Devolución
-                    </button>
-                    <button 
-                      disabled={pedido.estado === 'CANCELADO'}
-                      onClick={() => handleStatusChange('CANCELADO')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'CANCELADO' ? 'bg-red-50 text-red-700 border-red-100 opacity-60 cursor-not-allowed' : 'text-red-500 hover:bg-red-50 border-transparent'}`}
-                    >
-                      <XCircle size={14} /> Anular Pedido
-                    </button>
-                  </div>
+              {/* Informative footer card */}
+              <div className="bg-zinc-50 dark:bg-card/40 border border-zinc-200/50 dark:border-border/30 rounded-3xl p-5 flex items-start gap-3">
+                <div className="size-8 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-muted-foreground shrink-0">
+                  <CreditCard size={15} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-foreground">Registro Automatizado de Costos</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Los egresos correspondientes a material consumido y energía eléctrica se calculan y registran de forma automática al iniciar los procesos de impresión del pedido.
+                  </p>
+                </div>
               </div>
+
             </div>
 
-            {/* Right Column: Billing Summary */}
-            <div className="lg:col-span-4">
-              <div className="sticky top-8 space-y-6">
-                <div className="p-8 border border-border/50 rounded-[2.5rem] bg-card space-y-8 shadow-sm">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="studio-caption text-muted-foreground uppercase tracking-widest text-[10px] font-bold">Total Presupuesto</span>
-                      <span className="text-xl font-mono font-bold text-zinc-900">{formatCurrency(pedido.total)}</span>
+            {/* Right Column: Actions & Financial Info */}
+            <div className="space-y-6">
+              
+              {/* Payment & Invoice Box (iOS Card Style) */}
+              <div className="bg-white dark:bg-card border border-zinc-200/60 dark:border-border/50 rounded-3xl p-6 shadow-sm space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Resumen de Cuenta</h3>
+                  
+                  {/* Totals lines */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Total Presupuestado</span>
+                      <span className="font-semibold font-mono text-foreground">{formatCurrency(pedido.total)}</span>
                     </div>
-                    <div className="flex justify-between items-center text-emerald-600">
-                      <span className="studio-caption uppercase tracking-widest text-[10px] font-bold">Monto Cobrado</span>
-                      <span className="text-sm font-mono font-bold">{formatCurrency(pedido.montoPagado)}</span>
+                    
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-emerald-600 dark:text-emerald-500 font-medium">Monto Pagado</span>
+                      <span className="font-semibold font-mono text-emerald-600 dark:text-emerald-500">{formatCurrency(pedido.montoPagado)}</span>
                     </div>
-                    <div className="border-t border-dashed border-border pt-4 flex justify-between items-center">
-                      <span className="studio-caption text-zinc-900 font-bold uppercase tracking-widest text-[10px]">Saldo Pendiente</span>
-                      <span className={`text-2xl font-mono font-bold ${pedido.saldoPendiente > 0 ? 'text-amber-600' : 'text-zinc-400'}`}>
+
+                    {/* iOS style completion progress bar */}
+                    <div className="space-y-1 pt-1">
+                      <div className="h-2 w-full bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-emerald-500 transition-all duration-500 rounded-full" 
+                          style={{ width: `${paymentProgress}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[9px] text-muted-foreground font-semibold">
+                        <span>{paymentProgress.toFixed(0)}% cubierto</span>
+                        {pedido.saldoPendiente > 0 ? (
+                          <span>{formatCurrency(pedido.saldoPendiente)} restante</span>
+                        ) : (
+                          <span className="text-emerald-600">Saldo completado</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-zinc-100 dark:border-border/30 pt-3 flex justify-between items-center">
+                      <span className="text-sm font-bold text-foreground">Saldo Pendiente</span>
+                      <span className={`text-xl font-bold font-mono ${pedido.saldoPendiente > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-zinc-400'}`}>
                         {formatCurrency(pedido.saldoPendiente)}
                       </span>
                     </div>
                   </div>
-
-                  <button 
-                    onClick={() => setShowPagoModal(true)}
-                    disabled={pedido.saldoPendiente <= 0}
-                    className="studio-button-primary !w-full flex items-center justify-center gap-2 disabled:opacity-30"
-                  >
-                    <DollarSign size={18} />
-                    Registrar Pago / Seña
-                  </button>
                 </div>
 
-                <div className="p-6 bg-muted/10 rounded-[2rem] border border-border/30">
-                  <div className="flex items-center gap-2 mb-2 text-muted-foreground">
-                    <History size={14} />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Información de Venta</span>
+                <button 
+                  onClick={() => setShowPagoModal(true)}
+                  disabled={pedido.saldoPendiente <= 0}
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98] transition-all py-2.5 rounded-2xl text-xs font-bold shadow-sm disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  <DollarSign size={16} />
+                  Registrar Pago / Seña
+                </button>
+              </div>
+
+              {/* Action Sheet Card (Gestión de Estados) */}
+              <div className="bg-white dark:bg-card border border-zinc-200/60 dark:border-border/50 rounded-3xl p-6 shadow-sm space-y-5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Estado y Acciones</h3>
+                
+                <div className="space-y-4">
+                  {/* Logical Next Step Button (prominent iOS design) */}
+                  {nextStep ? (
+                    <div className="space-y-2">
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">Siguiente Paso Recomendado</p>
+                      <button 
+                        onClick={() => handleStatusChange(nextStep.estado)}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all active:scale-[0.98] cursor-pointer ${nextStep.className}`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {nextStep.icon}
+                          <span>{nextStep.label}</span>
+                        </div>
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-zinc-50 dark:bg-zinc-950 rounded-2xl text-center border border-zinc-100 dark:border-zinc-800">
+                      <p className="text-xs font-semibold text-muted-foreground">Pedido finalizado o inactivo</p>
+                    </div>
+                  )}
+
+                  {/* Other Action buttons list (clean list menu like iOS Settings) */}
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">Cambiar Estado</p>
+                    <div className="bg-zinc-50 dark:bg-zinc-950/40 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 divide-y divide-zinc-200/50 dark:divide-border/40 overflow-hidden">
+                      <button 
+                        onClick={() => handleStatusChange('COTIZADO')}
+                        disabled={pedido.estado === 'COTIZADO'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <History size={14} className="text-muted-foreground" />
+                        <span>Volver a Cotizado</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('CONFIRMADO')}
+                        disabled={pedido.estado === 'CONFIRMADO'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <CheckCircle2 size={14} className="text-indigo-500" />
+                        <span>Establecer como Confirmado</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('EN_PRODUCCION')}
+                        disabled={pedido.estado === 'EN_PRODUCCION'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <Truck size={14} className="text-blue-500" />
+                        <span>Establecer en Producción</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('LISTO_PARA_ENTREGAR')}
+                        disabled={pedido.estado === 'LISTO_PARA_ENTREGAR'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <Package size={14} className="text-teal-500" />
+                        <span>Establecer Listo para Entregar</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('ENTREGADO')}
+                        disabled={pedido.estado === 'ENTREGADO'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <CheckCircle2 size={14} className="text-emerald-500" />
+                        <span>Marcar como Entregado</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('DEVUELTO')}
+                        disabled={pedido.estado === 'DEVUELTO'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-foreground hover:bg-zinc-100/70 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <RefreshCcw size={14} className="text-amber-500" />
+                        <span>Marcar como Devolución</span>
+                      </button>
+                      <button 
+                        onClick={() => handleStatusChange('CANCELADO')}
+                        disabled={pedido.estado === 'CANCELADO'}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left text-xs font-semibold text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-colors disabled:opacity-40 cursor-pointer"
+                      >
+                        <XCircle size={14} className="text-red-500" />
+                        <span>Anular Pedido</span>
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-muted-foreground">
-                    Este pedido fue creado el {format(new Date(pedido.fechaCreacion), "dd 'de' MMMM", { locale: es })}. 
-                    Los egresos por material y luz se registran automáticamente al iniciar la producción.
-                  </p>
                 </div>
               </div>
+
             </div>
 
           </div>
@@ -327,3 +492,4 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
     </div>
   );
 }
+
