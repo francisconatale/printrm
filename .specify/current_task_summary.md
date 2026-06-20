@@ -1,12 +1,13 @@
-# Estado de Tarea: Unificación de Productos Duplicados en Pedidos
+# Estado de Tarea: Claves Únicas para Items del Formulario
 
 ## Objetivo
-Evitar la creación de filas duplicadas en el modal de pedidos. Si un usuario selecciona un producto que ya existe en otra fila, la cantidad de la fila actual se sumará a la fila existente y se eliminará la fila actual redundante.
+Solucionar el fallo en el borrado de filas del listado de ítems reemplazando la clave `index` en el `key` de React por un identificador único generado al vuelo (`keyId`). Esto garantiza que React concilie correctamente el DOM al eliminar filas.
 
 ## Tareas
-- [x] Modificar `handleItemChange` en `CrearPedidoModal.tsx` para detectar productos duplicados.
-- [x] Implementar la suma de cantidades y eliminación de la fila duplicada actual.
-- [x] Validar compilación.
+- [ ] Modificar la interfaz `ItemFormState` para incluir una propiedad `keyId`.
+- [ ] Generar un `keyId` aleatorio/único al inicializar el estado y al usar `handleAddItem`.
+- [ ] Cambiar el atributo `key` del listado de ítems en el render a `item.keyId`.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
