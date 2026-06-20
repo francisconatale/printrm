@@ -88,6 +88,11 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
             </div>
           </div>
         </td>
+        <td className="px-4 py-4 text-center">
+          <span className="text-sm font-bold text-foreground font-mono">
+            {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : '—'}
+          </span>
+        </td>
         <td className="px-4 py-4">
           <div className="flex items-center gap-1 bg-muted/40 border border-border/50 rounded-full p-0.5 w-fit">
             <button
@@ -211,6 +216,7 @@ export function ProductosGalleryView() {
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-center">Stock</th>
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Partes</th>
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Costo Prod.</th>
+                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-center">Precio Venta</th>
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Ajustar Stock</th>
                     <th className="px-6 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-right rounded-tr-2xl">Acciones</th>
                   </tr>
