@@ -44,6 +44,21 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
   const handleItemChange = (index: number, field: keyof ItemFormState, value: any) => {
     setItems(prev => {
+      // Si cambia el producto y ya está seleccionado en otra fila, unificamos cantidades
+      if (field === 'productoId' && value) {
+        const existingIndex = prev.findIndex((item, i) => i !== index && item.productoId === value);
+        if (existingIndex !== -1) {
+          const copy = [...prev];
+          const currentQty = copy[index].cantidad || 1;
+          copy[existingIndex] = {
+            ...copy[existingIndex],
+            cantidad: (copy[existingIndex].cantidad || 0) + currentQty
+          };
+          // Eliminamos la fila actual redundante
+          return copy.filter((_, i) => i !== index);
+        }
+      }
+
       const copy = [...prev];
       copy[index] = {
         ...copy[index],
