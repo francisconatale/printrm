@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../../lib/api-client';
+import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 import { 
   Perfil, 
   PerfilCreate, 
@@ -20,7 +21,8 @@ const PRINT_API_URL = '/v1/print-profiles';
 // Helper for generating standard CRUD hooks
 function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
   queryKey: string,
-  url: string
+  url: string,
+  entitySingular: string
 ) {
   return {
     useGet: () => useQuery<T[]>({
@@ -32,7 +34,7 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
     }),
     useCreate: () => {
       const queryClient = useQueryClient();
-      return useMutation({
+      return useMutationWithFeedback({
         mutationFn: async (newItem: TCreate) => {
           const { data } = await apiClient.post<T>(url, newItem);
           return data;
@@ -40,11 +42,13 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [queryKey] });
         },
+        successMessage: `${entitySingular} creado correctamente.`,
+        errorMessage: `Error al crear ${entitySingular.toLowerCase()}.`,
       });
     },
     useUpdate: () => {
       const queryClient = useQueryClient();
-      return useMutation({
+      return useMutationWithFeedback({
         mutationFn: async ({ id, ...updates }: TUpdate & { id: string }) => {
           const { data } = await apiClient.put<T>(`${url}/${id}`, updates);
           return data;
@@ -52,23 +56,27 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [queryKey] });
         },
+        successMessage: `${entitySingular} actualizado correctamente.`,
+        errorMessage: `Error al actualizar ${entitySingular.toLowerCase()}.`,
       });
     },
     useDelete: () => {
       const queryClient = useQueryClient();
-      return useMutation({
+      return useMutationWithFeedback({
         mutationFn: async (id: string) => {
           await apiClient.delete(`${url}/${id}`);
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: [queryKey] });
         },
+        successMessage: `${entitySingular} eliminado correctamente.`,
+        errorMessage: `Error al eliminar ${entitySingular.toLowerCase()}.`,
       });
     },
   };
 }
 
-const printerHooks = createCrudHooks<Perfil, PerfilCreate, PerfilUpdate>('perfiles', API_URL);
+const printerHooks = createCrudHooks<Perfil, PerfilCreate, PerfilUpdate>('perfiles', API_URL, 'Impresora');
 export const useGetPerfiles = printerHooks.useGet;
 export const useCreatePerfil = printerHooks.useCreate;
 export const useUpdatePerfil = printerHooks.useUpdate;
@@ -84,13 +92,13 @@ export const useGetSlicerConfigs = () => {
   });
 };
 
-const filamentHooks = createCrudHooks<FilamentProfile, FilamentProfileCreate, FilamentProfileUpdate>('filament-profiles', FILAMENT_API_URL);
+const filamentHooks = createCrudHooks<FilamentProfile, FilamentProfileCreate, FilamentProfileUpdate>('filament-profiles', FILAMENT_API_URL, 'Filamento');
 export const useGetFilamentProfiles = filamentHooks.useGet;
 export const useCreateFilamentProfile = filamentHooks.useCreate;
 export const useUpdateFilamentProfile = filamentHooks.useUpdate;
 export const useDeleteFilamentProfile = filamentHooks.useDelete;
 
-const printHooks = createCrudHooks<PrintProfile, PrintProfileCreate, PrintProfileUpdate>('print-profiles', PRINT_API_URL);
+const printHooks = createCrudHooks<PrintProfile, PrintProfileCreate, PrintProfileUpdate>('print-profiles', PRINT_API_URL, 'Ajuste de impresión');
 export const useGetPrintProfiles = printHooks.useGet;
 export const useCreatePrintProfile = printHooks.useCreate;
 export const useUpdatePrintProfile = printHooks.useUpdate;

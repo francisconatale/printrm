@@ -55,15 +55,17 @@ export function ConfigTable<T extends { id: string }>({
                   onClick={() => onEdit(item)}
                   className="p-1.5 hover:bg-muted/30 rounded-full transition-all text-muted-foreground hover:text-foreground"
                   title={editTitle}
+                  aria-label={editTitle}
                 >
-                  <Edit3 size={14} />
+                  <Edit3 size={14} aria-hidden="true" />
                 </button>
                 <button
                   onClick={() => onDelete(item)}
                   className="p-1.5 hover:bg-red-500/10 rounded-full transition-all text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
                   title={deleteTitle}
+                  aria-label={deleteTitle}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={14} aria-hidden="true" />
                 </button>
               </div>
             </td>

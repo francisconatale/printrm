@@ -30,6 +30,8 @@ import { ConfigTable, ColumnDef } from '../../../components/ui/config-table';
 import { ConfigSection } from '../../../components/ui/config-section';
 import { formatCurrency } from '../../../lib/utils';
 import { AjustesSeccion } from '../../ajustes/components/AjustesSeccion';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
+
 
 // --- Column Definitions ---
 const printerColumns: ColumnDef<Perfil>[] = [
@@ -89,6 +91,15 @@ export const PerfilesDashboardView: React.FC = () => {
   const printCreate = useCreatePrintProfile();
   const printUpdate = useUpdatePrintProfile();
   const printDelete = useDeletePrintProfile();
+
+  const isQueryError = printersQuery.isError || filamentsQuery.isError || printsQuery.isError;
+  const errorObj = printersQuery.error || filamentsQuery.error || printsQuery.error;
+  const refetchAll = () => {
+    printersQuery.refetch();
+    filamentsQuery.refetch();
+    printsQuery.refetch();
+  };
+
 
 
 
@@ -218,7 +229,7 @@ export const PerfilesDashboardView: React.FC = () => {
                   activeTab === cfg.id ? 'border-foreground text-foreground font-semibold' : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <IconComp size={16} />
+                <IconComp size={16} aria-hidden="true" />
                 {cfg.label}
               </button>
             );
@@ -229,14 +240,16 @@ export const PerfilesDashboardView: React.FC = () => {
               activeTab === 'general' ? 'border-foreground text-foreground font-semibold' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Settings size={16} />
+            <Settings size={16} aria-hidden="true" />
             Ajustes Generales
           </button>
         </div>
 
         {/* Tab Content */}
         <div className="pt-4">
-          {activeTab === 'general' ? (
+          {isQueryError ? (
+            <QueryErrorView error={errorObj} refetch={refetchAll} />
+          ) : activeTab === 'general' ? (
             <AjustesSeccion />
           ) : currentConfig ? (
             /* DYNAMIC PROFILES TAB */

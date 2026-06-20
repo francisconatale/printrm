@@ -1,5 +1,7 @@
 import React from 'react'
 import { X } from "lucide-react"
+import { toast } from 'sonner'
+
 
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav'
 import { PerfilForm } from '../../perfiles/components/PerfilForm'
@@ -98,10 +100,11 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
           console.log("Perfil actualizado con éxito");
           setShowPerfilModal(false);
           setEditingPerfil(null);
+          toast.success("Perfil de impresión actualizado correctamente");
         },
         onError: (err) => {
           console.error("Error al actualizar perfil:", err);
-          alert("Error al actualizar el perfil. Revisa la consola.");
+          toast.error("Error al actualizar el perfil.");
         }
       });
     } else {
@@ -109,10 +112,11 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
         onSuccess: (newPerfil) => {
           console.log("Perfil creado con éxito:", newPerfil);
           setShowPerfilModal(false);
+          toast.success("Perfil de impresión creado correctamente");
         },
         onError: (err) => {
           console.error("Error al crear perfil:", err);
-          alert("Error al crear el perfil. Revisa la consola.");
+          toast.error("Error al crear el perfil.");
         }
       });
     }
@@ -137,7 +141,10 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
       imagenBase64,
     }, {
       onSuccess: () => {
-        alert('Pieza guardada en la biblioteca');
+        toast.success('Pieza guardada en la biblioteca correctamente');
+      },
+      onError: (err) => {
+        toast.error('Error al guardar la pieza en la biblioteca');
       }
     });
   };
@@ -171,9 +178,10 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
             minutos,
             gramos: result.filamentUsedG || 0,
           });
+          toast.success('Archivo STL analizado con éxito');
         },
         onError: () => {
-          alert('Error al analizar el archivo STL');
+          toast.error('Error al analizar el archivo STL');
           setIsAnalyzing(false);
         },
       }

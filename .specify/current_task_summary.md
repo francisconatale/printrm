@@ -1,13 +1,13 @@
-# Tarea Actual: Implementar infraestructura global de feedback y visualización de errores (T022)
+# Tarea Actual: Implementar remediación UX/A11y en CalculadoraView.tsx y PerfilesDashboardView.tsx (T023)
 
 ## Estado
-- [ ] Instalar `sonner` en el frontend (T022).
-- [ ] Registrar `<Toaster />` global en `App.tsx` (T022).
-- [ ] Crear componente reusable `QueryErrorView.tsx` (T022).
-- [ ] Crear hook o helper para mutaciones con feedback visual automático (T022).
+- [ ] Eliminar `alert()` y reemplazar con Toasts de `sonner` en `CalculadoraView.tsx` (T023).
+- [ ] Ajustar la jerarquía de títulos (`<h2>` -> `<h1>`) (T023).
+- [ ] Agregar `<label>` accesible a inputs de búsqueda (T023).
+- [ ] Configurar `aria-label` en botones interactivos de iconos y `aria-hidden` en iconos decorativos (T023).
+- [ ] Manejar estados de carga/error en queries de `PerfilesDashboardView.tsx` (T023).
 
 ## Archivos involucrados
-- `frontend/package.json`
-- `frontend/src/App.tsx`
-- `frontend/src/components/ui/query-error-view.tsx`
-- `frontend/src/hooks/useMutationWithFeedback.ts`
+- `frontend/src/features/calculo/components/CalculadoraView.tsx`
+- `frontend/src/features/perfiles/components/PerfilesDashboardView.tsx`
+- `CHANGELOG.md`

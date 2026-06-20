@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2026-06-20] - Remediación UX/A11y en Calculadora y Perfiles (T023)
+### Descripción
+- **Frontend (Calculadora):** Se eliminó el uso de `alert()` nativo en `CalculadoraView.tsx`, reemplazándolo por toasts interactivos y accesibles de `sonner` para éxitos y errores de guardado de piezas y análisis de archivos.
+- **Frontend (Perfiles):** Se integró `useMutationWithFeedback` en todos los hooks CRUD de perfiles (`perfiles.api.ts`) para proveer toasts visuales automáticos. Se implementó el componente `QueryErrorView` en la pestaña de visualización para capturar y reintentar fallos en el fetching de perfiles.
+- **Frontend (Accesibilidad):** Se agregaron los atributos `aria-hidden="true"` a los íconos de Lucide decorativos y `aria-label` a los botones interactivos sin texto visible en `ConfigTable` y tabuladores de perfiles.
+
 ## [2026-06-20] - Infraestructura de Feedback y Resiliencia UX (T022)
 ### Descripción
 - **Frontend (Notificaciones y Errores):** Se instaló e integró la biblioteca `sonner` para la visualización de toasts accesibles y con colores enriquecidos en `App.tsx`.
