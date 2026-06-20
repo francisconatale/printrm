@@ -157,7 +157,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona un cliente *" />
             </SelectTrigger>
-            <SelectContent className="z-[300]">
+            <SelectContent className="z-[300]" position="popper" side="bottom">
               <SelectItem value="">
                 Selecciona un cliente *
               </SelectItem>
@@ -223,7 +223,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona un producto *" />
                       </SelectTrigger>
-                      <SelectContent className="z-[300]">
+                      <SelectContent className="z-[300]" position="popper" side="bottom">
                         <SelectItem value="">
                           Selecciona un producto *
                         </SelectItem>
