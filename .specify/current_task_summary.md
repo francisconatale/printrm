@@ -1,13 +1,13 @@
-# Estado de Tarea: Claves Únicas para Items del Formulario
+# Estado de Tarea: Estado Vacío de Ítems en Pedidos
 
 ## Objetivo
-Solucionar el fallo en el borrado de filas del listado de ítems reemplazando la clave `index` en el `key` de React por un identificador único generado al vuelo (`keyId`). Esto garantiza que React concilie correctamente el DOM al eliminar filas.
+Permitir la eliminación completa de todos los productos en el modal (incluso el último) y mostrar un estado vacío (empty state) premium con un botón de llamada a la acción para agregar el primer producto cuando no haya ítems.
 
 ## Tareas
-- [x] Modificar la interfaz `ItemFormState` para incluir una propiedad `keyId`.
-- [x] Generar un `keyId` aleatorio/único al inicializar el estado y al usar `handleAddItem`.
-- [x] Cambiar el atributo `key` del listado de ítems en el render a `item.keyId`.
-- [x] Validar compilación.
+- [ ] Eliminar la restricción `disabled={items.length === 1}` del botón de borrado (tacho) de cada fila.
+- [ ] Implementar un componente de estado vacío premium cuando `items.length === 0`.
+- [ ] Ocultar los encabezados de grilla si no hay ítems agregados.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
