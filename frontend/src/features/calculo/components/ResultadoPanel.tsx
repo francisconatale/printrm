@@ -80,7 +80,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           onSaveToLibrary={onSaveToLibrary}
           isSavingToLibrary={isSavingToLibrary}
           perfilNombre={perfilActivo?.nombre || 'Perfil Estándar'}
-          multiplicador={ajustes?.multiplicador || 3}
+          multiplicador={3}
         />
       ) : (
         <AjustesGlobalesForm

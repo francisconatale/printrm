@@ -5,8 +5,9 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { CuboidIcon as Cube, Weight, Shirt, Check, Plus } from 'lucide-react';
+import { CuboidIcon as Cube, Check, Plus } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
+import { useAjustes } from '../../ajustes/hooks/useAjustes';
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
@@ -31,6 +32,7 @@ const formatWeight = (grams?: number) => {
 export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }: ComposicionProductoModalProps) {
   const { data: piezas } = useGetPiezas();
   const { mutate: saveProducto, isPending: isSaving } = useSaveProducto();
+  const { ajustes } = useAjustes();
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProductoCreate>({
     resolver: zodResolver(productoSchema),
@@ -45,6 +47,10 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
 
   const selectedPartes = watch('parteIds') || [];
 
+  const selectedPiezasData = React.useMemo(() => {
+    return piezas?.filter(p => selectedPartes.includes(p.id)) || [];
+  }, [piezas, selectedPartes]);
+
   React.useEffect(() => {
     if (preselectedParteId && piezas && isOpen) {
       const pieza = piezas.find(p => p.id === preselectedParteId);
@@ -54,6 +60,12 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
       }
     }
   }, [preselectedParteId, piezas, setValue, isOpen]);
+
+  React.useEffect(() => {
+    const totalCostoBase = selectedPiezasData.reduce((sum, p) => sum + (p.costoBase || 0), 0);
+    const multiplier = 3;
+    setValue('precioSugerido', Math.round(totalCostoBase * multiplier));
+  }, [selectedPiezasData, ajustes, setValue]);
 
   const toggleParte = (id: string) => {
     const current = [...selectedPartes];
@@ -69,7 +81,6 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
     });
   };
 
-  const selectedPiezasData = piezas?.filter(p => selectedPartes.includes(p.id)) || [];
   const totalWeight = selectedPiezasData.reduce((sum, p) => sum + (p.pesoGramos || 0), 0);
 
   return (

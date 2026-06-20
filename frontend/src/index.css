@@ -161,3 +161,31 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* =============================================
+   Sonner Toaster — Printrm Studio Design System
+   (sigue el estilo de Modal: bg-background,
+    rounded-[2rem], borde sutil)
+   ============================================= */
+.printrm-toaster[data-sonner-theme='light'],
+.printrm-toaster[data-sonner-theme='dark'] {
+  --normal-bg: var(--background);
+  --normal-border: var(--border);
+  --normal-text: var(--foreground);
+  --success-bg: var(--background);
+  --success-border: var(--primary);
+  --success-text: var(--foreground);
+  --error-bg: var(--background);
+  --error-border: var(--destructive);
+  --error-text: var(--foreground);
+  --border-radius: 32px;
+}
+
+[data-sonner-toast][data-styled='true'] [data-close-button] {
+  background: var(--background);
+  border-color: var(--border);
+}
+
+[data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+  background: var(--muted);
+}
