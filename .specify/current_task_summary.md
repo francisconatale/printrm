@@ -1,11 +1,11 @@
-# Estado de Tarea: Feedback de Hover en Elementos del Select
+# Estado de Tarea: Corrección de Spread Order en SelectItem
 
 ## Objetivo
-Mejorar el feedback visual al pasar el ratón (hover) sobre los elementos de la lista desplegable (SelectItem) utilizando un color de fondo más visible y el cursor pointer.
+Resolver el crash (pantalla en blanco) corrigiendo el orden del spread de props en `SelectItem` de `select.tsx`, ya que `{...props}` sobreescribía el valor `mappedValue` con el valor vacío original `""`.
 
 ## Tareas
-- [x] Modificar las clases CSS de `SelectItem` en `select.tsx` para cambiar `focus:bg-muted/30` por `focus:bg-muted` y añadir `cursor-pointer`.
-- [x] Validar compilación.
+- [ ] Modificar la definición de `SelectItem` en `select.tsx` para desestructurar `value` de los argumentos, evitando que se propague en `props`.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/components/ui/select.tsx`
