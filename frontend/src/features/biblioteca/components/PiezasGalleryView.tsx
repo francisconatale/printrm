@@ -6,9 +6,10 @@ import { Search, PackageOpen, Loader2 } from 'lucide-react';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { ComposicionProductoModal } from '../../stock/components/ComposicionProductoModal';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 export function PiezasGalleryView() {
-  const { data: piezas, isLoading } = useGetPiezas();
+  const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [deletePieceId, setDeletePieceId] = React.useState<string | null>(null);
@@ -28,6 +29,8 @@ export function PiezasGalleryView() {
     alert(`Próximamente: Cargando ${pieza.nombre} en el cotizador...`);
   };
 
+  const isSearching = searchTerm.trim().length > 0;
+
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
       <StudioSubNav />
@@ -38,13 +41,15 @@ export function PiezasGalleryView() {
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h2 className="studio-display-md !text-4xl tracking-tight">Biblioteca de Piezas</h2>
+              <h1 className="studio-display-md !text-4xl tracking-tight">Biblioteca de Piezas</h1>
               <p className="studio-body text-muted-foreground">Gestioná tus modelos 3D y recalcula costos rápidamente.</p>
             </div>
 
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+              <label htmlFor="search-piezas" className="sr-only">Buscar modelo o material</label>
               <input 
+                id="search-piezas"
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -54,28 +59,46 @@ export function PiezasGalleryView() {
             </div>
           </div>
 
-          {/* Gallery Grid */}
-          {isLoading ? (
+          {/* Gallery Content */}
+          {isError ? (
+            <QueryErrorView error={error} refetch={refetch} />
+          ) : isLoading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4 text-muted-foreground">
-              <Loader2 className="animate-spin" size={32} />
+              <Loader2 className="animate-spin" size={32} aria-hidden="true" />
               <p className="studio-caption">Cargando biblioteca...</p>
             </div>
           ) : filteredPiezas.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 animate-in fade-in duration-700">
               {filteredPiezas.map((pieza) => (
                 <STLCard 
-                  key={pieza.id} 
-                  pieza={pieza} 
-                  onDelete={(id) => setDeletePieceId(id)}
-                  onCalculate={handleCalculate}
-                  onPublish={(pieza) => setPublishPieceId(pieza.id)}
+                   key={pieza.id} 
+                   pieza={pieza} 
+                   onDelete={(id) => setDeletePieceId(id)}
+                   onCalculate={handleCalculate}
+                   onPublish={(pieza) => setPublishPieceId(pieza.id)}
                 />
               ))}
+            </div>
+          ) : isSearching ? (
+            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+              <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
+              </div>
+              <div className="space-y-1">
+                <p className="studio-body-strong text-foreground">Búsqueda sin resultados</p>
+                <p className="studio-caption text-muted-foreground">No encontramos piezas que coincidan con "{searchTerm}". Intentá con otros términos.</p>
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="text-xs text-primary font-semibold hover:underline mt-2"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
               <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
-                <PackageOpen size={32} className="text-muted-foreground/40" />
+                <PackageOpen size={32} className="text-muted-foreground/40" aria-hidden="true" />
               </div>
               <div className="space-y-1">
                 <p className="studio-body-strong text-foreground">No se encontraron piezas</p>

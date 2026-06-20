@@ -98,21 +98,23 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="studio-caption font-semibold flex items-center gap-2">
-                <Package size={14} /> Nombre del Producto
+              <label htmlFor="prod-nombre" className="studio-caption font-semibold flex items-center gap-2">
+                <Package size={14} aria-hidden="true" /> Nombre del Producto *
               </label>
               <input 
+                id="prod-nombre"
                 {...register('nombre')}
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
                 placeholder="Ej: Lámpara de Escritorio"
+                required
               />
               {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre.message}</p>}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="studio-caption font-semibold flex items-center gap-2">
-                  <Tag size={14} /> Precio Sugerido ($)
+                <label htmlFor="prod-precio" className="studio-caption font-semibold flex items-center gap-2">
+                  <Tag size={14} aria-hidden="true" /> Precio Sugerido ($) *
                 </label>
                 <button 
                   type="button"
@@ -120,14 +122,17 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                   onClick={() => {
                     setValue('precioSugerido', calculateTotalSuggested());
                   }}
+                  aria-label="Recalcular precio sugerido"
                 >
-                  <Calculator size={10} /> Recalcular
+                  <Calculator size={10} aria-hidden="true" /> Recalcular
                 </button>
               </div>
               <input 
+                id="prod-precio"
                 type="number"
                 {...register('precioSugerido', { valueAsNumber: true })}
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
+                required
               />
               <p className="text-[10px] text-muted-foreground italic">
                 Costo de producción × multiplicador.
@@ -135,11 +140,12 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             </div>
 
             <div className="space-y-2">
-              <label className="studio-caption font-semibold flex items-center gap-2">
-                <Percent size={14} /> Multiplicador de Ganancia
+              <label htmlFor="prod-multiplicador" className="studio-caption font-semibold flex items-center gap-2">
+                <Percent size={14} aria-hidden="true" /> Multiplicador de Ganancia
               </label>
               <div className="flex gap-2">
                 <input
+                  id="prod-multiplicador"
                   type="number"
                   min={1}
                   step={0.5}
@@ -167,8 +173,9 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             </div>
 
             <div className="space-y-2">
-              <label className="studio-caption font-semibold">Descripción (Opcional)</label>
+              <label htmlFor="prod-descripcion" className="studio-caption font-semibold">Descripción (Opcional)</label>
               <textarea 
+                id="prod-descripcion"
                 {...register('descripcion')}
                 rows={3}
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all resize-none"
@@ -178,26 +185,28 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
           </div>
 
           <div className="space-y-2 flex flex-col h-full">
-            <label className="studio-caption font-semibold flex items-center gap-2">
-              <Layers size={14} /> Partes (Archivos STL) *
-            </label>
+            <span className="studio-caption font-semibold flex items-center gap-2">
+              <Layers size={14} aria-hidden="true" /> Partes (Archivos STL) *
+            </span>
             <div className="flex-1 border border-border/50 rounded-xl overflow-y-auto max-h-[250px] bg-muted/5 p-2 custom-scrollbar">
               {piezas?.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center p-4 text-center opacity-40">
-                  <AlertCircle size={20} />
+                  <AlertCircle size={20} aria-hidden="true" />
                   <p className="text-[10px] mt-1 uppercase font-bold">Biblioteca vacía</p>
                 </div>
               ) : (
                 <div className="space-y-1">
                   {piezas?.map(pieza => (
-                    <div 
+                    <button 
                       key={pieza.id}
+                      type="button"
                       onClick={() => toggleParte(pieza.id)}
-                      className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`w-full flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all text-left ${
                         selectedPartes.includes(pieza.id) 
                           ? 'bg-black text-white shadow-lg' 
                           : 'bg-white border border-transparent hover:border-zinc-200'
                       }`}
+                      aria-label={`${selectedPartes.includes(pieza.id) ? 'Quitar' : 'Agregar'} pieza ${pieza.nombre}`}
                     >
                       <div className="truncate pr-2">
                         <p className="text-xs font-semibold truncate">{pieza.nombre}</p>
@@ -207,10 +216,10 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                       </div>
                       <div className={`size-4 rounded-full border-2 flex items-center justify-center ${
                         selectedPartes.includes(pieza.id) ? 'border-white bg-white text-black' : 'border-zinc-200'
-                      }`}>
+                      }`} aria-hidden="true">
                         {selectedPartes.includes(pieza.id) && <Plus size={10} />}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -221,7 +230,18 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
 
         <div className="flex justify-end gap-3 pt-6 border-t border-[var(--studio-hairline)]">
           <button type="button" onClick={onClose} className="studio-button-secondary-pill">Cancelar</button>
-          <button type="submit" disabled={isSaving} className="studio-button-primary min-w-[140px]">
+          <button 
+            type="submit" 
+            disabled={isSaving || selectedPartes.length === 0 || !watch('nombre')} 
+            className="studio-button-primary min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
+            title={
+              selectedPartes.length === 0 
+                ? "Seleccioná al menos una pieza STL para armar el producto" 
+                : !watch('nombre') 
+                  ? "Ingresá un nombre para el producto antes de crearlo" 
+                  : "Crear Producto"
+            }
+          >
             {isSaving ? 'Guardando...' : 'Crear Producto'}
           </button>
         </div>

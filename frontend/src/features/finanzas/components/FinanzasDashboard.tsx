@@ -12,9 +12,11 @@ import {
 } from 'lucide-react';
 import { format, subMonths, parseISO, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale/es';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 interface FinanzasDashboardProps {
   onOpenNewTransaction: () => void;
+  refetchAll: () => void;
 }
 
 const formatCurrency = (value: number) => {
@@ -23,7 +25,7 @@ const formatCurrency = (value: number) => {
   return value < 0 ? `- ${formatted}` : formatted;
 };
 
-export function FinanzasDashboard({ onOpenNewTransaction }: FinanzasDashboardProps) {
+export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: FinanzasDashboardProps) {
   const { data: transacciones, isLoading, error } = useGetTransacciones();
 
   const metrics = React.useMemo(() => {
@@ -130,11 +132,10 @@ export function FinanzasDashboard({ onOpenNewTransaction }: FinanzasDashboardPro
 
   if (error || !metrics) {
     return (
-      <div className="p-8 text-center text-red-500 flex flex-col items-center justify-center gap-4 bg-red-500/5 rounded-2xl border border-red-500/10">
-        <AlertCircle size={32} />
-        <h4 className="studio-body-strong">Error al cargar el dashboard</h4>
-        <p className="studio-caption">Ocurrió un problema al conectar con el servidor.</p>
-      </div>
+      <QueryErrorView 
+        error={error} 
+        refetch={refetchAll} 
+      />
     );
   }
 

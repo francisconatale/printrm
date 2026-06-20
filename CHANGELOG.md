@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-20] - Remediación UX/A11y en Biblioteca de Piezas, Catálogo de Stock y Libro Diario (T026)
+### Descripción
+- **Frontend (Biblioteca de Piezas):**
+  - Se agregó `<label>` oculta para lectores de pantalla al input de búsqueda de piezas.
+  - Se añadieron atributos `aria-label` y `aria-hidden` a los botones y elementos de acción de la tarjeta `STLCard.tsx` para mejorar la accesibilidad (A11y).
+- **Frontend (Catálogo de Stock / Productos):**
+  - Se ajustó el modal de composición de producto (`ComposicionProductoModal.tsx`) para incluir etiquetas `<label>` correctas, accesibilidad por teclado y validación preventiva del botón principal con tooltips informativos.
+- **Frontend (Libro Diario / Finanzas):**
+  - Se incorporó `QueryErrorView` en `FinanzasDashboard.tsx` para interceptar fallos en el cálculo de métricas financieras.
+  - Se agregaron identificadores secundarios visuales (`#id`) al listado de movimientos de `LibroDiarioView.tsx` para diferenciar transacciones ocurridas en el mismo minuto/fecha.
+  - Se añadieron etiquetas `<label>` e `id` a los elementos interactivos y controles del formulario de transacción `TransactionForm.tsx`, con validación de botón preventiva basada en estados y tooltips en hover.
+
 ## [2026-06-20] - Remediación UX/A11y en Detalle de Pedido y Agenda (T025)
 ### Descripción
 - **Frontend (Detalle de Pedido):**

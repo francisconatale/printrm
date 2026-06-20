@@ -4,4 +4,4 @@
 - [x] T023 Implementar remediación UX/A11y en CalculadoraView.tsx y PerfilesDashboardView.tsx.
 - [x] T024 Implementar remediación UX/A11y en ClientesListView.tsx y PedidosListView.tsx.
 - [x] T025 Implementar remediación UX/A11y en PedidoDetalleView.tsx (incl. breadcrumb) y AgendaProduccionView.tsx.
-- [ ] T026 Implementar remediación UX/A11y en PiezasGalleryView.tsx, ProductosGalleryView.tsx y LibroDiarioView.tsx.
+- [x] T026 Implementar remediación UX/A11y en PiezasGalleryView.tsx, ProductosGalleryView.tsx y LibroDiarioView.tsx.

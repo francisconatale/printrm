@@ -101,8 +101,9 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
 
         {/* Tipo de Transacción */}
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Tipo de Movimiento *</label>
+          <label htmlFor="tx-tipo" className="studio-caption font-semibold">Tipo de Movimiento *</label>
           <select
+            id="tx-tipo"
             value={tipo}
             onChange={handleTipoChange}
             className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
@@ -116,8 +117,9 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
         <div className="grid grid-cols-2 gap-4">
           {/* Categoría */}
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Categoría *</label>
+            <label htmlFor="tx-categoria" className="studio-caption font-semibold">Categoría *</label>
             <select
+              id="tx-categoria"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value as CategoriaTransaccion)}
               className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
@@ -131,10 +133,11 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
 
           {/* Monto */}
           <div className="space-y-2">
-            <label className="studio-caption font-semibold">Monto *</label>
+            <label htmlFor="tx-monto" className="studio-caption font-semibold">Monto *</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm" aria-hidden="true">$</span>
               <input
+                id="tx-monto"
                 type="number"
                 min="0.01"
                 step="0.01"
@@ -150,10 +153,11 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
 
         {/* Descripción */}
         <div className="space-y-2">
-          <label className="studio-caption font-semibold">Descripción *</label>
+          <label htmlFor="tx-descripcion" className="studio-caption font-semibold">Descripción *</label>
           <input
+            id="tx-descripcion"
             type="text"
-            placeholder="Ej: Compra de 2kg filamento PLA negro Grilon"
+            placeholder="Ej: Compra de 2kg filamento PLA PLA"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
             className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
@@ -172,8 +176,15 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
           </button>
           <button
             type="submit"
-            disabled={isPending || !montoStr || !descripcion}
-            className="studio-button-primary"
+            disabled={isPending || !montoStr || parseFloat(montoStr) <= 0 || !descripcion.trim()}
+            className="studio-button-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            title={
+              !montoStr || parseFloat(montoStr) <= 0
+                ? "Ingresá un monto válido mayor a 0 antes de guardar"
+                : !descripcion.trim()
+                  ? "Ingresá una descripción para registrar la transacción"
+                  : "Guardar Movimiento"
+            }
           >
             {isPending ? 'Procesando...' : 'Guardar Movimiento'}
           </button>

@@ -23,6 +23,7 @@ public class ProductoService {
     private final ProductoRepository repository;
     private final PiezaSTLRepository piezaRepository;
     private final LoteRepository loteRepository;
+    private final com.printrm.studio.domain.finanzas.TransaccionRepository transaccionRepository;
     private final CostCalculationService costCalculationService;
     private final AjustesService ajustesService;
 
@@ -145,6 +146,44 @@ public class ProductoService {
         
         producto.setCantidadStock(producto.getCantidadStock() + cantidad);
         repository.save(producto);
+
+        // Registrar los egresos correspondientes al filamento y energía consumidos para la cantidad fabricada
+        Double totalFilamento = 0.0;
+        Double totalEnergia = 0.0;
+        AjustesDTO ajustes = ajustesService.getAjustes();
+        
+        for (PiezaSTL pieza : producto.getPartes()) {
+            CostCalculationResult res = costCalculationService.calculate(
+                pieza.getPesoGramos(),
+                parseHours(pieza.getTiempoEstimado()),
+                parseMinutes(pieza.getTiempoEstimado()),
+                0.0,
+                pieza.getPerfilPreferido(),
+                pieza.getFilamentoPreferido(),
+                ajustes
+            );
+            totalFilamento += res.getCostoFilamento();
+            totalEnergia += res.getCostoEnergia();
+        }
+
+        if (totalFilamento > 0) {
+            com.printrm.studio.domain.finanzas.Transaccion txMat = com.printrm.studio.domain.finanzas.Transaccion.builder()
+                    .tipo(com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MATERIAL)
+                    .monto(-totalFilamento * cantidad)
+                    .descripcion("Filamento: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)")
+                    .build();
+            transaccionRepository.save(txMat);
+        }
+        if (totalEnergia > 0) {
+            com.printrm.studio.domain.finanzas.Transaccion txEne = com.printrm.studio.domain.finanzas.Transaccion.builder()
+                    .tipo(com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.ENERGIA)
+                    .monto(-totalEnergia * cantidad)
+                    .descripcion("Energía: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)")
+                    .build();
+            transaccionRepository.save(txEne);
+        }
     }
 
     @Transactional

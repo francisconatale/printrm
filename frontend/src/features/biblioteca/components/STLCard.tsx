@@ -85,15 +85,18 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
           </div>
           
           <DropdownMenu>
-            <DropdownMenuTrigger className="p-1 rounded-full hover:bg-gray-100 transition-colors">
-              <MoreVertical size={16} className="text-[#7a7a7a]" />
+            <DropdownMenuTrigger 
+              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label={`Opciones para pieza ${pieza.nombre}`}
+            >
+              <MoreVertical size={16} className="text-[#7a7a7a]" aria-hidden="true" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem 
                 onClick={() => onDelete(pieza.id)}
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
               >
-                <Trash2 size={14} className="mr-2" />
+                <Trash2 size={14} className="mr-2" aria-hidden="true" />
                 Eliminar
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -120,7 +123,8 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
             <button 
               onClick={() => onPublish?.(pieza)}
               className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
-              title="Fabricar en Catálogo"
+              title={`Fabricar ${pieza.nombre} en Catálogo`}
+              aria-label={`Fabricar pieza ${pieza.nombre} en Catálogo`}
             >
               Fabricar
             </button>

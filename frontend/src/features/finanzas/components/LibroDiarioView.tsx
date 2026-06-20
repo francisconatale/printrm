@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { FinanzasDashboard } from './FinanzasDashboard';
 import { TransactionForm } from './TransactionForm';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
@@ -21,8 +22,8 @@ const formatCurrency = (value: number) => {
 };
 
 export function LibroDiarioView() {
-  const { data: transacciones, isLoading } = useGetTransacciones();
-  const { data: balance } = useGetBalance();
+  const { data: transacciones, isLoading: isTransaccionesLoading, isError: isTransaccionesError, error: transaccionesError, refetch: refetchTransacciones } = useGetTransacciones();
+  const { data: balance, isLoading: isBalanceLoading, isError: isBalanceError, error: balanceError, refetch: refetchBalance } = useGetBalance();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [activeTab, setActiveTab] = React.useState<'dashboard' | 'ledger'>('dashboard');
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -36,6 +37,16 @@ export function LibroDiarioView() {
     );
   }, [transacciones, searchTerm]);
 
+  const isLoading = isTransaccionesLoading || isBalanceLoading;
+  const isQueryError = isTransaccionesError || isBalanceError;
+  const errorObj = transaccionesError || balanceError;
+  const refetchAll = () => {
+    refetchTransacciones();
+    refetchBalance();
+  };
+
+  const isSearching = searchTerm.trim().length > 0;
+
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
       <StudioSubNav />
@@ -46,7 +57,7 @@ export function LibroDiarioView() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
             <div className="space-y-2">
-              <h2 className="studio-display-md !text-4xl tracking-tight">Finanzas & Negocio</h2>
+              <h1 className="studio-display-md !text-4xl tracking-tight font-bold text-foreground">Finanzas & Negocio</h1>
               <p className="studio-body text-muted-foreground">Control de flujo de caja, mermas, rentabilidad y egresos manuales.</p>
             </div>
             
@@ -54,8 +65,8 @@ export function LibroDiarioView() {
               onClick={() => setIsFormOpen(true)}
               className="studio-button-primary self-start md:self-center flex items-center gap-2 transition-all duration-300"
             >
-              <Plus size={16} />
-              Registrar Gasto / Ingreso
+              <Plus size={16} aria-hidden="true" />
+              <span>Registrar Gasto / Ingreso</span>
             </button>
           </div>
 
@@ -69,8 +80,8 @@ export function LibroDiarioView() {
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              <LayoutDashboard size={16} />
-              Dashboard Financiero
+              <LayoutDashboard size={16} aria-hidden="true" />
+              <span>Dashboard Financiero</span>
             </button>
             <button
               onClick={() => setActiveTab('ledger')}
@@ -80,15 +91,17 @@ export function LibroDiarioView() {
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              <ReceiptText size={16} />
-              Libro Diario
+              <ReceiptText size={16} aria-hidden="true" />
+              <span>Libro Diario</span>
             </button>
           </div>
 
           {/* Content area */}
           <div className="pt-2">
-            {activeTab === 'dashboard' ? (
-              <FinanzasDashboard onOpenNewTransaction={() => setIsFormOpen(true)} />
+            {isQueryError ? (
+              <QueryErrorView error={errorObj} refetch={refetchAll} />
+            ) : activeTab === 'dashboard' ? (
+              <FinanzasDashboard onOpenNewTransaction={() => setIsFormOpen(true)} refetchAll={refetchAll} />
             ) : (
               <div className="space-y-8 animate-in fade-in duration-300">
                 {/* Balance & Stats */}
@@ -96,7 +109,7 @@ export function LibroDiarioView() {
                   <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
-                        <Wallet size={20} />
+                        <Wallet size={20} aria-hidden="true" />
                       </div>
                     </div>
                     <div>
@@ -113,8 +126,10 @@ export function LibroDiarioView() {
                   <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Historial de Movimientos</h3>
                   
                   <div className="relative w-full md:w-80">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                    <label htmlFor="search-libro" className="sr-only">Buscar por descripción</label>
                     <input 
+                      id="search-libro"
                       type="text"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -127,7 +142,7 @@ export function LibroDiarioView() {
                 {/* Transactions List */}
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-40 gap-4 text-muted-foreground">
-                    <Loader2 className="animate-spin" size={32} />
+                    <Loader2 className="animate-spin" size={32} aria-hidden="true" />
                     <p className="studio-caption">Cargando movimientos...</p>
                   </div>
                 ) : filteredTransacciones.length > 0 ? (
@@ -142,10 +157,11 @@ export function LibroDiarioView() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/50">
-                        {filteredTransacciones.map((t) => (
+                        {filteredTransacciones.map((t, idx) => (
                           <tr key={t.id} className="hover:bg-muted/5 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground font-mono">
-                              {format(new Date(t.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}
+                              <span className="block">{format(new Date(t.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
+                              <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{t.id.slice(-6)}</span>
                             </td>
                             <td className="px-6 py-4 text-sm studio-body-strong text-foreground">
                               {t.descripcion}
@@ -171,9 +187,31 @@ export function LibroDiarioView() {
                       </tbody>
                     </table>
                   </div>
+                ) : isSearching ? (
+                  <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                    <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                      <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="studio-body-strong text-foreground">Búsqueda sin resultados</p>
+                      <p className="studio-caption text-muted-foreground">No encontramos movimientos que coincidan con "{searchTerm}". Intentá con otros términos.</p>
+                      <button 
+                        onClick={() => setSearchTerm('')}
+                        className="text-xs text-primary font-semibold hover:underline mt-2"
+                      >
+                        Limpiar filtros
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  <div className="py-20 text-center opacity-40">
-                    <p className="studio-caption uppercase font-bold">No hay movimientos registrados</p>
+                  <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                    <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                      <Wallet size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="studio-body-strong text-foreground">No hay movimientos registrados</p>
+                      <p className="studio-caption text-muted-foreground">Registrá tu primer ingreso o gasto manual para iniciar el libro contable.</p>
+                    </div>
                   </div>
                 )}
               </div>
