@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [2026-06-20] - Integración STL a Producto y Precios Variables (T018, T019, T020)
+### Descripción
+- **Backend (Pedidos y Precios):** Se implementó el soporte para precios unitarios personalizados en los ítems de pedidos (`precioPersonalizado`). Se actualizó la entidad `ItemPedido`, la lógica de negocio en `PedidoService` y los DTOs de request/response para priorizar el precio unitario personalizado en el cálculo del subtotal y del total.
+- **Frontend (Pedidos):** Se agregaron campos editables para el precio unitario en el modal de creación de pedidos (`CrearPedidoModal.tsx`), recalculando los subtotales y el total en tiempo real.
+- **Frontend (Biblioteca STL):** Se integró un acceso directo de "Fabricar" en la tarjeta de piezas STL (`STLCard.tsx`) que abre el modal de composición de producto (`ComposicionProductoModal.tsx`) con la pieza preseleccionada y el nombre auto-completado. Se removió el botón "Play" (Calcular Costo) de la tarjeta STL al estar obsoleta la navegación indirecta.
+
+### Archivos Involucrados
+- [backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoRequestDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoRequestDTO.java)
+- [backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java)
+- [backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedido.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedido.java)
+- [backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+- [frontend/src/features/pedidos/types/pedidos.types.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/types/pedidos.types.ts)
+- [frontend/src/features/pedidos/components/CrearPedidoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/CrearPedidoModal.tsx)
+- [frontend/src/features/stock/components/ComposicionProductoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/ComposicionProductoModal.tsx)
+- [frontend/src/features/biblioteca/components/STLCard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/STLCard.tsx)
+- [frontend/src/features/biblioteca/components/PiezasGalleryView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/PiezasGalleryView.tsx)
+- [CHANGELOG.md](file:///C:/Users/franc/OneDrive/Desktop/printrm/CHANGELOG.md)
+
 ## [2026-06-20] - Pruebas de Integración de Dominio Financiero en Producción (T017)
 ### Descripción
 - **Backend (Pruebas):** Se creó la clase de prueba de integración `OrdenProduccionServiceIntegrationTest.java` para verificar de forma integral el comportamiento contable y financiero cuando una orden de producción se finaliza.
