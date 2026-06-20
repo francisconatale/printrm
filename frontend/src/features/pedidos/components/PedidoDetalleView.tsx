@@ -211,48 +211,20 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                                 {item.cantidadMerma} FALLIDAS
                               </span>
                             )}
+                            {item.productoId && (
+                              <>
+                                {(item.cantidadFaltante ?? 0) > 0 ? (
+                                  <span className="text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                    FALTAN {item.cantidadFaltante} U.
+                                  </span>
+                                ) : (
+                                  <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded font-bold text-[9px]">
+                                    LISTO
+                                  </span>
+                                )}
+                              </>
+                            )}
                           </div>
-
-                          {/* Stock & Fab Metrics */}
-                          {item.productoId && (
-                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground pt-1">
-                              <span>Stock: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
-                              {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
-                                <span>En cola/fab: <strong className="text-foreground">
-                                  {item.ordenesProduccion.reduce((acc, o) => ['COLA', 'IMPRIMIENDO'].includes(o.estado) ? acc + o.cantidad : acc, 0)}
-                                </strong></span>
-                              )}
-                              {(item.cantidadFaltante ?? 0) > 0 ? (
-                                <span className="text-amber-600 dark:text-amber-500 font-semibold flex items-center gap-0.5">
-                                  Faltante: <strong>{item.cantidadFaltante}</strong>
-                                </span>
-                              ) : (
-                                <span className="text-emerald-600 dark:text-emerald-500 font-semibold">Listo</span>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Related production history (traza) */}
-                          {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
-                            <div className="mt-2 space-y-1 pl-2 border-l-2 border-zinc-200 dark:border-zinc-800">
-                              <p className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Historial de Fabricación</p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {item.ordenesProduccion.map((op) => (
-                                  <div key={op.id} className="text-[10px] flex items-center gap-1 bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-1.5 py-0.5 rounded">
-                                    <span className="font-medium text-foreground">x{op.cantidad}</span>
-                                    <span className={`font-bold text-[8px] uppercase ${
-                                      op.estado === 'COLA' ? 'text-zinc-500' :
-                                      op.estado === 'IMPRIMIENDO' ? 'text-blue-500' :
-                                      op.estado === 'COMPLETADO' ? 'text-emerald-500' :
-                                      'text-red-500'
-                                    }`}>
-                                      {op.estado}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -290,19 +262,6 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Informative footer card */}
-              <div className="bg-zinc-50 dark:bg-card/40 border border-zinc-200/50 dark:border-border/30 rounded-3xl p-5 flex items-start gap-3">
-                <div className="size-8 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-muted-foreground shrink-0">
-                  <CreditCard size={15} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-foreground">Registro Automatizado de Costos</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Los egresos correspondientes a material consumido y energía eléctrica se calculan y registran de forma automática al iniciar los procesos de impresión del pedido.
-                  </p>
                 </div>
               </div>
 

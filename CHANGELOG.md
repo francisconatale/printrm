@@ -4,6 +4,8 @@
 ### Descripción
 - **Frontend (Pedidos):**
   - Se rediseñó la vista `PedidoDetalleView.tsx` siguiendo estándares estéticos de iOS/iPhone: se implementó un encabezado limpio tipo tarjeta, una barra de progreso del flujo de trabajo, una barra de completado de pago y se organizó la gestión de estados destacando el siguiente paso recomendado en un panel interactivo premium.
+  - Se simplificó visualmente el desglose de los ítems de presupuesto eliminando la información sobrecargada de stock físico, órdenes en cola/producción e historial detallado de fabricación bajo cada ítem; ahora se muestra una línea única de badges minimalistas de estado (`U.`, `ENTREGADAS`, `FALLIDAS`, `FALTAN` o `LISTO`).
+  - Se removió la tarjeta informativa de "Registro Automatizado de Costos" al pie de la lista de artículos para mantener un diseño despejado y enfocado en el pedido.
 - **Backend (Pedidos):**
   - Se modificó `PedidoService.java` para comprobar explícitamente si el pedido ya está en estado `ENTREGADO` antes de procesar cambios a ese mismo estado, arrojando una excepción clara si se intenta entregar de nuevo.
 ### Archivos Involucrados
