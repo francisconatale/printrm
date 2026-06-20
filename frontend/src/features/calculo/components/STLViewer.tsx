@@ -106,6 +106,13 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef, onInitial
       setBlobUrl(null);
       return;
     }
+    if (file.size === 0) {
+      // It's a placeholder file from the library, load directly from backend URL
+      const backendUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${file.name}`;
+      setBlobUrl(backendUrl);
+      setIsLoading(true);
+      return;
+    }
     const url = URL.createObjectURL(file);
     setBlobUrl(url);
     setIsLoading(true);

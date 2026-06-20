@@ -27,9 +27,11 @@ import { CalculoSnapshot } from '../types/calculo.types'
 
 interface CalculadoraViewProps {
   initialData?: CalculoSnapshot | null;
+  initialFile?: File | null;
+  onResetFile?: () => void;
 }
 
-export function CalculadoraView({ initialData }: CalculadoraViewProps) {
+export function CalculadoraView({ initialData, initialFile, onResetFile }: CalculadoraViewProps) {
   const { perfilActivo } = usePerfilActivo();
   const { data: printers } = useGetPerfiles();
   const { data: filaments } = useGetFilamentProfiles();
@@ -66,7 +68,10 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
       }
       setHasAnalyzed(true);
     }
-  }, [initialData]);
+    if (initialFile) {
+      setFile(initialFile);
+    }
+  }, [initialData, initialFile]);
 
   // Set default values when profiles are loaded
 
@@ -189,6 +194,9 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
     setFile(null);
     setHasAnalyzed(false);
     setPiezaInput(prev => ({ ...prev, horas: 0, minutosAdicionales: 0, gramos: 0 }));
+    if (onResetFile) {
+      onResetFile();
+    }
   };
 
   return (

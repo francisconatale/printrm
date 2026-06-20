@@ -9,7 +9,11 @@ import { ComposicionProductoModal } from '../../stock/components/ComposicionProd
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PiezaDetailModal } from './PiezaDetailModal';
 
-export function PiezasGalleryView() {
+interface PiezasGalleryViewProps {
+  onCalculatePiece?: (pieza: PiezaSTL) => void;
+}
+
+export function PiezasGalleryView({ onCalculatePiece }: PiezasGalleryViewProps) {
   const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -26,9 +30,12 @@ export function PiezasGalleryView() {
   }, [piezas, searchTerm]);
 
   const handleCalculate = (pieza: PiezaSTL) => {
-    // Logic to navigate to calculator with this piece
-    console.log("Calcular costo para:", pieza.nombre);
-    alert(`Próximamente: Cargando ${pieza.nombre} en el cotizador...`);
+    if (onCalculatePiece) {
+      onCalculatePiece(pieza);
+    } else {
+      console.log("Calcular costo para:", pieza.nombre);
+      alert(`Próximamente: Cargando ${pieza.nombre} en el cotizador...`);
+    }
   };
 
   const isSearching = searchTerm.trim().length > 0;

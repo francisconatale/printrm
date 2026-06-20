@@ -120,6 +120,14 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
 
           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             <button 
+              onClick={() => onCalculate(pieza)}
+              className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
+              title={`Recalcular costo para ${pieza.nombre}`}
+              aria-label={`Recalcular costo para pieza ${pieza.nombre}`}
+            >
+              Recalcular
+            </button>
+            <button 
               onClick={() => onPublish?.(pieza)}
               className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
               title={`Fabricar ${pieza.nombre} en Catálogo`}

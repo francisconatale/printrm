@@ -23,14 +23,42 @@ function App() {
     return <LoadingScreen retryCount={retryCount} error={error} />
   }
 
+  const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
+
   const renderView = () => {
     switch (currentView) {
       case 'calculator':
-        return <CalculadoraView />
+        return (
+          <CalculadoraView 
+            initialData={selectedPieza ? {
+              horas: 0,
+              minutosAdicionales: 0,
+              gramos: selectedPieza.pesoGramos || 0,
+              insumosExtra: 0,
+              perfilId: '',
+              perfilNombre: selectedPieza.perfilImpresoraNombre || '',
+              costoEnergia: selectedPieza.costoEnergia || 0,
+              costoFilamento: selectedPieza.costoMaterial || 0,
+              costoDesgaste: 0,
+              subtotal: selectedPieza.costoBase || 0,
+              costoBase: selectedPieza.costoBase || 0,
+              precioVenta: (selectedPieza.costoBase || 0) * 3,
+            } : null}
+            initialFile={selectedPieza ? new File([], selectedPieza.filePath) : null}
+            onResetFile={() => setSelectedPieza(null)}
+          />
+        )
       case 'profiles':
         return <PerfilesDashboardView />
       case 'inventory':
-        return <PiezasGalleryView />
+        return (
+          <PiezasGalleryView 
+            onCalculatePiece={(pieza) => {
+              setSelectedPieza(pieza);
+              setCurrentView('calculator');
+            }}
+          />
+        )
       case 'stock':
         return <ProductosGalleryView />
       case 'customers':
