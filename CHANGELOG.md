@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [2026-06-20] - Pruebas y validación para el flujo de pedidos y fabricación (T014, T015)
+### Descripción
+- **Backend (Pruebas):** 
+  - Se crearon pruebas de integración para `VentaService` en `VentaServiceIntegrationTest.java` para verificar el correcto descuento de stock y el registro de la transacción de ingreso.
+  - Se implementaron pruebas de integración y flujo completo en `PedidoFlujoCompletoIntegrationTest.java` para validar el cálculo dinámico de faltantes neto (basado en stock real y órdenes en producción) y el flujo completo (desde la creación de un pedido, mandarlo a fabricar, completar la orden y realizar la entrega definitiva con impacto financiero).
+### Archivos Involucrados
+- [VentaServiceIntegrationTest.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/test/java/com/printrm/studio/domain/pedidos/VentaServiceIntegrationTest.java)
+- [PedidoFlujoCompletoIntegrationTest.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/test/java/com/printrm/studio/domain/pedidos/PedidoFlujoCompletoIntegrationTest.java)
+- [.specify/history/sprint-2/007-flujo-pedidos-fabricacion/tasks.md](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/007-flujo-pedidos-fabricacion/tasks.md)
+- [.specify/current_task_summary.md](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/current_task_summary.md)
+
 ## [2026-06-20] - Solución a doble notificación toast al guardar pieza
 ### Descripción
 - **Frontend (Calculadora):** Se eliminó la visualización manual duplicada del toast de éxito/error al guardar una pieza en la biblioteca en `CalculadoraView.tsx`, ya que la mutación `useGuardarPieza` (vía `useMutationWithFeedback`) se encarga de mostrar la notificación correspondiente de forma automática.
@@ -11,12 +22,14 @@
 - **Estructura del Proyecto (.specify):** Se eliminaron las tareas de pulido `T016` y `T017` en `005-roadmap-phase-2` por no ser necesarias, y la tarea deprecada `T003` en `003-historial-exportacion`. Al no quedar tareas pendientes, se archivaron las siguientes especificaciones completadas al 100% moviéndolas a `.specify/history/sprint-2/`:
   - `003-historial-exportacion`
   - `005-roadmap-phase-2`
+  - `007-flujo-pedidos-fabricacion`
   - `007-integration-ux`
   - `008-auditoria-ux`
   - `009-correcciones-errores`
 ### Archivos Involucrados
 - [.specify/specs/003-historial-exportacion/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/003-historial-exportacion/) (movido a history)
 - [.specify/specs/005-roadmap-phase-2/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/005-roadmap-phase-2/) (movido a history)
+- [.specify/specs/007-flujo-pedidos-fabricacion/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/007-flujo-pedidos-fabricacion/) (movido a history)
 - [.specify/specs/007-integration-ux/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/007-integration-ux/) (movido a history)
 - [.specify/specs/008-auditoria-ux/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/008-auditoria-ux/) (movido a history)
 - [.specify/specs/009-correcciones-errores/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/009-correcciones-errores/) (movido a history)

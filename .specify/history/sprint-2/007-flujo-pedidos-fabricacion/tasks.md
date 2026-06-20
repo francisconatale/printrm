@@ -22,5 +22,6 @@
 - [x] T013 Agregar botones en la Agenda para avanzar el estado de las órdenes de producción.
 
 ## Phase 5: Testing & Verification
-- [ ] T014 Escribir pruebas unitarias e integración para `VentaService`, `PedidoService` (cálculo dinámico y entrega) y `OrdenProduccionService` (ingreso de stock y egresos).
-- [ ] T015 Realizar pruebas de flujo completo: Crear pedido -> Ver faltante -> Mandar a fabricar -> Completar orden en Agenda -> Verificar stock ingresado y egreso -> Entregar pedido -> Verificar venta registrada e ingreso final.
+- [x] T014 Escribir pruebas unitarias e integración para `VentaService`, `PedidoService` (cálculo dinámico y entrega) y `OrdenProduccionService` (ingreso de stock y egresos).
+- [x] T015 Realizar pruebas de flujo completo: Crear pedido -> Ver faltante -> Mandar a fabricar -> Completar orden en Agenda -> Verificar stock ingresado y egreso -> Entregar pedido -> Verificar venta registrada e ingreso final.
+
