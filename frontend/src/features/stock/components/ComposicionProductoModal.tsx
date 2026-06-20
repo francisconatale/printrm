@@ -5,11 +5,8 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { Package, Tag, Layers, AlertCircle, Plus, Calculator, Loader2 } from 'lucide-react';
+import { Package, Tag, Layers, AlertCircle, Plus, Calculator, Percent } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
-import { useCalculo } from '../../calculo/hooks/useCalculo';
-import { useGetPerfiles, useGetFilamentProfiles } from '../../perfiles/api/perfiles.api';
-import { useAjustes } from '../../ajustes/hooks/useAjustes';
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
@@ -22,12 +19,13 @@ const productoSchema = z.object({
 interface ComposicionProductoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  preselectedParteId?: string;
 }
 
-export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProductoModalProps) {
+export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }: ComposicionProductoModalProps) {
   const { data: piezas } = useGetPiezas();
-  const { data: printers } = useGetPerfiles();
   const { mutate: saveProducto, isPending: isSaving } = useSaveProducto();
+  const [multiplicador, setMultiplicador] = React.useState(3);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProductoCreate>({
     resolver: zodResolver(productoSchema),
@@ -40,32 +38,38 @@ export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProduct
     }
   });
 
-  const selectedPartes = watch('parteIds');
+  const selectedPartes = watch('parteIds') || [];
 
-  // TRIGGER BACKEND CALCULATION FOR PRICE SUGGESTION
-  // In a real scenario, we'd loop through selected parts and sum their backend costs.
-  // For simplicity and performance, we'll sum the pieces' metadata which already contains the current backend-calculated costoBase.
+  React.useEffect(() => {
+    if (preselectedParteId && piezas && isOpen) {
+      const pieza = piezas.find(p => p.id === preselectedParteId);
+      if (pieza) {
+        setValue('nombre', pieza.nombre);
+        setValue('parteIds', [preselectedParteId]);
+      }
+    }
+  }, [preselectedParteId, piezas, setValue, isOpen]);
+
   const calculateTotalSuggested = React.useCallback(() => {
-    if (!selectedPartes.length || !piezas) return 0;
+    if (!selectedPartes?.length || !piezas) return 0;
     
     let total = 0;
     selectedPartes.forEach(id => {
       const pieza = piezas.find(p => p.id === id);
       if (!pieza) return;
       
-      // Every piece in the library now has a costoBase calculated by the backend upon save/refresh
-      total += (pieza.costoBase || 0) * 3; // Default multiplier 3
+      total += (pieza.costoBase || 0) * multiplicador;
     });
     return Math.round(total);
-  }, [selectedPartes, piezas]);
+  }, [selectedPartes, piezas, multiplicador]);
 
-  // Update price when selection changes
+  // Update price when selection or multiplier changes
   React.useEffect(() => {
     const suggested = calculateTotalSuggested();
     if (suggested > 0) {
       setValue('precioSugerido', suggested);
     }
-  }, [selectedPartes, calculateTotalSuggested, setValue]);
+  }, [selectedPartes, multiplicador, calculateTotalSuggested, setValue]);
 
   const toggleParte = (id: string) => {
     const current = [...selectedPartes];
@@ -126,8 +130,40 @@ export function ComposicionProductoModal({ isOpen, onClose }: ComposicionProduct
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
               />
               <p className="text-[10px] text-muted-foreground italic">
-                Sugerencia basada en costos de producción (API) + margen.
+                Costo de producción × multiplicador.
               </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="studio-caption font-semibold flex items-center gap-2">
+                <Percent size={14} /> Multiplicador de Ganancia
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  step={0.5}
+                  value={multiplicador}
+                  onChange={(e) => setMultiplicador(parseFloat(e.target.value) || 1)}
+                  className="w-24 bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
+                />
+                <div className="flex gap-1">
+                  {[2, 2.5, 3, 4].map(v => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setMultiplicador(v)}
+                      className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all ${
+                        multiplicador === v
+                          ? 'bg-black text-white border-black'
+                          : 'bg-white text-zinc-600 border-[#e0e0e0] hover:border-zinc-400'
+                      }`}
+                    >
+                      ×{v}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">

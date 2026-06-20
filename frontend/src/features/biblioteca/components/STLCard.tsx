@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { STLPreview } from './STLPreview';
-import { MoreVertical, Trash2, Play, Box } from 'lucide-react';
+import { MoreVertical, Trash2, Box } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +16,14 @@ interface STLCardProps {
   pieza: PiezaSTL;
   onDelete: (id: string) => void;
   onCalculate: (pieza: PiezaSTL) => void;
+  onPublish?: (pieza: PiezaSTL) => void;
 }
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }) => {
+export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, onPublish }) => {
   const [hovered, setHovered] = useState(false);
   
   const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`; 
@@ -115,13 +116,15 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate }
             )}
           </div>
 
-          <button 
-            onClick={() => onCalculate(pieza)}
-            className="size-8 rounded-full bg-black text-white flex items-center justify-center transition-transform active:scale-90 hover:bg-zinc-800"
-            title="Calcular Costo"
-          >
-            <Play size={12} fill="currentColor" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => onPublish?.(pieza)}
+              className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
+              title="Fabricar en Catálogo"
+            >
+              Fabricar
+            </button>
+          </div>
         </div>
       </div>
     </div>

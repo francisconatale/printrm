@@ -5,12 +5,14 @@ import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Search, PackageOpen, Loader2 } from 'lucide-react';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { PiezaSTL } from '../types/biblioteca.types';
+import { ComposicionProductoModal } from '../../stock/components/ComposicionProductoModal';
 
 export function PiezasGalleryView() {
   const { data: piezas, isLoading } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [deletePieceId, setDeletePieceId] = React.useState<string | null>(null);
+  const [publishPieceId, setPublishPieceId] = React.useState<string | null>(null);
 
   const filteredPiezas = React.useMemo(() => {
     if (!piezas) return [];
@@ -66,6 +68,7 @@ export function PiezasGalleryView() {
                   pieza={pieza} 
                   onDelete={(id) => setDeletePieceId(id)}
                   onCalculate={handleCalculate}
+                  onPublish={(pieza) => setPublishPieceId(pieza.id)}
                 />
               ))}
             </div>
@@ -98,6 +101,12 @@ export function PiezasGalleryView() {
         confirmText="Eliminar"
         cancelText="Cancelar"
         isDestructive={true}
+      />
+
+      <ComposicionProductoModal
+        isOpen={publishPieceId !== null}
+        onClose={() => setPublishPieceId(null)}
+        preselectedParteId={publishPieceId || undefined}
       />
     </div>
   );
