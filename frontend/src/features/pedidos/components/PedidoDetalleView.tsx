@@ -272,8 +272,8 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                           </button>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
