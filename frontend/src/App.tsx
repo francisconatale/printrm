@@ -12,6 +12,7 @@ import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
+import { Toaster } from 'sonner'
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           {renderView()}
         </main>
       </AppShell>
+      <Toaster richColors position="top-right" closeButton />
     </ThemeProvider>
   )
 }

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2026-06-20] - Infraestructura de Feedback y Resiliencia UX (T022)
+### Descripción
+- **Frontend (Notificaciones y Errores):** Se instaló e integró la biblioteca `sonner` para la visualización de toasts accesibles y con colores enriquecidos en `App.tsx`.
+- **Frontend (Utilidades):** Se creó el hook personalizado `useMutationWithFeedback` para automatizar la visualización de notificaciones flotantes ante éxitos y errores de mutaciones en React Query.
+- **Frontend (Componentes de Error):** Se creó el componente `QueryErrorView` para proveer una UI consistente ante fallos de carga en queries de React Query, incluyendo botón de reintento.
+
 ## [2026-06-20] - Captura de Miniatura STL en Posición Inicial (T021)
 ### Descripción
 - **Frontend (Miniatura STL):** Se modificó la renderización 3D para capturar automáticamente la imagen de la pieza en su ángulo/posición inicial (cámara ajustada al cargar) antes de iniciar la rotación o cualquier interacción del usuario. Esta imagen se almacena y se usa al presionar "Guardar en biblioteca", evitando saltos o discrepancias visuales de la miniatura frente al render 3D al interactuar con el badge "Ver 3D".
