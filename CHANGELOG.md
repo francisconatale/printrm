@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2026-06-19] - Corrección de Selección de Tipo de Ítem en Crear Pedido (T014)
+### Descripción
+- **Frontend (Pedidos):** Se corrigió un bug lógico en el modal `CrearPedidoModal.tsx` que causaba que el selector de "Producto" se mostrara por defecto e incorrectamente en lugar del selector de "Cotización". Se introdujo un estado explícito de tipo (`tipo: 'CALC' | 'PROD'`) para asegurar una distinción precisa y fluida acorde a la intención de compra.
+
+### Archivos Involucrados
+- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
+- `CHANGELOG.md`
+
 ## [2026-06-19] - Actualización de Skill revisar_tareas y Archivado de Especificación FIFO (006)
 ### Descripción
 - **Customizations (Skills):** Se actualizó la skill `revisar_tareas` (`.agents/skills/revisar_tareas/SKILL.md`) para incorporar la instrucción de archivar automáticamente carpetas de especificaciones (`tasks.md`) cuyos checklists estén al 100% completados.

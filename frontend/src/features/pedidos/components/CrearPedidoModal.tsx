@@ -18,32 +18,37 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
   const { data: productos, isLoading: isLoadingProductos } = useGetProductos();
   const { mutate: createPedido, isPending: isCreating } = useCreatePedido();
 
+  interface ItemFormState {
+    tipo: 'CALC' | 'PROD';
+    calculoId: string;
+    productoId: string;
+    cantidad: number;
+  }
+
   const [clienteId, setClienteId] = React.useState<string>('');
-  const [items, setItems] = React.useState<ItemPedidoRequest[]>([
-    { calculoId: '', productoId: '', cantidad: 1 }
+  const [items, setItems] = React.useState<ItemFormState[]>([
+    { tipo: 'CALC', calculoId: '', productoId: '', cantidad: 1 }
   ]);
   const [error, setError] = React.useState<string>('');
 
   const handleAddItem = () => {
-    setItems(prev => [...prev, { calculoId: '', productoId: '', cantidad: 1 }]);
+    setItems(prev => [...prev, { tipo: 'CALC', calculoId: '', productoId: '', cantidad: 1 }]);
   };
 
   const handleRemoveItem = (index: number) => {
     setItems(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleItemChange = (index: number, field: keyof ItemPedidoRequest, value: string | number) => {
+  const handleItemChange = (index: number, field: keyof ItemFormState, value: any) => {
     setItems(prev => {
       const copy = [...prev];
-      if (field === 'calculoId' && value !== '') {
-        copy[index] = { ...copy[index], calculoId: value as string, productoId: '', [field]: value };
-      } else if (field === 'productoId' && value !== '') {
-        copy[index] = { ...copy[index], productoId: value as string, calculoId: '', [field]: value };
-      } else {
-        copy[index] = {
-          ...copy[index],
-          [field]: value
-        };
+      copy[index] = {
+        ...copy[index],
+        [field]: value
+      };
+      if (field === 'tipo') {
+        copy[index].calculoId = '';
+        copy[index].productoId = '';
       }
       return copy;
     });
@@ -58,7 +63,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       return;
     }
 
-    const validItems = items.filter(item => item.calculoId !== '' || item.productoId !== '');
+    const validItems = items.filter(item => (item.tipo === 'CALC' && item.calculoId !== '') || (item.tipo === 'PROD' && item.productoId !== ''));
     if (validItems.length === 0) {
       setError('Por favor, agrega al menos un ítem.');
       return;
@@ -73,8 +78,8 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       {
         clienteId,
         items: validItems.map(it => ({
-          calculoId: it.calculoId || undefined,
-          productoId: it.productoId || undefined,
+          calculoId: it.tipo === 'CALC' ? it.calculoId : undefined,
+          productoId: it.tipo === 'PROD' ? it.productoId : undefined,
           cantidad: it.cantidad
         }))
       },
@@ -91,11 +96,11 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
   const calculateTotalPreview = () => {
     return items.reduce((sum, item) => {
-      if (item.calculoId) {
+      if (item.tipo === 'CALC' && item.calculoId) {
         const calcObj = historial?.find(h => h.id === item.calculoId);
         return sum + (calcObj ? calcObj.precioVenta * item.cantidad : 0);
       }
-      if (item.productoId) {
+      if (item.tipo === 'PROD' && item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
         return sum + (prodObj?.precioSugerido ? prodObj.precioSugerido * item.cantidad : 0);
       }
@@ -103,7 +108,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     }, 0);
   };
 
-  const isFormValid = clienteId && items.some(item => item.calculoId !== '' || item.productoId !== '') && !isCreating;
+  const isFormValid = clienteId && items.some(item => (item.tipo === 'CALC' && item.calculoId !== '') || (item.tipo === 'PROD' && item.productoId !== '')) && !isCreating;
 
   return (
     <Modal
@@ -153,7 +158,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {items.map((item, index) => {
-              const selectedPrice = item.calculoId 
+              const selectedPrice = item.tipo === 'CALC' 
                 ? historial?.find(h => h.id === item.calculoId)?.precioVenta
                 : productos?.find(p => p.id === item.productoId)?.precioSugerido;
 
@@ -162,10 +167,9 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                   <div className="flex items-center gap-4">
                     <div className="flex-1 flex gap-2">
                       <select
-                        value={item.productoId ? 'PROD' : 'CALC'}
+                        value={item.tipo}
                         onChange={(e) => {
-                          if (e.target.value === 'PROD') handleItemChange(index, 'productoId', '');
-                          else handleItemChange(index, 'calculoId', '');
+                          handleItemChange(index, 'tipo', e.target.value as 'CALC' | 'PROD');
                         }}
                         className="w-32 bg-[#f5f5f7] border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-bold uppercase"
                       >
@@ -173,7 +177,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         <option value="PROD">Producto</option>
                       </select>
 
-                      {item.productoId !== undefined && !item.calculoId ? (
+                      {item.tipo === 'PROD' ? (
                         <select
                           value={item.productoId}
                           onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
