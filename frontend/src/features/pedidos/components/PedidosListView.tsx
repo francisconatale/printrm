@@ -3,11 +3,12 @@ import { useGetPedidos } from '../api/pedidos.api';
 import { EstadoBadge } from './EstadoBadge';
 import { CrearPedidoModal } from './CrearPedidoModal';
 import { PedidoDetalleView } from './PedidoDetalleView';
-import { Plus, Search, Loader2, ShoppingBag, Eye, DollarSign } from 'lucide-react';
+import { Plus, Search, Loader2, ShoppingBag, Eye } from 'lucide-react';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 export function PedidosListView() {
-  const { data: pedidos, isLoading, error } = useGetPedidos();
+  const { data: pedidos, isLoading, error, refetch } = useGetPedidos();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(null);
   const [isCrearModalOpen, setIsCrearModalOpen] = React.useState(false);
@@ -30,6 +31,8 @@ export function PedidosListView() {
     );
   }
 
+  const isSearching = searchTerm.trim().length > 0;
+
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
       <StudioSubNav />
@@ -40,14 +43,16 @@ export function PedidosListView() {
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h2 className="studio-display-md !text-4xl tracking-tight">Gestión de Pedidos</h2>
+              <h1 className="studio-display-md !text-4xl tracking-tight">Gestión de Pedidos</h1>
               <p className="studio-body text-muted-foreground">Monitoreá estados, registrá pagos parciales y controlá mermas.</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                <label htmlFor="search-pedidos" className="sr-only">Buscar pedido</label>
                 <input 
+                  id="search-pedidos"
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -57,35 +62,52 @@ export function PedidosListView() {
               </div>
               <button 
                 onClick={() => setIsCrearModalOpen(true)}
-                className="studio-button-primary"
+                className="studio-button-primary flex items-center gap-2"
               >
-                <Plus size={16} /> Nuevo Pedido
+                <Plus size={16} aria-hidden="true" />
+                <span>Nuevo Pedido</span>
               </button>
             </div>
           </div>
 
-          {/* Pedidos Table */}
-          {isLoading ? (
+          {/* Pedidos Content */}
+          {error ? (
+            <QueryErrorView error={error} refetch={refetch} />
+          ) : isLoading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4 text-muted-foreground">
-              <Loader2 className="animate-spin" size={32} />
+              <Loader2 className="animate-spin" size={32} aria-hidden="true" />
               <p className="studio-caption">Cargando pedidos...</p>
             </div>
-          ) : error ? (
-            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4">
-              <p className="text-red-500 font-semibold">Error al obtener el listado de pedidos del servidor.</p>
-            </div>
           ) : filteredPedidos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
-              <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
-                <ShoppingBag size={32} className="text-muted-foreground/40" />
+            isSearching ? (
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                  <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                </div>
+                <div className="space-y-1">
+                  <p className="studio-body-strong text-foreground">Búsqueda sin resultados</p>
+                  <p className="studio-caption text-muted-foreground">No encontramos pedidos que coincidan con "{searchTerm}". Intentá con otros términos.</p>
+                  <button 
+                    onClick={() => setSearchTerm('')}
+                    className="text-xs text-primary font-semibold hover:underline mt-2"
+                  >
+                    Limpiar filtros
+                  </button>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="studio-body-strong text-foreground">No se encontraron pedidos</p>
-                <p className="studio-caption text-muted-foreground">Creá tu primer pedido cotizado para realizar el seguimiento.</p>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                  <ShoppingBag size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                </div>
+                <div className="space-y-1">
+                  <p className="studio-body-strong text-foreground">No se encontraron pedidos</p>
+                  <p className="studio-caption text-muted-foreground">Creá tu primer pedido cotizado para realizar el seguimiento.</p>
+                </div>
               </div>
-            </div>
+            )
           ) : (
-            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden">
+            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-border/50">
                 <thead className="bg-muted/10">
                   <tr>
@@ -128,16 +150,19 @@ export function PedidosListView() {
                         {new Date(pedido.fechaCreacion).toLocaleDateString('es-ES', {
                           day: '2-digit',
                           month: '2-digit',
-                          year: 'numeric'
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
                         })}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
                         <button 
                           onClick={() => setSelectedPedidoId(pedido.id)}
-                          className="text-primary hover:opacity-80 transition-colors p-1"
+                          className="text-primary hover:opacity-80 transition-colors p-2 rounded-full hover:bg-primary/10"
                           title="Ver Detalle"
+                          aria-label={`Ver detalle del pedido ${pedido.id.substring(0, 8)}`}
                         >
-                          <Eye size={16} />
+                          <Eye size={16} aria-hidden="true" />
                         </button>
                       </td>
                     </tr>

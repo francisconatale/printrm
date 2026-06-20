@@ -7,9 +7,10 @@ import { es } from 'date-fns/locale/es';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { ClienteForm } from './ClienteForm';
 import { Cliente } from '../types/clientes.types';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 export function ClientesListView() {
-  const { data: clientes, isLoading } = useGetClientes();
+  const { data: clientes, isLoading, isError, error, refetch } = useGetClientes();
   const { mutate: createCliente, isPending: isCreating } = useCreateCliente();
   const { mutate: updateCliente, isPending: isUpdating } = useUpdateCliente();
   const { mutate: deleteCliente, isPending: isDeleting } = useDeleteCliente();
@@ -54,6 +55,7 @@ export function ClientesListView() {
   };
 
   const isMutationLoading = isCreating || isUpdating;
+  const isSearching = searchTerm.trim().length > 0;
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
@@ -65,14 +67,16 @@ export function ClientesListView() {
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h2 className="studio-display-md !text-4xl tracking-tight">Gestión de Clientes</h2>
+              <h1 className="studio-display-md !text-4xl tracking-tight">Gestión de Clientes</h1>
               <p className="studio-body text-muted-foreground">Administrá tu base de contactos comerciales.</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                <label htmlFor="search-clientes" className="sr-only">Buscar cliente</label>
                 <input 
+                  id="search-clientes"
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -85,29 +89,50 @@ export function ClientesListView() {
                   setEditingCliente(null);
                   setShowFormModal(true);
                 }}
-                className="studio-button-primary"
+                className="studio-button-primary flex items-center gap-2"
               >
-                <Plus size={16} /> Nuevo Cliente
+                <Plus size={16} aria-hidden="true" />
+                <span>Nuevo Cliente</span>
               </button>
             </div>
           </div>
 
-          {/* Clientes Table */}
-          {isLoading ? (
+          {/* Clientes Content */}
+          {isError ? (
+            <QueryErrorView error={error} refetch={refetch} />
+          ) : isLoading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4 text-muted-foreground">
-              <Loader2 className="animate-spin" size={32} />
+              <Loader2 className="animate-spin" size={32} aria-hidden="true" />
               <p className="studio-caption">Cargando clientes...</p>
             </div>
           ) : filteredClientes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
-              <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
-                <User size={32} className="text-muted-foreground/40" />
+            isSearching ? (
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                  <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                </div>
+                <div className="space-y-1">
+                  <p className="studio-body-strong text-foreground">Búsqueda sin resultados</p>
+                  <p className="studio-caption text-muted-foreground">No encontramos clientes que coincidan con "{searchTerm}". Intentá con otros términos.</p>
+                  <button 
+                    onClick={() => setSearchTerm('')}
+                    className="text-xs text-primary font-semibold hover:underline mt-2"
+                  >
+                    Limpiar filtros
+                  </button>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="studio-body-strong text-foreground">No se encontraron clientes</p>
-                <p className="studio-caption text-muted-foreground">Creá tu primer cliente para empezar a organizar tus pedidos.</p>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
+                  <User size={32} className="text-muted-foreground/40" aria-hidden="true" />
+                </div>
+                <div className="space-y-1">
+                  <p className="studio-body-strong text-foreground">No hay clientes registrados</p>
+                  <p className="studio-caption text-muted-foreground">Creá tu primer cliente para empezar a organizar tus pedidos.</p>
+                </div>
               </div>
-            </div>
+            )
           ) : (
             <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-border/50">
@@ -132,26 +157,28 @@ export function ClientesListView() {
                         {cliente.fechaCreacion ? format(new Date(cliente.fechaCreacion), 'dd/MM/yyyy', { locale: es }) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
                             onClick={() => {
                               setEditingCliente(cliente);
                               setShowFormModal(true);
                             }}
-                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted/30"
                             title="Editar Cliente"
+                            aria-label="Editar Cliente"
                           >
-                            <Edit size={16} />
+                            <Edit size={16} aria-hidden="true" />
                           </button>
                           <button 
                             onClick={() => {
                               setClienteToDelete(cliente);
                               setShowConfirmModal(true);
                             }}
-                            className="text-muted-foreground hover:text-red-500 transition-colors"
+                            className="p-2 text-muted-foreground hover:text-red-500 transition-colors rounded-full hover:bg-red-500/10"
                             title="Eliminar Cliente"
+                            aria-label="Eliminar Cliente"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={16} aria-hidden="true" />
                           </button>
                         </div>
                       </td>

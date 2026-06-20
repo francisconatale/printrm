@@ -1,13 +1,16 @@
-# Tarea Actual: Implementar remediación UX/A11y en CalculadoraView.tsx y PerfilesDashboardView.tsx (T023)
+# Tarea Actual: Implementar remediación UX/A11y en ClientesListView.tsx y PedidosListView.tsx (T024)
 
 ## Estado
-- [ ] Eliminar `alert()` y reemplazar con Toasts de `sonner` en `CalculadoraView.tsx` (T023).
-- [ ] Ajustar la jerarquía de títulos (`<h2>` -> `<h1>`) (T023).
-- [ ] Agregar `<label>` accesible a inputs de búsqueda (T023).
-- [ ] Configurar `aria-label` en botones interactivos de iconos y `aria-hidden` en iconos decorativos (T023).
-- [ ] Manejar estados de carga/error en queries de `PerfilesDashboardView.tsx` (T023).
+- [ ] Implementar `QueryErrorView` para las consultas principales de Clientes y Pedidos (T024).
+- [ ] Integrar `useMutationWithFeedback` para las mutaciones de Clientes y Pedidos en sus respectivas APIs (T024).
+- [ ] Aplicar accesibilidad (A11y): `<label>` en inputs de búsqueda, `aria-label` en botones y `aria-hidden` en iconos (T024).
+- [ ] Corregir jerarquía de encabezados (`<h2>` -> `<h1>`) (T024).
+- [ ] Ajustar placeholders de selects y validación interactiva / jerarquía de botones en modales (T024).
 
 ## Archivos involucrados
-- `frontend/src/features/calculo/components/CalculadoraView.tsx`
-- `frontend/src/features/perfiles/components/PerfilesDashboardView.tsx`
+- `frontend/src/features/clientes/api/clientes.api.ts`
+- `frontend/src/features/pedidos/api/pedidos.api.ts`
+- `frontend/src/features/clientes/components/ClientesListView.tsx`
+- `frontend/src/features/pedidos/components/PedidosListView.tsx`
+- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
 - `CHANGELOG.md`

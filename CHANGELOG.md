@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-20] - Remediación UX/A11y en Clientes y Pedidos (T024)
+### Descripción
+- **Frontend (APIs):** Se actualizaron `clientes.api.ts` y `pedidos.api.ts` integrando `useMutationWithFeedback` para asegurar confirmación visual en mutaciones.
+- **Frontend (Vistas Clientes y Pedidos):** Se implementaron vistas resilientes a errores mediante el uso del componente `QueryErrorView` al fallar el fetching de datos.
+- **Frontend (Formularios e Interacción):**
+  - Se añadieron placeholders descriptivos y activos en selectores (`Elegí un cliente *`, `Elegí un producto *`).
+  - Se agregaron encabezados de columna (`Cant. | Precio Unit. | Subtotal`) en el modal `CrearPedidoModal.tsx`.
+  - Se configuró el botón de basura para que se muestre en gris cuando la fila de ítems esté vacía y adquiera el color danger sólo al contener datos de productos.
+  - Se incorporaron tooltips de validación preventiva en el botón de confirmación de pedido.
+  - Se agregaron marcas de tiempo (hora exacta) en el formateador de fechas de la lista de pedidos.
+- **Frontend (A11y):** Etiquetas `<label>` añadidas con atributos `sr-only` en los inputs de búsqueda de Clientes y Pedidos. Headings principales elevados a jerarquía `<h1>`.
+
 ## [2026-06-20] - Remediación UX/A11y en Calculadora y Perfiles (T023)
 ### Descripción
 - **Frontend (Calculadora):** Se eliminó el uso de `alert()` nativo en `CalculadoraView.tsx`, reemplazándolo por toasts interactivos y accesibles de `sonner` para éxitos y errores de guardado de piezas y análisis de archivos.

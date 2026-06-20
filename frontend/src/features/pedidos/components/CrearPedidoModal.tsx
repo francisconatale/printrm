@@ -127,7 +127,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             onChange={(e) => setClienteId(e.target.value)}
             className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
           >
-            <option value="">-- Seleccionar Cliente --</option>
+            <option value="">Elegí un cliente *</option>
             {clientes?.map(cliente => (
               <option key={cliente.id} value={cliente.id}>
                 {cliente.nombre}
@@ -145,13 +145,24 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
               onClick={handleAddItem}
               className="flex items-center gap-1 text-sm text-primary hover:opacity-85 font-medium"
             >
-              <Plus size={14} /> Agregar Ítem
+              <Plus size={14} aria-hidden="true" />
+              <span>Agregar Ítem</span>
             </button>
+          </div>
+
+          {/* Grid Headers for Numeric Columns */}
+          <div className="flex gap-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-1.5 border-b border-border/40">
+            <div className="flex-1">Producto *</div>
+            <div className="w-20 text-center">Cant.</div>
+            <div className="w-28 text-right">Precio Unit. (Editar)</div>
+            <div className="w-24 text-right">Subtotal</div>
+            <div className="w-8"></div>
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {items.map((item, index) => {
               const selectedPrice = productos?.find(p => p.id === item.productoId)?.precioSugerido;
+              const isEmptyRow = !item.productoId;
 
               return (
                 <div key={index} className="flex flex-col gap-3 bg-muted/10 p-4 rounded-xl border border-border/50">
@@ -162,7 +173,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
                         className="flex-1 bg-white border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
                       >
-                        <option value="">-- Seleccionar Producto --</option>
+                        <option value="">Elegí un producto *</option>
                         {productos?.map(p => (
                           <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
                         ))}
@@ -191,11 +202,12 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                           handleItemChange(index, 'precioPersonalizado', val === '' ? undefined : parseFloat(val));
                         }}
                         placeholder="0.00"
-                        className="w-full bg-white border border-[#e0e0e0] rounded-lg pl-5 pr-2 py-1.5 text-sm font-mono text-right"
+                        className="w-full bg-blue-50/30 border border-primary/20 hover:border-primary focus:border-primary/80 focus:ring-1 focus:ring-primary/30 rounded-lg pl-5 pr-2 py-1.5 text-sm font-mono text-right transition-colors"
+                        title="Precio unitario (editable)"
                       />
                     </div>
 
-                    <div className="w-24 text-right font-mono font-bold text-sm">
+                    <div className="w-24 text-right font-mono font-bold text-sm text-foreground/80">
                       ${((item.precioPersonalizado !== undefined ? item.precioPersonalizado : (selectedPrice || 0)) * item.cantidad).toFixed(2)}
                     </div>
 
@@ -203,9 +215,15 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       type="button"
                       onClick={() => handleRemoveItem(index)}
                       disabled={items.length === 1}
-                      className="text-red-400 hover:text-red-600 p-1"
+                      className={`p-1.5 rounded-full transition-colors ${
+                        isEmptyRow 
+                          ? 'text-muted-foreground/30 hover:text-foreground hover:bg-muted/50' 
+                          : 'text-red-400 hover:text-red-600 hover:bg-red-500/10'
+                      }`}
+                      title={isEmptyRow ? "Quitar fila" : "Eliminar ítem (se perderán los datos)"}
+                      aria-label="Quitar fila"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -223,7 +241,20 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className="studio-button-secondary-pill">Cancelar</button>
-            <button type="submit" disabled={!isFormValid} className="studio-button-primary disabled:opacity-50">
+            <button 
+              type="submit" 
+              disabled={!isFormValid} 
+              title={
+                !clienteId 
+                  ? "Seleccioná un cliente antes de confirmar" 
+                  : !items.some(it => it.productoId) 
+                  ? "Elegí al menos un producto para confirmar"
+                  : items.some(it => it.cantidad <= 0)
+                  ? "La cantidad de todos los ítems debe ser mayor a 0"
+                  : undefined
+              }
+              className="studio-button-primary disabled:opacity-50"
+            >
               {isCreating ? 'Creando...' : 'Confirmar Pedido'}
             </button>
           </div>
