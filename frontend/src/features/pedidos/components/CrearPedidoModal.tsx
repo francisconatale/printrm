@@ -18,6 +18,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
   interface ItemFormState {
     productoId: string;
     cantidad: number;
+    precioPersonalizado?: number;
   }
 
   const [clienteId, setClienteId] = React.useState<string>('');
@@ -41,6 +42,10 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         ...copy[index],
         [field]: value
       };
+      if (field === 'productoId') {
+        const prodObj = productos?.find(p => p.id === value);
+        copy[index].precioPersonalizado = prodObj?.precioSugerido ?? undefined;
+      }
       return copy;
     });
   };
@@ -70,7 +75,8 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         clienteId,
         items: validItems.map(it => ({
           productoId: it.productoId,
-          cantidad: it.cantidad
+          cantidad: it.cantidad,
+          precioPersonalizado: it.precioPersonalizado
         }))
       },
       {
@@ -88,7 +94,8 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     return items.reduce((sum, item) => {
       if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
-        return sum + (prodObj?.precioSugerido ? prodObj.precioSugerido * item.cantidad : 0);
+        const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodObj?.precioSugerido || 0);
+        return sum + (price * item.cantidad);
       }
       return sum;
     }, 0);
@@ -172,8 +179,24 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       />
                     </div>
 
+                    <div className="w-28 relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-mono">$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={item.precioPersonalizado !== undefined ? item.precioPersonalizado : (selectedPrice || '')}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleItemChange(index, 'precioPersonalizado', val === '' ? undefined : parseFloat(val));
+                        }}
+                        placeholder="0.00"
+                        className="w-full bg-white border border-[#e0e0e0] rounded-lg pl-5 pr-2 py-1.5 text-sm font-mono text-right"
+                      />
+                    </div>
+
                     <div className="w-24 text-right font-mono font-bold text-sm">
-                      ${((selectedPrice || 0) * item.cantidad).toFixed(2)}
+                      ${((item.precioPersonalizado !== undefined ? item.precioPersonalizado : (selectedPrice || 0)) * item.cantidad).toFixed(2)}
                     </div>
 
                     <button

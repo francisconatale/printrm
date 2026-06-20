@@ -17,6 +17,7 @@ export interface ItemPedido {
   cantidad: number;
   cantidadMerma: number;
   subtotal: number;
+  precioPersonalizado?: number;
   stockDisponible?: number;
   cantidadFaltante?: number;
   ordenesProduccion?: OrdenProduccionResumen[];
@@ -36,6 +37,7 @@ export interface Pedido {
 export interface ItemPedidoRequest {
   productoId?: string;
   cantidad: number;
+  precioPersonalizado?: number;
 }
 
 export interface PedidoCreate {
