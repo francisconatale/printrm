@@ -4,10 +4,10 @@
 Hacer que el menú desplegable (SelectContent) tome el 100% del ancho del SelectTrigger usando variables de Radix, y encapsular la lógica del placeholder vacío (`""` a `"__empty__"`) directamente dentro de `select.tsx` para simplificar la API de los componentes del proyecto.
 
 ## Tareas
-- [ ] En `select.tsx`, agregar `w-[var(--radix-select-trigger-width)]` en la clase de popper de `<SelectContent>`.
-- [ ] En `select.tsx`, encapsular el mapeo del valor vacío en los componentes `<Select>` y `<SelectItem>`.
-- [ ] En `CrearPedidoModal.tsx`, simplificar los componentes para usar `value={clienteId}` y `SelectItem value=""` sin mapeo manual.
-- [ ] Validar compilación.
+- [x] En `select.tsx`, agregar `w-[var(--radix-select-trigger-width)]` en la clase de popper de `<SelectContent>`.
+- [x] En `select.tsx`, encapsular el mapeo del valor vacío en los componentes `<Select>` y `<SelectItem>`.
+- [x] En `CrearPedidoModal.tsx`, simplificar los componentes para usar `value={clienteId}` y `SelectItem value=""` sin mapeo manual.
+- [x] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/components/ui/select.tsx`
