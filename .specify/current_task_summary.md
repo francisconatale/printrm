@@ -1,12 +1,14 @@
-# Estado de Tarea: Corrección de Crash en Selects de Radix UI
+# Estado de Tarea: Ancho de Dropdown y Encapsulamiento de Lógica
 
 ## Objetivo
-Resolver el crash al abrir el modal reemplazando el valor de string vacío (`""`) en `<SelectItem>` por un valor especial placeholder `"__empty__"` compatible con Radix UI.
+Hacer que el menú desplegable (SelectContent) tome el 100% del ancho del SelectTrigger usando variables de Radix, y encapsular la lógica del placeholder vacío (`""` a `"__empty__"`) directamente dentro de `select.tsx` para simplificar la API de los componentes del proyecto.
 
 ## Tareas
-- [x] Cambiar el valor vacío `""` a `"__empty__"` en los `<SelectItem>` y en las propiedades `value` de los selectores.
-- [x] En los eventos `onValueChange`, interceptar el valor `"__empty__"` y setearlo en el estado como string vacío `""` para mantener la lógica de validación del formulario.
-- [x] Validar compilación.
+- [ ] En `select.tsx`, agregar `w-[var(--radix-select-trigger-width)]` en la clase de popper de `<SelectContent>`.
+- [ ] En `select.tsx`, encapsular el mapeo del valor vacío en los componentes `<Select>` y `<SelectItem>`.
+- [ ] En `CrearPedidoModal.tsx`, simplificar los componentes para usar `value={clienteId}` y `SelectItem value=""` sin mapeo manual.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
+- `frontend/src/components/ui/select.tsx`
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
