@@ -10,6 +10,4 @@ public class ClienteResponseDTO {
     private String nombre;
     private String email;
     private String telefono;
-    private String notas;
-    private LocalDateTime fechaCreacion;
 }

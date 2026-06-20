@@ -25,10 +25,7 @@ public class Cliente {
     private String email;
     
     private String telefono;
-
-    @Column(columnDefinition = "TEXT")
-    private String notas;
-
+    
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;

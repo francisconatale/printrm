@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [2026-06-19] - Eliminación del Historial de Cálculos (T015)
+### Descripción
+- **Frontend & Backend (Cálculos):** Se eliminó por completo el "Historial de Cálculos" de la aplicación.
+  - En el frontend, se removieron la pestaña "Historial" del sidebar, la vista de historial (`HistorialView.tsx`), la tabla (`HistorialTable.tsx`), y las consultas a la API de historial.
+  - En el backend, se eliminaron los endpoints de persistencia de cálculos (`GET /api/v1/calculos`, `POST /api/v1/calculos`, `DELETE /api/v1/calculos`), conservando únicamente el endpoint `/api/v1/calculos/calculate` utilizado bajo demanda por el Cotizador.
+  - Se eliminaron las clases `Calculo.java`, `CalculoRepository.java`, y `CalculoService.java`.
+  - Se actualizaron las pruebas de integración de Pedidos para interactuar directamente con Productos del catálogo en lugar de snapshots de cálculos.
+
+### Archivos Involucrados
+- `frontend/src/App.tsx` (modificado)
+- `frontend/src/components/layout/sidebar.tsx` (modificado)
+- `frontend/src/features/calculo/components/HistorialTable.tsx` (eliminado)
+- `frontend/src/features/calculo/components/HistorialView.tsx` (eliminado)
+- `frontend/src/features/calculo/api/historial.api.ts` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/calculo/Calculo.java` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/calculo/CalculoRepository.java` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/calculo/CalculoService.java` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/calculo/CalculoController.java` (modificado)
+- `backend/src/test/java/com/printrm/studio/domain/pedidos/DevolucionIntegrationTest.java` (modificado)
+- `backend/src/test/java/com/printrm/studio/domain/pedidos/IdempotenciaFinancieraTest.java` (modificado)
+- `backend/src/test/java/com/printrm/studio/domain/pedidos/PedidoIntegrationTest.java` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Unificación de Ítems de Pedidos a Productos del Catálogo (T014)
 ### Descripción
 - **Frontend (Pedidos):** Se simplificó la lógica del modal `CrearPedidoModal.tsx` y la vista `PedidoDetalleView.tsx` eliminando la opción y distinción de "Cotización" (Cálculo). Ahora todos los pedidos asocian sus ítems exclusivamente a productos del catálogo, reduciendo el ruido visual en la interfaz y alineándose con el flujo simplificado de intención de compra y facturación del backend.

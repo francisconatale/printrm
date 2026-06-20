@@ -17,11 +17,11 @@
 - [x] Crear el modal de creación de orden de producción independiente para reponer stock propio (T012).
 - [x] Agregar botones en la Agenda para avanzar el estado de las órdenes de producción (T013).
 - [x] Eliminar la relación de `Calculo` de `ItemPedido.java`, `PedidoService.java`, DTOs de backend y types de frontend (T014).
+- [x] Eliminar por completo el Historial de Cálculos del frontend y backend (T015).
 
 ## Archivos involucrados
-- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedido.java`
-- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoRequestDTO.java`
-- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java`
-- `backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java`
-- `frontend/src/features/pedidos/types/pedidos.types.ts`
+- `frontend/src/App.tsx`
+- `frontend/src/components/layout/sidebar.tsx`
+- `backend/src/main/java/com/printrm/studio/domain/calculo/CalculoController.java`
+- `backend/src/test/java/com/printrm/studio/domain/pedidos/`
 - `.specify/current_task_summary.md`
