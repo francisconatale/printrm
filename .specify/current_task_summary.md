@@ -1,13 +1,12 @@
-# Estado de Tarea: Opciones de Deselección en Selects
+# Estado de Tarea: Posicionamiento de Dropdowns hacia abajo
 
 ## Objetivo
-Agregar la opción de "Seleccionar" (opción vacía) como un elemento seleccionable dentro de los dropdowns personalizados (Radix UI) para permitir deseleccionar o iniciar el select con la opción por defecto visible en el listado.
+Configurar los componentes de SelectContent para posicionarse como un "popper" orientado hacia abajo, evitando la alineación de ítems por defecto de Radix que causa saltos visuales hacia arriba.
 
 ## Tareas
-- [x] Agregar `<SelectItem value="">Selecciona un cliente</SelectItem>` en el selector de clientes.
-- [x] Agregar `<SelectItem value="">Selecciona un producto</SelectItem>` en el selector de productos.
-- [x] Cambiar las propiedades `value` de los Select para recibir el valor nativo (`clienteId` y `item.productoId`).
-- [x] Validar compilación.
+- [ ] Configurar `position="popper"` y `side="bottom"` en el `<SelectContent>` del selector de cliente.
+- [ ] Configurar `position="popper"` y `side="bottom"` en el `<SelectContent>` del selector de productos.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
