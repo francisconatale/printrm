@@ -1,13 +1,14 @@
-# Tarea Actual: Captura de Miniatura STL en Posición Inicial Completada (T021)
+# Tarea Actual: Planificación de Auditoría UX/UI y Accesibilidad (T022-T026)
 
 ## Estado
-- [x] Implementar captura automática de la miniatura del modelo STL en su posición inicial (cámara ajustada al inicio) en `stl-model-viewer.tsx` (T021).
-- [x] Pasar el callback de captura desde `CalculadoraView.tsx` a través de `STLUpload.tsx` y `STLViewer.tsx` (T021).
-- [x] Guardar la miniatura pre-capturada en el backend al guardar la pieza en la biblioteca (T021).
+- [x] Crear especificaciones de diseño en `spec.md` (T022-T026).
+- [x] Crear plan de implementación en `plan.md` (T022-T026).
+- [x] Crear listado de tareas detalladas en `tasks.md` (T022-T026).
+- [ ] Implementar infraestructura global de feedback y visualización de errores (T022).
+- [ ] Aplicar correcciones por lotes de vistas (T023-T026).
 
 ## Archivos involucrados
-- `frontend/src/components/ui/stl-model-viewer.tsx`
-- `frontend/src/features/calculo/components/STLViewer.tsx`
-- `frontend/src/features/calculo/components/STLUpload.tsx`
-- `frontend/src/features/calculo/components/CalculadoraView.tsx`
-- `CHANGELOG.md`
+- `.specify/specs/008-auditoria-ux/spec.md`
+- `.specify/specs/008-auditoria-ux/plan.md`
+- `.specify/specs/008-auditoria-ux/tasks.md`
+- `.specify/current_task_summary.md`
