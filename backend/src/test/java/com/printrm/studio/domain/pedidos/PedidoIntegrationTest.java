@@ -14,6 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@org.springframework.test.context.ActiveProfiles("test")
 @Transactional
 public class PedidoIntegrationTest {
 
