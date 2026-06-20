@@ -11,4 +11,11 @@ import java.util.UUID;
 public class ItemPedidoRequestDTO {
     private UUID productoId;
     private Integer cantidad;
+    private Double precioPersonalizado;
+
+    public ItemPedidoRequestDTO(UUID productoId, Integer cantidad) {
+        this.productoId = productoId;
+        this.cantidad = cantidad;
+        this.precioPersonalizado = null;
+    }
 }

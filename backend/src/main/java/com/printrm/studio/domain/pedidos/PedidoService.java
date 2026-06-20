@@ -50,6 +50,7 @@ public class PedidoService {
                 ItemPedido item = ItemPedido.builder()
                         .pedido(savedPedido)
                         .cantidad(itemDto.getCantidad())
+                        .precioPersonalizado(itemDto.getPrecioPersonalizado())
                         .cantidadMerma(0)
                         .build();
 
@@ -265,6 +266,7 @@ public class PedidoService {
             itemDto.setCantidad(item.getCantidad());
             itemDto.setCantidadMerma(item.getCantidadMerma());
             itemDto.setSubtotal(item.getSubtotal());
+            itemDto.setPrecioPersonalizado(item.getPrecioPersonalizado());
             
             List<OrdenProduccion> ordenes = ordenProduccionRepository.findByItemPedidoId(item.getId());
             itemDto.setOrdenesProduccion(ordenes.stream().map(o -> ItemPedidoResponseDTO.OrdenProduccionResumenDTO.builder()
