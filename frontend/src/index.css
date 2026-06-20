@@ -9,92 +9,73 @@
    ============================================= */
 
 :root {
-  /* Fondos */
   --background:        #ffffff;
-  --foreground:        #1d1d1f;
+  --foreground:        #111827;
 
-  /* Cards y popovers */
-  --card:              #ffffff;
-  --card-foreground:   #1d1d1f;
-  --popover:           #ffffff;
-  --popover-foreground:#1d1d1f;
+  --muted:             #f5f5f7;
+  --muted-foreground:  #6b7280;
 
-  /* Color primario — Action Blue */
-  --primary:           #0066cc;
+  --border:            #e5e7eb;
+  --input:             #e5e7eb;
+  --ring:              #2563eb;
+
+  --primary:           #2563eb;
   --primary-foreground:#ffffff;
 
-  /* Secundario — parchment */
   --secondary:         #f5f5f7;
-  --secondary-foreground: #1d1d1f;
+  --secondary-foreground: #111827;
 
-  /* Muted */
-  --muted:             #f5f5f7;
-  --muted-foreground:  #7a7a7a;
-
-  /* Accent */
-  --accent:            #0066cc;
-  --accent-foreground: #ffffff;
-
-  /* Destructivo */
-  --destructive:       #ef4444;
+  --destructive:       #ff3b30;
   --destructive-foreground: #ffffff;
 
-  /* Borde principal — hairline */
-  --border:            #e0e0e0;
-  --input:             #e0e0e0;
-  --ring:              rgba(0, 102, 204, 0.25);
+  --success:           #34c759;
+  --success-foreground:#ffffff;
 
-  /* ── Bordes explícitos con intensidad variable ─────────────────
-     Usá estas variables en lugar de border-border/20 etc.
-     Los modificadores de opacidad (border-border/20) NO funcionan
-     con variables hex en Tailwind — generan CSS inválido.
-  ──────────────────────────────────────────────────────────────── */
-  --border-subtle:     #ebebeb;   /* Borde muy sutil — separadores internos */
-  --border-faint:      #f2f2f2;   /* Borde casi invisible — wrappers de zona */
+  --warning:           #ff9f0a;
+  --warning-foreground:#ffffff;
 
-  /* Radio base */
-  --radius: 1rem;
+  --card:              #ffffff;
+  --card-foreground:   #111827;
+
+  --popover:           #ffffff;
+  --popover-foreground:#111827;
+
+  --radius:            0.5rem;
+  --radius-lg:         1rem;
+  --radius-xl:         1.5rem;
+  --radius-pill:       9999px;
 }
 
 .dark {
-  /* Fondos */
   --background:        #1c1c1e;
   --foreground:        #f5f5f7;
 
-  /* Cards y popovers */
-  --card:              #2c2c2e;
-  --card-foreground:   #f5f5f7;
-  --popover:           #2c2c2e;
-  --popover-foreground:#f5f5f7;
+  --muted:             #2c2c2e;
+  --muted-foreground:  #9ca3af;
 
-  /* Color primario dark — Action Blue aclarado */
-  --primary:           #2997ff;
+  --border:            #3a3a3c;
+  --input:             #3a3a3c;
+
+  --primary:           #2997ff;        /* Apple blue para dark */
   --primary-foreground:#ffffff;
 
-  /* Secundario dark */
-  --secondary:         #3a3a3c;
+  --secondary:         #2c2c2e;
   --secondary-foreground: #f5f5f7;
 
-  /* Muted dark */
-  --muted:             #3a3a3c;
-  --muted-foreground:  #86868b;
-
-  /* Accent dark */
-  --accent:            #2997ff;
-  --accent-foreground: #ffffff;
-
-  /* Destructivo dark */
   --destructive:       #ff453a;
   --destructive-foreground: #ffffff;
 
-  /* Borde dark */
-  --border:            #3a3a3c;
-  --input:             #3a3a3c;
-  --ring:              rgba(41, 151, 255, 0.3);
+  --success:           #30d158;
+  --success-foreground:#ffffff;
 
-  /* Bordes explícitos dark — valores reales, sin opacity hack */
-  --border-subtle:     #2e2e30;   /* Sutil: ligeramente más claro que canvas #1c1c1e */
-  --border-faint:      #252527;   /* Casi invisible: apenas por encima del canvas */
+  --warning:           #ffd60a;
+  --warning-foreground:#111827;
+
+  --card:              #2c2c2e;
+  --card-foreground:   #f5f5f7;
+
+  --popover:           #2c2c2e;
+  --popover-foreground:#f5f5f7;
 }
 
 @tailwind base;
