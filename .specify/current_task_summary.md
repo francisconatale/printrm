@@ -1,14 +1,13 @@
-# Estado de Tarea: Rediseño del modal de Nuevo Pedido
+# Estado de Tarea: Simplificación Visual de CrearPedidoModal
 
 ## Objetivo
-Rediseñar el modal de nuevo pedido (`CrearPedidoModal.tsx`) para ofrecer una interfaz visualmente impresionante y fluida usando los principios de UI/UX Pro Max.
+Refactorizar el diseño del modal de nuevo pedido (`CrearPedidoModal.tsx`) para eliminar el anidamiento excesivo de tarjetas (cards dentro de cards), reduciendo el ruido visual y logrando una estética ultra limpia y fluida.
 
 ## Tareas
-- [x] Rediseñar la selección de clientes con mejor estilo.
-- [x] Rediseñar la sección de ítems en formato de grilla moderna, limpia y compacta.
-- [x] Mejorar los campos de entrada (cantidad, precio, margen) con estados de foco e indicadores claros.
-- [x] Mejorar el resumen del total con un desglose premium (cantidad de ítems, costo total y rentabilidad estimada).
-- [x] Validar que compile y funcione correctamente.
+- [ ] Eliminar contenedor de tarjeta en la selección de cliente, simplificándolo a un selector elegante y directo.
+- [ ] Cambiar el listado de ítems para que use filas limpias separadas por líneas sutiles en lugar de cards grises individuales.
+- [ ] Simplificar el resumen financiero integrado eliminando el borde y fondo pesado de tarjeta.
+- [ ] Validar compilación y funcionamiento.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
