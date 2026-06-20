@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PiezaSTLService — Integration Tests" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-06-20T06:20:08" hostname="DESKTOP-EJ6HF1N" time="0.38">
+  <properties/>
+  <testcase name="save() persiste y recupera imagenBase64 de gran tamaño íntegramente (campo TEXT)" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.061"/>
+  <testcase name="save() persiste pieza mínima, popula creadoEn y deja perfiles nulos" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.044"/>
+  <testcase name="save() con archivo existente en temp-uploads lo mueve a saved-uploads y resuelve colisiones si ya existe" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.036"/>
+  <testcase name="delete() elimina la pieza de la base de datos" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.031"/>
+  <testcase name="save() asocia los 3 perfiles reales via FK y resuelve sus nombres en el DTO" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.029"/>
+  <testcase name="getAll() devuelve las piezas en orden DESC por creadoEn" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.123"/>
+  <testcase name="save() con perfilImpresoraId de UUID inexistente guarda la pieza sin lanzar excepción (graceful null)" classname="com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest" time="0.038"/>
+  <system-out><![CDATA[14:20:08.798  INFO --- .AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest]: PiezaSTLServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:20:08.827  INFO --- c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.biblioteca.PiezaSTLServiceIntegrationTest
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

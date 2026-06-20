@@ -162,7 +162,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Neto</p>
-            <p className={`text-3xl font-mono font-bold tracking-tight mt-1 transition-all ${
+            <p className={`text-3xl font-bold tracking-tight mt-1 transition-all ${
               metrics.balance >= 0 ? 'text-zinc-950 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'
             }`}>
               {formatCurrency(metrics.balance)}
@@ -184,7 +184,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ingresos Netos</p>
-            <p className="text-3xl font-mono font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
+            <p className="text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
               {formatCurrency(metrics.totalIngresosNetos)}
             </p>
           </div>
@@ -199,7 +199,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Gastos Totales</p>
-            <p className="text-3xl font-mono font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
+            <p className="text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
               {formatCurrency(metrics.totalGastos)}
             </p>
           </div>
@@ -220,7 +220,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Retorno (ROI)</p>
-            <p className={`text-3xl font-mono font-bold tracking-tight mt-1 ${
+            <p className={`text-3xl font-bold tracking-tight mt-1 ${
               metrics.roi >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
             }`}>
               {metrics.roi >= 1000 ? '> 1000%' : `${metrics.roi.toFixed(1)}%`}
@@ -265,7 +265,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                     <div className="h-44 w-full flex justify-center items-end gap-1.5 relative">
                       
                       {/* Tooltip on Hover */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black text-white text-[10px] px-2.5 py-1.5 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 w-28 text-center font-mono space-y-1">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-black text-white text-[10px] px-2.5 py-1.5 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 w-28 text-center space-y-1">
                         <p className="font-bold text-zinc-300 uppercase font-sans text-[9px] mb-1">{month.label}</p>
                         <p className="text-emerald-400">+{new Intl.NumberFormat('es-AR', { notation: 'compact' }).format(month.ingresos)}</p>
                         <p className="text-zinc-400">-{new Intl.NumberFormat('es-AR', { notation: 'compact' }).format(month.gastos)}</p>
@@ -285,7 +285,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                     </div>
                     
                     {/* Month Label */}
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold font-mono select-none">
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold select-none">
                       {month.label}
                     </span>
                   </div>
@@ -317,7 +317,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
 
                 return (
                   <div key={item.category} className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-mono font-medium">
+                    <div className="flex justify-between text-xs font-medium">
                       <span className="text-foreground font-sans">{categoryLabels[item.category] || item.category}</span>
                       <div className="space-x-2 text-[#7a7a7a]">
                         <span>{formatCurrency(item.amount)}</span>

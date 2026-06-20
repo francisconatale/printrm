@@ -27,18 +27,18 @@ public class OrdenProduccionController {
     }
 
     @PostMapping("/vinculada")
-    public OrdenProduccionResponseDTO createVinculada(@RequestBody OrdenProduccionRequestDTO dto) {
+    public OrdenProduccionResponseDTO createVinculada(@jakarta.validation.Valid @RequestBody OrdenProduccionRequestDTO dto) {
         OrdenProduccion o = service.crearOrdenVinculada(
-                UUID.fromString(dto.getItemPedidoId()),
+                com.printrm.studio.utils.UUIDUtils.parseUUID(dto.getItemPedidoId()),
                 dto.getCantidad()
         );
         return mapToDTO(o);
     }
 
     @PostMapping("/independiente")
-    public OrdenProduccionResponseDTO createIndependiente(@RequestBody OrdenProduccionRequestDTO dto) {
+    public OrdenProduccionResponseDTO createIndependiente(@jakarta.validation.Valid @RequestBody OrdenProduccionRequestDTO dto) {
         OrdenProduccion o = service.crearOrdenIndependiente(
-                UUID.fromString(dto.getProductoId()),
+                com.printrm.studio.utils.UUIDUtils.parseUUID(dto.getProductoId()),
                 dto.getCantidad()
         );
         return mapToDTO(o);

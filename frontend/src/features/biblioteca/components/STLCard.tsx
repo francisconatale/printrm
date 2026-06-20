@@ -38,11 +38,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
     >
       {/* 3D Preview Area */}
       <div className="aspect-square w-full bg-[#f5f5f7] relative overflow-hidden flex items-center justify-center">
-        {hovered ? (
-          <div className="w-full h-full animate-in fade-in duration-300">
-            <STLPreview url={stlUrl} />
-          </div>
-        ) : pieza.imagenBase64 ? (
+        {pieza.imagenBase64 ? (
           <img 
             src={pieza.imagenBase64} 
             alt={pieza.nombre} 
@@ -59,17 +55,6 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
           <div className="absolute top-3 left-3 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
             <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
             <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>
-          </div>
-        )}
-
-        {/* 3D Interactive Badge */}
-        {!hovered && (
-          <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[9px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-500"></span>
-            </span>
-            VER 3D
           </div>
         )}
       </div>

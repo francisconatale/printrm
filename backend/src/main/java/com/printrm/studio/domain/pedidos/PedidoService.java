@@ -94,6 +94,19 @@ public class PedidoService {
 
     @Transactional
     public void cambiarEstado(String pedidoId, String nuevoEstado) {
+        boolean estadoValido = false;
+        if (nuevoEstado != null) {
+            for (Pedido.EstadoPedido ep : Pedido.EstadoPedido.values()) {
+                if (ep.name().equals(nuevoEstado)) {
+                    estadoValido = true;
+                    break;
+                }
+            }
+        }
+        if (!estadoValido) {
+            throw new IllegalArgumentException("Estado de pedido no válido: " + nuevoEstado);
+        }
+
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 

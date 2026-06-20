@@ -114,7 +114,7 @@ export function LibroDiarioView() {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Caja Chica</p>
-                      <p className={`text-3xl font-mono font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-zinc-900 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'}`}>
+                      <p className={`text-3xl font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-zinc-900 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'}`}>
                         {formatCurrency(balance || 0)}
                       </p>
                     </div>
@@ -159,7 +159,7 @@ export function LibroDiarioView() {
                       <tbody className="divide-y divide-border/50">
                         {filteredTransacciones.map((t, idx) => (
                           <tr key={t.id} className="hover:bg-muted/5 transition-colors">
-                            <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground font-mono">
+                            <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
                               <span className="block">{format(new Date(t.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
                               <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{t.id.slice(-6)}</span>
                             </td>
@@ -175,7 +175,7 @@ export function LibroDiarioView() {
                                 {t.categoria}
                               </span>
                             </td>
-                            <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-mono font-bold ${
+                            <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-bold ${
                               t.tipo === 'INGRESO' ? 'text-emerald-600 dark:text-emerald-400' :
                               t.tipo === 'REEMBOLSO' ? 'text-amber-600 dark:text-amber-400' :
                               'text-zinc-900 dark:text-zinc-300'

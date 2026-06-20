@@ -52,7 +52,10 @@ public class ProductoService {
 
         if (dto.getParteIds() != null) {
             List<PiezaSTL> partes = dto.getParteIds().stream()
-                .map(id -> piezaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pieza no encontrada: " + id)))
+                .map(id -> {
+                    com.printrm.studio.utils.UUIDUtils.parseUUID(id);
+                    return piezaRepository.findById(id).orElseThrow(() -> new com.printrm.studio.exception.ResourceNotFoundException("Pieza no encontrada: " + id));
+                })
                 .collect(Collectors.toList());
             producto.setPartes(partes);
         }
@@ -62,6 +65,8 @@ public class ProductoService {
         if (isNew && initialStock > 0) {
             updateStock(saved.getId().toString(), initialStock); 
         }
+
+        saved = repository.findById(saved.getId()).orElse(saved);
 
         return mapToResponseDTO(saved);
     }
@@ -122,7 +127,7 @@ public class ProductoService {
     @Transactional
     public void addStock(UUID productoId, Integer cantidad, Double costo) {
         Producto producto = repository.findById(productoId)
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            .orElseThrow(() -> new com.printrm.studio.exception.ResourceNotFoundException("Producto no encontrado"));
         
         // Cost-Tiered FIFO: Check if we can merge with the latest active lot
         Lote ultimoLote = loteRepository.findFirstByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionDesc(
@@ -189,7 +194,7 @@ public class ProductoService {
     @Transactional
     public void updateStock(String id, Integer delta) {
         Producto producto = repository.findById(UUID.fromString(id))
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            .orElseThrow(() -> new com.printrm.studio.exception.ResourceNotFoundException("Producto no encontrado"));
         
         if (delta > 0) {
             // DYNAMIC CALCULATION: Recalculate cost based on current settings for the new lot

@@ -44,7 +44,9 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       };
       if (field === 'productoId') {
         const prodObj = productos?.find(p => p.id === value);
-        copy[index].precioPersonalizado = prodObj?.precioSugerido ?? undefined;
+        const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
+        // Default 200% margin (3x cost)
+        copy[index].precioPersonalizado = prodCost * 3;
       }
       return copy;
     });
@@ -94,7 +96,8 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     return items.reduce((sum, item) => {
       if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
-        const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodObj?.precioSugerido || 0);
+        const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
+        const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
         return sum + (price * item.cantidad);
       }
       return sum;
@@ -153,16 +156,22 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           {/* Grid Headers for Numeric Columns */}
           <div className="flex gap-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-1.5 border-b border-border/40">
             <div className="flex-1">Producto *</div>
-            <div className="w-20 text-center">Cant.</div>
-            <div className="w-28 text-right">Precio Unit. (Editar)</div>
-            <div className="w-24 text-right">Subtotal</div>
+            <div className="w-16 text-center">Cant.</div>
+            <div className="w-20 text-right">Costo</div>
+            <div className="w-20 text-right">Margen %</div>
+            <div className="w-24 text-right">Precio Unit.</div>
+            <div className="w-20 text-right">Subtotal</div>
             <div className="w-8"></div>
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {items.map((item, index) => {
-              const selectedPrice = productos?.find(p => p.id === item.productoId)?.precioSugerido;
+              const prodObj = productos?.find(p => p.id === item.productoId);
+              const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
               const isEmptyRow = !item.productoId;
+
+              const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
+              const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
 
               return (
                 <div key={index} className="flex flex-col gap-3 bg-muted/10 p-4 rounded-xl border border-border/50">
@@ -180,7 +189,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       </select>
                     </div>
 
-                    <div className="w-20">
+                    <div className="w-16">
                       <input
                         type="number"
                         min="1"
@@ -190,25 +199,51 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       />
                     </div>
 
-                    <div className="w-28 relative">
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-mono">$</span>
+                    {/* Costo Base */}
+                    <div className="w-20 text-right text-xs font-semibold text-slate-500 py-1.5">
+                      ${prodCost.toFixed(0)}
+                    </div>
+
+                    {/* Margen % Input */}
+                    <div className="w-20 relative">
                       <input
                         type="number"
-                        step="0.01"
-                        min="0"
-                        value={item.precioPersonalizado !== undefined ? item.precioPersonalizado : (selectedPrice || '')}
+                        min="-100"
+                        value={isEmptyRow ? '' : marginPercent}
+                        disabled={isEmptyRow}
                         onChange={(e) => {
-                          const val = e.target.value;
-                          handleItemChange(index, 'precioPersonalizado', val === '' ? undefined : parseFloat(val));
+                          const marginVal = parseFloat(e.target.value) || 0;
+                          const calculatedPrice = prodCost * (1 + marginVal / 100);
+                          handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
                         }}
-                        placeholder="0.00"
-                        className="w-full bg-blue-50/30 border border-primary/20 hover:border-primary focus:border-primary/80 focus:ring-1 focus:ring-primary/30 rounded-lg pl-5 pr-2 py-1.5 text-sm font-mono text-right transition-colors"
-                        title="Precio unitario (editable)"
+                        placeholder="200"
+                        className="w-full bg-white border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-sm text-right font-semibold disabled:opacity-40"
+                        title="Margen de ganancia en porcentaje"
+                      />
+                      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground font-bold pointer-events-none">%</span>
+                    </div>
+
+                    {/* Precio Unitario */}
+                    <div className="w-24 relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        value={isEmptyRow ? '' : Math.round(currentPrice)}
+                        disabled={isEmptyRow}
+                        onChange={(e) => {
+                          const priceVal = parseFloat(e.target.value) || 0;
+                          handleItemChange(index, 'precioPersonalizado', priceVal);
+                        }}
+                        placeholder="0"
+                        className="w-full bg-blue-50/30 border border-primary/20 hover:border-primary focus:border-primary/80 focus:ring-1 focus:ring-primary/30 rounded-lg pl-4 pr-1 py-1.5 text-sm text-right font-semibold transition-colors disabled:opacity-40"
+                        title="Precio unitario final"
                       />
                     </div>
 
-                    <div className="w-24 text-right font-mono font-bold text-sm text-foreground/80">
-                      ${((item.precioPersonalizado !== undefined ? item.precioPersonalizado : (selectedPrice || 0)) * item.cantidad).toFixed(2)}
+                    <div className="w-20 text-right font-bold text-sm text-foreground/80 py-1.5">
+                      ${Math.round(currentPrice * item.cantidad)}
                     </div>
 
                     <button

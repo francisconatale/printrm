@@ -5,13 +5,13 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { Package, Tag, Layers, AlertCircle, Plus, Calculator, Percent } from 'lucide-react';
+import { Package, Layers, AlertCircle, Plus } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
   descripcion: z.string().optional(),
-  precioSugerido: z.number().min(0, "El precio no puede ser negativo"),
+  precioSugerido: z.number().min(0).optional().default(0),
   cantidadStock: z.number().min(0).default(0),
   parteIds: z.array(z.string()).min(1, "Debes seleccionar al menos una pieza STL"),
 });
@@ -25,7 +25,6 @@ interface ComposicionProductoModalProps {
 export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }: ComposicionProductoModalProps) {
   const { data: piezas } = useGetPiezas();
   const { mutate: saveProducto, isPending: isSaving } = useSaveProducto();
-  const [multiplicador, setMultiplicador] = React.useState(3);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProductoCreate>({
     resolver: zodResolver(productoSchema),
@@ -49,27 +48,6 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
       }
     }
   }, [preselectedParteId, piezas, setValue, isOpen]);
-
-  const calculateTotalSuggested = React.useCallback(() => {
-    if (!selectedPartes?.length || !piezas) return 0;
-    
-    let total = 0;
-    selectedPartes.forEach(id => {
-      const pieza = piezas.find(p => p.id === id);
-      if (!pieza) return;
-      
-      total += (pieza.costoBase || 0) * multiplicador;
-    });
-    return Math.round(total);
-  }, [selectedPartes, piezas, multiplicador]);
-
-  // Update price when selection or multiplier changes
-  React.useEffect(() => {
-    const suggested = calculateTotalSuggested();
-    if (suggested > 0) {
-      setValue('precioSugerido', suggested);
-    }
-  }, [selectedPartes, multiplicador, calculateTotalSuggested, setValue]);
 
   const toggleParte = (id: string) => {
     const current = [...selectedPartes];
@@ -112,72 +90,11 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="prod-precio" className="studio-caption font-semibold flex items-center gap-2">
-                  <Tag size={14} aria-hidden="true" /> Precio Sugerido ($) *
-                </label>
-                <button 
-                  type="button"
-                  className="text-[10px] text-blue-600 font-bold hover:underline flex items-center gap-1"
-                  onClick={() => {
-                    setValue('precioSugerido', calculateTotalSuggested());
-                  }}
-                  aria-label="Recalcular precio sugerido"
-                >
-                  <Calculator size={10} aria-hidden="true" /> Recalcular
-                </button>
-              </div>
-              <input 
-                id="prod-precio"
-                type="number"
-                {...register('precioSugerido', { valueAsNumber: true })}
-                className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
-                required
-              />
-              <p className="text-[10px] text-muted-foreground italic">
-                Costo de producción × multiplicador.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="prod-multiplicador" className="studio-caption font-semibold flex items-center gap-2">
-                <Percent size={14} aria-hidden="true" /> Multiplicador de Ganancia
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id="prod-multiplicador"
-                  type="number"
-                  min={1}
-                  step={0.5}
-                  value={multiplicador}
-                  onChange={(e) => setMultiplicador(parseFloat(e.target.value) || 1)}
-                  className="w-24 bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 font-mono focus:ring-2 focus:ring-black outline-none"
-                />
-                <div className="flex gap-1">
-                  {[2, 2.5, 3, 4].map(v => (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => setMultiplicador(v)}
-                      className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all ${
-                        multiplicador === v
-                          ? 'bg-black text-white border-black'
-                          : 'bg-white text-zinc-600 border-[#e0e0e0] hover:border-zinc-400'
-                      }`}
-                    >
-                      ×{v}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
               <label htmlFor="prod-descripcion" className="studio-caption font-semibold">Descripción (Opcional)</label>
               <textarea 
                 id="prod-descripcion"
                 {...register('descripcion')}
-                rows={3}
+                rows={4}
                 className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all resize-none"
                 placeholder="Detalles del acabado, ensamble..."
               />

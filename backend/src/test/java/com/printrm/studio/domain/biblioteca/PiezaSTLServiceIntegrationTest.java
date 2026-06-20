@@ -152,8 +152,11 @@ class PiezaSTLServiceIntegrationTest {
     @DisplayName("getAll() devuelve las piezas en orden DESC por creadoEn")
     void getAll_returnsItemsInDescendingOrder() throws InterruptedException {
         piezaSTLService.save(buildMinimalRequest("primera"));
+        entityManager.flush();
         Thread.sleep(50);
         piezaSTLService.save(buildMinimalRequest("segunda"));
+        entityManager.flush();
+        entityManager.clear();
 
         List<PiezaSTLResponseDTO> result = piezaSTLService.getAll();
 

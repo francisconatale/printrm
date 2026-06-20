@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="OrdenProduccionService — Integration Tests" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-20T06:20:10" hostname="DESKTOP-EJ6HF1N" time="0.089">
+  <properties/>
+  <testcase name="Debe registrar egresos de filamento y energía al completar una orden independiente" classname="com.printrm.studio.domain.produccion.OrdenProduccionServiceIntegrationTest" time="0.05"/>
+  <testcase name="Debe registrar egresos de filamento y energía al completar una orden vinculada" classname="com.printrm.studio.domain.produccion.OrdenProduccionServiceIntegrationTest" time="0.038"/>
+  <system-out><![CDATA[14:20:10.048  INFO --- .AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.produccion.OrdenProduccionServiceIntegrationTest]: OrdenProduccionServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:20:10.068  INFO --- c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.produccion.OrdenProduccionServiceIntegrationTest
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -114,17 +114,17 @@ public class PerfilService {
     }
 
     private void updateEntity(Perfil perfil, PerfilRequestDTO dto) {
-        perfil.setNombre(dto.getNombre());
-        perfil.setModeloImpresora(dto.getModeloImpresora());
-        perfil.setConsumoW(dto.getConsumoW());
-        perfil.setVidaUtilHoras(dto.getVidaUtilHoras());
-        perfil.setCostoRepuestos(dto.getCostoRepuestos());
-        perfil.setFilamentoPorKg(dto.getFilamentoPorKg());
-        perfil.setNozzleDiameter(dto.getNozzleDiameter());
-        perfil.setBedShape(dto.getBedShape());
-        perfil.setMaxPrintHeight(dto.getMaxPrintHeight());
-        perfil.setPrintConfig(dto.getPrintConfig());
-        perfil.setFilamentConfig(dto.getFilamentConfig());
-        perfil.setPrinterConfig(dto.getPrinterConfig());
+        if (dto.getNombre() != null) perfil.setNombre(dto.getNombre());
+        if (dto.getModeloImpresora() != null) perfil.setModeloImpresora(dto.getModeloImpresora());
+        if (dto.getConsumoW() != null) perfil.setConsumoW(dto.getConsumoW());
+        if (dto.getVidaUtilHoras() != null) perfil.setVidaUtilHoras(dto.getVidaUtilHoras());
+        if (dto.getCostoRepuestos() != null) perfil.setCostoRepuestos(dto.getCostoRepuestos());
+        if (dto.getFilamentoPorKg() != null) perfil.setFilamentoPorKg(dto.getFilamentoPorKg());
+        if (dto.getNozzleDiameter() != null) perfil.setNozzleDiameter(dto.getNozzleDiameter());
+        if (dto.getBedShape() != null) perfil.setBedShape(dto.getBedShape());
+        if (dto.getMaxPrintHeight() != null) perfil.setMaxPrintHeight(dto.getMaxPrintHeight());
+        if (dto.getPrintConfig() != null) perfil.setPrintConfig(dto.getPrintConfig());
+        if (dto.getFilamentConfig() != null) perfil.setFilamentConfig(dto.getFilamentConfig());
+        if (dto.getPrinterConfig() != null) perfil.setPrinterConfig(dto.getPrinterConfig());
     }
 }

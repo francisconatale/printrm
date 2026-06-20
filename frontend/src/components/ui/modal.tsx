@@ -9,7 +9,7 @@ interface ModalProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '90vw';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -31,6 +31,12 @@ export const Modal: React.FC<ModalProps> = ({
     lg: 'max-w-lg',
     xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
+    '6xl': 'max-w-6xl',
+    '7xl': 'max-w-7xl',
+    '90vw': 'max-w-[90vw]',
   };
 
   return createPortal(
@@ -38,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Click outside backdrop to close */}
       <div className="absolute inset-0" onClick={onClose} />
       
-      <div className={`bg-background rounded-[2rem] w-full ${sizeClasses[size]} max-h-[85vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 z-10`}>
+      <div className={`bg-background rounded-[2rem] w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 z-10`}>
         <button 
           onClick={onClose}
           className="absolute right-8 top-8 p-2 hover:bg-muted/30 rounded-full transition-colors z-10"

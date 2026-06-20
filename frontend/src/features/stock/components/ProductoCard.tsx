@@ -34,20 +34,30 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
 
   return (
     <>
-      <div className="group relative bg-white border border-[#e0e0e0] dark:border-zinc-800 rounded-[2rem] overflow-hidden transition-all duration-300 hover:border-zinc-950 dark:hover:border-zinc-50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
+      <div className="group relative bg-white dark:bg-zinc-950 border border-[#e0e0e0] dark:border-zinc-800 rounded-[2rem] overflow-hidden transition-all duration-300 hover:border-zinc-950 dark:hover:border-zinc-50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
         
-        {/* 3D Preview Area */}
-        <div className="aspect-[4/3] w-full bg-[#f5f5f7] dark:bg-zinc-900 relative">
-          <STLPreview url={firstPartUrl} />
+        {/* Preview Area */}
+        <div className="aspect-[4/3] w-full bg-[#f5f5f7] dark:bg-zinc-900/50 relative overflow-hidden flex items-center justify-center border-b border-border/30">
+          {producto.partes?.[0]?.imagenBase64 ? (
+            <img 
+              src={producto.partes[0].imagenBase64} 
+              alt={producto.nombre} 
+              className="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-102"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-muted-foreground/30">
+              <Box size={36} strokeWidth={1.5} />
+            </div>
+          )}
           
           {/* Stock Badge Overlay */}
           <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-white/30 dark:border-zinc-800/30 shadow-sm flex items-center gap-2">
             <Package size={12} className="text-zinc-500" aria-hidden="true" />
-            <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">{producto.cantidadStock} EN STOCK</span>
+            <span className="text-[10px] font-bold text-zinc-850 dark:text-zinc-200">{producto.cantidadStock} EN STOCK</span>
           </div>
 
           {/* Cost Info Overlay (Centralized Backend logic) */}
-          <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-zinc-900/60 dark:bg-black/60 backdrop-blur-md border border-white/10 dark:border-zinc-800/10 shadow-sm flex items-center gap-2 text-white">
+          <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-zinc-900/70 dark:bg-black/70 backdrop-blur-md border border-white/10 dark:border-zinc-800/10 shadow-sm flex items-center gap-2 text-white">
             <Coins size={10} className="text-zinc-300" aria-hidden="true" />
             <span className="text-[9px] font-bold tracking-tight uppercase" title="Costo calculado centralmente por la API">
               Costo Fab: {formatCurrency(currentProductionCost)}
@@ -61,7 +71,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
                 e.stopPropagation();
                 setIsLotesModalOpen(true);
               }}
-              className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-white/20 dark:bg-zinc-800/20 backdrop-blur-md border border-white/20 dark:border-zinc-700/20 text-white text-[10px] font-bold hover:bg-white hover:text-black dark:hover:bg-zinc-900 dark:hover:text-white transition-all group/btn shadow-lg"
+              className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-white/20 dark:bg-zinc-850/20 backdrop-blur-md border border-white/20 dark:border-zinc-700/20 text-white text-[10px] font-bold hover:bg-white hover:text-black dark:hover:bg-zinc-900 dark:hover:text-white transition-all group/btn shadow-lg"
               title="Ver desglose de inventario (FIFO)"
               aria-label={`Ver ${producto.lotes.length} lotes de ${producto.nombre}`}
             >
@@ -105,9 +115,9 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
 
           <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-850">
             <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">Precio Sugerido</span>
-              <span className="text-xl font-mono font-bold text-zinc-900 dark:text-zinc-50">
-                {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : 'N/A'}
+              <span className="text-[9px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">Costo Producción</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                {formatCurrency(currentProductionCost)}
               </span>
             </div>
 

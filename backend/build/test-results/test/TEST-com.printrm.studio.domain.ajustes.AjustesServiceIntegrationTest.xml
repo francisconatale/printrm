@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="AjustesService — Integration Tests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-06-20T06:20:07" hostname="DESKTOP-EJ6HF1N" time="1.015">
+  <properties/>
+  <testcase name="initDefaultAjustes() es idempotente: doble llamada no duplica el registro" classname="com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest" time="0.935"/>
+  <testcase name="updateAjustes() persiste nuevos valores y los devuelve en el siguiente get" classname="com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest" time="0.028"/>
+  <testcase name="updateAjustes() crea registro si no existe (upsert implícito en tabla vacía)" classname="com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest" time="0.025"/>
+  <testcase name="getAjustes() devuelve defaults hardcoded cuando la tabla está vacía (sin lanzar excepción)" classname="com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest" time="0.021"/>
+  <system-out><![CDATA[14:19:58.351 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest]: AjustesServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:19:58.561 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.ajustes.AjustesServiceIntegrationTest
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+14:19:59.196  INFO --- s.d.a.AjustesServiceIntegrationTest : Starting AjustesServiceIntegrationTest using Java 17.0.17 with PID 2456 (started by franc in C:\Users\franc\OneDrive\Desktop\printrm\backend)
+14:19:59.198  INFO --- s.d.a.AjustesServiceIntegrationTest : The following 1 profile is active: "test"
+14:20:00.257  INFO --- r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+14:20:00.400  INFO --- r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 130 ms. Found 12 JPA repository interfaces.
+14:20:02.960  INFO --- o.s.o.j.p.SpringPersistenceUnitInfo : No LoadTimeWeaver setup: ignoring JPA class transformer
+14:20:03.042  INFO --- com.zaxxer.hikari.HikariDataSource  : HikariPool-1 - Starting...
+14:20:03.296  INFO --- com.zaxxer.hikari.pool.HikariPool   : HikariPool-1 - Added connection org.sqlite.jdbc4.JDBC4Connection@6caeba36
+14:20:03.298  INFO --- com.zaxxer.hikari.HikariDataSource  : HikariPool-1 - Start completed.
+14:20:04.829  INFO --- alContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+14:20:06.890  WARN --- seConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+14:20:07.731  INFO --- s.d.a.AjustesServiceIntegrationTest : Started AjustesServiceIntegrationTest in 8.965 seconds (process running for 10.734)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
