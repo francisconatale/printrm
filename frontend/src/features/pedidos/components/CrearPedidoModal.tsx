@@ -147,12 +147,13 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
         )}
 
-        {/* Selector de Cliente Simple y Elegante */}
-        <div className="space-y-2">
-          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-            Cliente Asignado *
-          </label>
-          <Select value={clienteId} onValueChange={(val) => setClienteId(val)}>
+        {/* Selector de Cliente con Diseño Premium */}
+        <div className="bg-muted/20 border border-border/60 rounded-2xl p-4 space-y-2">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <User size={16} className="text-primary" />
+            <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
+          </div>
+          <Select value={clienteId || undefined} onValueChange={(val) => setClienteId(val)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona un cliente *" />
             </SelectTrigger>
@@ -213,7 +214,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                   <div className="flex-1 min-w-[200px]">
                     <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
                     <Select
-                      value={item.productoId}
+                      value={item.productoId || undefined}
                       onValueChange={(val) => handleItemChange(index, 'productoId', val)}
                     >
                       <SelectTrigger className="w-full">
