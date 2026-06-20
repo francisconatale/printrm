@@ -1,11 +1,12 @@
-# Estado de Tarea: Corrección de Spread Order en SelectItem
+# Estado de Tarea: Unificación de Productos Duplicados en Pedidos
 
 ## Objetivo
-Resolver el crash (pantalla en blanco) corrigiendo el orden del spread de props en `SelectItem` de `select.tsx`, ya que `{...props}` sobreescribía el valor `mappedValue` con el valor vacío original `""`.
+Evitar la creación de filas duplicadas en el modal de pedidos. Si un usuario selecciona un producto que ya existe en otra fila, la cantidad de la fila actual se sumará a la fila existente y se eliminará la fila actual redundante.
 
 ## Tareas
-- [x] Modificar la definición de `SelectItem` en `select.tsx` para desestructurar `value` de los argumentos, evitando que se propague en `props`.
-- [x] Validar compilación.
+- [ ] Modificar `handleItemChange` en `CrearPedidoModal.tsx` para detectar productos duplicados.
+- [ ] Implementar la suma de cantidades y eliminación de la fila duplicada actual.
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
-- `frontend/src/components/ui/select.tsx`
+- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
