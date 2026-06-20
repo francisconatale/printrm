@@ -3,6 +3,13 @@ import { useGetClientes } from '../../clientes/api/clientes.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { useCreatePedido } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../components/ui/select';
 import { Plus, Trash2, AlertCircle, User, ShoppingBag, DollarSign, Percent, TrendingUp } from 'lucide-react';
 
 interface CrearPedidoModalProps {
@@ -130,7 +137,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       description="Creá un nuevo pedido seleccionando productos de catálogo."
       isOpen={isOpen}
       onClose={onClose}
-      size="3xl"
+      size="5xl"
     >
       <form onSubmit={handleSubmit} className="space-y-6 pt-4">
         {error && (
@@ -140,50 +147,44 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
         )}
 
-        {/* Selector de Cliente con Diseño Premium */}
-        <div className="bg-muted/20 border border-border/60 rounded-2xl p-4 space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <User size={16} className="text-primary" />
-            <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
-          </div>
-          <div className="relative">
-            <select
-              value={clienteId}
-              onChange={(e) => setClienteId(e.target.value)}
-              className="w-full bg-background border border-border/80 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-medium cursor-pointer appearance-none"
-            >
-              <option value="">Selecciona un cliente *</option>
+        {/* Selector de Cliente Simple y Elegante */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
+            Cliente Asignado *
+          </label>
+          <Select value={clienteId} onValueChange={(val) => setClienteId(val)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecciona un cliente *" />
+            </SelectTrigger>
+            <SelectContent className="z-[300]">
               {clientes?.map(cliente => (
-                <option key={cliente.id} value={cliente.id}>
+                <SelectItem key={cliente.id} value={cliente.id}>
                   {cliente.nombre}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">
-              ▼
-            </div>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Sección de Ítems */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center px-1">
+        <div className="space-y-2">
+          <div className="flex justify-between items-center pb-2 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <ShoppingBag size={18} className="text-primary" />
-              <label className="text-sm font-bold text-foreground">Productos en este Pedido</label>
+              <ShoppingBag size={16} className="text-primary" />
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Productos en este Pedido</span>
             </div>
             <button
               type="button"
               onClick={handleAddItem}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-200"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-200"
             >
-              <Plus size={14} />
+              <Plus size={12} />
               <span>Agregar Producto</span>
             </button>
           </div>
 
           {/* Encabezados de Grilla */}
-          <div className="hidden md:flex gap-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-1.5 border-b border-border/40">
+          <div className="hidden md:flex gap-4 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider py-1.5">
             <div className="flex-1">Producto *</div>
             <div className="w-16 text-center">Cant.</div>
             <div className="w-20 text-right">Costo Base</div>
@@ -194,7 +195,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
 
           {/* Lista de Filas de Items */}
-          <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="space-y-1 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
             {items.map((item, index) => {
               const prodObj = productos?.find(p => p.id === item.productoId);
               const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
@@ -206,21 +207,26 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
               return (
                 <div 
                   key={index} 
-                  className="flex flex-col md:flex-row md:items-center gap-3 bg-muted/10 hover:bg-muted/20 p-4 rounded-xl border border-border/50 hover:border-primary/20 transition-all duration-250"
+                  className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-border/40 last:border-0"
                 >
                   {/* Selector de Producto */}
                   <div className="flex-1 min-w-[200px]">
                     <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
-                    <select
+                    <Select
                       value={item.productoId}
-                      onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
-                      className="w-full bg-background border border-border rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer"
+                      onValueChange={(val) => handleItemChange(index, 'productoId', val)}
                     >
-                      <option value="">Selecciona un producto *</option>
-                      {productos?.map(p => (
-                        <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecciona un producto *" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[300]">
+                        {productos?.map(p => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.nombre} (Stock: {p.cantidadStock})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="flex flex-wrap md:flex-nowrap items-end md:items-center gap-3 flex-1 justify-between md:justify-end">
@@ -232,14 +238,14 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         min="1"
                         value={item.cantidad}
                         onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 0)}
-                        className="w-full bg-background border border-border rounded-xl px-2 py-2 text-center text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                        className="w-full bg-background border border-border rounded-xl px-2 py-1.5 text-center text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                       />
                     </div>
 
                     {/* Costo Base */}
                     <div className="w-20 text-right">
                       <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Costo</label>
-                      <span className="text-xs font-semibold text-muted-foreground block py-2">
+                      <span className="text-xs font-semibold text-muted-foreground block py-1.5">
                         ${prodCost.toFixed(0)}
                       </span>
                     </div>
@@ -259,7 +265,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                             handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
                           }}
                           placeholder="200"
-                          className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-2 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
+                          className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-1.5 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />
                         <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold pointer-events-none">%</span>
                       </div>
@@ -281,7 +287,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                             handleItemChange(index, 'precioPersonalizado', priceVal);
                           }}
                           placeholder="0"
-                          className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-2 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
+                          className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-1.5 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
                         />
                       </div>
                     </div>
@@ -289,7 +295,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                     {/* Subtotal */}
                     <div className="w-24 text-right">
                       <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Subtotal</label>
-                      <span className="font-bold text-sm text-foreground block py-2">
+                      <span className="font-bold text-sm text-foreground block py-1.5">
                         ${Math.round(currentPrice * item.cantidad)}
                       </span>
                     </div>
@@ -313,24 +319,24 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
         </div>
 
-        {/* Panel de Resumen de Finanzas (Business Intelligence Widget) */}
+        {/* Panel de Resumen de Finanzas (Minimalista sin bordes) */}
         {totals.totalPrecio > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-muted/30 border border-border/80">
-            <div className="space-y-1">
+          <div className="flex flex-row flex-wrap justify-between gap-4 py-4 border-t border-b border-border/60">
+            <div className="flex-1 min-w-[100px]">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Productos</span>
               <span className="text-sm font-semibold text-foreground">{totals.totalCantidad} unidades</span>
             </div>
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Costo de Producción</span>
+            <div className="flex-1 min-w-[120px]">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Costo Estimado</span>
               <span className="text-sm font-semibold text-foreground/80">${totals.totalCosto.toFixed(0)}</span>
             </div>
-            <div className="space-y-1">
+            <div className="flex-1 min-w-[120px]">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                 Ganancia <TrendingUp size={10} className="text-green-500" />
               </span>
               <span className="text-sm font-bold text-green-500">${totals.gananciaEstimada.toFixed(0)}</span>
             </div>
-            <div className="space-y-1">
+            <div className="flex-1 min-w-[100px]">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Rentabilidad</span>
               <span className="text-sm font-bold text-primary">{Math.round(totals.margenPromedio)}%</span>
             </div>
@@ -338,7 +344,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         )}
 
         {/* Footer */}
-        <div className="flex justify-between items-center border-t border-border pt-5">
+        <div className="flex justify-between items-center pt-2">
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total del Pedido</p>
             <p className="text-3xl font-extrabold text-foreground font-mono leading-none mt-1">
