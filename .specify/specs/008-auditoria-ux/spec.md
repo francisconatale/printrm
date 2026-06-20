@@ -61,7 +61,25 @@ Como usuario que utiliza lectores de pantalla o navegación por teclado, quiero 
   - "No hay datos registrados aún" (botón para crear el primero).
   - "No se encontraron resultados para la búsqueda" (sugerencia de limpiar filtros).
 
+### Form Design & Interaction Guidelines
+- **FR-010 - Actionable Select Placeholders**: Nunca usar placeholders genéricos estilo `-- Seleccionar X --`. Emplear verbos activos orientados a la acción (ej. `"Elegí un cliente"`, `"Buscar producto..."`). Si el campo es obligatorio, marcarlo visualmente con un asterisco (`*`).
+- **FR-011 - Grid Headers for Numeric Rows**: En modales/tablas con filas de ítems con más de un valor numérico (ej. `CrearPedidoModal`), incluir encabezados encima de las columnas (`Cant. | Precio unit. | Subtotal`). El campo editable debe distinguirse visualmente de forma clara respecto a los campos calculados.
+- **FR-012 - Contextual Trash Icon styling**: En filas de tablas de edición dinámica que estén vacías u omitidas por el usuario, no mostrar el ícono de eliminar (trash) en color rojo/danger por defecto (mantenerlo gris neutro u ocultarlo). Aplicar color rojo/danger únicamente cuando contenga datos que vayan a perderse tras hacer click.
+- **FR-013 - Preventive Button Validation**: Los botones de acción principal (Crear/Confirmar/Guardar) deben estar deshabilitados si no se han completado los campos requeridos mínimos. Mostrar un tooltip en estado hover (ej. `"Seleccioná un cliente antes de confirmar"`) en lugar de esperar a que ocurra el evento submit para reportar los campos vacíos.
+- **FR-014 - Identical Date Records Differentiator**: Cuando existan múltiples registros/transacciones cargados con la misma fecha en una vista, añadir un diferenciador secundario visual (ej. hora exacta, número de lote `#001` / `#002`, o un badge de orden como `"Próximo en salir"`) para evitar filas indistinguibles.
+- **FR-015 - Consistent Badges Justification**: Si un badge de estado o prioridad se utiliza en algunos registros y no en otros dentro del mismo contexto visual, dicha ausencia debe estar plenamente justificada o documentarse su lógica (ej. si uno tiene badge FIFO, otros necesitan su badge correspondiente o indicar la razón de no poseerlo).
+- **FR-016 - Semantic Icons Consistency**: Los íconos usados para la misma entidad en un contexto deben ser idénticos. Si se utilizan íconos distintos, la diferencia semántica debe ser real y explicarse explícitamente mediante tooltips descriptivos.
+- **FR-017 - Explicit Mathematical Operators**: Eliminar el uso de flechas `→` redundantes para relacionar valores numéricos si la operación aritmética es obvia (ej. si `precio × cantidad = subtotal`). Si se desea ilustrar la relación, usar operadores matemáticos explícitos (`×` e `=`).
+- **FR-018 - Modal Button Hierarchy**: Asegurar la jerarquía visual de los botones de los modales en todas las vistas:
+  | Acción | Estilo |
+  |--------|--------|
+  | Crear / Confirmar / Guardar | Primario (sólido, color principal) |
+  | Cancelar / Volver | Secundario (outline) |
+  | Cerrar sin guardar | Ghost o Link simple |
+  | Eliminar | Danger (rojo) + diálogo/confirmación preventiva |
+
 ---
+
 
 ## Success Criteria
 - **SC-001**: Cero alertas críticas de accesibilidad en los elementos modificados según la auditoría.

@@ -56,3 +56,15 @@ Implementar mejoras transversales de accesibilidad (A11y), manejo de errores y c
 *   [`AgendaProduccionView.tsx`](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/produccion/components/AgendaProduccionView.tsx) y [`LibroDiarioView.tsx`](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/finanzas/components/LibroDiarioView.tsx):
     - Asegurar semántica HTML, headings `<h1>`.
     - Corrección de alertas en inputs de filtrado y búsqueda.
+
+### Directrices de Diseño de Formularios e Interacción (Transversal)
+Para asegurar consistencia en todas las vistas y componentes:
+- **Placeholders de Selects**: Utilizar verbos de acción en lugar de "-- Seleccionar --" y marcar obligatorios con `*`.
+- **Modales de Creación de Pedido/Composición**: Implementar headers explícitos (`Cant. | Precio unit. | Subtotal`) en filas de items con múltiples valores numéricos.
+- **Trash Icons contextuales**: Ocultar o mantener en gris neutro los íconos de eliminar en filas nuevas/vacías; usar color danger sólo cuando se vayan a perder datos ingresados.
+- **Validación Preventiva y Tooltips**: Deshabilitar botones de confirmación si no se cumplen campos mínimos y agregar tooltips explicativos en hover.
+- **Diferenciación de Registros por Fecha**: En listados/tablas de transacciones o producción con la misma fecha, agregar un diferenciador secundario (hora exacta, ID de lote, o badge de orden).
+- **Consistencia en Badges e Iconos**: Justificar la ausencia de badges en el mismo contexto y unificar íconos redundantes (o diferenciarlos vía tooltips).
+- **Jerarquía en Botones de Modales**: Aplicar estilos Primario (sólido), Secundario (outline), Ghost/Link (Cerrar) y Danger (Rojo) con confirmación para eliminación.
+- **Eliminación de Flechas `→`**: Reemplazar por operadores aritméticos explícitos o remover redundancias de flujo de datos numéricos.
+
