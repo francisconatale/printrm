@@ -57,7 +57,7 @@ export function PedidosListView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar por cliente o ID de pedido..."
-                  className="w-full bg-white border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
               <button 
@@ -107,10 +107,10 @@ export function PedidosListView() {
               </div>
             )
           ) : (
-            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
-              <table className="min-w-full divide-y divide-border/50">
-                <thead className="bg-muted/10">
-                  <tr>
+          <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-border">
                     <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider">ID</th>
                     <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Cliente</th>
                     <th className="px-6 py-3 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Estado</th>
@@ -121,7 +121,7 @@ export function PedidosListView() {
                     <th className="px-6 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/50">
+                <tbody className="divide-y divide-border">
                   {filteredPedidos.map((pedido) => (
                     <tr 
                       key={pedido.id} 

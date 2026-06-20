@@ -80,7 +80,7 @@ export function RegistrarMermaModal({ pedidoId, itemId, isOpen, onClose }: Regis
             step="1"
             value={unidades}
             onChange={(e) => setUnidades(e.target.value)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             required
           />
         </div>

@@ -51,7 +51,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
           </label>
           <input 
             {...register('nombre')}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             placeholder="Ej: Juan Pérez"
           />
           {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
@@ -65,7 +65,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
             <input 
               {...register('email')}
               type="email"
-              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+              className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
               placeholder="ejemplo@email.com"
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
@@ -78,7 +78,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
             <input 
               {...register('telefono')}
               type="tel"
-              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+              className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
               placeholder="+54 9 11 1234-5678"
             />
             {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono.message}</p>}
@@ -92,7 +92,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit,
           <textarea 
             {...register('notas')}
             rows={4}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all resize-y"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all resize-y"
             placeholder="Información adicional sobre el cliente..."
           />
           {errors.notas && <p className="text-red-500 text-xs mt-1">{errors.notas.message}</p>}

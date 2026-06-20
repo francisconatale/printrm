@@ -4,39 +4,32 @@
      Fuente de verdad: design-system.md
      ============================================= */
 
-  /* Brand & Accent */
-  --studio-primary-action: #0066cc;   /* Action Blue — links, botones pill, focus rings */
-  --studio-primary-focus:  #0071e3;   /* Focus ring de accesibilidad */
-  --studio-primary-dark:   #2997ff;   /* Variante brillante para fondos oscuros */
+  --studio-canvas:          var(--background);
+  --studio-ink:             var(--foreground);
+  --studio-ink-secondary:   var(--muted-foreground);
+  --studio-hairline:        var(--border);
+  --studio-surface:         var(--muted);
+  --studio-primary-action:  var(--primary);
 
-  /* Surface & Tiles */
-  --studio-canvas:          #ffffff;   /* Lienzo blanco — tiles de producto y cards */
-  --studio-parchment:       #f5f5f7;   /* Off-white — tiles alternos, footer, sidebar */
-  --studio-tile-dark-1:     #272729;   /* Tile oscuro principal */
-  --studio-tile-dark-2:     #2a2a2c;   /* Variante micro-aclarada */
-  --studio-surface-black:   #000000;   /* Negro puro — header y vacío fotográfico */
-  --studio-hairline:        #e0e0e0;   /* Borde 1px para cards y divisores */
-
-  /* Texto — superficies claras */
-  --studio-ink:             #1d1d1f;   /* Titulares y cuerpo en superficies claras */
-  --studio-body-on-dark:    #ffffff;   /* Todo el texto sobre tiles oscuros */
-  --studio-ink-muted-80:    #333333;   /* Texto secundario — botones pearl, footer */
-  --studio-ink-muted-48:    #7a7a7a;   /* Texto desactivado y letra pequeña */
+  /* Tile dark — agregar override faltante */
+  --studio-tile-dark-1:     #272729;
+  --studio-tile-dark-2:     #2a2a2c;
 
   /* Aliases internos (para compatibilidad con código existente) */
   --studio-primary:                 var(--studio-ink);
-  --studio-primary-on-dark:         var(--studio-body-on-dark);
+  --studio-primary-on-dark:         #ffffff;
   --studio-body:                    var(--studio-ink);
-  --studio-body-muted:              var(--studio-ink-muted-48);
+  --studio-body-muted:              var(--studio-ink-secondary);
   --studio-divider-soft:            var(--studio-hairline);
-  --studio-canvas-parchment:        var(--studio-parchment);
-  --studio-surface-pearl:           var(--studio-parchment);
+  --studio-canvas-parchment:        var(--studio-surface);
+  --studio-surface-pearl:           var(--studio-surface);
   --studio-surface-tile-1:          var(--studio-tile-dark-1);
   --studio-surface-tile-2:          var(--studio-tile-dark-2);
   --studio-surface-tile-3:          #252527;
   --studio-surface-chip-translucent: rgba(210, 210, 215, 0.64);
   --studio-on-primary:              #ffffff;
-  --studio-on-dark:                 var(--studio-body-on-dark);
+  --studio-on-dark:                 #ffffff;
+  --studio-parchment:               var(--studio-surface);
 
   /* Sub-nav frosted — adaptable por modo */
   --studio-subnav-bg:    rgba(245, 245, 247, 0.82);
@@ -68,31 +61,11 @@
    DARK MODE — Variantes de tokens
    ============================================= */
 .dark {
-  /* Texto en dark */
-  --studio-ink:          #f5f5f7;    /* Claro, sin ser blanco puro */
-  --studio-ink-muted-80: #b0b0b5;
-  --studio-ink-muted-48: #86868b;
-  --studio-body-on-dark: #f5f5f7;
+  /* Override faltante que causaba jerarquía invertida */
+  --studio-tile-dark-1:     #1a1a1c;
+  --studio-tile-dark-2:     #1e1e20;
 
-  /* Surface en dark */
-  --studio-canvas:         #1c1c1e;   /* Fondo principal dark — gris muy oscuro, no negro puro */
-  --studio-parchment:      #2c2c2e;   /* Off-dark — tiles alternos, sidebar, footer */
-  --studio-hairline:       #3a3a3c;   /* Borde sutil en dark */
-
-  /* Action Blue — se aclara para mayor contraste sobre dark */
-  --studio-primary-action: #2997ff;   /* Mismo que primary-dark en light */
-  --studio-primary-focus:  #409cff;
-
-  /* Aliases */
-  --studio-primary:                 var(--studio-ink);
   --studio-primary-on-dark:         var(--studio-ink);
-  --studio-body:                    var(--studio-ink);
-  --studio-body-muted:              var(--studio-ink-muted-48);
-  --studio-divider-soft:            var(--studio-hairline);
-  --studio-canvas-parchment:        var(--studio-parchment);
-  --studio-surface-pearl:           var(--studio-parchment);
-  --studio-surface-chip-translucent: rgba(44, 44, 46, 0.82);
-  --studio-on-primary:              #ffffff;
   --studio-on-dark:                 var(--studio-ink);
 
   /* Sub-nav frosted oscuro */
@@ -196,34 +169,7 @@
    COMPONENTES BASE
    ============================================= */
 
-/* Botón Primario — Action Blue, pill shape */
-.studio-button-primary {
-  background-color: var(--studio-primary-action);
-  color: #ffffff;
-  padding: 11px 22px;
-  border-radius: var(--studio-rounded-pill);
-  font-size: 17px;
-  font-weight: 400;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.studio-button-primary:hover {
-  opacity: 0.85;
-}
-
-.studio-button-primary:active {
-  transform: scale(0.95);
-}
-
-.studio-button-primary:focus-visible {
-  outline: 2px solid var(--studio-primary-focus);
-  outline-offset: 2px;
-}
 
 /* Botón Secundario — borde Action Blue, pill shape */
 .studio-button-secondary-pill {

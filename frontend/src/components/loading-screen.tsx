@@ -11,7 +11,7 @@ export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
       <div className="text-center space-y-6 max-w-sm px-6">
         <div className="relative flex items-center justify-center">
           {/* iOS-style animated spinner */}
-          <Loader2 className="h-12 w-12 text-indigo-500 animate-spin transition-all duration-300 ease-in-out" />
+          <Loader2 className="h-12 w-12 text-primary animate-spin transition-all duration-300 ease-in-out" />
         </div>
         
         <div className="space-y-2">

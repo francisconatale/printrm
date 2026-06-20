@@ -51,12 +51,7 @@ function App() {
         return <PerfilesDashboardView />
       case 'inventory':
         return (
-          <PiezasGalleryView 
-            onCalculatePiece={(pieza) => {
-              setSelectedPieza(pieza);
-              setCurrentView('calculator');
-            }}
-          />
+          <PiezasGalleryView />
         )
       case 'stock':
         return <ProductosGalleryView />

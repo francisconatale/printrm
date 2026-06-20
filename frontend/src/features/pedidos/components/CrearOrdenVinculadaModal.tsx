@@ -74,7 +74,7 @@ export function CrearOrdenVinculadaModal({
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(parseInt(e.target.value) || 0)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             required
           />
           <p className="text-xs text-muted-foreground">Faltante neto sugerido: {cantidadRecomendada} unidades</p>

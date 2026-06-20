@@ -150,7 +150,7 @@ export function AgendaProduccionView() {
             <button
               onClick={() => handleStatusChange(o.id, 'IMPRIMIENDO')}
               disabled={updating}
-              className="flex items-center gap-1 px-3 py-1 bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold rounded-lg transition-all"
+              className="flex items-center gap-1 px-3 py-1 bg-black text-white hover:bg-zinc-800 dark:bg-background dark:text-black dark:hover:bg-zinc-200 text-xs font-bold rounded-lg transition-all"
               aria-label="Iniciar orden de producción"
             >
               <Play size={10} aria-hidden="true" /> Iniciar
@@ -265,7 +265,7 @@ export function AgendaProduccionView() {
                   placeholder="Buscar producto, cliente..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white border border-[#e0e0e0] rounded-full pl-9 pr-4 py-2 text-xs focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-[#e0e0e0] rounded-full pl-9 pr-4 py-2 text-xs focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
 

@@ -30,7 +30,7 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
 
   return (
     <>
-      <tr className="hover:bg-muted/15 transition-colors group border-b border-border/30">
+      <tr className="hover:bg-muted/15 transition-colors group border-b border-border">
         <td className="px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="size-16 rounded-2xl bg-muted/50 border border-border/40 flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden">
@@ -203,10 +203,10 @@ export function ProductosGalleryView() {
               <p className="studio-caption">Cargando catálogo...</p>
             </div>
           ) : filteredProductos.length > 0 ? (
-            <div className="border border-border/40 rounded-2xl bg-card animate-in fade-in duration-500 shadow-sm">
+            <div className="border border-border rounded-2xl bg-card animate-in fade-in duration-500 shadow-sm">
               <table className="w-full text-left text-sm border-collapse">
-                <thead className="bg-muted/20">
-                  <tr className="border-b border-border/40">
+                <thead>
+                  <tr className="border-b border-border">
                     <th className="px-6 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider rounded-tl-2xl">Producto</th>
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-center">Stock</th>
                     <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Partes</th>
@@ -215,7 +215,7 @@ export function ProductosGalleryView() {
                     <th className="px-6 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-right rounded-tr-2xl">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/20">
+                <tbody className="divide-y divide-border">
                   {filteredProductos.map((prod) => (
                     <ProductoRow
                       key={prod.id}

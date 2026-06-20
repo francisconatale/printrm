@@ -106,7 +106,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
             id="tx-tipo"
             value={tipo}
             onChange={handleTipoChange}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
             required
           >
             <option value="EGRESO">Egreso (Gasto / Salida)</option>
@@ -122,7 +122,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
               id="tx-categoria"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value as CategoriaTransaccion)}
-              className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
+              className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
               required
             >
               {CATEGORIES.map(cat => (
@@ -144,7 +144,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
                 placeholder="0.00"
                 value={montoStr}
                 onChange={(e) => setMontoStr(e.target.value)}
-                className="w-full bg-white border border-[#e0e0e0] rounded-lg pl-7 pr-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm font-mono"
+                className="w-full bg-background border border-[#e0e0e0] rounded-lg pl-7 pr-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm font-mono"
                 required
               />
             </div>
@@ -160,7 +160,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
             placeholder="Ej: Compra de 2kg filamento PLA PLA"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
             required
           />
         </div>

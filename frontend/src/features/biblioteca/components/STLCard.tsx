@@ -8,14 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAjustes } from '../../ajustes/hooks/useAjustes';
-import { useGetPerfiles, useGetFilamentProfiles } from '../../perfiles/api/perfiles.api';
-import { parseEstimatedTime } from '../../calculo/utils/calculos.utils';
 
 interface STLCardProps {
   pieza: PiezaSTL;
   onDelete: (id: string) => void;
-  onCalculate: (pieza: PiezaSTL) => void;
   onPublish?: (pieza: PiezaSTL) => void;
   onViewDetail?: (pieza: PiezaSTL) => void;
 }
@@ -24,7 +20,7 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, onPublish, onViewDetail }) => {
+export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, onViewDetail }) => {
   const [hovered, setHovered] = useState(false);
   
   const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`; 
@@ -34,7 +30,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => onViewDetail?.(pieza)}
-      className="group relative bg-white border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)] cursor-pointer"
+      className="group relative bg-background border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)] cursor-pointer"
     >
       {/* 3D Preview Area */}
       <div className="aspect-square w-full bg-[#f5f5f7] relative overflow-hidden flex items-center justify-center">
@@ -56,7 +52,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
 
         {/* Dynamic Cost Badge (Calculated by Backend) */}
         {pieza.costoBase && pieza.costoBase > 0 && (
-          <div className="absolute top-3 left-3 z-10 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
+          <div className="absolute top-3 left-3 z-10 bg-background/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
             <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
             <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>
           </div>
@@ -118,15 +114,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
             )}
           </div>
 
-          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={() => onCalculate(pieza)}
-              className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
-              title={`Recalcular costo para ${pieza.nombre}`}
-              aria-label={`Recalcular costo para pieza ${pieza.nombre}`}
-            >
-              Recalcular
-            </button>
+          <div onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => onPublish?.(pieza)}
               className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"

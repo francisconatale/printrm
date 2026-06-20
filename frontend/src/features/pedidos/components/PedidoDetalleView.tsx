@@ -173,7 +173,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                                 setSelectedItemFaltante(item.cantidadFaltante ?? 0);
                                 setShowFabricarModal(true);
                               }}
-                              className="mt-2 text-[10px] font-bold uppercase tracking-wider bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-3 py-1 rounded-full transition-all"
+                              className="mt-2 text-[10px] font-bold uppercase tracking-wider bg-black text-white hover:bg-zinc-800 dark:bg-background dark:text-black dark:hover:bg-zinc-200 px-3 py-1 rounded-full transition-all"
                             >
                               Mandar a Fabricar
                             </button>

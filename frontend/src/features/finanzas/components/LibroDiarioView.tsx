@@ -134,7 +134,7 @@ export function LibroDiarioView() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Buscar por descripción..."
-                      className="w-full bg-white border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                      className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -146,17 +146,17 @@ export function LibroDiarioView() {
                     <p className="studio-caption">Cargando movimientos...</p>
                   </div>
                 ) : filteredTransacciones.length > 0 ? (
-                  <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
-                    <table className="min-w-full divide-y divide-border/50">
-                      <thead className="bg-muted/10">
-                        <tr>
+                  <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="border-b border-border">
                           <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Fecha</th>
                           <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Descripción</th>
                           <th className="px-6 py-3 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Categoría</th>
                           <th className="px-6 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Monto</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border/50">
+                      <tbody className="divide-y divide-border">
                         {filteredTransacciones.map((t, idx) => (
                           <tr key={t.id} className="hover:bg-muted/5 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">

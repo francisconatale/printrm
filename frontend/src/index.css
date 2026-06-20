@@ -154,7 +154,7 @@
   --normal-border: var(--border);
   --normal-text: var(--foreground);
   --success-bg: var(--background);
-  --success-border: var(--primary);
+  --success-border: var(--success);
   --success-text: var(--foreground);
   --error-bg: var(--background);
   --error-border: var(--destructive);

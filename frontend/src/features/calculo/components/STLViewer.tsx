@@ -36,7 +36,7 @@ const ViewerControls = ({
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
       {/* Color Selector */}
-      <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+      <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-background/40 backdrop-blur-lg border border-white/20 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
         {COLORS.map((c) => (
           <button
             key={c.value}
@@ -74,14 +74,14 @@ const ViewerControls = ({
       <div className="flex items-center gap-1.5">
         <button 
           onClick={onToggleRotate}
-          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+          className="size-10 rounded-full bg-background/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-background/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
           title={isAutoRotate ? "Pausar Rotación" : "Activar Rotación"}
         >
           {isAutoRotate ? <Pause size={16} /> : <Play size={16} />}
         </button>
         <button 
           onClick={onScreenshot}
-          className="size-10 rounded-full bg-white/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-white/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+          className="size-10 rounded-full bg-background/40 backdrop-blur-lg border border-white/20 flex items-center justify-center text-foreground hover:bg-background/90 transition-all active:scale-90 shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
           title="Capturar Render"
         >
           <Camera size={16} />

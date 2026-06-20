@@ -81,7 +81,7 @@ export function ClientesListView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar cliente..."
-                  className="w-full bg-white border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
               <button 
@@ -134,10 +134,10 @@ export function ClientesListView() {
               </div>
             )
           ) : (
-            <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
-              <table className="min-w-full divide-y divide-border/50">
-                <thead className="bg-muted/10">
-                  <tr>
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-border">
                     <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Nombre</th>
                     <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Email</th>
                     <th className="px-6 py-3 text-left text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Teléfono</th>
@@ -146,7 +146,7 @@ export function ClientesListView() {
                     <th className="px-6 py-3 text-right text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/50">
+                <tbody className="divide-y divide-border">
                   {filteredClientes.map((cliente) => (
                     <tr key={cliente.id} className="hover:bg-muted/5 transition-colors group">
                       <td className="px-6 py-4 whitespace-nowrap text-sm studio-body-strong text-foreground">{cliente.nombre}</td>

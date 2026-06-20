@@ -9,11 +9,7 @@ import { ComposicionProductoModal } from '../../stock/components/ComposicionProd
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PiezaDetailModal } from './PiezaDetailModal';
 
-interface PiezasGalleryViewProps {
-  onCalculatePiece?: (pieza: PiezaSTL) => void;
-}
-
-export function PiezasGalleryView({ onCalculatePiece }: PiezasGalleryViewProps) {
+export function PiezasGalleryView() {
   const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -28,15 +24,6 @@ export function PiezasGalleryView({ onCalculatePiece }: PiezasGalleryViewProps) 
       p.perfilFilamentoNombre?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [piezas, searchTerm]);
-
-  const handleCalculate = (pieza: PiezaSTL) => {
-    if (onCalculatePiece) {
-      onCalculatePiece(pieza);
-    } else {
-      console.log("Calcular costo para:", pieza.nombre);
-      alert(`Próximamente: Cargando ${pieza.nombre} en el cotizador...`);
-    }
-  };
 
   const isSearching = searchTerm.trim().length > 0;
 
@@ -63,7 +50,7 @@ export function PiezasGalleryView({ onCalculatePiece }: PiezasGalleryViewProps) 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar modelo o material..."
-                className="w-full bg-white border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
               />
             </div>
           </div>
@@ -83,7 +70,6 @@ export function PiezasGalleryView({ onCalculatePiece }: PiezasGalleryViewProps) 
                    key={pieza.id} 
                    pieza={pieza} 
                    onDelete={(id) => setDeletePieceId(id)}
-                   onCalculate={handleCalculate}
                    onPublish={(pieza) => setPublishPieceId(pieza.id)}
                    onViewDetail={(pieza) => setSelectedPiezaDetail(pieza)}
                 />

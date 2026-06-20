@@ -196,7 +196,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
         <button 
           type="button"
           onClick={onCancel}
-          className="studio-button-secondary-pill flex-1 order-2 sm:order-1 gap-2 bg-transparent text-black border border-foreground hover:bg-gray-50 transition-colors"
+          className="studio-button-secondary-pill flex-1 order-2 sm:order-1 gap-2 bg-transparent text-black border border-foreground hover:bg-muted transition-colors"
         >
           <X size={18} />
           Cancelar

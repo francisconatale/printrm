@@ -134,7 +134,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
               )}
             </div>
 
-            <div className="border border-zinc-200/60 dark:border-zinc-800/50 rounded-2xl overflow-hidden bg-white dark:bg-zinc-950/50 max-h-[340px] overflow-y-auto custom-scrollbar">
+            <div className="border border-zinc-200/60 dark:border-zinc-800/50 rounded-2xl overflow-hidden bg-background dark:bg-zinc-950/50 max-h-[340px] overflow-y-auto custom-scrollbar">
               {!piezas || piezas.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-14 text-center">
                   <div className="size-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3">
@@ -152,19 +152,19 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                         key={pieza.id}
                         type="button"
                         onClick={() => toggleParte(pieza.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left ${
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left border ${
                           isSelected
-                            ? 'bg-primary dark:bg-primary'
-                            : 'hover:bg-zinc-50 dark:hover:bg-zinc-900/40'
+                            ? 'bg-primary/10 border-primary text-primary'
+                            : 'border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900/40'
                         }`}
                         aria-label={`${isSelected ? 'Quitar' : 'Agregar'} ${pieza.nombre}`}
                       >
                         <div className={`size-5 rounded flex items-center justify-center shrink-0 transition-all ${
                           isSelected
-                            ? 'bg-white dark:bg-zinc-900'
+                            ? 'bg-primary border border-primary text-primary-foreground'
                             : 'border-2 border-zinc-200 dark:border-zinc-700'
                         }`} aria-hidden="true">
-                          {isSelected && <Check size={12} className="text-primary dark:text-primary" strokeWidth={3} />}
+                          {isSelected && <Check size={12} className="text-white dark:text-zinc-950" strokeWidth={3} />}
                         </div>
 
                         <div className="size-9 shrink-0 rounded-lg bg-[#f5f5f7] dark:bg-zinc-900 border border-zinc-200/40 dark:border-zinc-800/40 overflow-hidden flex items-center justify-center">
@@ -177,19 +177,19 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
 
                         <div className="flex-1 min-w-0">
                           <p className={`text-[13px] font-semibold truncate leading-tight ${
-                              isSelected ? 'text-primary-foreground' : 'text-zinc-800 dark:text-zinc-200'
+                              isSelected ? 'text-primary' : 'text-zinc-800 dark:text-zinc-200'
                           }`}>
                             {pieza.nombre}
                           </p>
                           <p className="flex items-center gap-1.5 mt-0.5">
                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
                               isSelected
-                                ? 'bg-primary-foreground/15 text-primary-foreground'
+                                ? 'bg-primary/15 text-primary'
                                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
                             }`}>
                               {formatWeight(pieza.pesoGramos)}
                             </span>
-                            <span className={`text-[10px] ${isSelected ? 'text-primary-foreground/50' : 'text-zinc-400 dark:text-zinc-500'}`}>
+                            <span className={`text-[10px] ${isSelected ? 'text-primary/60' : 'text-zinc-400 dark:text-zinc-500'}`}>
                               {pieza.perfilFilamentoNombre || 'Sin filamento'}
                             </span>
                           </p>
@@ -224,7 +224,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             <button
               type="submit"
               disabled={isSaving || selectedPartes.length === 0 || !watch('nombre')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[var(--radius-pill)] bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               {isSaving ? 'Guardando...' : (
                 <>

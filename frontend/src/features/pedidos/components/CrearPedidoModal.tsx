@@ -128,7 +128,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           <select
             value={clienteId}
             onChange={(e) => setClienteId(e.target.value)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
           >
             <option value="">Elegí un cliente *</option>
             {clientes?.map(cliente => (
@@ -180,7 +180,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                       <select
                         value={item.productoId}
                         onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
-                        className="flex-1 bg-white border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
+                        className="flex-1 bg-background border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
                       >
                         <option value="">Elegí un producto *</option>
                         {productos?.map(p => (
@@ -195,7 +195,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         min="1"
                         value={item.cantidad}
                         onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 0)}
-                        className="w-full bg-white border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-center text-sm font-bold"
+                        className="w-full bg-background border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-center text-sm font-bold"
                       />
                     </div>
 
@@ -217,7 +217,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                           handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
                         }}
                         placeholder="200"
-                        className="w-full bg-white border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-sm text-right font-semibold disabled:opacity-40"
+                        className="w-full bg-background border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-sm text-right font-semibold disabled:opacity-40"
                         title="Margen de ganancia en porcentaje"
                       />
                       <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground font-bold pointer-events-none">%</span>

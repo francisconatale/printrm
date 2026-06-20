@@ -73,7 +73,7 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
           <select
             value={productoId}
             onChange={(e) => setProductoId(e.target.value)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             required
             disabled={loadingProductos}
           >
@@ -96,7 +96,7 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(parseInt(e.target.value) || 0)}
-            className="w-full bg-white border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             required
           />
         </div>
