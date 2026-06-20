@@ -2,8 +2,6 @@ package com.printrm.studio.domain.pedidos;
 
 import com.printrm.studio.domain.clientes.Cliente;
 import com.printrm.studio.domain.clientes.ClienteRepository;
-import com.printrm.studio.domain.calculo.Calculo;
-import com.printrm.studio.domain.calculo.CalculoRepository;
 import com.printrm.studio.domain.stock.Producto;
 import com.printrm.studio.domain.stock.ProductoRepository;
 import com.printrm.studio.domain.finanzas.Transaccion;
@@ -26,8 +24,6 @@ public class DevolucionIntegrationTest {
     @Autowired
     private ClienteRepository clienteRepository;
     @Autowired
-    private CalculoRepository calculoRepository;
-    @Autowired
     private TransaccionRepository transaccionRepository;
     @Autowired
     private ProductoRepository productoRepository;
@@ -36,8 +32,8 @@ public class DevolucionIntegrationTest {
     public void testDevolucionDePedidoGeneraReembolsoYConsistenciaDeBalance() {
         // 1. Setup: Cliente y un Pedido ENTREGADO (que generó un Ingreso de $800)
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Cliente Devolución").build());
-        Calculo calc = calculoRepository.save(Calculo.builder().costoBase(800.0).build());
-        PedidoRequestDTO request = new PedidoRequestDTO(cliente.getId(), List.of(new ItemPedidoRequestDTO(calc.getId(), null, 1)));
+        Producto prod = productoRepository.save(Producto.builder().nombre("Producto Test").precioSugerido(800.0).build());
+        PedidoRequestDTO request = new PedidoRequestDTO(cliente.getId(), List.of(new ItemPedidoRequestDTO(prod.getId(), 1)));
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(request);
         pedidoService.cambiarEstado(pedido.getId(), "ENTREGADO");

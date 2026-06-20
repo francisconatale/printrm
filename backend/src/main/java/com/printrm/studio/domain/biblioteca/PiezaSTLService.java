@@ -111,7 +111,6 @@ public class PiezaSTLService {
         if (pieza.getFilamentoPreferido() != null) dto.setPerfilFilamentoNombre(pieza.getFilamentoPreferido().getNombre());
         if (pieza.getImpresionPreferida() != null) dto.setPerfilImpresionNombre(pieza.getImpresionPreferida().getNombre());
 
-        // Dynamic cost calculation
         int horas = 0;
         int minutos = 0;
         if (pieza.getTiempoEstimado() != null && pieza.getTiempoEstimado().contains("h")) {

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
-import { HistorialView } from './features/calculo/components/HistorialView'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
 import { ClientesListView } from './features/clientes/components/ClientesListView'
@@ -13,29 +12,20 @@ import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
-import { CalculoSnapshot } from './features/calculo/types/calculo.types'
 
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
-  const [historyData, setHistoryData] = useState<CalculoSnapshot | null>(null)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
   }
 
-  const handleSelectFromHistory = (data: CalculoSnapshot) => {
-    setHistoryData(data)
-    setCurrentView('calculator')
-  }
-
   const renderView = () => {
     switch (currentView) {
       case 'calculator':
-        return <CalculadoraView initialData={historyData} />
-      case 'history':
-        return <HistorialView onSelect={handleSelectFromHistory} />
+        return <CalculadoraView />
       case 'profiles':
         return <PerfilesDashboardView />
       case 'inventory':
