@@ -1,16 +1,12 @@
-# Tarea Actual: Implementar remediación UX/A11y en ClientesListView.tsx y PedidosListView.tsx (T024)
+# Tarea Actual: Implementar remediación UX/A11y en PedidoDetalleView.tsx (incl. breadcrumb) y AgendaProduccionView.tsx (T025)
 
 ## Estado
-- [ ] Implementar `QueryErrorView` para las consultas principales de Clientes y Pedidos (T024).
-- [ ] Integrar `useMutationWithFeedback` para las mutaciones de Clientes y Pedidos en sus respectivas APIs (T024).
-- [ ] Aplicar accesibilidad (A11y): `<label>` en inputs de búsqueda, `aria-label` en botones y `aria-hidden` en iconos (T024).
-- [ ] Corregir jerarquía de encabezados (`<h2>` -> `<h1>`) (T024).
-- [ ] Ajustar placeholders de selects y validación interactiva / jerarquía de botones en modales (T024).
+- [ ] Agregar componente de navegación Breadcrumb en `PedidoDetalleView.tsx` (T025).
+- [ ] Implementar manejo de errores y estados de carga en queries de `PedidoDetalleView.tsx` (T025).
+- [ ] Aplicar semántica HTML, headings `<h1>` y accesibilidad (labels, aria-label, aria-hidden) en `PedidoDetalleView.tsx` y `AgendaProduccionView.tsx` (T025).
+- [ ] Ajustar la validación preventiva de botones, diferenciación de registros por fecha e íconos consistentes en la agenda (T025).
 
 ## Archivos involucrados
-- `frontend/src/features/clientes/api/clientes.api.ts`
-- `frontend/src/features/pedidos/api/pedidos.api.ts`
-- `frontend/src/features/clientes/components/ClientesListView.tsx`
-- `frontend/src/features/pedidos/components/PedidosListView.tsx`
-- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
+- `frontend/src/features/pedidos/components/PedidoDetalleView.tsx`
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx`
 - `CHANGELOG.md`

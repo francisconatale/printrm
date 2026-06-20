@@ -24,9 +24,11 @@ import {
   Wrench
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
+
 
 export function AgendaProduccionView() {
-  const { data: ordenes, isLoading } = useGetOrdenesProduccion();
+  const { data: ordenes, isLoading, isError, error, refetch } = useGetOrdenesProduccion();
   const { mutate: updateEstado, isPending: updating } = useUpdateEstadoOrden();
 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -38,12 +40,23 @@ export function AgendaProduccionView() {
     updateEstado({ id, estado: nuevoEstado });
   };
 
+  if (isError) {
+    return (
+      <div className="flex-1 flex flex-col min-h-screen bg-background">
+        <StudioSubNav />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <QueryErrorView error={error} refetch={refetch} />
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex-1 flex flex-col min-h-screen bg-background animate-in fade-in">
         <StudioSubNav />
         <div className="flex-1 flex items-center justify-center">
-          <Clock className="animate-spin text-muted-foreground" size={32} />
+          <Clock className="animate-spin text-muted-foreground" size={32} aria-hidden="true" />
         </div>
       </div>
     );
@@ -121,14 +134,14 @@ export function AgendaProduccionView() {
             className="flex items-center gap-1 text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full"
             title={`Para pedido del cliente: ${o.clienteNombre}`}
           >
-            <User size={10} /> Cliente
+            <User size={10} aria-hidden="true" /> Cliente
           </span>
         ) : (
           <span 
             className="flex items-center gap-1 text-[9px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-full"
             title="Para stock propio"
           >
-            <Package size={10} /> Stock
+            <Package size={10} aria-hidden="true" /> Stock
           </span>
         )}
       </div>
@@ -173,8 +186,9 @@ export function AgendaProduccionView() {
               onClick={() => handleStatusChange(o.id, o.tipo === 'INTERNA' ? 'IMPRIMIENDO' : 'ENVIADO_PROVEEDOR')}
               disabled={updating}
               className="flex items-center gap-1 px-3 py-1 bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold rounded-lg transition-all"
+              aria-label="Iniciar orden de producción"
             >
-              <Play size={10} /> Iniciar
+              <Play size={10} aria-hidden="true" /> Iniciar
             </button>
           )}
 
@@ -183,8 +197,9 @@ export function AgendaProduccionView() {
               onClick={() => handleStatusChange(o.id, 'COMPLETADO')}
               disabled={updating}
               className="flex items-center gap-1 px-3 py-1 bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold rounded-lg transition-all"
+              aria-label="Completar orden de producción"
             >
-              <Check size={10} /> Completar
+              <Check size={10} aria-hidden="true" /> Completar
             </button>
           )}
 
@@ -193,8 +208,9 @@ export function AgendaProduccionView() {
               onClick={() => handleStatusChange(o.id, 'RECIBIDO_PROVEEDOR')}
               disabled={updating}
               className="flex items-center gap-1 px-3 py-1 bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold rounded-lg transition-all"
+              aria-label="Recibir orden de producción"
             >
-              <Check size={10} /> Recibir
+              <Check size={10} aria-hidden="true" /> Recibir
             </button>
           )}
         </div>
@@ -204,10 +220,11 @@ export function AgendaProduccionView() {
           <button
             onClick={() => handleStatusChange(o.id, 'CANCELADO')}
             disabled={updating}
-            className="p-1 rounded-lg border border-transparent text-muted-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all ml-auto"
+            className="p-1.5 rounded-full border border-transparent text-muted-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all ml-auto flex items-center justify-center"
             title="Cancelar Orden"
+            aria-label="Cancelar orden de producción"
           >
-            <X size={14} />
+            <X size={14} aria-hidden="true" />
           </button>
         )}
       </div>
@@ -228,10 +245,10 @@ export function AgendaProduccionView() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
-              <h2 className="studio-display-md !text-4xl tracking-tight flex items-center gap-3">
-                <Hammer className="text-foreground shrink-0" size={32} />
-                Agenda de Producción
-              </h2>
+              <h1 className="studio-display-md !text-4xl tracking-tight flex items-center gap-3">
+                <Hammer className="text-foreground shrink-0" size={32} aria-hidden="true" />
+                <span>Agenda de Producción</span>
+              </h1>
               <p className="studio-body text-muted-foreground">
                 Monitoreá las piezas en impresión y ordenes tercerizadas. Al finalizarlas, se repondrá stock automáticamente.
               </p>
@@ -240,8 +257,8 @@ export function AgendaProduccionView() {
               onClick={() => setShowCreateModal(true)}
               className="studio-button-primary flex items-center gap-2 self-start sm:self-center"
             >
-              <Plus size={18} />
-              Nueva Orden de Stock
+              <Plus size={18} aria-hidden="true" />
+              <span>Nueva Orden de Stock</span>
             </button>
           </div>
 
@@ -268,7 +285,8 @@ export function AgendaProduccionView() {
                     : "hover:bg-indigo-50/20 border-transparent text-muted-foreground"
                 )}
               >
-                <User size={12} /> Para Clientes
+                <User size={12} aria-hidden="true" />
+                <span>Para Clientes</span>
               </button>
               <button
                 onClick={() => setFilterType('STOCK')}
@@ -279,14 +297,17 @@ export function AgendaProduccionView() {
                     : "hover:bg-teal-50/20 border-transparent text-muted-foreground"
                 )}
               >
-                <Package size={12} /> Reposición Stock
+                <Package size={12} aria-hidden="true" />
+                <span>Reposición Stock</span>
               </button>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="relative flex-1 md:w-64">
-                <Search className="absolute left-3 top-2.5 text-muted-foreground" size={16} />
+                <Search className="absolute left-3 top-2.5 text-muted-foreground" size={16} aria-hidden="true" />
+                <label htmlFor="search-agenda" className="sr-only">Buscar orden de producción</label>
                 <input
+                  id="search-agenda"
                   type="text"
                   placeholder="Buscar producto, cliente..."
                   value={searchTerm}
@@ -302,7 +323,7 @@ export function AgendaProduccionView() {
                   onChange={(e) => setShowCanceled(e.target.checked)}
                   className="rounded border-border text-black focus:ring-black"
                 />
-                Ver Canceladas
+                <span>Ver Canceladas</span>
               </label>
             </div>
           </div>

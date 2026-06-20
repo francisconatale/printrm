@@ -20,6 +20,7 @@ import { es } from 'date-fns/locale/es';
 import { RegistrarPagoModal } from './RegistrarPagoModal';
 import { RegistrarMermaModal } from './RegistrarMermaModal';
 import { CrearOrdenVinculadaModal } from './CrearOrdenVinculadaModal';
+import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 interface PedidoDetalleViewProps {
   pedidoId: string;
@@ -31,7 +32,7 @@ const formatCurrency = (value: number) => {
 };
 
 export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) {
-  const { data: pedido, isLoading } = useGetPedido(pedidoId);
+  const { data: pedido, isLoading, isError, error, refetch } = useGetPedido(pedidoId);
   const { mutate: updateEstado } = useUpdateEstadoPedido();
   
   const [showPagoModal, setShowPagoModal] = React.useState(false);
@@ -41,10 +42,18 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
   const [selectedItemName, setSelectedItemName] = React.useState<string>('');
   const [selectedItemFaltante, setSelectedItemFaltante] = React.useState<number>(0);
 
+  if (isError) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-8 bg-background">
+        <QueryErrorView error={error} refetch={refetch} />
+      </div>
+    );
+  }
+
   if (isLoading || !pedido) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="animate-spin text-muted-foreground" size={32} />
+        <Loader2 className="animate-spin text-muted-foreground" size={32} aria-hidden="true" />
       </div>
     );
   }
@@ -61,16 +70,23 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
         <div className="max-w-[1200px] mx-auto space-y-10">
           
           {/* Top Navigation & Status */}
-          <div className="flex items-center justify-between">
-            <button 
-              onClick={onBack}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              <div className="size-8 rounded-full bg-muted/20 flex items-center justify-center group-hover:bg-muted/40">
-                <ArrowLeft size={16} />
-              </div>
-              <span className="text-sm font-medium">Volver al listado</span>
-            </button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col gap-2">
+              <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium" aria-label="Breadcrumb">
+                <button onClick={onBack} className="hover:text-foreground transition-colors">Pedidos</button>
+                <span aria-hidden="true">/</span>
+                <span className="text-foreground">Detalle del Pedido</span>
+              </nav>
+              <button 
+                onClick={onBack}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+              >
+                <div className="size-8 rounded-full bg-muted/20 flex items-center justify-center group-hover:bg-muted/40">
+                  <ArrowLeft size={16} aria-hidden="true" />
+                </div>
+                <span className="text-sm font-medium">Volver al listado</span>
+              </button>
+            </div>
 
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Estado Actual</span>
@@ -83,7 +99,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
             {/* Left Column: Order Content */}
             <div className="lg:col-span-8 space-y-8">
               <div className="space-y-1">
-                <h2 className="studio-display-md !text-4xl tracking-tight">Pedido #{pedido.id.substring(0, 8)}</h2>
+                <h1 className="studio-display-md !text-4xl tracking-tight">Pedido #{pedido.id.substring(0, 8)}</h1>
                 <p className="studio-body text-muted-foreground">Solicitado por <span className="text-foreground font-semibold">{pedido.clienteNombre}</span></p>
               </div>
 

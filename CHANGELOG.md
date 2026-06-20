@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-20] - Remediación UX/A11y en Detalle de Pedido y Agenda (T025)
+### Descripción
+- **Frontend (Detalle de Pedido):**
+  - Se agregó navegación por migas de pan (Breadcrumb) en la vista `PedidoDetalleView.tsx`.
+  - Se inyectó control de error de query mediante `QueryErrorView` para evitar spinners de carga infinitos en fallos de red.
+  - Se actualizó el título principal a etiqueta `<h1>`.
+  - Se agregaron atributos de accesibilidad `aria-hidden` y `aria-label` a los elementos interactivos e íconos.
+- **Frontend (Agenda de Producción):**
+  - Se corrigió la jerarquía de títulos de la sección a `<h1>`.
+  - Se inyectó control de error y reintento en el fetching de órdenes mediante `QueryErrorView`.
+  - Se agregó etiqueta `<label>` accesible al input de búsqueda y atributos `aria-label` descriptivos a los botones de acción rápida en las tarjetas de producción ("Iniciar", "Completar", "Recibir", "Cancelar").
+
 ## [2026-06-20] - Remediación UX/A11y en Clientes y Pedidos (T024)
 ### Descripción
 - **Frontend (APIs):** Se actualizaron `clientes.api.ts` y `pedidos.api.ts` integrando `useMutationWithFeedback` para asegurar confirmación visual en mutaciones.
