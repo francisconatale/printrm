@@ -23,6 +23,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
   const { mutate: createPedido, isPending: isCreating } = useCreatePedido();
 
   interface ItemFormState {
+    keyId: string;
     productoId: string;
     cantidad: number;
     precioPersonalizado?: number;
@@ -30,23 +31,26 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
   const [clienteId, setClienteId] = React.useState<string>('');
   const [items, setItems] = React.useState<ItemFormState[]>([
-    { productoId: '', cantidad: 1 }
+    { keyId: Math.random().toString(), productoId: '', cantidad: 1 }
   ]);
   const [error, setError] = React.useState<string>('');
 
   const handleAddItem = () => {
-    setItems(prev => [...prev, { productoId: '', cantidad: 1 }]);
+    setItems(prev => [...prev, { keyId: Math.random().toString(), productoId: '', cantidad: 1 }]);
   };
 
-  const handleRemoveItem = (index: number) => {
-    setItems(prev => prev.filter((_, i) => i !== index));
+  const handleRemoveItem = (keyId: string) => {
+    setItems(prev => prev.filter(item => item.keyId !== keyId));
   };
 
-  const handleItemChange = (index: number, field: keyof ItemFormState, value: any) => {
+  const handleItemChange = (keyId: string, field: keyof ItemFormState, value: any) => {
     setItems(prev => {
+      const index = prev.findIndex(item => item.keyId === keyId);
+      if (index === -1) return prev;
+
       // Si cambia el producto y ya está seleccionado en otra fila, unificamos cantidades
       if (field === 'productoId' && value) {
-        const existingIndex = prev.findIndex((item, i) => i !== index && item.productoId === value);
+        const existingIndex = prev.findIndex((item) => item.keyId !== keyId && item.productoId === value);
         if (existingIndex !== -1) {
           const copy = [...prev];
           const currentQty = copy[index].cantidad || 1;
@@ -55,7 +59,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             cantidad: (copy[existingIndex].cantidad || 0) + currentQty
           };
           // Eliminamos la fila actual redundante
-          return copy.filter((_, i) => i !== index);
+          return copy.filter(item => item.keyId !== keyId);
         }
       }
 
@@ -225,7 +229,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
               return (
                 <div 
-                  key={index} 
+                  key={item.keyId} 
                   className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-border/40 last:border-0"
                 >
                   {/* Selector de Producto */}
@@ -233,7 +237,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                     <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
                     <Select
                       value={item.productoId}
-                      onValueChange={(val) => handleItemChange(index, 'productoId', val)}
+                      onValueChange={(val) => handleItemChange(item.keyId, 'productoId', val)}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona un producto *" />
@@ -259,7 +263,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         type="number"
                         min="1"
                         value={item.cantidad}
-                        onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 0)}
+                        onChange={(e) => handleItemChange(item.keyId, 'cantidad', parseInt(e.target.value) || 0)}
                         className="w-full bg-background border border-border rounded-xl px-2 py-1.5 text-center text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                       />
                     </div>
@@ -284,7 +288,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                           onChange={(e) => {
                             const marginVal = parseFloat(e.target.value) || 0;
                             const calculatedPrice = prodCost * (1 + marginVal / 100);
-                            handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
+                            handleItemChange(item.keyId, 'precioPersonalizado', Math.round(calculatedPrice));
                           }}
                           placeholder="200"
                           className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-1.5 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -306,7 +310,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                           disabled={isEmptyRow}
                           onChange={(e) => {
                             const priceVal = parseFloat(e.target.value) || 0;
-                            handleItemChange(index, 'precioPersonalizado', priceVal);
+                            handleItemChange(item.keyId, 'precioPersonalizado', priceVal);
                           }}
                           placeholder="0"
                           className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-1.5 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
@@ -326,9 +330,9 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                     <div className="pt-2 md:pt-0">
                       <button
                         type="button"
-                        onClick={() => handleRemoveItem(index)}
+                        onClick={() => handleRemoveItem(item.keyId)}
                         disabled={items.length === 1}
-                        className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                        className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
                         title="Eliminar este ítem"
                       >
                         <Trash2 size={16} />
