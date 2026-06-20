@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2026-06-20] - Solución a doble notificación toast al guardar pieza
+### Descripción
+- **Frontend (Calculadora):** Se eliminó la visualización manual duplicada del toast de éxito/error al guardar una pieza en la biblioteca en `CalculadoraView.tsx`, ya que la mutación `useGuardarPieza` (vía `useMutationWithFeedback`) se encarga de mostrar la notificación correspondiente de forma automática.
+### Archivos Involucrados
+- [CalculadoraView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/CalculadoraView.tsx)
+
 ## [2026-06-20] - Archivado de especificaciones completadas
 ### Descripción
 - **Estructura del Proyecto (.specify):** Se eliminaron las tareas de pulido `T016` y `T017` en `005-roadmap-phase-2` por no ser necesarias, y la tarea deprecada `T003` en `003-historial-exportacion`. Al no quedar tareas pendientes, se archivaron las siguientes especificaciones completadas al 100% moviéndolas a `.specify/history/sprint-2/`:

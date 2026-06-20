@@ -139,13 +139,6 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
       perfilFilamentoId: activeFilament?.id,
       perfilImpresionId: overrideConfigs.print || undefined,
       imagenBase64,
-    }, {
-      onSuccess: () => {
-        toast.success('Pieza guardada en la biblioteca correctamente');
-      },
-      onError: (err) => {
-        toast.error('Error al guardar la pieza en la biblioteca');
-      }
     });
   };
 
