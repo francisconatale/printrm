@@ -1,12 +1,13 @@
-# Estado de Tarea: Corrección de Placeholder y Estilo en Selects
+# Estado de Tarea: Opciones de Deselección en Selects
 
 ## Objetivo
-Corregir la selección automática del primer elemento en los componentes de Select personalizados usando el fallback a `undefined` para mostrar el placeholder por defecto, y restaurar el contenedor premium para el selector de clientes.
+Agregar la opción de "Seleccionar" (opción vacía) como un elemento seleccionable dentro de los dropdowns personalizados (Radix UI) para permitir deseleccionar o iniciar el select con la opción por defecto visible en el listado.
 
 ## Tareas
-- [x] Modificar el selector de cliente para usar `value={clienteId || undefined}` y restaurar su contenedor estilizado.
-- [x] Modificar el selector de producto en la grilla para usar `value={item.productoId || undefined}`.
-- [x] Validar compilación y funcionamiento.
+- [ ] Agregar `<SelectItem value="">Selecciona un cliente</SelectItem>` en el selector de clientes.
+- [ ] Agregar `<SelectItem value="">Selecciona un producto</SelectItem>` en el selector de productos.
+- [ ] Cambiar las propiedades `value` de los Select para recibir el valor nativo (`clienteId` y `item.productoId`).
+- [ ] Validar compilación.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
