@@ -153,11 +153,14 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             <User size={16} className="text-primary" />
             <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
           </div>
-          <Select value={clienteId || undefined} onValueChange={(val) => setClienteId(val)}>
+          <Select value={clienteId} onValueChange={(val) => setClienteId(val)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona un cliente *" />
             </SelectTrigger>
             <SelectContent className="z-[300]">
+              <SelectItem value="">
+                Selecciona un cliente *
+              </SelectItem>
               {clientes?.map(cliente => (
                 <SelectItem key={cliente.id} value={cliente.id}>
                   {cliente.nombre}
@@ -214,13 +217,16 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                   <div className="flex-1 min-w-[200px]">
                     <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
                     <Select
-                      value={item.productoId || undefined}
+                      value={item.productoId}
                       onValueChange={(val) => handleItemChange(index, 'productoId', val)}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecciona un producto *" />
                       </SelectTrigger>
                       <SelectContent className="z-[300]">
+                        <SelectItem value="">
+                          Selecciona un producto *
+                        </SelectItem>
                         {productos?.map(p => (
                           <SelectItem key={p.id} value={p.id}>
                             {p.nombre} (Stock: {p.cantidadStock})
