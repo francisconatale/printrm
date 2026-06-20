@@ -112,9 +112,10 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  value,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
-  const mappedValue = props.value === "" ? "__empty__" : props.value;
+  const mappedValue = value === "" ? "__empty__" : value;
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
