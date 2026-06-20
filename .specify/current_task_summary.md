@@ -4,9 +4,9 @@
 Reemplazar el selector HTML nativo (`<select>`) en el modal `CrearOrdenIndependienteModal.tsx` por el componente de diseño personalizado `Select`, `SelectItem`, etc., de la aplicación.
 
 ## Tareas
-- [ ] Importar los componentes `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` de `../../../components/ui/select`.
-- [ ] Reemplazar el `<select>` nativo por la estructura de componentes correspondiente.
-- [ ] Validar la compilación.
+- [x] Importar los componentes `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` de `../../../components/ui/select`.
+- [x] Reemplazar el `<select>` nativo por la estructura de componentes correspondiente.
+- [x] Validar la compilación.
 
 ## Archivos Involucrados
 - `frontend/src/features/produccion/components/CrearOrdenIndependienteModal.tsx`

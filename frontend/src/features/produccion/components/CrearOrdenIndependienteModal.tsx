@@ -3,6 +3,13 @@ import { useCreateOrdenIndependiente } from '../api/produccion.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { Modal } from '../../../components/ui/modal';
 import { AlertCircle, Package } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../components/ui/select';
 
 interface CrearOrdenIndependienteModalProps {
   isOpen: boolean;
@@ -70,20 +77,25 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
           <label className="studio-caption font-semibold flex items-center gap-2">
             <Package size={14} /> Producto *
           </label>
-          <select
-            value={productoId}
-            onChange={(e) => setProductoId(e.target.value)}
-            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
-            required
+          <Select 
+            value={productoId} 
+            onValueChange={setProductoId}
             disabled={loadingProductos}
           >
-            <option value="">Seleccionar Producto...</option>
-            {productos?.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nombre} (Stock actual: {p.cantidadStock})
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccionar Producto..." />
+            </SelectTrigger>
+            <SelectContent className="z-[300]" position="popper" side="bottom">
+              <SelectItem value="">
+                Seleccionar Producto...
+              </SelectItem>
+              {productos?.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.nombre} (Stock actual: {p.cantidadStock})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {loadingProductos && <p className="text-xs text-muted-foreground">Cargando productos...</p>}
         </div>
 
@@ -96,7 +108,7 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(parseInt(e.target.value) || 0)}
-            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             required
           />
         </div>

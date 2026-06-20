@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2026-06-21] - Reutilización de componente Select en Modal de Nueva Orden de Stock
+### Descripción
+- **Frontend (Producción):** Se actualizó el modal `CrearOrdenIndependienteModal.tsx` reemplazando el elemento `<select>` nativo de HTML por el componente de diseño personalizado `Select` de la aplicación (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`), mejorando la coherencia de la UI y agregando una opción de selección por defecto "Seleccionar Producto...".
+### Archivos Involucrados
+- [CrearOrdenIndependienteModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/produccion/components/CrearOrdenIndependienteModal.tsx)
+
 ## [2026-06-21] - Rediseño premium del modal de Nuevo Pedido
 ### Descripción
 - **Frontend (Pedidos):** Se rediseñó por completo el modal `CrearPedidoModal.tsx` incorporando principios de `ui-ux-pro-max`:
