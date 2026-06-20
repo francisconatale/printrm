@@ -16,7 +16,7 @@
 - [x] Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (T011).
 - [x] Crear el modal de creación de orden de producción independiente para reponer stock propio (T012).
 - [x] Agregar botones en la Agenda para avanzar el estado de las órdenes de producción (T013).
-- [ ] Corregir lógica de selección de tipo de ítem (Cotización vs Producto) en `CrearPedidoModal.tsx` (T014).
+- [x] Corregir lógica de selección de tipo de ítem (Cotización vs Producto) en `CrearPedidoModal.tsx` (T014).
 
 ## Archivos involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
