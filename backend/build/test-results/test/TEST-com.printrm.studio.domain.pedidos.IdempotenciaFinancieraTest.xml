@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-06-20T06:20:09" hostname="DESKTOP-EJ6HF1N" time="0.053">
-  <properties/>
-  <testcase name="testEvitarDobleDescuentoAlRegistrarMerma()" classname="com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest" time="0.053"/>
-  <system-out><![CDATA[14:20:09.483  INFO --- .AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest]: IdempotenciaFinancieraTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-14:20:09.488  INFO --- c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.printrm.studio.StudioApplication for test class com.printrm.studio.domain.pedidos.IdempotenciaFinancieraTest
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

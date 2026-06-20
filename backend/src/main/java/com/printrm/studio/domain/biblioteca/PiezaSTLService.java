@@ -63,7 +63,7 @@ public class PiezaSTLService {
                 try {
                     Files.move(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Error al mover el archivo STL subido a almacenamiento permanente: " + e.getMessage(), e);
                 }
             }
         }

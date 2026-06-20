@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [2026-06-20] - Merges Condicionales, Validación de Enums y Recarga de DB (T004)
+### Descripción
+- **Backend:**
+  - Se implementó la lógica de merge condicional en `PerfilService.java` (`updateEntity`) para evitar que las actualizaciones parciales reseteen los campos no provistos a nulo.
+  - Se incorporó la validación estricta de cadenas de estado contra el enum `Pedido.EstadoPedido` en `PedidoService.java` (`cambiarEstado`), lanzando `IllegalArgumentException` si la cadena es inválida.
+  - Se forzó la recarga desde la base de datos de la entidad `Producto` en `ProductoService.java` (`save`) tras registrar el stock inicial, asegurando que los detalles de los lotes y stock actualizados se retornen de manera fresca en el DTO de respuesta.
+### Archivos Involucrados
+- [PerfilService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/perfil/PerfilService.java)
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+- [ProductoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/stock/ProductoService.java)
+
 ## [2026-06-20] - Estabilización de Servicios Core y Null-Safety (T002)
 ### Descripción
 - **Backend:**

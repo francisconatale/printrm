@@ -28,3 +28,10 @@ java-wrapper/.gradle/
 # Environment variables
 .env
 .env.local
+
+# Backend build and database files
+backend/build/
+backend/.gradle/
+backend/*.db
+!backend/studio.db
+
