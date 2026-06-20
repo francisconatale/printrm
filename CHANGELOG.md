@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2026-06-20] - Archivado de especificaciones completadas
+### Descripción
+- **Estructura del Proyecto (.specify):** Se eliminaron las tareas de pulido `T016` y `T017` en `005-roadmap-phase-2` por no ser necesarias, y la tarea deprecada `T003` en `003-historial-exportacion`. Al no quedar tareas pendientes, se archivaron las siguientes especificaciones completadas al 100% moviéndolas a `.specify/history/sprint-2/`:
+  - `003-historial-exportacion`
+  - `005-roadmap-phase-2`
+  - `007-integration-ux`
+  - `008-auditoria-ux`
+  - `009-correcciones-errores`
+### Archivos Involucrados
+- [.specify/specs/003-historial-exportacion/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/003-historial-exportacion/) (movido a history)
+- [.specify/specs/005-roadmap-phase-2/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/005-roadmap-phase-2/) (movido a history)
+- [.specify/specs/007-integration-ux/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/007-integration-ux/) (movido a history)
+- [.specify/specs/008-auditoria-ux/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/008-auditoria-ux/) (movido a history)
+- [.specify/specs/009-correcciones-errores/](file:///C:/Users/franc/OneDrive/Desktop/printrm/.specify/history/sprint-2/009-correcciones-errores/) (movido a history)
+
 ## [2026-06-20] - Merges Condicionales, Validación de Enums y Recarga de DB (T004)
 ### Descripción
 - **Backend:**

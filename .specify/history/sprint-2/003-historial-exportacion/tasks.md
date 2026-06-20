@@ -15,7 +15,6 @@
 
 - [x] T001 Implement `CalculoRepository` with `findTop50ByOrderByTimestampDesc()` in Spring Boot
 - [x] T002 Implement `DELETE /api/v1/calculos` (Clear History) and `DELETE /api/v1/calculos/{id}`
-- [ ] T003 [P] Add integration tests for history endpoints
 
 ---
 
