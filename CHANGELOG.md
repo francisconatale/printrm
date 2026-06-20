@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2026-06-21] - Ajuste de borde de estado vacío en Pedidos
+### Descripción
+- **Frontend (Pedidos):** Se modificaron los bordes dashed del estado vacío en la vista de lista de pedidos (`PedidosListView.tsx`), reemplazando la clase `border-border/60` (que tenía un color brillante) por `border-zinc-200 dark:border-zinc-800` para brindar un tono más suave y armónico en el modo oscuro.
+### Archivos Involucrados
+- [PedidosListView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/PedidosListView.tsx)
+
 ## [2026-06-20] - Pruebas y validación para el flujo de pedidos y fabricación (T014, T015)
 ### Descripción
 - **Backend (Pruebas):** 

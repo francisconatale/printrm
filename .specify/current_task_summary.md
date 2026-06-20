@@ -1,19 +1,15 @@
-# Estado de Tarea: Ajustar borde de estado vacío en Pedidos
+# Estado de Tarea: Ajustes Visuales en Agenda de Producción
 
 ## Objetivo
-Cambiar el borde dashed del estado vacío en `PedidosListView.tsx` de un color brillante a un tono más suave en modo oscuro (e.g., `border-zinc-200 dark:border-zinc-800`).
+- Suavizar los bordes de los contenedores de columnas Kanban en modo oscuro (actualmente `border-border/30`) en `AgendaProduccionView.tsx`.
+- Corregir/mejorar la alineación vertical del checkbox toggle 'Ver Canceladas' en la barra de herramientas.
 
 ## Tareas
-- [ ] Fase 1: Actualizar `index.css` con nuevos tokens de color.
-- [ ] Fase 2: Realizar reemplazos globales de colores, textos, bordes y radios en componentes.
-  - [x] Corregir fondo de previsualización de imagen en `STLCard.tsx` para Dark Mode.
-  - [ ] Corregir fondo de `STLCard` para asegurar contraste adecuado.
-- [ ] Fase 3: Ajustar componentes específicos (toasts, chips activos, botones).
-- [ ] Fase 4: Limpiar `studio-theme.css` convirtiendo Studio tokens a alias de Shadcn y eliminando duplicados.
-- [ ] Fase 5: Realizar verificación final y pruebas de compilación/Dark Mode.
-- [ ] Modificar `frontend/src/features/pedidos/components/PedidosListView.tsx` cambiando `border-border/60` a `border-zinc-200 dark:border-zinc-800` o similar.
-- [ ] Verificar la compilación del proyecto.
+- [x] Modificar `frontend/src/features/pedidos/components/PedidosListView.tsx` cambiando `border-border/60` a `border-zinc-200 dark:border-zinc-800` o similar.
+- [ ] Modificar `frontend/src/features/produccion/components/AgendaProduccionView.tsx` suavizando los bordes de las columnas en modo oscuro (e.g. agregando `dark:border-border/10` o similar).
+- [ ] Alinear verticalmente el checkbox toggle 'Ver Canceladas' con el resto de elementos/botones de la barra de herramientas.
+- [ ] Verificar compilación y visualización.
 
 ## Archivos Involucrados
 - `.specify/current_task_summary.md`
-- `frontend/src/features/pedidos/components/PedidosListView.tsx`
+- `frontend/src/features/produccion/components/AgendaProduccionView.tsx`
