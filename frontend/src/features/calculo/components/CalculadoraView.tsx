@@ -17,7 +17,6 @@ import {
   useGetFilamentProfiles,
   useGetPrintProfiles
 } from '../../perfiles/api/perfiles.api'
-import { useGuardarCalculo } from '../api/calculos.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
@@ -83,7 +82,6 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
 
   const { mutate: createPerfil, isPending: isCreating } = useCreatePerfil();
   const { mutate: updatePerfil, isPending: isUpdating } = useUpdatePerfil();
-  const { mutate: guardarCalculo, isPending: isSavingCalculo } = useGuardarCalculo();
   const { mutate: sliceSTL, isPending: isSlicing } = useSliceSTL();
   const { mutate: guardarPieza, isPending: isSavingPieza } = useGuardarPieza();
 
@@ -115,23 +113,7 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
     }
   };
 
-  const handleSaveCalculo = () => {
-    if (!perfilActivo || !resultado) return;
 
-    const snapshot = {
-      perfilId: perfilActivo.id,
-      perfilNombre: perfilActivo.nombre,
-      ...piezaInput,
-      ...resultado,
-      precioVenta: resultado.precioVenta
-    };
-
-    guardarCalculo(snapshot, {
-      onSuccess: () => {
-        alert('Cálculo guardado en el historial');
-      }
-    });
-  };
 
   const handleSaveToLibrary = () => {
     if (!file || !resultado) return;
@@ -256,8 +238,6 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
                 <div className="p-7 border border-[var(--border-faint)] rounded-[2rem] bg-card animate-in fade-in duration-500">
                   <ResultadoPanel 
                     resultado={resultado}
-                    onSave={handleSaveCalculo}
-                    isSaving={isSavingCalculo}
                     onSaveToLibrary={handleSaveToLibrary}
                     isSavingToLibrary={isSavingPieza}
                     onAnalyze={handleAnalyze}

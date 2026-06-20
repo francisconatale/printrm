@@ -10,8 +10,6 @@ interface ResultadosBreakdownProps {
   onInsumosExtraChange?: (v: number) => void;
   multiplicador?: number;
   onMultiplicadorChange?: (v: number) => void;
-  onSave: () => void;
-  isSaving?: boolean;
   onSaveToLibrary?: () => void;
   isSavingToLibrary?: boolean;
   perfilNombre?: string;
@@ -22,8 +20,6 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
   insumosExtra = 0,
   onInsumosExtraChange,
   multiplicador = 3,
-  onSave,
-  isSaving,
   onSaveToLibrary,
   isSavingToLibrary,
   perfilNombre = 'Perfil Estándar'
@@ -142,11 +138,6 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
           </button>
         </div>
       </div>
-
-      <button onClick={onSave} disabled={isSaving || resultado.subtotal === 0}
-        className="studio-button-primary !w-full mt-6 !py-3 text-[13px] font-bold">
-        {isSaving ? 'Guardando...' : 'Guardar en Historial'}
-      </button>
 
       <button onClick={onSaveToLibrary} disabled={isSavingToLibrary || resultado.subtotal === 0}
         className="studio-button-secondary-pill !w-full mt-3 !py-3 text-[13px] font-bold border-zinc-200 text-zinc-600 hover:border-zinc-800 hover:text-zinc-800">

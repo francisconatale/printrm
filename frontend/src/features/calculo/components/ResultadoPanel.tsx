@@ -9,8 +9,6 @@ import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo';
 
 interface ResultadoPanelProps {
   resultado: ResultadoCalculo | null;
-  onSave: () => void;
-  isSaving?: boolean;
   onSaveToLibrary?: () => void;
   isSavingToLibrary?: boolean;
   onAnalyze?: () => void;
@@ -24,8 +22,6 @@ interface ResultadoPanelProps {
 
 export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   resultado, 
-  onSave, 
-  isSaving, 
   onSaveToLibrary, 
   isSavingToLibrary, 
   onAnalyze, 
@@ -81,8 +77,6 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           resultado={resultado}
           insumosExtra={insumosExtra}
           onInsumosExtraChange={onInsumosExtraChange}
-          onSave={onSave}
-          isSaving={isSaving}
           onSaveToLibrary={onSaveToLibrary}
           isSavingToLibrary={isSavingToLibrary}
           perfilNombre={perfilActivo?.nombre || 'Perfil Estándar'}
