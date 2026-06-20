@@ -1,13 +1,12 @@
-# Estado de Tarea: Simplificación Visual de CrearPedidoModal
+# Estado de Tarea: Corrección de Placeholder y Estilo en Selects
 
 ## Objetivo
-Refactorizar el diseño del modal de nuevo pedido (`CrearPedidoModal.tsx`) para eliminar el anidamiento excesivo de tarjetas (cards dentro de cards), reduciendo el ruido visual y logrando una estética ultra limpia y fluida.
+Corregir la selección automática del primer elemento en los componentes de Select personalizados usando el fallback a `undefined` para mostrar el placeholder por defecto, y restaurar el contenedor premium para el selector de clientes.
 
 ## Tareas
-- [x] Eliminar contenedor de tarjeta en la selección de cliente, simplificándolo a un selector elegante y directo.
-- [x] Cambiar el listado de ítems para que use filas limpias separadas por líneas sutiles en lugar de cards grises individuales.
-- [x] Simplificar el resumen financiero integrado eliminando el borde y fondo pesado de tarjeta.
-- [x] Validar compilación y funcionamiento.
+- [ ] Modificar el selector de cliente para usar `value={clienteId || undefined}` y restaurar su contenedor estilizado.
+- [ ] Modificar el selector de producto en la grilla para usar `value={item.productoId || undefined}`.
+- [ ] Validar compilación y funcionamiento.
 
 ## Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
