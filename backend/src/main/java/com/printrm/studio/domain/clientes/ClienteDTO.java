@@ -1,9 +1,11 @@
 package com.printrm.studio.domain.clientes;
 
 import lombok.Data;
+import java.util.UUID;
 
 @Data
-public class ClienteRequestDTO {
+public class ClienteDTO {
+    private UUID id;
     private String nombre;
     private String email;
     private String telefono;

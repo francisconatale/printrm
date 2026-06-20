@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2026-06-19] - Simplificación y Unificación de DTOs de Clientes (T016)
+### Descripción
+- **Backend (Clientes):** Se unificaron `ClienteRequestDTO` y `ClienteResponseDTO` en una única clase `ClienteDTO` con el campo `id` opcional/anulable, reduciendo el código redundante del backend.
+- **Configuración de Agentes (Reglas):** Se creó el archivo de reglas de codificación del proyecto `.agents/AGENTS.md` y se actualizó la constitución de diseño en `.specify/memory/constitution.md` para plasmar la regla canónica de "DTOs Unificados" en el backend.
+
+### Archivos Involucrados
+- `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteRequestDTO.java` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteResponseDTO.java` (eliminado)
+- `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteDTO.java` (creado)
+- `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteController.java` (modificado)
+- `backend/src/main/java/com/printrm/studio/domain/clientes/ClienteService.java` (modificado)
+- `.agents/AGENTS.md` (creado)
+- `.specify/memory/constitution.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Eliminación del Historial de Cálculos (T015)
 ### Descripción
 - **Frontend & Backend (Cálculos):** Se eliminó por completo el "Historial de Cálculos" de la aplicación.

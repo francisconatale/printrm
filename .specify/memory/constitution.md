@@ -61,6 +61,7 @@ Todo cambio en cualquier input del formulario debe disparar un recálculo inmedi
 - Autenticación: ninguna en v1
 - Formato: JSON, `Content-Type: application/json`
 - Errores: estructura `{ "error": "string", "code": "string" }`
+- **DTOs Unificados**: Si los campos de entrada y salida son idénticos (salvo por el `id`), usar un DTO único (ej. `ClienteDTO`) con el `id` opcional/anulable. Se prohíbe crear clases duplicadas `Request` y `Response` innecesariamente.
 
 ## Arquitectura de Entrega
 

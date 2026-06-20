@@ -2,7 +2,6 @@ package com.printrm.studio.domain.clientes;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,23 +15,23 @@ public class ClienteController {
     private final ClienteService service;
 
     @GetMapping
-    public List<ClienteResponseDTO> getAll() {
+    public List<ClienteDTO> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ClienteResponseDTO getById(@PathVariable UUID id) {
+    public ClienteDTO getById(@PathVariable UUID id) {
         return service.getById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClienteResponseDTO create(@RequestBody ClienteRequestDTO request) {
+    public ClienteDTO create(@RequestBody ClienteDTO request) {
         return service.create(request);
     }
 
     @PutMapping("/{id}")
-    public ClienteResponseDTO update(@PathVariable UUID id, @RequestBody ClienteRequestDTO request) {
+    public ClienteDTO update(@PathVariable UUID id, @RequestBody ClienteDTO request) {
         return service.update(id, request);
     }
 

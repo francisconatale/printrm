@@ -18,10 +18,10 @@
 - [x] Agregar botones en la Agenda para avanzar el estado de las órdenes de producción (T013).
 - [x] Eliminar la relación de `Calculo` de `ItemPedido.java`, `PedidoService.java`, DTOs de backend y types de frontend (T014).
 - [x] Eliminar por completo el Historial de Cálculos del frontend y backend (T015).
+- [x] Unificar DTOs de Clientes a ClienteDTO y actualizar especificaciones (T016).
 
 ## Archivos involucrados
-- `frontend/src/App.tsx`
-- `frontend/src/components/layout/sidebar.tsx`
-- `backend/src/main/java/com/printrm/studio/domain/calculo/CalculoController.java`
-- `backend/src/test/java/com/printrm/studio/domain/pedidos/`
+- `backend/src/main/java/com/printrm/studio/domain/clientes/`
+- `.specify/memory/constitution.md`
+- `.agents/AGENTS.md`
 - `.specify/current_task_summary.md`
