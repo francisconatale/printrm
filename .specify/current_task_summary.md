@@ -1,13 +1,12 @@
-# Estado de Tarea: Estado Vacío de Ítems en Pedidos
+# Estado de Tarea: Reutilizar patrón de Select en Modal de Nueva Orden de Stock
 
 ## Objetivo
-Permitir la eliminación completa de todos los productos en el modal (incluso el último) y mostrar un estado vacío (empty state) premium con un botón de llamada a la acción para agregar el primer producto cuando no haya ítems.
+Reemplazar el selector HTML nativo (`<select>`) en el modal `CrearOrdenIndependienteModal.tsx` por el componente de diseño personalizado `Select`, `SelectItem`, etc., de la aplicación.
 
 ## Tareas
-- [ ] Eliminar la restricción `disabled={items.length === 1}` del botón de borrado (tacho) de cada fila.
-- [ ] Implementar un componente de estado vacío premium cuando `items.length === 0`.
-- [ ] Ocultar los encabezados de grilla si no hay ítems agregados.
-- [ ] Validar compilación.
+- [ ] Importar los componentes `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue` de `../../../components/ui/select`.
+- [ ] Reemplazar el `<select>` nativo por la estructura de componentes correspondiente.
+- [ ] Validar la compilación.
 
 ## Archivos Involucrados
-- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
+- `frontend/src/features/produccion/components/CrearOrdenIndependienteModal.tsx`
