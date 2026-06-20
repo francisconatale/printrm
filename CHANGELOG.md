@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [2026-06-20] - Pruebas de Integración de Dominio Financiero en Producción (T017)
+### Descripción
+- **Backend (Pruebas):** Se creó la clase de prueba de integración `OrdenProduccionServiceIntegrationTest.java` para verificar de forma integral el comportamiento contable y financiero cuando una orden de producción se finaliza.
+  - Para producción interna, se verifica la deducción estimada de insumos (Material) y de electricidad (Energía) basándose en las especificaciones físicas de la pieza STL (peso, tiempo) y perfiles preferidos de impresora y filamento.
+  - Para producción externa (outsourcing), se valida el registro de egreso consolidado contra el total cobrado por el proveedor externo.
+  - Se configuró la clase utilizando `@ActiveProfiles("test")` para asegurar que las pruebas corran de forma aislada sobre la base de datos de prueba SQLite sin contaminar la base de datos de desarrollo del proyecto.
+
+### Archivos Involucrados
+- `backend/src/test/java/com/printrm/studio/domain/produccion/OrdenProduccionServiceIntegrationTest.java` (creado)
+- `.specify/current_task_summary.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Simplificación y Unificación de DTOs de Clientes (T016)
 ### Descripción
 - **Backend (Clientes):** Se unificaron `ClienteRequestDTO` y `ClienteResponseDTO` en una única clase `ClienteDTO` con el campo `id` opcional/anulable, reduciendo el código redundante del backend.
