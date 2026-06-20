@@ -6,6 +6,7 @@ import { STLModelViewer } from '../../../components/ui/stl-model-viewer';
 interface STLViewerProps {
   file: File | null;
   canvasRef?: React.RefObject<HTMLCanvasElement>;
+  onInitialCapture?: (dataUrl: string) => void;
 }
 
 const COLORS = [
@@ -90,7 +91,7 @@ const ViewerControls = ({
   );
 };
 
-export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef }) => {
+export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef, onInitialCapture }) => {
   const { isDark } = useTheme();
   const canvasBg = isDark ? '#1c1c1e' : '#f5f5f7';
   const localCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -154,6 +155,7 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef }) => {
         preserveDrawingBuffer={true}
         backgroundColor={canvasBg}
         showEnvironment={true}
+        onInitialCapture={onInitialCapture}
       />
     </div>
   );

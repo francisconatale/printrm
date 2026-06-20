@@ -36,6 +36,11 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
   const [file, setFile] = React.useState<File | null>(null);
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const initialScreenshotRef = React.useRef<string | undefined>(undefined);
+
+  React.useEffect(() => {
+    initialScreenshotRef.current = undefined;
+  }, [file]);
 
   const [piezaInput, setPiezaInput] = React.useState<PiezaInput>({
     horas: 0,
@@ -119,7 +124,7 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
     if (!file || !resultado) return;
 
     const canvas = canvasRef.current;
-    const imagenBase64 = canvas ? canvas.toDataURL('image/png') : undefined;
+    const imagenBase64 = initialScreenshotRef.current || (canvas ? canvas.toDataURL('image/png') : undefined);
 
     guardarPieza({
       nombre: file.name.replace('.stl', ''),
@@ -214,6 +219,9 @@ export function CalculadoraView({ initialData }: CalculadoraViewProps) {
                   isSlicing={isAnalyzing || isSlicing}
                   onReset={handleResetAnalysis}
                   canvasRef={canvasRef}
+                  onInitialCapture={(dataUrl) => {
+                    initialScreenshotRef.current = dataUrl;
+                  }}
                 />
 
                 <div className="pt-8 border-t border-[var(--border-subtle)]">

@@ -9,10 +9,11 @@ interface STLUploadProps {
   isSlicing: boolean;
   onReset?: () => void;
   canvasRef?: React.RefObject<HTMLCanvasElement>;
+  onInitialCapture?: (dataUrl: string) => void;
 }
 
 export const STLUpload: React.FC<STLUploadProps> = ({ 
-  file, onFileChange, isSlicing, onReset, canvasRef
+  file, onFileChange, isSlicing, onReset, canvasRef, onInitialCapture
 }) => {
   const { perfilActivo } = usePerfilActivo();
 
@@ -60,7 +61,7 @@ export const STLUpload: React.FC<STLUploadProps> = ({
             
             {/* STL Viewer - Full Bleed */}
             <div className="w-full h-full">
-              <STLViewer file={file} canvasRef={canvasRef} />
+              <STLViewer file={file} canvasRef={canvasRef} onInitialCapture={onInitialCapture} />
             </div>
           </div>
         ) : (

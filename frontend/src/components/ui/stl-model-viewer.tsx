@@ -37,31 +37,54 @@ class STLErrorBoundary extends React.Component<
   }
 }
 
-function CameraRig({ geometry }: { geometry: THREE.BufferGeometry }) {
-  const { camera } = useThree();
-  const fitted = useRef(false);
+interface ModelProps {
+  url: string;
+  onLoaded?: () => void;
+  color?: string;
+  onInitialCapture?: (dataUrl: string) => void;
+}
+
+function CameraRig({ 
+  geometry, 
+  onFitted 
+}: { 
+  geometry: THREE.BufferGeometry;
+  onFitted?: (dataUrl: string) => void;
+}) {
+  const { camera, gl, scene } = useThree();
+  const fitted = useRef(0);
 
   useFrame(() => {
-    if (fitted.current) return;
-    geometry.computeBoundingBox();
-    const box = geometry.boundingBox as THREE.Box3;
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-    box.getCenter(center);
-    box.getSize(size);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const fov = (camera as THREE.PerspectiveCamera).fov * (Math.PI / 180);
-    const dist = Math.abs(maxDim / (2 * Math.tan(fov / 2))) * 2.2;
-    camera.position.set(center.x + dist * 0.5, center.y + dist * 0.5, center.z + dist);
-    camera.lookAt(center);
-    camera.updateProjectionMatrix();
-    fitted.current = true;
+    if (fitted.current === 2) return;
+
+    if (fitted.current === 0) {
+      geometry.computeBoundingBox();
+      const box = geometry.boundingBox as THREE.Box3;
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      box.getCenter(center);
+      box.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const fov = (camera as THREE.PerspectiveCamera).fov * (Math.PI / 180);
+      const dist = Math.abs(maxDim / (2 * Math.tan(fov / 2))) * 2.2;
+      camera.position.set(center.x + dist * 0.5, center.y + dist * 0.5, center.z + dist);
+      camera.lookAt(center);
+      camera.updateProjectionMatrix();
+      fitted.current = 1;
+    } else if (fitted.current === 1) {
+      if (onFitted) {
+        gl.render(scene, camera);
+        const dataUrl = gl.domElement.toDataURL('image/png');
+        onFitted(dataUrl);
+      }
+      fitted.current = 2;
+    }
   });
 
   return null;
 }
 
-function Model({ url, onLoaded, color = '#7a7a7a' }: { url: string; onLoaded?: () => void, color?: string }) {
+function Model({ url, onLoaded, color = '#7a7a7a', onInitialCapture }: ModelProps) {
   const geometry = useLoader(STLLoader, url);
 
   useEffect(() => {
@@ -79,9 +102,22 @@ function Model({ url, onLoaded, color = '#7a7a7a' }: { url: string; onLoaded?: (
           />
         </mesh>
       </Center>
-      <CameraRig geometry={geometry} />
+      <CameraRig geometry={geometry} onFitted={onInitialCapture} />
     </>
   );
+}
+
+interface STLModelViewerProps {
+  url: string;
+  color?: string;
+  autoRotate?: boolean;
+  enableControls?: boolean;
+  onLoaded?: () => void;
+  preserveDrawingBuffer?: boolean;
+  backgroundColor?: string;
+  ambientIntensity?: number;
+  showEnvironment?: boolean;
+  onInitialCapture?: (dataUrl: string) => void;
 }
 
 export const STLModelViewer = React.forwardRef<HTMLCanvasElement, STLModelViewerProps>(({
@@ -93,14 +129,17 @@ export const STLModelViewer = React.forwardRef<HTMLCanvasElement, STLModelViewer
   preserveDrawingBuffer = false,
   backgroundColor,
   ambientIntensity = 0.5,
-  showEnvironment = false
+  showEnvironment = false,
+  onInitialCapture
 }, ref) => {
+  const shouldPreserve = preserveDrawingBuffer || !!onInitialCapture;
+
   return (
     <div className="w-full h-full relative">
       <STLErrorBoundary>
         <Canvas
           ref={ref}
-          gl={{ antialias: true, preserveDrawingBuffer }}
+          gl={{ antialias: true, preserveDrawingBuffer: shouldPreserve }}
           camera={{ position: [0, 0, 100], fov: 45 }}
           style={{ width: '100%', height: '100%' }}
         >
@@ -110,7 +149,7 @@ export const STLModelViewer = React.forwardRef<HTMLCanvasElement, STLModelViewer
           <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
           
           <Suspense fallback={null}>
-            <Model url={url} color={color} onLoaded={onLoaded} />
+            <Model url={url} color={color} onLoaded={onLoaded} onInitialCapture={onInitialCapture} />
             {showEnvironment && <Environment preset="studio" />}
           </Suspense>
           

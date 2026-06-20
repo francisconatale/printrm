@@ -1,9 +1,9 @@
-# Tarea Actual: Captura de Miniatura STL en Posición Inicial (T021)
+# Tarea Actual: Captura de Miniatura STL en Posición Inicial Completada (T021)
 
 ## Estado
-- [ ] Implementar captura automática de la miniatura del modelo STL en su posición inicial (cámara ajustada al inicio) en `stl-model-viewer.tsx` (T021).
-- [ ] Pasar el callback de captura desde `CalculadoraView.tsx` a través de `STLUpload.tsx` y `STLViewer.tsx` (T021).
-- [ ] Guardar la miniatura pre-capturada en el backend al guardar la pieza en la biblioteca (T021).
+- [x] Implementar captura automática de la miniatura del modelo STL en su posición inicial (cámara ajustada al inicio) en `stl-model-viewer.tsx` (T021).
+- [x] Pasar el callback de captura desde `CalculadoraView.tsx` a través de `STLUpload.tsx` y `STLViewer.tsx` (T021).
+- [x] Guardar la miniatura pre-capturada en el backend al guardar la pieza en la biblioteca (T021).
 
 ## Archivos involucrados
 - `frontend/src/components/ui/stl-model-viewer.tsx`

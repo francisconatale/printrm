@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [2026-06-20] - Captura de Miniatura STL en Posición Inicial (T021)
+### Descripción
+- **Frontend (Miniatura STL):** Se modificó la renderización 3D para capturar automáticamente la imagen de la pieza en su ángulo/posición inicial (cámara ajustada al cargar) antes de iniciar la rotación o cualquier interacción del usuario. Esta imagen se almacena y se usa al presionar "Guardar en biblioteca", evitando saltos o discrepancias visuales de la miniatura frente al render 3D al interactuar con el badge "Ver 3D".
+
+### Archivos Involucrados
+- [frontend/src/components/ui/stl-model-viewer.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/components/ui/stl-model-viewer.tsx)
+- [frontend/src/features/calculo/components/STLViewer.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/STLViewer.tsx)
+- [frontend/src/features/calculo/components/STLUpload.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/STLUpload.tsx)
+- [frontend/src/features/calculo/components/CalculadoraView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/CalculadoraView.tsx)
+- [CHANGELOG.md](file:///C:/Users/franc/OneDrive/Desktop/printrm/CHANGELOG.md)
+
 ## [2026-06-20] - Integración STL a Producto y Precios Variables (T018, T019, T020)
 ### Descripción
 - **Backend (Pedidos y Precios):** Se implementó el soporte para precios unitarios personalizados en los ítems de pedidos (`precioPersonalizado`). Se actualizó la entidad `ItemPedido`, la lógica de negocio en `PedidoService` y los DTOs de request/response para priorizar el precio unitario personalizado en el cálculo del subtotal y del total.
