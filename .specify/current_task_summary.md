@@ -1,16 +1,13 @@
-# Tarea Actual: Implementar remediación UX/A11y en PiezasGalleryView.tsx, ProductosGalleryView.tsx y LibroDiarioView.tsx (T026)
+# Tarea Actual: Ajustes en catálogo de stock (T027)
 
 ## Estado
-- [x] Implementar `QueryErrorView` para las consultas principales de Piezas, Productos y Libro Diario/Finanzas (T026).
-- [x] Integrar `useMutationWithFeedback` para las mutaciones de Piezas, Productos y Finanzas en sus respectivas APIs (T026).
-- [x] Aplicar semántica HTML, headings `<h1>` y accesibilidad (labels, aria-label, aria-hidden) en las tres vistas (T026).
-- [x] Ajustar la validación preventiva de botones, diferenciación de registros por fecha e íconos consistentes en las tres vistas (T026).
+- [ ] Eliminar columna 'Costo Fab.' de la tabla del catálogo en `ProductosGalleryView.tsx`.
+- [ ] Exponer costos de materiales y energía en `PiezaSTLResponseDTO` en el backend y `PiezaSTL` en el frontend.
+- [ ] Modificar celda de 'Precio Sug.' en `ProductosGalleryView.tsx` para mostrar tooltip con desglose de costos (Costo Material, Costo Energía, Total Costo de Producción).
 
 ## Archivos involucrados
-- `frontend/src/features/biblioteca/api/biblioteca.api.ts`
-- `frontend/src/features/stock/api/productos.api.ts`
-- `frontend/src/features/finanzas/api/finanzas.api.ts`
-- `frontend/src/features/biblioteca/components/PiezasGalleryView.tsx`
+- `backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLResponseDTO.java`
+- `backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLService.java`
+- `frontend/src/features/biblioteca/types/biblioteca.types.ts`
 - `frontend/src/features/stock/components/ProductosGalleryView.tsx`
-- `frontend/src/features/finanzas/components/LibroDiarioView.tsx`
 - `CHANGELOG.md`

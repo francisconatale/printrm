@@ -17,13 +17,14 @@ interface STLCardProps {
   onDelete: (id: string) => void;
   onCalculate: (pieza: PiezaSTL) => void;
   onPublish?: (pieza: PiezaSTL) => void;
+  onViewDetail?: (pieza: PiezaSTL) => void;
 }
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, onPublish }) => {
+export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, onPublish, onViewDetail }) => {
   const [hovered, setHovered] = useState(false);
   
   const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`; 
@@ -32,7 +33,8 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
     <div 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative bg-white border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)]"
+      onClick={() => onViewDetail?.(pieza)}
+      className="group relative bg-white border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)] cursor-pointer"
     >
       {/* 3D Preview Area */}
       <div className="aspect-square w-full bg-[#f5f5f7] relative overflow-hidden flex items-center justify-center">
@@ -75,32 +77,40 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
       {/* Info Area */}
       <div className="p-4 space-y-3">
         <div className="flex justify-between items-start">
-          <div>
-            <h3 className="studio-body-strong truncate max-w-[140px]" title={pieza.nombre}>
+          <div className="min-w-0 flex-1">
+            <h3 className="studio-body-strong truncate pr-2" title={pieza.nombre}>
               {pieza.nombre}
             </h3>
-            <p className="text-[10px] text-[#7a7a7a] uppercase tracking-wider font-semibold">
+            <p className="text-[10px] text-[#7a7a7a] uppercase tracking-wider font-semibold truncate">
               {pieza.perfilFilamentoNombre || 'Material no definido'}
             </p>
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger 
-              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label={`Opciones para pieza ${pieza.nombre}`}
-            >
-              <MoreVertical size={16} className="text-[#7a7a7a]" aria-hidden="true" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem 
-                onClick={() => onDelete(pieza.id)}
-                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+          <div onClick={(e) => e.stopPropagation()}>
+            <DropdownMenu>
+              <DropdownMenuTrigger 
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label={`Opciones para pieza ${pieza.nombre}`}
               >
-                <Trash2 size={14} className="mr-2" aria-hidden="true" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <MoreVertical size={16} className="text-[#7a7a7a]" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  onClick={() => onViewDetail?.(pieza)}
+                >
+                  <Box size={14} className="mr-2" aria-hidden="true" />
+                  Ver Detalle
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onDelete(pieza.id)}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                >
+                  <Trash2 size={14} className="mr-2" aria-hidden="true" />
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-[#f0f0f0]">
@@ -119,7 +129,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => onPublish?.(pieza)}
               className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"

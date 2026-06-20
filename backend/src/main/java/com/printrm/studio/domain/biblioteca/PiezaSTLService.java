@@ -129,6 +129,8 @@ public class PiezaSTLService {
         );
 
         dto.setCostoBase(calc != null ? calc.getCostoBase() : 0.0);
+        dto.setCostoMaterial(calc != null ? calc.getCostoFilamento() : 0.0);
+        dto.setCostoEnergia(calc != null ? calc.getCostoEnergia() : 0.0);
 
         return dto;
     }

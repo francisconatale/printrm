@@ -12,6 +12,8 @@ public class PiezaSTLResponseDTO {
     private Double pesoGramos;
     private String tiempoEstimado;
     private Double costoBase;
+    private Double costoMaterial;
+    private Double costoEnergia;
     private String imagenBase64;
     
     private String perfilImpresoraNombre;
@@ -20,3 +22,4 @@ public class PiezaSTLResponseDTO {
     
     private LocalDateTime creadoEn;
 }
+

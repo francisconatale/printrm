@@ -6,6 +6,8 @@ export interface PiezaSTL {
   pesoGramos?: number;
   tiempoEstimado?: string;
   costoBase?: number;
+  costoMaterial?: number;
+  costoEnergia?: number;
   
   perfilImpresoraNombre?: string;
   perfilFilamentoNombre?: string;

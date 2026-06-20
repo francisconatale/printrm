@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [2026-06-20] - Ajustes en Catálogo de Stock y Desglose de Costos (T027)
+### Descripción
+- **Backend:**
+  - Se modificó [PiezaSTLResponseDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLResponseDTO.java) y [PiezaSTLService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLService.java) para exponer el desglose de costos calculados (`costoMaterial` y `costoEnergia`) en cada pieza del producto.
+- **Frontend:**
+  - Se actualizó [biblioteca.types.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/types/biblioteca.types.ts) para soportar las nuevas propiedades.
+  - Se eliminó la columna "Costo Fab." de la tabla del catálogo en [ProductosGalleryView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/ProductosGalleryView.tsx).
+  - Se modificó la celda "Precio Sug." en [ProductosGalleryView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/ProductosGalleryView.tsx) para incorporar un tooltip interactivo en hover que muestra el desglose: Costo Material, Costo Energía y Total Costo de Producción.
+
+## [2026-06-20] - Desglose de Costo en Detalle de Piezas STL
+### Descripción
+- **Backend (Biblioteca de Piezas):**
+  - Se modificó `PiezaSTLResponseDTO.java` para incluir los campos `costoMaterial` y `costoEnergia`.
+  - Se actualizó `PiezaSTLService.java` para mapear los costos individuales resultantes de `CostCalculationService` (`costoFilamento` y `costoEnergia`) en el DTO de respuesta.
+- **Frontend (Biblioteca de Piezas):**
+  - Se actualizó la interfaz `PiezaSTL` en `biblioteca.types.ts` incorporando los campos opcionales `costoMaterial` y `costoEnergia`.
+  - Se creó el componente interactivo `PiezaDetailModal.tsx` que ofrece una previsualización 3D y una sección visualmente atractiva con el desglose de costos de material, consumo de energía y costo total.
+  - Se modificó `STLCard.tsx` para agregar la acción de ver detalle al hacer click en la tarjeta o a través del menú desplegable, y asegurar que la card principal sólo muestre el costo consolidado.
+  - Se integró `PiezaDetailModal` en `PiezasGalleryView.tsx`.
+
 ## [2026-06-20] - Remediación UX/A11y en Biblioteca de Piezas, Catálogo de Stock y Libro Diario (T026)
 ### Descripción
 - **Frontend (Biblioteca de Piezas):**

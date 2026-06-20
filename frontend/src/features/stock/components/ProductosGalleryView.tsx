@@ -20,6 +20,14 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
     return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
   }, [producto.partes]);
 
+  const costoMaterial = React.useMemo(() => {
+    return producto.partes.reduce((sum, p) => sum + (p.costoMaterial || 0), 0);
+  }, [producto.partes]);
+
+  const costoEnergia = React.useMemo(() => {
+    return producto.partes.reduce((sum, p) => sum + (p.costoEnergia || 0), 0);
+  }, [producto.partes]);
+
   return (
     <>
       <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors group border-b border-zinc-100 dark:border-zinc-800">
@@ -50,15 +58,29 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
           </div>
         </td>
         <td className="py-4">
-          <div className="flex items-center gap-1">
-            <Coins size={11} className="text-zinc-455" aria-hidden="true" />
-            <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400">{formatCurrency(currentProductionCost)}</span>
+          <div className="relative group/tooltip inline-block">
+            <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100 underline decoration-dotted decoration-zinc-400 cursor-help">
+              {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : 'N/A'}
+            </span>
+            <div className="absolute z-50 invisible group-hover/tooltip:visible bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100 text-xs rounded-xl p-3.5 border border-zinc-200 dark:border-zinc-800 shadow-xl min-w-[220px] left-1/2 -translate-x-1/2 bottom-full mb-2.5 transition-all opacity-0 group-hover/tooltip:opacity-100 duration-200 pointer-events-none">
+              <div className="space-y-2 font-sans">
+                <p className="font-semibold text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-850 pb-1.5 mb-1.5">Desglose de Costos</p>
+                <div className="flex justify-between gap-4 text-zinc-500 dark:text-zinc-400">
+                  <span>Costo Material:</span>
+                  <span className="font-mono font-medium text-zinc-800 dark:text-zinc-200">{formatCurrency(costoMaterial)}</span>
+                </div>
+                <div className="flex justify-between gap-4 text-zinc-500 dark:text-zinc-400">
+                  <span>Costo Energía:</span>
+                  <span className="font-mono font-medium text-zinc-800 dark:text-zinc-200">{formatCurrency(costoEnergia)}</span>
+                </div>
+                <div className="flex justify-between gap-4 pt-1.5 border-t border-zinc-100 dark:border-zinc-800 text-zinc-950 dark:text-white font-semibold">
+                  <span>Total Costo Prod.:</span>
+                  <span className="font-mono font-bold">{formatCurrency(currentProductionCost)}</span>
+                </div>
+              </div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white dark:border-t-zinc-900" />
+            </div>
           </div>
-        </td>
-        <td className="py-4">
-          <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100">
-            {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : 'N/A'}
-          </span>
         </td>
         <td className="py-4">
           <div className="flex items-center gap-1 bg-[#f5f5f7] dark:bg-zinc-800 rounded-full p-0.5 border border-zinc-200 dark:border-zinc-700 w-fit">
@@ -182,7 +204,6 @@ export function ProductosGalleryView() {
                     <th className="px-6 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider">Producto</th>
                     <th className="px-4 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider text-center">Stock</th>
                     <th className="px-4 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider">Partes</th>
-                    <th className="px-4 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider">Costo Fab.</th>
                     <th className="px-4 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider">Precio Sug.</th>
                     <th className="px-4 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider">Ajustar Stock</th>
                     <th className="px-6 py-4 font-bold text-zinc-500 dark:text-zinc-400 text-[10px] uppercase tracking-wider text-right">Acciones</th>

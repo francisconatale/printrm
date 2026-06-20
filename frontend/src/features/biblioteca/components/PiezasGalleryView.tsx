@@ -7,6 +7,7 @@ import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { ComposicionProductoModal } from '../../stock/components/ComposicionProductoModal';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { PiezaDetailModal } from './PiezaDetailModal';
 
 export function PiezasGalleryView() {
   const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
@@ -14,6 +15,7 @@ export function PiezasGalleryView() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [deletePieceId, setDeletePieceId] = React.useState<string | null>(null);
   const [publishPieceId, setPublishPieceId] = React.useState<string | null>(null);
+  const [selectedPiezaDetail, setSelectedPiezaDetail] = React.useState<PiezaSTL | null>(null);
 
   const filteredPiezas = React.useMemo(() => {
     if (!piezas) return [];
@@ -76,6 +78,7 @@ export function PiezasGalleryView() {
                    onDelete={(id) => setDeletePieceId(id)}
                    onCalculate={handleCalculate}
                    onPublish={(pieza) => setPublishPieceId(pieza.id)}
+                   onViewDetail={(pieza) => setSelectedPiezaDetail(pieza)}
                 />
               ))}
             </div>
@@ -130,6 +133,12 @@ export function PiezasGalleryView() {
         isOpen={publishPieceId !== null}
         onClose={() => setPublishPieceId(null)}
         preselectedParteId={publishPieceId || undefined}
+      />
+
+      <PiezaDetailModal
+        pieza={selectedPiezaDetail}
+        isOpen={selectedPiezaDetail !== null}
+        onClose={() => setSelectedPiezaDetail(null)}
       />
     </div>
   );
