@@ -153,10 +153,6 @@ public class OrdenProduccionService {
                         filamentoTotal += res.getCostoFilamento();
                         energiaTotal += res.getCostoEnergia();
                     }
-                } else if (orden.getItemPedido().getCalculo() != null) {
-                    com.printrm.studio.domain.calculo.Calculo calc = orden.getItemPedido().getCalculo();
-                    filamentoTotal = calc.getCostoFilamento() != null ? calc.getCostoFilamento() : 0.0;
-                    energiaTotal = calc.getCostoEnergia() != null ? calc.getCostoEnergia() : 0.0;
                 }
 
                 filamentoTotal *= orden.getCantidad();

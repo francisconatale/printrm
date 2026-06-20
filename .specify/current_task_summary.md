@@ -1,4 +1,4 @@
-# Tarea Actual: Unificar ítems de pedido a Productos del catálogo (T014)
+# Tarea Actual: Remover relación de Calculo del módulo de Pedidos (T014)
 
 ## Estado
 - [x] Crear la entidad `OrdenProduccion.java` con sus enums y relaciones (T001).
@@ -16,9 +16,12 @@
 - [x] Crear la vista de "Agenda de Producción" que liste las órdenes agrupadas/filtradas por estado y tipo (T011).
 - [x] Crear el modal de creación de orden de producción independiente para reponer stock propio (T012).
 - [x] Agregar botones en la Agenda para avanzar el estado de las órdenes de producción (T013).
-- [x] Simplificar `CrearPedidoModal.tsx` and `PedidoDetalleView.tsx` para asociar ítems exclusivamente a productos del catálogo (T014).
+- [x] Eliminar la relación de `Calculo` de `ItemPedido.java`, `PedidoService.java`, DTOs de backend y types de frontend (T014).
 
 ## Archivos involucrados
-- `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
-- `frontend/src/features/pedidos/components/PedidoDetalleView.tsx`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedido.java`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoRequestDTO.java`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java`
+- `frontend/src/features/pedidos/types/pedidos.types.ts`
 - `.specify/current_task_summary.md`

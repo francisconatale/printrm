@@ -11,7 +11,6 @@ export interface OrdenProduccionResumen {
 
 export interface ItemPedido {
   id: string;
-  calculoId: string;
   productoId?: string;
   productoNombre?: string;
   perfilNombre: string;
@@ -35,7 +34,6 @@ export interface Pedido {
 }
 
 export interface ItemPedidoRequest {
-  calculoId?: string;
   productoId?: string;
   cantidad: number;
 }

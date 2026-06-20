@@ -9,7 +9,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemPedidoRequestDTO {
-    private UUID calculoId;
     private UUID productoId;
     private Integer cantidad;
 }

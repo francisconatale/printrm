@@ -2,8 +2,6 @@ package com.printrm.studio.domain.pedidos;
 
 import com.printrm.studio.domain.clientes.Cliente;
 import com.printrm.studio.domain.clientes.ClienteRepository;
-import com.printrm.studio.domain.calculo.Calculo;
-import com.printrm.studio.domain.calculo.CalculoRepository;
 import com.printrm.studio.domain.finanzas.Transaccion;
 import com.printrm.studio.domain.finanzas.TransaccionRepository;
 import com.printrm.studio.domain.stock.Producto;
@@ -26,7 +24,6 @@ public class PedidoService {
     private final PedidoRepository repository;
     private final ItemPedidoRepository itemRepository;
     private final ClienteRepository clienteRepository;
-    private final CalculoRepository calculoRepository;
     private final TransaccionRepository transaccionRepository;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
@@ -60,10 +57,6 @@ public class PedidoService {
                     Producto prod = productoRepository.findById(itemDto.getProductoId())
                             .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + itemDto.getProductoId()));
                     item.setProducto(prod);
-                } else if (itemDto.getCalculoId() != null) {
-                    Calculo calculo = calculoRepository.findById(itemDto.getCalculoId())
-                            .orElseThrow(() -> new RuntimeException("Cálculo no encontrado: " + itemDto.getCalculoId()));
-                    item.setCalculo(calculo);
                 }
                 
                 item.calcularSubtotal();
@@ -156,9 +149,11 @@ public class PedidoService {
         List<Transaccion> egresos = transaccionRepository.findAllByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.EGRESO);
         
         if (!egresos.isEmpty()) {
-            Calculo calc = item.getCalculo();
-            if (calc != null) {
-                double costoPorUnidad = calc.getCostoEnergia() + calc.getCostoFilamento();
+            Producto producto = item.getProducto();
+            if (producto != null && producto.getPartes() != null) {
+                double costoPorUnidad = producto.getPartes().stream()
+                        .mapToDouble(p -> p.getCostoBase() != null ? p.getCostoBase() : 0.0)
+                        .sum();
                 double montoAReclasificar = costoPorUnidad * unidadesFallidas;
 
                 transaccionRepository.save(Transaccion.builder()
@@ -174,7 +169,7 @@ public class PedidoService {
                     .categoria(Transaccion.CategoriaTransaccion.MERMA)
                     .monto(montoAReclasificar * -1)
                     .pedidoId(pedido.getId())
-                    .descripcion("Estadística Merma: " + unidadesFallidas + " unidades de " + calc.getPerfilNombre())
+                    .descripcion("Estadística Merma: " + unidadesFallidas + " unidades de " + producto.getNombre())
                     .build());
             }
         }
@@ -203,23 +198,21 @@ public class PedidoService {
         if (yaRegistrado) return;
 
         for (ItemPedido item : pedido.getItems()) {
-            Calculo calc = item.getCalculo();
-            if (calc != null) {
-                transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                    .monto(calc.getCostoFilamento() * item.getCantidad() * -1)
-                    .pedidoId(pedido.getId())
-                    .descripcion("Material: " + calc.getPerfilNombre())
-                    .build());
+            Producto producto = item.getProducto();
+            if (producto != null && producto.getPartes() != null) {
+                double costoBaseTotal = producto.getPartes().stream()
+                        .mapToDouble(p -> p.getCostoBase() != null ? p.getCostoBase() : 0.0)
+                        .sum();
 
-                transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(Transaccion.CategoriaTransaccion.ENERGIA)
-                    .monto(calc.getCostoEnergia() * item.getCantidad() * -1)
-                    .pedidoId(pedido.getId())
-                    .descripcion("Energía: " + calc.getPerfilNombre())
-                    .build());
+                if (costoBaseTotal > 0) {
+                    transaccionRepository.save(Transaccion.builder()
+                        .tipo(Transaccion.TipoTransaccion.EGRESO)
+                        .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
+                        .monto(costoBaseTotal * item.getCantidad() * -1)
+                        .pedidoId(pedido.getId())
+                        .descripcion("Costo estimado de fabricación: " + producto.getNombre())
+                        .build());
+                }
             }
         }
     }
@@ -306,26 +299,10 @@ public class PedidoService {
                 
                 int faltante = Math.max(0, item.getCantidad() - stockTotal - cantidadProducida - cantidadEnProduccion);
                 itemDto.setCantidadFaltante(faltante);
-            } else if (item.getCalculo() != null) {
-                itemDto.setCalculoId(item.getCalculo().getId().toString());
-                itemDto.setPerfilNombre(item.getCalculo().getPerfilNombre() != null ? item.getCalculo().getPerfilNombre() : "Cotización");
+            } else {
+                itemDto.setPerfilNombre("Item Desconocido");
                 itemDto.setStockDisponible(0);
-                
-                int cantidadProducida = ordenes.stream()
-                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.RECIBIDO_PROVEEDOR)
-                    .mapToInt(OrdenProduccion::getCantidad)
-                    .sum();
-                
-                int cantidadEnProduccion = ordenes.stream()
-                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COLA 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR)
-                    .mapToInt(OrdenProduccion::getCantidad)
-                    .sum();
-
-                int faltante = Math.max(0, item.getCantidad() - cantidadProducida - cantidadEnProduccion);
-                itemDto.setCantidadFaltante(faltante);
+                itemDto.setCantidadFaltante(item.getCantidad());
             }
             
             return itemDto;
