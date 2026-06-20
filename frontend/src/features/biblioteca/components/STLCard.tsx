@@ -38,7 +38,11 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
     >
       {/* 3D Preview Area */}
       <div className="aspect-square w-full bg-[#f5f5f7] relative overflow-hidden flex items-center justify-center">
-        {pieza.imagenBase64 ? (
+        {hovered ? (
+          <div className="w-full h-full animate-in fade-in duration-300">
+            <STLPreview url={stlUrl} />
+          </div>
+        ) : pieza.imagenBase64 ? (
           <img 
             src={pieza.imagenBase64} 
             alt={pieza.nombre} 
@@ -52,7 +56,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onCalculate, 
 
         {/* Dynamic Cost Badge (Calculated by Backend) */}
         {pieza.costoBase && pieza.costoBase > 0 && (
-          <div className="absolute top-3 left-3 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
+          <div className="absolute top-3 left-3 z-10 bg-white/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
             <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
             <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>
           </div>
