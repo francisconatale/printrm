@@ -123,100 +123,59 @@ public class OrdenProduccionServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Debe registrar transacciones financieras (egresos) correctas para materiales y energía en producción interna")
-    public void testProcesarFinalizacionOrdenInternaRegistraEgresos() {
-        // 1. Crear un pedido para generar ItemPedido
+    @DisplayName("Debe registrar egresos de filamento y energía al completar una orden vinculada")
+    public void testOrdenVinculadaRegistraEgresos() {
         PedidoRequestDTO request = new PedidoRequestDTO();
         request.setClienteId(cliente.getId());
         request.setItems(List.of(new ItemPedidoRequestDTO(producto.getId(), 1)));
 
         PedidoResponseDTO pedido = pedidoService.crearPedido(request);
-        String itemIdStr = pedido.getItems().get(0).getId();
-        UUID itemId = UUID.fromString(itemIdStr);
+        UUID itemId = UUID.fromString(pedido.getItems().get(0).getId());
 
-        // 2. Crear Orden de Producción Vinculada (Tipo: INTERNA)
-        OrdenProduccion orden = ordenProduccionService.crearOrdenVinculada(
-                itemId,
-                2, // cantidad = 2
-                "INTERNA",
-                null,
-                null
-        );
-
-        // 3. Completar Orden
+        OrdenProduccion orden = ordenProduccionService.crearOrdenVinculada(itemId, 2);
         orden = ordenProduccionService.cambiarEstado(orden.getId(), "COMPLETADO");
 
-        // 4. Verificación de Transacciones Financieras
-        // For 1 unit:
-        // tiempoTotalHoras = 2.5
-        // consumoW = 200W (0.2 kW)
-        // costoEnergia = 0.2 * 2.5 * 50 = 25.0
-        // costoFilamento = (100g / 1000g) * 2000 = 200.0
-        // For 2 units:
-        // costoEnergiaTotal = 50.0
-        // costoFilamentoTotal = 400.0
-
+        // 1 unidad: 2.5h * 200W = 0.5kWh * $50 = $25 energía, 100g * $2/g = $200 filamento
+        // 2 unidades: $50 energía, $400 filamento
         List<Transaccion> transacciones = transaccionRepository.findAll();
 
         Transaccion tMaterial = transacciones.stream()
                 .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
                         && t.getCategoria() == Transaccion.CategoriaTransaccion.MATERIAL
                         && t.getPedidoId().equals(UUID.fromString(pedido.getId())))
-                .findFirst()
-                .orElse(null);
-
+                .findFirst().orElse(null);
         Transaccion tEnergia = transacciones.stream()
                 .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
                         && t.getCategoria() == Transaccion.CategoriaTransaccion.ENERGIA
                         && t.getPedidoId().equals(UUID.fromString(pedido.getId())))
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
 
-        assertNotNull(tMaterial, "Debería registrarse una transacción de egreso de material");
-        assertEquals(-400.0, tMaterial.getMonto(), 0.001, "El monto del egreso de material debería ser -400.0");
-        assertTrue(tMaterial.getDescripcion().contains("Costo material fabricación interna"), "La descripción debería ser descriptiva del material");
-
-        assertNotNull(tEnergia, "Debería registrarse una transacción de egreso de energía");
-        assertEquals(-50.0, tEnergia.getMonto(), 0.001, "El monto del egreso de energía debería ser -50.0");
-        assertTrue(tEnergia.getDescripcion().contains("Costo energía fabricación interna"), "La descripción debería ser descriptiva de la energía");
+        assertNotNull(tMaterial);
+        assertEquals(-400.0, tMaterial.getMonto(), 0.001);
+        assertNotNull(tEnergia);
+        assertEquals(-50.0, tEnergia.getMonto(), 0.001);
     }
 
     @Test
-    @DisplayName("Debe registrar transacciones financieras (egresos) correctas para producción externa")
-    public void testProcesarFinalizacionOrdenExternaRegistraEgresos() {
-        // 1. Crear un pedido para generar ItemPedido
-        PedidoRequestDTO request = new PedidoRequestDTO();
-        request.setClienteId(cliente.getId());
-        request.setItems(List.of(new ItemPedidoRequestDTO(producto.getId(), 1)));
+    @DisplayName("Debe registrar egresos de filamento y energía al completar una orden independiente")
+    public void testOrdenIndependienteRegistraEgresos() {
+        OrdenProduccion orden = ordenProduccionService.crearOrdenIndependiente(producto.getId(), 1);
+        orden = ordenProduccionService.cambiarEstado(orden.getId(), "COMPLETADO");
 
-        PedidoResponseDTO pedido = pedidoService.crearPedido(request);
-        String itemIdStr = pedido.getItems().get(0).getId();
-        UUID itemId = UUID.fromString(itemIdStr);
-
-        // 2. Crear Orden de Producción Vinculada (Tipo: EXTERNA)
-        OrdenProduccion orden = ordenProduccionService.crearOrdenVinculada(
-                itemId,
-                2, // cantidad = 2
-                "EXTERNA",
-                "Proveedor Externo Test",
-                300.0 // costo estimado total
-        );
-
-        // 3. Recibir de Proveedor (Completar para externas)
-        orden = ordenProduccionService.cambiarEstado(orden.getId(), "RECIBIDO_PROVEEDOR");
-
-        // 4. Verificación de Transacciones Financieras
         List<Transaccion> transacciones = transaccionRepository.findAll();
 
         Transaccion tMaterial = transacciones.stream()
                 .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
-                        && t.getCategoria() == Transaccion.CategoriaTransaccion.MATERIAL
-                        && t.getPedidoId().equals(UUID.fromString(pedido.getId())))
-                .findFirst()
-                .orElse(null);
+                        && t.getCategoria() == Transaccion.CategoriaTransaccion.MATERIAL)
+                .findFirst().orElse(null);
+        Transaccion tEnergia = transacciones.stream()
+                .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
+                        && t.getCategoria() == Transaccion.CategoriaTransaccion.ENERGIA)
+                .findFirst().orElse(null);
 
-        assertNotNull(tMaterial, "Debería registrarse una transacción de egreso de material");
-        assertEquals(-300.0, tMaterial.getMonto(), 0.001, "El monto del egreso debería coincidir con el costo estimado (-300.0)");
-        assertTrue(tMaterial.getDescripcion().contains("Pago a proveedor externo"), "La descripción debería mencionar al proveedor externo");
+        assertNotNull(tMaterial, "Debe registrar egreso de filamento");
+        assertEquals(-200.0, tMaterial.getMonto(), 0.001);
+        assertNotNull(tEnergia, "Debe registrar egreso de energía");
+        assertEquals(-25.0, tEnergia.getMonto(), 0.001);
     }
 }

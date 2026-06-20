@@ -42,46 +42,30 @@ public class OrdenProduccionService {
     }
 
     @Transactional
-    public OrdenProduccion crearOrdenVinculada(UUID itemId, Integer cantidad, String tipo, String proveedor, Double costoEstimado) {
+    public OrdenProduccion crearOrdenVinculada(UUID itemId, Integer cantidad) {
         ItemPedido item = itemPedidoRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Ítem de pedido no encontrado: " + itemId));
-
-        OrdenProduccion.TipoProduccion tipoEnum = OrdenProduccion.TipoProduccion.valueOf(tipo.toUpperCase());
-        OrdenProduccion.EstadoProduccion estadoInicial = tipoEnum == OrdenProduccion.TipoProduccion.EXTERNA 
-                ? OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR 
-                : OrdenProduccion.EstadoProduccion.COLA;
 
         OrdenProduccion orden = OrdenProduccion.builder()
                 .itemPedido(item)
                 .producto(item.getProducto())
                 .cantidad(cantidad)
-                .tipo(tipoEnum)
-                .estado(estadoInicial)
-                .proveedor(proveedor)
-                .costoEstimado(costoEstimado != null ? costoEstimado : 0.0)
+                .estado(OrdenProduccion.EstadoProduccion.COLA)
                 .build();
 
         return repository.save(orden);
     }
 
     @Transactional
-    public OrdenProduccion crearOrdenIndependiente(UUID productoId, Integer cantidad, String tipo, String proveedor, Double costoEstimado) {
+    public OrdenProduccion crearOrdenIndependiente(UUID productoId, Integer cantidad) {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + productoId));
-
-        OrdenProduccion.TipoProduccion tipoEnum = OrdenProduccion.TipoProduccion.valueOf(tipo.toUpperCase());
-        OrdenProduccion.EstadoProduccion estadoInicial = tipoEnum == OrdenProduccion.TipoProduccion.EXTERNA 
-                ? OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR 
-                : OrdenProduccion.EstadoProduccion.COLA;
 
         OrdenProduccion orden = OrdenProduccion.builder()
                 .itemPedido(null)
                 .producto(producto)
                 .cantidad(cantidad)
-                .tipo(tipoEnum)
-                .estado(estadoInicial)
-                .proveedor(proveedor)
-                .costoEstimado(costoEstimado != null ? costoEstimado : 0.0)
+                .estado(OrdenProduccion.EstadoProduccion.COLA)
                 .build();
 
         return repository.save(orden);
@@ -95,7 +79,7 @@ public class OrdenProduccionService {
         OrdenProduccion.EstadoProduccion estadoEnum = OrdenProduccion.EstadoProduccion.valueOf(nuevoEstado.toUpperCase());
         orden.setEstado(estadoEnum);
 
-        if (estadoEnum == OrdenProduccion.EstadoProduccion.COMPLETADO || estadoEnum == OrdenProduccion.EstadoProduccion.RECIBIDO_PROVEEDOR) {
+        if (estadoEnum == OrdenProduccion.EstadoProduccion.COMPLETADO) {
             orden.setFechaFin(LocalDateTime.now());
             procesarFinalizacionOrden(orden);
         }
@@ -105,79 +89,43 @@ public class OrdenProduccionService {
 
     private void procesarFinalizacionOrden(OrdenProduccion orden) {
         Producto producto = orden.getProducto();
-        
-        // 1. Alta de Stock
-        if (producto != null) {
-            if (orden.getTipo() == OrdenProduccion.TipoProduccion.INTERNA) {
-                // Para internas, updateStock con delta positivo calcula automáticamente el costo del lote
-                productoService.updateStock(producto.getId().toString(), orden.getCantidad());
-            } else {
-                // Para externas, dividimos el costoEstimado para definir el costo del lote
-                double costoUnitario = orden.getCantidad() > 0 ? (orden.getCostoEstimado() / orden.getCantidad()) : 0.0;
-                productoService.addStock(producto.getId(), orden.getCantidad(), costoUnitario);
-            }
+        if (producto == null) return;
+
+        double costoUnitario = producto.getPartes().stream()
+                .mapToDouble(p -> costCalculationService.calculate(
+                        p.getPesoGramos(), parseHours(p.getTiempoEstimado()),
+                        parseMinutes(p.getTiempoEstimado()), 0.0,
+                        p.getPerfilPreferido(), p.getFilamentoPreferido(),
+                        ajustesService.getAjustes()).getCostoBase())
+                .sum();
+        productoService.addStock(producto.getId(), orden.getCantidad(), costoUnitario);
+
+        UUID pedidoId = orden.getItemPedido() != null ? orden.getItemPedido().getPedido().getId() : null;
+        String nombre = producto.getNombre();
+
+        AjustesDTO ajustes = ajustesService.getAjustes();
+        double filamento = 0, energia = 0;
+        for (PiezaSTL pieza : producto.getPartes()) {
+            CostCalculationResult r = costCalculationService.calculate(
+                    pieza.getPesoGramos(), parseHours(pieza.getTiempoEstimado()),
+                    parseMinutes(pieza.getTiempoEstimado()), 0.0,
+                    pieza.getPerfilPreferido(), pieza.getFilamentoPreferido(), ajustes);
+            filamento += r.getCostoFilamento();
+            energia += r.getCostoEnergia();
         }
+        filamento *= orden.getCantidad();
+        energia *= orden.getCantidad();
 
-        // 2. Registro Contable de Egresos en Finanzas
-        if (orden.getItemPedido() != null) {
-            UUID pedidoId = orden.getItemPedido().getPedido().getId();
-            String productoNombre = producto != null ? producto.getNombre() : "Pieza Cotizada";
-
-            if (orden.getTipo() == OrdenProduccion.TipoProduccion.EXTERNA) {
-                // Registrar el costo cobrado por el proveedor externo
-                transaccionRepository.save(Transaccion.builder()
-                        .tipo(Transaccion.TipoTransaccion.EGRESO)
-                        .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                        .monto(-orden.getCostoEstimado())
-                        .pedidoId(pedidoId)
-                        .descripcion("Pago a proveedor externo " + (orden.getProveedor() != null ? orden.getProveedor() : "") 
-                                + " por fabricación de " + orden.getCantidad() + " unidades de " + productoNombre)
-                        .build());
-            } else {
-                // Registrar egresos internos estimados de filamento y energía
-                double filamentoTotal = 0.0;
-                double energiaTotal = 0.0;
-                
-                if (producto != null) {
-                    AjustesDTO ajustes = ajustesService.getAjustes();
-                    for (PiezaSTL pieza : producto.getPartes()) {
-                        CostCalculationResult res = costCalculationService.calculate(
-                                pieza.getPesoGramos(),
-                                parseHours(pieza.getTiempoEstimado()),
-                                parseMinutes(pieza.getTiempoEstimado()),
-                                0.0,
-                                pieza.getPerfilPreferido(),
-                                pieza.getFilamentoPreferido(),
-                                ajustes
-                        );
-                        filamentoTotal += res.getCostoFilamento();
-                        energiaTotal += res.getCostoEnergia();
-                    }
-                }
-
-                filamentoTotal *= orden.getCantidad();
-                energiaTotal *= orden.getCantidad();
-
-                if (filamentoTotal > 0) {
-                    transaccionRepository.save(Transaccion.builder()
-                            .tipo(Transaccion.TipoTransaccion.EGRESO)
-                            .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                            .monto(-filamentoTotal)
-                            .pedidoId(pedidoId)
-                            .descripcion("Costo material fabricación interna: " + orden.getCantidad() + " unidades de " + productoNombre)
-                            .build());
-                }
-                if (energiaTotal > 0) {
-                    transaccionRepository.save(Transaccion.builder()
-                            .tipo(Transaccion.TipoTransaccion.EGRESO)
-                            .categoria(Transaccion.CategoriaTransaccion.ENERGIA)
-                            .monto(-energiaTotal)
-                            .pedidoId(pedidoId)
-                            .descripcion("Costo energía fabricación interna: " + orden.getCantidad() + " unidades de " + productoNombre)
-                            .build());
-                }
-            }
-        }
+        if (filamento > 0)
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO).categoria(Transaccion.CategoriaTransaccion.MATERIAL)
+                    .monto(-filamento).pedidoId(pedidoId)
+                    .descripcion("Filamento: " + orden.getCantidad() + " uds de " + nombre).build());
+        if (energia > 0)
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO).categoria(Transaccion.CategoriaTransaccion.ENERGIA)
+                    .monto(-energia).pedidoId(pedidoId)
+                    .descripcion("Energía: " + orden.getCantidad() + " uds de " + nombre).build());
     }
 
     private Integer parseHours(String time) {

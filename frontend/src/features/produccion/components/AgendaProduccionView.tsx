@@ -12,13 +12,7 @@ import {
   Play, 
   Check, 
   X, 
-  Layers, 
-  Tag, 
   Search, 
-  Filter, 
-  ChevronRight, 
-  AlertCircle,
-  TrendingDown,
   User,
   Package,
   Wrench
@@ -67,8 +61,7 @@ export function AgendaProduccionView() {
     // Search
     const searchMatch = 
       o.productoNombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.clienteNombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.proveedor?.toLowerCase().includes(searchTerm.toLowerCase());
+      o.clienteNombre?.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (!searchMatch) return false;
 
@@ -84,31 +77,22 @@ export function AgendaProduccionView() {
 
   // Group by columns
   const colaOrders = filteredOrdenes.filter(o => o.estado === 'COLA');
-  const procesoOrders = filteredOrdenes.filter(o => o.estado === 'IMPRIMIENDO' || o.estado === 'ENVIADO_PROVEEDOR');
-  const finalizadasOrders = filteredOrdenes.filter(o => o.estado === 'COMPLETADO' || o.estado === 'RECIBIDO_PROVEEDOR');
+  const procesoOrders = filteredOrdenes.filter(o => o.estado === 'IMPRIMIENDO');
+  const finalizadasOrders = filteredOrdenes.filter(o => o.estado === 'COMPLETADO');
   const canceladasOrders = filteredOrdenes.filter(o => o.estado === 'CANCELADO');
-
-  const formatCurrency = (val?: number) => {
-    if (val === undefined || val === null) return '-';
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(val);
-  };
 
   const getStatusBadge = (estado: string) => {
     const badges: Record<string, string> = {
       COLA: 'bg-zinc-100 border-zinc-200 text-zinc-700 dark:bg-zinc-800/40 dark:text-zinc-300 dark:border-zinc-700/60',
       IMPRIMIENDO: 'bg-blue-50 border-blue-100 text-blue-700 dark:bg-blue-900/10 dark:text-blue-400 dark:border-blue-800/40',
-      ENVIADO_PROVEEDOR: 'bg-amber-50 border-amber-100 text-amber-700 dark:bg-amber-900/10 dark:text-amber-400 dark:border-amber-800/40',
       COMPLETADO: 'bg-emerald-50 border-emerald-100 text-emerald-700 dark:bg-emerald-950/10 dark:text-emerald-400 dark:border-emerald-900/40',
-      RECIBIDO_PROVEEDOR: 'bg-emerald-50 border-emerald-100 text-emerald-700 dark:bg-emerald-950/10 dark:text-emerald-400 dark:border-emerald-900/40',
       CANCELADO: 'bg-red-50 border-red-100 text-red-700 dark:bg-red-950/10 dark:text-red-400 dark:border-red-900/40'
     };
 
     const label: Record<string, string> = {
       COLA: 'En Cola',
       IMPRIMIENDO: 'Imprimiendo',
-      ENVIADO_PROVEEDOR: 'En Proveedor',
       COMPLETADO: 'Completada',
-      RECIBIDO_PROVEEDOR: 'Recibida',
       CANCELADO: 'Cancelada'
     };
 
@@ -151,25 +135,7 @@ export function AgendaProduccionView() {
           <span className="text-muted-foreground">Cantidad: </span>
           <strong className="text-foreground">{o.cantidad} u.</strong>
         </div>
-        <div>
-          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
-            {o.tipo === 'INTERNA' ? 'Interna' : 'Externa'}
-          </span>
-        </div>
       </div>
-
-      {o.tipo === 'EXTERNA' && (
-        <div className="bg-muted/20 p-2 rounded-lg text-[11px] space-y-1 text-muted-foreground">
-          <div className="flex justify-between">
-            <span>Proveedor:</span>
-            <span className="font-semibold text-foreground">{o.proveedor}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Costo Estimado:</span>
-            <span className="font-semibold text-foreground">{formatCurrency(o.costoEstimado)}</span>
-          </div>
-        </div>
-      )}
 
       {o.itemPedidoId && (
         <div className="text-[10px] text-muted-foreground flex items-center gap-1">
@@ -179,11 +145,10 @@ export function AgendaProduccionView() {
       )}
 
       <div className="pt-2 flex justify-between gap-2">
-        {/* Status Actions */}
         <div className="flex gap-2">
           {o.estado === 'COLA' && (
             <button
-              onClick={() => handleStatusChange(o.id, o.tipo === 'INTERNA' ? 'IMPRIMIENDO' : 'ENVIADO_PROVEEDOR')}
+              onClick={() => handleStatusChange(o.id, 'IMPRIMIENDO')}
               disabled={updating}
               className="flex items-center gap-1 px-3 py-1 bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold rounded-lg transition-all"
               aria-label="Iniciar orden de producción"
@@ -202,21 +167,9 @@ export function AgendaProduccionView() {
               <Check size={10} aria-hidden="true" /> Completar
             </button>
           )}
-
-          {o.estado === 'ENVIADO_PROVEEDOR' && (
-            <button
-              onClick={() => handleStatusChange(o.id, 'RECIBIDO_PROVEEDOR')}
-              disabled={updating}
-              className="flex items-center gap-1 px-3 py-1 bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold rounded-lg transition-all"
-              aria-label="Recibir orden de producción"
-            >
-              <Check size={10} aria-hidden="true" /> Recibir
-            </button>
-          )}
         </div>
 
-        {/* Cancellation Button */}
-        {['COLA', 'IMPRIMIENDO', 'ENVIADO_PROVEEDOR'].includes(o.estado) && (
+        {['COLA', 'IMPRIMIENDO'].includes(o.estado) && (
           <button
             onClick={() => handleStatusChange(o.id, 'CANCELADO')}
             disabled={updating}
@@ -250,7 +203,7 @@ export function AgendaProduccionView() {
                 <span>Agenda de Producción</span>
               </h1>
               <p className="studio-body text-muted-foreground">
-                Monitoreá las piezas en impresión y ordenes tercerizadas. Al finalizarlas, se repondrá stock automáticamente.
+                Monitoreá las piezas en impresión. Al finalizarlas, se repondrá stock automáticamente y se registrarán los costos de filamento y energía.
               </p>
             </div>
             <button
@@ -359,7 +312,7 @@ export function AgendaProduccionView() {
               <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
                 {procesoOrders.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
-                    <p className="text-xs">No hay impresiones ni envíos activos.</p>
+                    <p className="text-xs">No hay impresiones activas.</p>
                   </div>
                 ) : (
                   procesoOrders.map(renderCard)

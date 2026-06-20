@@ -30,10 +30,7 @@ public class OrdenProduccionController {
     public OrdenProduccionResponseDTO createVinculada(@RequestBody OrdenProduccionRequestDTO dto) {
         OrdenProduccion o = service.crearOrdenVinculada(
                 UUID.fromString(dto.getItemPedidoId()),
-                dto.getCantidad(),
-                dto.getTipo(),
-                dto.getProveedor(),
-                dto.getCostoEstimado()
+                dto.getCantidad()
         );
         return mapToDTO(o);
     }
@@ -42,10 +39,7 @@ public class OrdenProduccionController {
     public OrdenProduccionResponseDTO createIndependiente(@RequestBody OrdenProduccionRequestDTO dto) {
         OrdenProduccion o = service.crearOrdenIndependiente(
                 UUID.fromString(dto.getProductoId()),
-                dto.getCantidad(),
-                dto.getTipo(),
-                dto.getProveedor(),
-                dto.getCostoEstimado()
+                dto.getCantidad()
         );
         return mapToDTO(o);
     }
@@ -67,10 +61,7 @@ public class OrdenProduccionController {
                 .productoId(o.getProducto() != null ? o.getProducto().getId().toString() : null)
                 .productoNombre(o.getProducto() != null ? o.getProducto().getNombre() : "Pieza Cotizada")
                 .cantidad(o.getCantidad())
-                .tipo(o.getTipo().name())
                 .estado(o.getEstado().name())
-                .costoEstimado(o.getCostoEstimado())
-                .proveedor(o.getProveedor())
                 .fechaInicio(o.getFechaInicio())
                 .fechaFin(o.getFechaFin())
                 .build();

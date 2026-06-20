@@ -23,9 +23,6 @@ public class ItemPedidoResponseDTO {
     public static class OrdenProduccionResumenDTO {
         private String id;
         private Integer cantidad;
-        private String tipo;
         private String estado;
-        private String proveedor;
-        private Double costoEstimado;
     }
 }

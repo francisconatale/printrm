@@ -272,10 +272,7 @@ public class PedidoService {
             itemDto.setOrdenesProduccion(ordenes.stream().map(o -> ItemPedidoResponseDTO.OrdenProduccionResumenDTO.builder()
                 .id(o.getId().toString())
                 .cantidad(o.getCantidad())
-                .tipo(o.getTipo().name())
                 .estado(o.getEstado().name())
-                .proveedor(o.getProveedor())
-                .costoEstimado(o.getCostoEstimado())
                 .build()).collect(Collectors.toList()));
 
             if (item.getProducto() != null) {
@@ -287,15 +284,13 @@ public class PedidoService {
                 itemDto.setStockDisponible(stockTotal);
                 
                 int cantidadProducida = ordenes.stream()
-                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.RECIBIDO_PROVEEDOR)
+                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO)
                     .mapToInt(OrdenProduccion::getCantidad)
                     .sum();
                 
                 int cantidadEnProduccion = ordenes.stream()
                     .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COLA 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.ENVIADO_PROVEEDOR)
+                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO)
                     .mapToInt(OrdenProduccion::getCantidad)
                     .sum();
                 

@@ -125,7 +125,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                               <span>Stock actual: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
                               {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (
                                 <span>En producción: <strong className="text-foreground">
-                                  {item.ordenesProduccion.reduce((acc, o) => ['COLA', 'IMPRIMIENDO', 'ENVIADO_PROVEEDOR'].includes(o.estado) ? acc + o.cantidad : acc, 0)}
+                                  {item.ordenesProduccion.reduce((acc, o) => ['COLA', 'IMPRIMIENDO'].includes(o.estado) ? acc + o.cantidad : acc, 0)}
                                 </strong></span>
                               )}
                               {(item.cantidadFaltante ?? 0) > 0 ? (
@@ -144,16 +144,15 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                               <p className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Historial de Fabricación</p>
                               {item.ordenesProduccion.map((op) => (
                                 <div key={op.id} className="text-[11px] flex items-center gap-2">
-                                  <span className="font-medium text-foreground">x{op.cantidad} {op.tipo === 'INTERNA' ? 'Interna' : `Externa (${op.proveedor})`}</span>
+                                  <span className="font-medium text-foreground">x{op.cantidad}</span>
                                   <span className="text-muted-foreground">•</span>
                                   <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
                                     op.estado === 'COLA' ? 'bg-zinc-100 border-zinc-200 text-zinc-700' :
                                     op.estado === 'IMPRIMIENDO' ? 'bg-blue-50 border-blue-100 text-blue-700' :
-                                    op.estado === 'COMPLETADO' || op.estado === 'RECIBIDO_PROVEEDOR' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' :
-                                    op.estado === 'CANCELADO' ? 'bg-red-50 border-red-100 text-red-700' :
-                                    'bg-amber-50 border-amber-100 text-amber-700' // ENVIADO_PROVEEDOR
+                                    op.estado === 'COMPLETADO' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' :
+                                    'bg-red-50 border-red-100 text-red-700'
                                   }`}>
-                                    {op.estado === 'RECIBIDO_PROVEEDOR' ? 'RECIBIDO' : op.estado}
+                                    {op.estado}
                                   </span>
                                 </div>
                               ))}

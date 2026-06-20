@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Transaccion } from '../types/finanzas.types';
+import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 
 const API_URL = 'http://localhost:8080/api/v1/transacciones';
 
@@ -26,7 +27,7 @@ export const useGetBalance = () => {
 
 export const useCreateTransaccion = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithFeedback({
     mutationFn: async (transaccion: Omit<Transaccion, 'id' | 'fecha'>) => {
       const { data } = await axios.post(API_URL, transaccion);
       return data;
@@ -34,6 +35,8 @@ export const useCreateTransaccion = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transacciones'] });
       queryClient.invalidateQueries({ queryKey: ['balance'] });
-    }
+    },
+    successMessage: 'Transacción registrada correctamente.',
+    errorMessage: 'Error al registrar la transacción.',
   });
 };

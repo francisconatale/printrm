@@ -35,15 +35,7 @@ public class OrdenProduccion {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoProduccion tipo;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private EstadoProduccion estado;
-
-    private Double costoEstimado;
-
-    private String proveedor;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -51,11 +43,7 @@ public class OrdenProduccion {
 
     private LocalDateTime fechaFin;
 
-    public enum TipoProduccion {
-        INTERNA, EXTERNA
-    }
-
     public enum EstadoProduccion {
-        COLA, IMPRIMIENDO, COMPLETADO, ENVIADO_PROVEEDOR, RECIBIDO_PROVEEDOR, CANCELADO
+        COLA, IMPRIMIENDO, COMPLETADO, CANCELADO
     }
 }

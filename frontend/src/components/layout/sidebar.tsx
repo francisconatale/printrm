@@ -4,9 +4,7 @@ import {
   ArrowUpDown, 
   Users, 
   Package, 
-  BarChart, 
   Printer,
-  Star,
   Sliders,
   Hammer
 } from 'lucide-react';
@@ -24,7 +22,7 @@ const NAV_ITEMS = [
   { icon: Users, label: 'Clientes', id: 'customers' },
   { icon: Sliders, label: 'Perfiles', id: 'profiles' },
   { icon: LayoutDashboard, label: 'Finanzas', id: 'finance' },
-  { icon: BarChart, label: 'Reportes', id: 'reports' },
+  // { icon: BarChart, label: 'Reportes', id: 'reports' },
 ];
 
 interface SidebarProps {

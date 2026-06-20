@@ -15,10 +15,7 @@ public class OrdenProduccionResponseDTO {
     private String productoId;
     private String productoNombre;
     private Integer cantidad;
-    private String tipo;
     private String estado;
-    private Double costoEstimado;
-    private String proveedor;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
 }

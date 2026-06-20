@@ -3,10 +3,7 @@ export type EstadoPedido = 'BORRADOR' | 'COTIZADO' | 'CONFIRMADO' | 'EN_PRODUCCI
 export interface OrdenProduccionResumen {
   id: string;
   cantidad: number;
-  tipo: 'INTERNA' | 'EXTERNA';
-  estado: 'COLA' | 'IMPRIMIENDO' | 'COMPLETADO' | 'ENVIADO_PROVEEDOR' | 'RECIBIDO_PROVEEDOR' | 'CANCELADO';
-  proveedor?: string;
-  costoEstimado?: number;
+  estado: 'COLA' | 'IMPRIMIENDO' | 'COMPLETADO' | 'CANCELADO';
 }
 
 export interface ItemPedido {
