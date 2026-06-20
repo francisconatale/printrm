@@ -17,7 +17,7 @@ public class TransaccionService {
 
     public Double getBalance() {
         return repository.findAll().stream()
-                .mapToDouble(Transaccion::getMonto)
+                .mapToDouble(t -> t.getMonto() != null ? t.getMonto() : 0.0)
                 .sum();
     }
 

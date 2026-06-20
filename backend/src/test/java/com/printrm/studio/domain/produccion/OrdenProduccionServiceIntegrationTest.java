@@ -142,11 +142,13 @@ public class OrdenProduccionServiceIntegrationTest {
         Transaccion tMaterial = transacciones.stream()
                 .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
                         && t.getCategoria() == Transaccion.CategoriaTransaccion.MATERIAL
+                        && t.getPedidoId() != null
                         && t.getPedidoId().equals(UUID.fromString(pedido.getId())))
                 .findFirst().orElse(null);
         Transaccion tEnergia = transacciones.stream()
                 .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
                         && t.getCategoria() == Transaccion.CategoriaTransaccion.ENERGIA
+                        && t.getPedidoId() != null
                         && t.getPedidoId().equals(UUID.fromString(pedido.getId())))
                 .findFirst().orElse(null);
 

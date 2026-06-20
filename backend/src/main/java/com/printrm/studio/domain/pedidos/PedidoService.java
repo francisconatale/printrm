@@ -9,6 +9,7 @@ import com.printrm.studio.domain.stock.ProductoRepository;
 import com.printrm.studio.domain.stock.ProductoService;
 import com.printrm.studio.domain.produccion.OrdenProduccion;
 import com.printrm.studio.domain.produccion.OrdenProduccionRepository;
+import com.printrm.studio.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +57,7 @@ public class PedidoService {
 
                 if (itemDto.getProductoId() != null) {
                     Producto prod = productoRepository.findById(itemDto.getProductoId())
-                            .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + itemDto.getProductoId()));
+                            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + itemDto.getProductoId()));
                     item.setProducto(prod);
                 }
                 
@@ -73,14 +74,14 @@ public class PedidoService {
     @Transactional
     public PedidoResponseDTO actualizarCantidadItem(UUID pedidoId, UUID itemId, Integer cantidad) {
         ItemPedido item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Ítem no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ítem no encontrado"));
         
         item.setCantidad(cantidad);
         item.calcularSubtotal();
         itemRepository.save(item);
 
         Pedido pedido = repository.findById(pedidoId)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
         
         pedido.calcularTotal();
         return mapToDTO(repository.save(pedido));
@@ -94,7 +95,7 @@ public class PedidoService {
     @Transactional
     public void cambiarEstado(String pedidoId, String nuevoEstado) {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
         Pedido.EstadoPedido anterior = pedido.getEstado();
         pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
@@ -104,9 +105,10 @@ public class PedidoService {
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
                     int stockDisponible = item.getProducto().getCantidadStock();
-                    if (stockDisponible < item.getCantidad()) {
+                    int cantidadRequerida = item.getCantidad() != null ? item.getCantidad() : 0;
+                    if (stockDisponible < cantidadRequerida) {
                         throw new RuntimeException("Stock insuficiente para entregar el producto: " + item.getProducto().getNombre() 
-                                + " (Requerido: " + item.getCantidad() + ", Disponible: " + stockDisponible + ")");
+                                + " (Requerido: " + cantidadRequerida + ", Disponible: " + stockDisponible + ")");
                     }
                 }
             }
@@ -114,7 +116,7 @@ public class PedidoService {
             // 2. Descontar stock usando VentaService
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
-                    ventaService.registrarConsumoStock(item.getProducto().getId(), item.getCantidad());
+                    ventaService.registrarConsumoStock(item.getProducto().getId(), item.getCantidad() != null ? item.getCantidad() : 0);
                 }
             }
 
@@ -126,7 +128,7 @@ public class PedidoService {
             // Reponer stock
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
-                    productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad());
+                    productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad() != null ? item.getCantidad() : 0);
                 }
             }
         } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
@@ -139,10 +141,10 @@ public class PedidoService {
     @Transactional
     public void registrarMerma(String pedidoId, String itemId, Integer unidadesFallidas) {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
         
         ItemPedido item = itemRepository.findById(UUID.fromString(itemId))
-                .orElseThrow(() -> new RuntimeException("Ítem no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ítem no encontrado"));
 
         item.setCantidadMerma(item.getCantidadMerma() + unidadesFallidas);
         itemRepository.save(item);
@@ -179,7 +181,7 @@ public class PedidoService {
     @Transactional
     public PedidoResponseDTO registrarPago(String pedidoId, Double monto, String descripcion) {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
         pedido.setMontoPagado(pedido.getMontoPagado() + monto);
         
@@ -206,10 +208,11 @@ public class PedidoService {
                         .sum();
 
                 if (costoBaseTotal > 0) {
+                    int cantidad = item.getCantidad() != null ? item.getCantidad() : 0;
                     transaccionRepository.save(Transaccion.builder()
                         .tipo(Transaccion.TipoTransaccion.EGRESO)
                         .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                        .monto(costoBaseTotal * item.getCantidad() * -1)
+                        .monto(costoBaseTotal * cantidad * -1)
                         .pedidoId(pedido.getId())
                         .descripcion("Costo estimado de fabricación: " + producto.getNombre())
                         .build());
@@ -248,7 +251,7 @@ public class PedidoService {
 
     public PedidoResponseDTO getPedido(String pedidoId) {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
         return mapToDTO(pedido);
     }
 
@@ -294,12 +297,13 @@ public class PedidoService {
                     .mapToInt(OrdenProduccion::getCantidad)
                     .sum();
                 
-                int faltante = Math.max(0, item.getCantidad() - stockTotal - cantidadProducida - cantidadEnProduccion);
+                int cantidad = item.getCantidad() != null ? item.getCantidad() : 0;
+                int faltante = Math.max(0, cantidad - stockTotal - cantidadProducida - cantidadEnProduccion);
                 itemDto.setCantidadFaltante(faltante);
             } else {
                 itemDto.setPerfilNombre("Item Desconocido");
                 itemDto.setStockDisponible(0);
-                itemDto.setCantidadFaltante(item.getCantidad());
+                itemDto.setCantidadFaltante(item.getCantidad() != null ? item.getCantidad() : 0);
             }
             
             return itemDto;

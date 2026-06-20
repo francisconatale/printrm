@@ -1,8 +1,10 @@
-# Estado de Tarea: Planificación de Estabilización (Ajustada)
+# Estado de Tarea: Implementando T002 (Null-Safety en Servicios Core)
 
 ## Objetivo
-Planificar y detallar la resolución de los problemas críticos y lógicos seleccionados en el backend de printrm, omitiendo el historial de cálculos, notas de clientes y campos de DTOs descartados en sprints anteriores.
+Implementar la seguridad frente a valores nulos en TransaccionService, PedidoService y CostCalculationService.
 
 ## Archivos Involucrados
-- `.specify/specs/009-correcciones-errores/plan.md`
+- `backend/src/main/java/com/printrm/studio/domain/finanzas/TransaccionService.java`
+- `backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java`
+- `backend/src/main/java/com/printrm/studio/domain/calculo/CostCalculationService.java`
 - `.specify/current_task_summary.md`

@@ -53,9 +53,20 @@ public class CostCalculationService {
 
         double tiempoTotalHoras = (horas != null ? horas : 0) + (minutos != null ? minutos / 60.0 : 0);
         
+        double precioKwh = 0.15;
+        double margenError = 0.0;
+        if (ajustes != null) {
+            if (ajustes.getPreciokWh() != null) {
+                precioKwh = ajustes.getPreciokWh();
+            }
+            if (ajustes.getMargenError() != null) {
+                margenError = ajustes.getMargenError();
+            }
+        }
+
         // 1. Energía
         double consumoW = (printer != null && printer.getConsumoW() != null) ? printer.getConsumoW() : 120.0;
-        double costoEnergia = (consumoW / 1000.0) * tiempoTotalHoras * ajustes.getPreciokWh();
+        double costoEnergia = (consumoW / 1000.0) * tiempoTotalHoras * precioKwh;
 
         // 2. Material
         double precioKg = 0.0;
@@ -70,7 +81,7 @@ public class CostCalculationService {
         double subtotal = costoEnergia + costoFilamento + (insumosExtra != null ? insumosExtra : 0.0);
         
         // 4. Margen de Error (Costo Base)
-        double costoBase = subtotal * (1 + (ajustes.getMargenError() / 100.0));
+        double costoBase = subtotal * (1 + (margenError / 100.0));
 
         return CostCalculationResult.builder()
                 .horas(horas)

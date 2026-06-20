@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [2026-06-20] - Estabilización de Servicios Core y Null-Safety (T002)
+### Descripción
+- **Backend:**
+  - Se añadieron validaciones de nulos en `TransaccionService.java` para prevenir excepciones por autodesarchivado al calcular el balance total.
+  - Se agregaron controles de seguridad frente a valores nulos al acceder al campo `item.getCantidad()` en varios puntos críticos de `PedidoService.java` (métodos `cambiarEstado`, `registrarGastoProduccion` y conversiones de DTOs).
+  - Se implementaron controles de nulos en `CostCalculationService.java` para las variables de ajustes y `preciokWh`, con valores predeterminados seguros (`0.15` y `0.0` respectivamente).
+  - Se corrigió una potencial excepción por puntero nulo en la prueba de integración de `OrdenProduccionServiceIntegrationTest.java` al interactuar con transacciones cuyo identificador de pedido es nulo.
+### Archivos Involucrados
+- [TransaccionService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/finanzas/TransaccionService.java)
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+- [CostCalculationService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/calculo/CostCalculationService.java)
+- [OrdenProduccionServiceIntegrationTest.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/test/java/com/printrm/studio/domain/produccion/OrdenProduccionServiceIntegrationTest.java)
+
+## [2026-06-20] - Rediseño Elegante (iPhone Style) de Modales
+### Descripción
+- **Frontend (Stock/Biblioteca):**
+  - Se rediseñó [LotesProductoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/LotesProductoModal.tsx) para aplicar un estilo refinado tipo iPhone: se agregó una cabecera explicativa del método FIFO con estilo de notificación de iOS y se implementó una lista agrupada con el diseño clásico de "Configuración de iPhone" (tarjetas agrupadas con bordes redondeados `rounded-3xl`, divisores finos y badges de estado personalizados) y soporte de animaciones suaves. Se eliminó el scroll interno y la restricción de altura para ver todo el contenido directamente.
+  - Se actualizó [PiezaDetailModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/PiezaDetailModal.tsx) con bordes sumamente redondeados, colores de fondo dinámicos que se adaptan al tema activo (light/dark mode) y una tarjeta de costos consolidada con estilo iOS. Se eliminaron las restricciones fijas de altura del visor y la columna de metadatos, y se configuró su tamaño a `90vw` (ancho máximo del 90% del viewport) con un límite de altura general de `90vh`, quitando cualquier scrollbar interno para mostrar la información unificada de una sola vez de forma muy espaciosa. Se removieron adornos genéricos (`Sparkles`).
+  - Se optimizó [STLCard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/STLCard.tsx) removiendo la previsualización 3D interactiva en hover dentro de la miniatura de la card en la galería. Esto mejora radicalmente el rendimiento de renderizado general de la galería; ahora, la previsualización 3D interactiva se abre directamente al hacer click y entrar al modal de detalle.
+  - Se optimizó y simplificó [ProductoCard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/ProductoCard.tsx) reemplazando la previsualización 3D pesada por defecto por la miniatura de la primera parte en 2D, reduciendo drásticamente la latencia y consumo de recursos de la galería de stock y aplicando el minimalismo exigido en el sistema de diseño.
+  - Se incorporó una mini miniatura visual en las filas de la tabla de [ProductosGalleryView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/stock/components/ProductosGalleryView.tsx) utilizando la previsualización 2D de la primera pieza, permitiendo una rápida identificación visual de cada producto sin alterar la estructura compacta.
+  - Se unificó la tipografía en [FinanzasDashboard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/finanzas/components/FinanzasDashboard.tsx) y en [LibroDiarioView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/finanzas/components/LibroDiarioView.tsx) eliminando la clase `font-mono` en métricas, gráficos, listas de transacciones y fechas para alinearlos al estilo limpio e Inter (sans-serif) de iPhone.
+
 ## [2026-06-20] - Ajustes en Catálogo de Stock y Desglose de Costos (T027)
 ### Descripción
 - **Backend:**
