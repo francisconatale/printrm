@@ -17,13 +17,12 @@ import { Toaster } from 'sonner'
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
+  const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
   }
-
-  const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
 
   const renderView = () => {
     switch (currentView) {
@@ -83,7 +82,7 @@ function App() {
           {renderView()}
         </main>
       </AppShell>
-      <Toaster richColors position="top-right" closeButton />
+      <Toaster richColors position="top-right" closeButton className="printrm-toaster" />
     </ThemeProvider>
   )
 }

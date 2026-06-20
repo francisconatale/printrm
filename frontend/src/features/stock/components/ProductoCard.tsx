@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Producto } from '../types/stock.types';
 import { STLPreview } from '../../biblioteca/components/STLPreview';
-import { Plus, Minus, Package, MoreVertical, Trash2, Coins, ListFilter } from 'lucide-react';
+import { Plus, Minus, Package, MoreVertical, Trash2, Coins, ListFilter, Box } from 'lucide-react';
 import { useUpdateStock } from '../api/productos.api';
 import {
   DropdownMenu,

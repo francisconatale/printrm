@@ -25,7 +25,7 @@ export function useMutationWithFeedback<
         toast.success(msg);
       }
       if (onSuccess) {
-        await onSuccess(data, variables, context);
+        await (onSuccess as any)(data, variables, context);
       }
     },
     onError: async (error, variables, context) => {
@@ -37,7 +37,7 @@ export function useMutationWithFeedback<
         toast.error(defaultMsg);
       }
       if (onError) {
-        await onError(error, variables, context);
+        await (onError as any)(error, variables, context);
       }
     },
   });
