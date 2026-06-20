@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2026-06-21] - Rediseño premium del modal de Nuevo Pedido
+### Descripción
+- **Frontend (Pedidos):** Se rediseñó por completo el modal `CrearPedidoModal.tsx` incorporando principios de `ui-ux-pro-max`:
+  - Se estilizó el selector de clientes en un contenedor premium con fondo `bg-muted/20` e icono descriptivo de usuario.
+  - Se rediseñó la lista de productos de pedido en una grilla responsive muy pulida, agregando clases de foco en inputs, bordes suaves hover y transiciones fluidas.
+  - Se implementó un panel de resumen financiero de tipo business intelligence que calcula automáticamente en tiempo real la cantidad total de unidades, el costo de producción acumulado, la ganancia estimada y la rentabilidad porcentual esperada del pedido.
+### Archivos Involucrados
+- [CrearPedidoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/CrearPedidoModal.tsx)
+
+## [2026-06-21] - Modificación de borde drag-drop en STLUpload
+### Descripción
+- **Frontend (Calculadora):** Se modificó el estilo del borde de la zona de arrastre (drag-drop) en `STLUpload.tsx`, reemplazando el borde continuo por un borde discontinuo neutral (`border-2 border-dashed border-gray-300 dark:border-zinc-700`) para ajustarse a los patrones de diseño estándar.
+### Archivos Involucrados
+- [STLUpload.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/STLUpload.tsx)
+
 ## [2026-06-21] - Corrección de Visualización en HistorialMensual y MetricCards de Finanzas
 ### Descripción
 - **Frontend (Finanzas):**

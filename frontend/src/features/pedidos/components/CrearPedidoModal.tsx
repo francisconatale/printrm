@@ -3,7 +3,7 @@ import { useGetClientes } from '../../clientes/api/clientes.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { useCreatePedido } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
-import { Plus, Trash2, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, AlertCircle, User, ShoppingBag, DollarSign, Percent, TrendingUp } from 'lucide-react';
 
 interface CrearPedidoModalProps {
   isOpen: boolean;
@@ -92,17 +92,35 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     );
   };
 
-  const calculateTotalPreview = () => {
-    return items.reduce((sum, item) => {
+  // Cálculo de totales y ganancias
+  const totals = React.useMemo(() => {
+    let totalPrecio = 0;
+    let totalCosto = 0;
+    let totalCantidad = 0;
+
+    items.forEach(item => {
       if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
         const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
         const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
-        return sum + (price * item.cantidad);
+        
+        totalPrecio += price * item.cantidad;
+        totalCosto += prodCost * item.cantidad;
+        totalCantidad += item.cantidad;
       }
-      return sum;
-    }, 0);
-  };
+    });
+
+    const gananciaEstimada = totalPrecio - totalCosto;
+    const margenPromedio = totalCosto > 0 ? (gananciaEstimada / totalCosto) * 100 : 0;
+
+    return {
+      totalPrecio,
+      totalCosto,
+      totalCantidad,
+      gananciaEstimada,
+      margenPromedio
+    };
+  }, [items, productos]);
 
   const isFormValid = clienteId && items.some(item => item.productoId !== '') && !isCreating;
 
@@ -116,55 +134,67 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     >
       <form onSubmit={handleSubmit} className="space-y-6 pt-4">
         {error && (
-          <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-sm">
+          <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-xl border border-red-500/20 text-sm">
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Cliente Selector */}
-        <div className="space-y-2">
-          <label className="studio-caption font-semibold">Cliente</label>
-          <select
-            value={clienteId}
-            onChange={(e) => setClienteId(e.target.value)}
-            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all text-sm"
-          >
-            <option value="">Elegí un cliente *</option>
-            {clientes?.map(cliente => (
-              <option key={cliente.id} value={cliente.id}>
-                {cliente.nombre}
-              </option>
-            ))}
-          </select>
+        {/* Selector de Cliente con Diseño Premium */}
+        <div className="bg-muted/20 border border-border/60 rounded-2xl p-4 space-y-2">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <User size={16} className="text-primary" />
+            <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
+          </div>
+          <div className="relative">
+            <select
+              value={clienteId}
+              onChange={(e) => setClienteId(e.target.value)}
+              className="w-full bg-background border border-border/80 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-medium cursor-pointer appearance-none"
+            >
+              <option value="">Selecciona un cliente *</option>
+              {clientes?.map(cliente => (
+                <option key={cliente.id} value={cliente.id}>
+                  {cliente.nombre}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">
+              ▼
+            </div>
+          </div>
         </div>
 
-        {/* Items Section */}
+        {/* Sección de Ítems */}
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <label className="studio-caption font-semibold">Ítems del Pedido</label>
+          <div className="flex justify-between items-center px-1">
+            <div className="flex items-center gap-2">
+              <ShoppingBag size={18} className="text-primary" />
+              <label className="text-sm font-bold text-foreground">Productos en este Pedido</label>
+            </div>
             <button
               type="button"
               onClick={handleAddItem}
-              className="flex items-center gap-1 text-sm text-primary hover:opacity-85 font-medium"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-200"
             >
-              <Plus size={14} aria-hidden="true" />
-              <span>Agregar Ítem</span>
+              <Plus size={14} />
+              <span>Agregar Producto</span>
             </button>
           </div>
 
-          {/* Grid Headers for Numeric Columns */}
-          <div className="flex gap-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-1.5 border-b border-border/40">
+          {/* Encabezados de Grilla */}
+          <div className="hidden md:flex gap-4 px-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider pb-1.5 border-b border-border/40">
             <div className="flex-1">Producto *</div>
             <div className="w-16 text-center">Cant.</div>
-            <div className="w-20 text-right">Costo</div>
+            <div className="w-20 text-right">Costo Base</div>
             <div className="w-20 text-right">Margen %</div>
             <div className="w-24 text-right">Precio Unit.</div>
-            <div className="w-20 text-right">Subtotal</div>
+            <div className="w-24 text-right">Subtotal</div>
             <div className="w-8"></div>
           </div>
 
-          <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+          {/* Lista de Filas de Items */}
+          <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
             {items.map((item, index) => {
               const prodObj = productos?.find(p => p.id === item.productoId);
               const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
@@ -174,92 +204,108 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
               const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
 
               return (
-                <div key={index} className="flex flex-col gap-3 bg-muted/10 p-4 rounded-xl border border-border/50">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 flex gap-2">
-                      <select
-                        value={item.productoId}
-                        onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
-                        className="flex-1 bg-background border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
-                      >
-                        <option value="">Elegí un producto *</option>
-                        {productos?.map(p => (
-                          <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
-                        ))}
-                      </select>
-                    </div>
+                <div 
+                  key={index} 
+                  className="flex flex-col md:flex-row md:items-center gap-3 bg-muted/10 hover:bg-muted/20 p-4 rounded-xl border border-border/50 hover:border-primary/20 transition-all duration-250"
+                >
+                  {/* Selector de Producto */}
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
+                    <select
+                      value={item.productoId}
+                      onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
+                      className="w-full bg-background border border-border rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer"
+                    >
+                      <option value="">Selecciona un producto *</option>
+                      {productos?.map(p => (
+                        <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
+                      ))}
+                    </select>
+                  </div>
 
+                  <div className="flex flex-wrap md:flex-nowrap items-end md:items-center gap-3 flex-1 justify-between md:justify-end">
+                    {/* Cantidad */}
                     <div className="w-16">
+                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Cant.</label>
                       <input
                         type="number"
                         min="1"
                         value={item.cantidad}
                         onChange={(e) => handleItemChange(index, 'cantidad', parseInt(e.target.value) || 0)}
-                        className="w-full bg-background border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-center text-sm font-bold"
+                        className="w-full bg-background border border-border rounded-xl px-2 py-2 text-center text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
                       />
                     </div>
 
                     {/* Costo Base */}
-                    <div className="w-20 text-right text-xs font-semibold text-slate-500 py-1.5">
-                      ${prodCost.toFixed(0)}
+                    <div className="w-20 text-right">
+                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Costo</label>
+                      <span className="text-xs font-semibold text-muted-foreground block py-2">
+                        ${prodCost.toFixed(0)}
+                      </span>
                     </div>
 
-                    {/* Margen % Input */}
+                    {/* Margen % */}
                     <div className="w-20 relative">
-                      <input
-                        type="number"
-                        min="-100"
-                        value={isEmptyRow ? '' : marginPercent}
-                        disabled={isEmptyRow}
-                        onChange={(e) => {
-                          const marginVal = parseFloat(e.target.value) || 0;
-                          const calculatedPrice = prodCost * (1 + marginVal / 100);
-                          handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
-                        }}
-                        placeholder="200"
-                        className="w-full bg-background border border-[#e0e0e0] rounded-lg px-2 py-1.5 text-sm text-right font-semibold disabled:opacity-40"
-                        title="Margen de ganancia en porcentaje"
-                      />
-                      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground font-bold pointer-events-none">%</span>
+                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Margen %</label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          min="-100"
+                          value={isEmptyRow ? '' : marginPercent}
+                          disabled={isEmptyRow}
+                          onChange={(e) => {
+                            const marginVal = parseFloat(e.target.value) || 0;
+                            const calculatedPrice = prodCost * (1 + marginVal / 100);
+                            handleItemChange(index, 'precioPersonalizado', Math.round(calculatedPrice));
+                          }}
+                          placeholder="200"
+                          className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-2 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
+                        />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold pointer-events-none">%</span>
+                      </div>
                     </div>
 
-                    {/* Precio Unitario */}
+                    {/* Precio Unitario Final */}
                     <div className="w-24 relative">
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
-                      <input
-                        type="number"
-                        step="1"
-                        min="0"
-                        value={isEmptyRow ? '' : Math.round(currentPrice)}
-                        disabled={isEmptyRow}
-                        onChange={(e) => {
-                          const priceVal = parseFloat(e.target.value) || 0;
-                          handleItemChange(index, 'precioPersonalizado', priceVal);
-                        }}
-                        placeholder="0"
-                        className="w-full bg-blue-50/30 border border-primary/20 hover:border-primary focus:border-primary/80 focus:ring-1 focus:ring-primary/30 rounded-lg pl-4 pr-1 py-1.5 text-sm text-right font-semibold transition-colors disabled:opacity-40"
-                        title="Precio unitario final"
-                      />
+                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Precio Unit.</label>
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">$</span>
+                        <input
+                          type="number"
+                          step="1"
+                          min="0"
+                          value={isEmptyRow ? '' : Math.round(currentPrice)}
+                          disabled={isEmptyRow}
+                          onChange={(e) => {
+                            const priceVal = parseFloat(e.target.value) || 0;
+                            handleItemChange(index, 'precioPersonalizado', priceVal);
+                          }}
+                          placeholder="0"
+                          className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-2 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
+                        />
+                      </div>
                     </div>
 
-                    <div className="w-20 text-right font-bold text-sm text-foreground/80 py-1.5">
-                      ${Math.round(currentPrice * item.cantidad)}
+                    {/* Subtotal */}
+                    <div className="w-24 text-right">
+                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Subtotal</label>
+                      <span className="font-bold text-sm text-foreground block py-2">
+                        ${Math.round(currentPrice * item.cantidad)}
+                      </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem(index)}
-                      disabled={items.length === 1}
-                      className={`p-1.5 rounded-full transition-colors ${
-                        isEmptyRow 
-                          ? 'text-muted-foreground/30 hover:text-foreground hover:bg-muted/50' 
-                          : 'text-red-400 hover:text-red-600 hover:bg-red-500/10'
-                      }`}
-                      title={isEmptyRow ? "Quitar fila" : "Eliminar ítem (se perderán los datos)"}
-                      aria-label="Quitar fila"
-                    >
-                      <Trash2 size={16} aria-hidden="true" />
-                    </button>
+                    {/* Botón Eliminar */}
+                    <div className="pt-2 md:pt-0">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(index)}
+                        disabled={items.length === 1}
+                        className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                        title="Eliminar este ítem"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -267,15 +313,47 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
         </div>
 
-        {/* Order Summary */}
-        <div className="flex justify-between items-center border-t border-[var(--studio-hairline)] pt-4">
+        {/* Panel de Resumen de Finanzas (Business Intelligence Widget) */}
+        {totals.totalPrecio > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-muted/30 border border-border/80">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Productos</span>
+              <span className="text-sm font-semibold text-foreground">{totals.totalCantidad} unidades</span>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Costo de Producción</span>
+              <span className="text-sm font-semibold text-foreground/80">${totals.totalCosto.toFixed(0)}</span>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                Ganancia <TrendingUp size={10} className="text-green-500" />
+              </span>
+              <span className="text-sm font-bold text-green-500">${totals.gananciaEstimada.toFixed(0)}</span>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Rentabilidad</span>
+              <span className="text-sm font-bold text-primary">{Math.round(totals.margenPromedio)}%</span>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="flex justify-between items-center border-t border-border pt-5">
           <div>
-            <p className="studio-caption text-muted-foreground uppercase tracking-widest text-[9px] font-bold">Total Presupuestado</p>
-            <p className="studio-lead font-bold text-2xl text-foreground font-mono">${calculateTotalPreview().toFixed(2)}</p>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total del Pedido</p>
+            <p className="text-3xl font-extrabold text-foreground font-mono leading-none mt-1">
+              ${totals.totalPrecio.toLocaleString()}
+            </p>
           </div>
 
           <div className="flex gap-3">
-            <button type="button" onClick={onClose} className="studio-button-secondary-pill">Cancelar</button>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="px-5 py-2.5 rounded-full border border-border hover:bg-muted text-sm font-medium active:scale-95 transition-all"
+            >
+              Cancelar
+            </button>
             <button 
               type="submit" 
               disabled={!isFormValid} 
@@ -290,7 +368,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
               }
               className="studio-button-primary disabled:opacity-50"
             >
-              {isCreating ? 'Creando...' : 'Confirmar Pedido'}
+              {isCreating ? 'Procesando...' : 'Confirmar Pedido'}
             </button>
           </div>
         </div>
@@ -298,3 +376,4 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     </Modal>
   );
 }
+
