@@ -95,7 +95,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                     <div key={item.id} className="bg-card border border-border/50 p-5 rounded-2xl flex items-center justify-between group">
                       <div className="flex items-center gap-4">
                         <div className="size-12 rounded-xl bg-muted/20 flex items-center justify-center text-muted-foreground">
-                          {item.productoId ? <Package size={20} /> : <FileText size={20} />}
+                          <Package size={20} />
                         </div>
                         <div>
                           <p className="studio-body-strong">{item.perfilNombre}</p>
@@ -104,7 +104,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                           </p>
 
                           {/* Stock & Production Metrics */}
-                          {(item.productoId || item.calculoId) && (
+                          {item.productoId && (
                             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                               <span>Stock actual: <strong className="text-foreground">{item.stockDisponible ?? 0}</strong></span>
                               {item.ordenesProduccion && item.ordenesProduccion.length > 0 && (

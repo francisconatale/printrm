@@ -1,11 +1,12 @@
 # CHANGELOG
 
-## [2026-06-19] - Corrección de Selección de Tipo de Ítem en Crear Pedido (T014)
+## [2026-06-19] - Unificación de Ítems de Pedidos a Productos del Catálogo (T014)
 ### Descripción
-- **Frontend (Pedidos):** Se corrigió un bug lógico en el modal `CrearPedidoModal.tsx` que causaba que el selector de "Producto" se mostrara por defecto e incorrectamente en lugar del selector de "Cotización". Se introdujo un estado explícito de tipo (`tipo: 'CALC' | 'PROD'`) para asegurar una distinción precisa y fluida acorde a la intención de compra.
+- **Frontend (Pedidos):** Se simplificó la lógica del modal `CrearPedidoModal.tsx` y la vista `PedidoDetalleView.tsx` eliminando la opción y distinción de "Cotización" (Cálculo). Ahora todos los pedidos asocian sus ítems exclusivamente a productos del catálogo, reduciendo el ruido visual en la interfaz y alineándose con el flujo simplificado de intención de compra y facturación del backend.
 
 ### Archivos Involucrados
 - `frontend/src/features/pedidos/components/CrearPedidoModal.tsx`
+- `frontend/src/features/pedidos/components/PedidoDetalleView.tsx`
 - `CHANGELOG.md`
 
 ## [2026-06-19] - Actualización de Skill revisar_tareas y Archivado de Especificación FIFO (006)

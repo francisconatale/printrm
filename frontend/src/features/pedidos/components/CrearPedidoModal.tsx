@@ -1,11 +1,9 @@
 import React from 'react';
 import { useGetClientes } from '../../clientes/api/clientes.api';
-import { useGetHistorial } from '../../calculo/api/calculos.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { useCreatePedido } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
-import { Plus, Trash2, AlertCircle, Loader2 } from 'lucide-react';
-import { ItemPedidoRequest } from '../types/pedidos.types';
+import { Plus, Trash2, AlertCircle } from 'lucide-react';
 
 interface CrearPedidoModalProps {
   isOpen: boolean;
@@ -13,26 +11,23 @@ interface CrearPedidoModalProps {
 }
 
 export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
-  const { data: clientes, isLoading: isLoadingClientes } = useGetClientes();
-  const { data: historial, isLoading: isLoadingHistorial } = useGetHistorial();
-  const { data: productos, isLoading: isLoadingProductos } = useGetProductos();
+  const { data: clientes } = useGetClientes();
+  const { data: productos } = useGetProductos();
   const { mutate: createPedido, isPending: isCreating } = useCreatePedido();
 
   interface ItemFormState {
-    tipo: 'CALC' | 'PROD';
-    calculoId: string;
     productoId: string;
     cantidad: number;
   }
 
   const [clienteId, setClienteId] = React.useState<string>('');
   const [items, setItems] = React.useState<ItemFormState[]>([
-    { tipo: 'CALC', calculoId: '', productoId: '', cantidad: 1 }
+    { productoId: '', cantidad: 1 }
   ]);
   const [error, setError] = React.useState<string>('');
 
   const handleAddItem = () => {
-    setItems(prev => [...prev, { tipo: 'CALC', calculoId: '', productoId: '', cantidad: 1 }]);
+    setItems(prev => [...prev, { productoId: '', cantidad: 1 }]);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -46,10 +41,6 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         ...copy[index],
         [field]: value
       };
-      if (field === 'tipo') {
-        copy[index].calculoId = '';
-        copy[index].productoId = '';
-      }
       return copy;
     });
   };
@@ -63,7 +54,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       return;
     }
 
-    const validItems = items.filter(item => (item.tipo === 'CALC' && item.calculoId !== '') || (item.tipo === 'PROD' && item.productoId !== ''));
+    const validItems = items.filter(item => item.productoId !== '');
     if (validItems.length === 0) {
       setError('Por favor, agrega al menos un ítem.');
       return;
@@ -78,8 +69,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       {
         clienteId,
         items: validItems.map(it => ({
-          calculoId: it.tipo === 'CALC' ? it.calculoId : undefined,
-          productoId: it.tipo === 'PROD' ? it.productoId : undefined,
+          productoId: it.productoId,
           cantidad: it.cantidad
         }))
       },
@@ -96,11 +86,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
   const calculateTotalPreview = () => {
     return items.reduce((sum, item) => {
-      if (item.tipo === 'CALC' && item.calculoId) {
-        const calcObj = historial?.find(h => h.id === item.calculoId);
-        return sum + (calcObj ? calcObj.precioVenta * item.cantidad : 0);
-      }
-      if (item.tipo === 'PROD' && item.productoId) {
+      if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
         return sum + (prodObj?.precioSugerido ? prodObj.precioSugerido * item.cantidad : 0);
       }
@@ -108,12 +94,12 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     }, 0);
   };
 
-  const isFormValid = clienteId && items.some(item => (item.tipo === 'CALC' && item.calculoId !== '') || (item.tipo === 'PROD' && item.productoId !== '')) && !isCreating;
+  const isFormValid = clienteId && items.some(item => item.productoId !== '') && !isCreating;
 
   return (
     <Modal
       title="Nuevo Pedido"
-      description="Creá un nuevo pedido asociando cotizaciones o productos de catálogo."
+      description="Creá un nuevo pedido seleccionando productos de catálogo."
       isOpen={isOpen}
       onClose={onClose}
       size="3xl"
@@ -158,48 +144,22 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {items.map((item, index) => {
-              const selectedPrice = item.tipo === 'CALC' 
-                ? historial?.find(h => h.id === item.calculoId)?.precioVenta
-                : productos?.find(p => p.id === item.productoId)?.precioSugerido;
+              const selectedPrice = productos?.find(p => p.id === item.productoId)?.precioSugerido;
 
               return (
                 <div key={index} className="flex flex-col gap-3 bg-muted/10 p-4 rounded-xl border border-border/50">
                   <div className="flex items-center gap-4">
                     <div className="flex-1 flex gap-2">
                       <select
-                        value={item.tipo}
-                        onChange={(e) => {
-                          handleItemChange(index, 'tipo', e.target.value as 'CALC' | 'PROD');
-                        }}
-                        className="w-32 bg-[#f5f5f7] border border-transparent rounded-lg px-2 py-1.5 text-[10px] font-bold uppercase"
+                        value={item.productoId}
+                        onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
+                        className="flex-1 bg-white border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
                       >
-                        <option value="CALC">Cotización</option>
-                        <option value="PROD">Producto</option>
+                        <option value="">-- Seleccionar Producto --</option>
+                        {productos?.map(p => (
+                          <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
+                        ))}
                       </select>
-
-                      {item.tipo === 'PROD' ? (
-                        <select
-                          value={item.productoId}
-                          onChange={(e) => handleItemChange(index, 'productoId', e.target.value)}
-                          className="flex-1 bg-white border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
-                        >
-                          <option value="">-- Seleccionar Producto --</option>
-                          {productos?.map(p => (
-                            <option key={p.id} value={p.id}>{p.nombre} (Stock: {p.cantidadStock})</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <select
-                          value={item.calculoId}
-                          onChange={(e) => handleItemChange(index, 'calculoId', e.target.value)}
-                          className="flex-1 bg-white border border-[#e0e0e0] rounded-lg px-3 py-1.5 text-sm"
-                        >
-                          <option value="">-- Seleccionar Cotización --</option>
-                          {historial?.map(calc => (
-                            <option key={calc.id} value={calc.id}>{calc.perfilNombre} - {calc.gramos}g</option>
-                          ))}
-                        </select>
-                      )}
                     </div>
 
                     <div className="w-20">
