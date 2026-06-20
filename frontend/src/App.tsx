@@ -77,7 +77,7 @@ function App() {
           {renderView()}
         </main>
       </AppShell>
-      <Toaster richColors position="top-right" closeButton className="printrm-toaster" />
+      <Toaster richColors position="top-right" className="printrm-toaster" />
     </ThemeProvider>
   )
 }

@@ -10,6 +10,7 @@ public class ItemPedidoResponseDTO {
     private String perfilNombre;
     private Integer cantidad;
     private Integer cantidadMerma;
+    private Integer cantidadEntregada;
     private Double subtotal;
     private Double precioPersonalizado;
     private Integer stockDisponible;

@@ -21,7 +21,6 @@ export function PedidosListView() {
     );
   }, [pedidos, searchTerm]);
 
-  // If a specific order is selected, show its detail view
   if (selectedPedidoId) {
     return (
       <PedidoDetalleView
@@ -39,7 +38,7 @@ export function PedidosListView() {
 
       <main className="flex-1 px-8 md:px-12 py-10 overflow-y-auto custom-scrollbar">
         <div className="max-w-[1400px] mx-auto space-y-10">
-          
+
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
@@ -51,7 +50,7 @@ export function PedidosListView() {
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                 <label htmlFor="search-pedidos" className="sr-only">Buscar pedido</label>
-                <input 
+                <input
                   id="search-pedidos"
                   type="text"
                   value={searchTerm}
@@ -60,7 +59,7 @@ export function PedidosListView() {
                   className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
-              <button 
+              <button
                 onClick={() => setIsCrearModalOpen(true)}
                 className="studio-button-primary flex items-center gap-2"
               >
@@ -87,7 +86,7 @@ export function PedidosListView() {
                 <div className="space-y-1">
                   <p className="studio-body-strong text-foreground">Búsqueda sin resultados</p>
                   <p className="studio-caption text-muted-foreground">No encontramos pedidos que coincidan con "{searchTerm}". Intentá con otros términos.</p>
-                  <button 
+                  <button
                     onClick={() => setSearchTerm('')}
                     className="text-xs text-primary font-semibold hover:underline mt-2"
                   >
@@ -107,7 +106,7 @@ export function PedidosListView() {
               </div>
             )
           ) : (
-          <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-border">
@@ -123,8 +122,8 @@ export function PedidosListView() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filteredPedidos.map((pedido) => (
-                    <tr 
-                      key={pedido.id} 
+                    <tr
+                      key={pedido.id}
                       onClick={() => setSelectedPedidoId(pedido.id)}
                       className="hover:bg-muted/5 transition-colors cursor-pointer"
                     >
@@ -152,11 +151,11 @@ export function PedidosListView() {
                           month: '2-digit',
                           year: 'numeric',
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
-                        <button 
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
+                        <button
                           onClick={() => setSelectedPedidoId(pedido.id)}
                           className="text-primary hover:opacity-80 transition-colors p-2 rounded-full hover:bg-primary/10"
                           title="Ver Detalle"

@@ -25,7 +25,7 @@ export const STLUpload: React.FC<STLUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className={`relative border border-[var(--border-faint)] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-muted/20 p-0' : 'bg-muted/10 hover:bg-muted/20 p-12 text-center'}`}>
+      <div className={`relative border border-[var(--border-subtle)] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-muted/20 p-0' : 'bg-muted/10 hover:bg-muted/20 p-12 text-center'}`}>
         
         {file ? (
           <div className="relative h-[320px] w-full">

@@ -34,10 +34,10 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
 
   return (
     <>
-      <div className="group relative bg-background dark:bg-zinc-950 border border-[#e0e0e0] dark:border-zinc-800 rounded-[2rem] overflow-hidden transition-all duration-300 hover:border-zinc-950 dark:hover:border-zinc-50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
+      <div className="group relative bg-background dark:bg-zinc-950 border border-border dark:border-zinc-800 rounded-[var(--radius-xl)] overflow-hidden transition-all duration-300 hover:border-zinc-950 dark:hover:border-zinc-50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
         
         {/* Preview Area */}
-        <div className="aspect-[4/3] w-full bg-[#f5f5f7] dark:bg-zinc-900/50 relative overflow-hidden flex items-center justify-center border-b border-border/30">
+        <div className="aspect-[4/3] w-full bg-muted dark:bg-zinc-900/50 relative overflow-hidden flex items-center justify-center border-b border-border/30">
           {producto.partes?.[0]?.imagenBase64 ? (
             <img 
               src={producto.partes[0].imagenBase64} 
@@ -122,7 +122,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
             </div>
 
             {/* Quick Stock Controls */}
-            <div className="flex items-center gap-1 bg-[#f5f5f7] dark:bg-zinc-900 rounded-full p-1 border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-1 bg-muted dark:bg-zinc-900 rounded-full p-1 border border-zinc-100 dark:border-zinc-800">
               <button 
                 onClick={() => updateStock({ id: producto.id, delta: -1 })}
                 disabled={producto.cantidadStock <= 0}

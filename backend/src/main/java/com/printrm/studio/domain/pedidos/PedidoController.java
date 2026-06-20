@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.pedidos;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class PedidoController {
     }
 
     @PostMapping
-    public PedidoResponseDTO create(@RequestBody PedidoRequestDTO request) {
+    public PedidoResponseDTO create(@Valid @RequestBody PedidoRequestDTO request) {
         return service.crearPedido(request);
     }
 

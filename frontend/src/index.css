@@ -151,7 +151,7 @@
 .printrm-toaster[data-sonner-theme='light'],
 .printrm-toaster[data-sonner-theme='dark'] {
   --normal-bg: var(--background);
-  --normal-border: var(--border);
+  --normal-border: var(--border-subtle);
   --normal-text: var(--foreground);
   --success-bg: var(--background);
   --success-border: var(--success);

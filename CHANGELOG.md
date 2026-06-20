@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [2026-06-21] - Control de doble entrega e idempotencia en Pedidos
+### Descripción
+- **Backend (Pedidos):** 
+  - Se añadió la propiedad `cantidadEntregada` a `ItemPedido` para llevar un control granular de las unidades ya suministradas al cliente.
+  - Se modificó `PedidoService.cambiarEstado` para validar que no se dupliquen entregas/devoluciones de stock y cobros basándose en el inventario pendiente por entregar.
+  - Se actualizó el cálculo de **Faltante Neto** (`cantidadFaltante`) para que ignore las unidades que ya fueron entregadas con éxito, reduciéndose a cero al completarse la entrega.
+- **Backend (Pruebas):** Se añadieron pruebas de integración en `PedidoIntegrationTest.java` (`testEntregarPedidoDosVecesLanzaExcepcion` y `testDevolverPedidoDosVecesLanzaExcepcion`) para garantizar que al intentar realizar entregas o devoluciones duplicadas se arroje una excepción `IllegalStateException`.
+- **Frontend (Pedidos):** Se actualizó `PedidoDetalleView.tsx` para renderizar visualmente las unidades entregadas por ítem y deshabilitar los botones de acción para estados finales (`ENTREGADO`, `DEVUELTO`, `CANCELADO`) una vez que el pedido se sitúa en ellos.
+### Archivos Involucrados
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+- [PedidoIntegrationTest.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/test/java/com/printrm/studio/domain/pedidos/PedidoIntegrationTest.java)
+- [pedidos.types.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/types/pedidos.types.ts)
+- [PedidoDetalleView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/PedidoDetalleView.tsx)
+
+
 ## [2026-06-21] - Reutilización de componente Select en Modal de Nueva Orden de Stock
 ### Descripción
 - **Frontend (Producción):** Se actualizó el modal `CrearOrdenIndependienteModal.tsx` reemplazando el elemento `<select>` nativo de HTML por el componente de diseño personalizado `Select` de la aplicación (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`), mejorando la coherencia de la UI y agregando una opción de selección por defecto "Seleccionar Producto...".

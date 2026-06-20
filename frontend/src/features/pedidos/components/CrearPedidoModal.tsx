@@ -3,13 +3,7 @@ import { useGetClientes } from '../../clientes/api/clientes.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { useCreatePedido } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../components/ui/select';
+import { ProfileSelect } from '../../../components/ui/profile-select';
 import { Plus, Trash2, AlertCircle, User, ShoppingBag, DollarSign, Percent, TrendingUp } from 'lucide-react';
 
 interface CrearPedidoModalProps {
@@ -172,21 +166,13 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             <User size={16} className="text-primary" />
             <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
           </div>
-          <Select value={clienteId} onValueChange={setClienteId}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona un cliente *" />
-            </SelectTrigger>
-            <SelectContent className="z-[300]" position="popper" side="bottom">
-              <SelectItem value="">
-                Selecciona un cliente *
-              </SelectItem>
-              {clientes?.map(cliente => (
-                <SelectItem key={cliente.id} value={cliente.id}>
-                  {cliente.nombre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <ProfileSelect
+            placeholder="Selecciona un cliente *"
+            emptyLabel="Selecciona un cliente *"
+            value={clienteId}
+            onValueChange={setClienteId}
+            items={(clientes ?? []).map((c) => ({ value: c.id, label: c.nombre }))}
+          />
         </div>
 
         {/* Sección de Ítems */}
@@ -206,143 +192,154 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
             </button>
           </div>
 
-          {/* Encabezados de Grilla */}
-          <div className="hidden md:flex gap-4 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider py-1.5">
-            <div className="flex-1">Producto *</div>
-            <div className="w-16 text-center">Cant.</div>
-            <div className="w-20 text-right">Costo Base</div>
-            <div className="w-20 text-right">Margen %</div>
-            <div className="w-24 text-right">Precio Unit.</div>
-            <div className="w-24 text-right">Subtotal</div>
-            <div className="w-8"></div>
-          </div>
+          {items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center bg-muted/5 border border-dashed border-border rounded-2xl p-6">
+              <ShoppingBag size={32} className="text-muted-foreground/40 mb-3" />
+              <p className="text-sm font-semibold text-foreground/80">No hay productos agregados</p>
+              <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                Inicia el pedido agregando productos del catálogo.
+              </p>
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-primary text-white hover:opacity-90 active:scale-95 transition-all duration-200"
+              >
+                <Plus size={14} />
+                <span>Agregar Primer Producto</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Encabezados de Grilla */}
+              <div className="hidden md:flex gap-4 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider py-1.5">
+                <div className="flex-1">Producto *</div>
+                <div className="w-16 text-center">Cant.</div>
+                <div className="w-20 text-right">Costo Base</div>
+                <div className="w-20 text-right">Margen %</div>
+                <div className="w-24 text-right">Precio Unit.</div>
+                <div className="w-24 text-right">Subtotal</div>
+                <div className="w-8"></div>
+              </div>
 
-          {/* Lista de Filas de Items */}
-          <div className="space-y-1 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
-            {items.map((item, index) => {
-              const prodObj = productos?.find(p => p.id === item.productoId);
-              const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
-              const isEmptyRow = !item.productoId;
+              {/* Lista de Filas de Items */}
+              <div className="space-y-1 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
+                {items.map((item, index) => {
+                  const prodObj = productos?.find(p => p.id === item.productoId);
+                  const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
+                  const isEmptyRow = !item.productoId;
 
-              const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
-              const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
+                  const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
+                  const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
 
-              return (
-                <div 
-                  key={item.keyId} 
-                  className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-border/40 last:border-0"
-                >
-                  {/* Selector de Producto */}
-                  <div className="flex-1 min-w-[200px]">
-                    <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
-                    <Select
-                      value={item.productoId}
-                      onValueChange={(val) => handleItemChange(item.keyId, 'productoId', val)}
+                  return (
+                    <div 
+                      key={item.keyId} 
+                      className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-border/40 last:border-0"
                     >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecciona un producto *" />
-                      </SelectTrigger>
-                      <SelectContent className="z-[300]" position="popper" side="bottom">
-                        <SelectItem value="">
-                          Selecciona un producto *
-                        </SelectItem>
-                        {productos?.map(p => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.nombre} (Stock: {p.cantidadStock})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex flex-wrap md:flex-nowrap items-end md:items-center gap-3 flex-1 justify-between md:justify-end">
-                    {/* Cantidad */}
-                    <div className="w-16">
-                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Cant.</label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.cantidad}
-                        onChange={(e) => handleItemChange(item.keyId, 'cantidad', parseInt(e.target.value) || 0)}
-                        className="w-full bg-background border border-border rounded-xl px-2 py-1.5 text-center text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                      />
-                    </div>
-
-                    {/* Costo Base */}
-                    <div className="w-20 text-right">
-                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Costo</label>
-                      <span className="text-xs font-semibold text-muted-foreground block py-1.5">
-                        ${prodCost.toFixed(0)}
-                      </span>
-                    </div>
-
-                    {/* Margen % */}
-                    <div className="w-20 relative">
-                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Margen %</label>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          min="-100"
-                          value={isEmptyRow ? '' : marginPercent}
-                          disabled={isEmptyRow}
-                          onChange={(e) => {
-                            const marginVal = parseFloat(e.target.value) || 0;
-                            const calculatedPrice = prodCost * (1 + marginVal / 100);
-                            handleItemChange(item.keyId, 'precioPersonalizado', Math.round(calculatedPrice));
-                          }}
-                          placeholder="200"
-                          className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-1.5 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                        />
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold pointer-events-none">%</span>
-                      </div>
-                    </div>
-
-                    {/* Precio Unitario Final */}
-                    <div className="w-24 relative">
-                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Precio Unit.</label>
-                      <div className="relative">
-                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">$</span>
-                        <input
-                          type="number"
-                          step="1"
-                          min="0"
-                          value={isEmptyRow ? '' : Math.round(currentPrice)}
-                          disabled={isEmptyRow}
-                          onChange={(e) => {
-                            const priceVal = parseFloat(e.target.value) || 0;
-                            handleItemChange(item.keyId, 'precioPersonalizado', priceVal);
-                          }}
-                          placeholder="0"
-                          className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-1.5 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
+                      {/* Selector de Producto */}
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
+                        <ProfileSelect
+                          placeholder="Selecciona un producto *"
+                          emptyLabel="Selecciona un producto *"
+                          value={item.productoId}
+                          onValueChange={(val) => handleItemChange(item.keyId, 'productoId', val)}
+                          items={(productos ?? []).map((p) => ({
+                            value: p.id,
+                            label: `${p.nombre} (Stock: ${p.cantidadStock})`,
+                          }))}
                         />
                       </div>
-                    </div>
 
-                    {/* Subtotal */}
-                    <div className="w-24 text-right">
-                      <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Subtotal</label>
-                      <span className="font-bold text-sm text-foreground block py-1.5">
-                        ${Math.round(currentPrice * item.cantidad)}
-                      </span>
-                    </div>
+                      <div className="flex flex-wrap md:flex-nowrap items-end md:items-center gap-3 flex-1 justify-between md:justify-end">
+                        {/* Cantidad */}
+                        <div className="w-16">
+                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Cant.</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.cantidad}
+                            onChange={(e) => handleItemChange(item.keyId, 'cantidad', parseInt(e.target.value) || 0)}
+                            className="w-full bg-background border border-border rounded-xl px-2 py-1.5 text-center text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                          />
+                        </div>
 
-                    {/* Botón Eliminar */}
-                    <div className="pt-2 md:pt-0">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(item.keyId)}
-                        disabled={items.length === 1}
-                        className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
-                        title="Eliminar este ítem"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                        {/* Costo Base */}
+                        <div className="w-20 text-right">
+                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Costo</label>
+                          <span className="text-xs font-semibold text-muted-foreground block py-1.5">
+                            ${prodCost.toFixed(0)}
+                          </span>
+                        </div>
+
+                        {/* Margen % */}
+                        <div className="w-20 relative">
+                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Margen %</label>
+                          <div className="relative">
+                            <input
+                              type="number"
+                              min="-100"
+                              value={isEmptyRow ? '' : marginPercent}
+                              disabled={isEmptyRow}
+                              onChange={(e) => {
+                                const marginVal = parseFloat(e.target.value) || 0;
+                                const calculatedPrice = prodCost * (1 + marginVal / 100);
+                                handleItemChange(item.keyId, 'precioPersonalizado', Math.round(calculatedPrice));
+                              }}
+                              placeholder="200"
+                              className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-1.5 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            />
+                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold pointer-events-none">%</span>
+                          </div>
+                        </div>
+
+                        {/* Precio Unitario Final */}
+                        <div className="w-24 relative">
+                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Precio Unit.</label>
+                          <div className="relative">
+                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">$</span>
+                            <input
+                              type="number"
+                              step="1"
+                              min="0"
+                              value={isEmptyRow ? '' : Math.round(currentPrice)}
+                              disabled={isEmptyRow}
+                              onChange={(e) => {
+                                const priceVal = parseFloat(e.target.value) || 0;
+                                handleItemChange(item.keyId, 'precioPersonalizado', priceVal);
+                              }}
+                              placeholder="0"
+                              className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-1.5 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Subtotal */}
+                        <div className="w-24 text-right">
+                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Subtotal</label>
+                          <span className="font-bold text-sm text-foreground block py-1.5">
+                            ${Math.round(currentPrice * item.cantidad)}
+                          </span>
+                        </div>
+
+                        {/* Botón Eliminar */}
+                        <div className="pt-2 md:pt-0">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(item.keyId)}
+                            className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 transition-all cursor-pointer"
+                            title="Eliminar este ítem"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Panel de Resumen de Finanzas (Minimalista sin bordes) */}

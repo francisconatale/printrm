@@ -4,6 +4,7 @@ import com.printrm.studio.domain.clientes.Cliente;
 import com.printrm.studio.domain.clientes.ClienteRepository;
 import com.printrm.studio.domain.stock.Producto;
 import com.printrm.studio.domain.stock.ProductoRepository;
+import com.printrm.studio.domain.stock.ProductoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,9 @@ public class PedidoIntegrationTest {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private ProductoService productoService;
 
     @Test
     public void testCrearPedidoMultiPiezaYAsociarACliente() {
@@ -87,5 +91,45 @@ public class PedidoIntegrationTest {
         PedidoResponseDTO result = pedidoService.getPedido(pedido.getId());
         assertEquals("CANCELADO", result.getEstado());
         assertEquals(100.0, result.getTotal()); // El total se preserva
+    }
+
+    @Test
+    public void testEntregarPedidoDosVecesLanzaExcepcion() {
+        Producto prod = productoRepository.save(Producto.builder()
+                .nombre("Producto Test Stock")
+                .precioSugerido(100.0)
+                .build());
+        productoService.addStock(prod.getId(), 10, 0.0);
+        
+        PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
+            List.of(new ItemPedidoRequestDTO(prod.getId(), 1))));
+
+        // Primer entrega (debe pasar)
+        pedidoService.cambiarEstado(pedido.getId(), "ENTREGADO");
+
+        // Intentar segunda entrega (debe fallar)
+        assertThrows(IllegalStateException.class, () -> {
+            pedidoService.cambiarEstado(pedido.getId(), "ENTREGADO");
+        });
+    }
+
+    @Test
+    public void testDevolverPedidoDosVecesLanzaExcepcion() {
+        Producto prod = productoRepository.save(Producto.builder()
+                .nombre("Producto Test Stock")
+                .precioSugerido(100.0)
+                .build());
+        productoService.addStock(prod.getId(), 10, 0.0);
+
+        PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
+            List.of(new ItemPedidoRequestDTO(prod.getId(), 1))));
+
+        pedidoService.cambiarEstado(pedido.getId(), "ENTREGADO");
+        pedidoService.cambiarEstado(pedido.getId(), "DEVUELTO");
+
+        // Intentar segunda devolución (debe fallar)
+        assertThrows(IllegalStateException.class, () -> {
+            pedidoService.cambiarEstado(pedido.getId(), "DEVUELTO");
+        });
     }
 }

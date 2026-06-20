@@ -2,14 +2,8 @@ import React from 'react';
 import { useCreateOrdenIndependiente } from '../api/produccion.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { Modal } from '../../../components/ui/modal';
+import { ProfileSelect } from '../../../components/ui/profile-select';
 import { AlertCircle, Package } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../components/ui/select';
 
 interface CrearOrdenIndependienteModalProps {
   isOpen: boolean;
@@ -77,25 +71,17 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
           <label className="studio-caption font-semibold flex items-center gap-2">
             <Package size={14} /> Producto *
           </label>
-          <Select 
-            value={productoId} 
+          <ProfileSelect
+            placeholder="Seleccionar Producto..."
+            emptyLabel="Seleccionar Producto..."
+            value={productoId}
             onValueChange={setProductoId}
             disabled={loadingProductos}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Seleccionar Producto..." />
-            </SelectTrigger>
-            <SelectContent className="z-[300]" position="popper" side="bottom">
-              <SelectItem value="">
-                Seleccionar Producto...
-              </SelectItem>
-              {productos?.map((p) => (
-                <SelectItem key={p.id} value={p.id}>
-                  {p.nombre} (Stock actual: {p.cantidadStock})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            items={(productos ?? []).map((p) => ({
+              value: p.id,
+              label: `${p.nombre} (Stock actual: ${p.cantidadStock})`,
+            }))}
+          />
           {loadingProductos && <p className="text-xs text-muted-foreground">Cargando productos...</p>}
         </div>
 

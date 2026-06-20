@@ -8,7 +8,7 @@ interface STLPreviewProps {
 
 export const STLPreview: React.FC<STLPreviewProps> = ({ url, color }) => {
   return (
-    <div className="w-full h-full bg-[#f9f9fb] rounded-xl overflow-hidden">
+    <div className="w-full h-full bg-muted rounded-xl overflow-hidden">
       <STLModelViewer 
         url={url} 
         color={color} 

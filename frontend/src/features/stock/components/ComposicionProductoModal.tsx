@@ -167,7 +167,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                           {isSelected && <Check size={12} className="text-white dark:text-zinc-950" strokeWidth={3} />}
                         </div>
 
-                        <div className="size-9 shrink-0 rounded-lg bg-[#f5f5f7] dark:bg-zinc-900 border border-zinc-200/40 dark:border-zinc-800/40 overflow-hidden flex items-center justify-center">
+                        <div className="size-9 shrink-0 rounded-lg bg-muted dark:bg-zinc-900 border border-zinc-200/40 dark:border-zinc-800/40 overflow-hidden flex items-center justify-center">
                           {pieza.imagenBase64 ? (
                             <img src={pieza.imagenBase64} alt="" className="w-full h-full object-contain p-0.5" />
                           ) : (

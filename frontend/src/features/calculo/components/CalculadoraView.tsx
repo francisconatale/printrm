@@ -1,5 +1,4 @@
 import React from 'react'
-import { X } from "lucide-react"
 import { toast } from 'sonner'
 
 
@@ -17,7 +16,6 @@ import {
   useUpdatePerfil,
   useGetPerfiles,
   useGetFilamentProfiles,
-  useGetPrintProfiles
 } from '../../perfiles/api/perfiles.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
@@ -35,7 +33,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
   const { perfilActivo } = usePerfilActivo();
   const { data: printers } = useGetPerfiles();
   const { data: filaments } = useGetFilamentProfiles();
-  const { data: prints } = useGetPrintProfiles();
 
   const [file, setFile] = React.useState<File | null>(null);
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });
@@ -233,14 +230,11 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
                   }}
                 />
 
-                <div className="pt-8 border-t border-[var(--border-subtle)]">
+                <div className="pt-8 border-t border-border/60">
                   <div className="mb-6">
                     <h3 className="text-[10px] font-bold uppercase text-muted-foreground">Parámetros de Impresión</h3>
                   </div>
-                  <SlicingConfigSelector 
-                    printers={printers || []}
-                    filaments={filaments || []}
-                    prints={prints || []}
+                  <SlicingConfigSelector
                     selected={overrideConfigs}
                     onChange={handleOverrideConfigsChange}
                   />
@@ -252,7 +246,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
             {/* Financial Column */}
             <div className="lg:col-span-5">
               <div className="sticky top-8">
-                <div className="p-7 border border-[var(--border-faint)] rounded-[2rem] bg-card animate-in fade-in duration-500">
+                <div className="p-7 border border-border/30 rounded-[var(--radius-xl)] bg-card animate-in fade-in duration-500">
                   <ResultadoPanel 
                     resultado={resultado}
                     onSaveToLibrary={handleSaveToLibrary}

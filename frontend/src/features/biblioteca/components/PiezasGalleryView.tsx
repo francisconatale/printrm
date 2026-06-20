@@ -42,7 +42,7 @@ export function PiezasGalleryView() {
             </div>
 
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
               <label htmlFor="search-piezas" className="sr-only">Buscar modelo o material</label>
               <input 
                 id="search-piezas"
@@ -50,7 +50,7 @@ export function PiezasGalleryView() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar modelo o material..."
-                className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
               />
             </div>
           </div>

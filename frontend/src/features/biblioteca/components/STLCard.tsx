@@ -33,7 +33,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
       className="group relative bg-background border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)] cursor-pointer"
     >
       {/* 3D Preview Area */}
-      <div className="aspect-square w-full bg-[#f5f5f7] relative overflow-hidden flex items-center justify-center">
+      <div className="aspect-square w-full bg-[#f5f5f7] dark:bg-neutral-800 relative overflow-hidden flex items-center justify-center">
         {hovered ? (
           <div className="w-full h-full animate-in fade-in duration-300">
             <STLPreview url={stlUrl} />

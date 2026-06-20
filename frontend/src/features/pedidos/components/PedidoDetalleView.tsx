@@ -116,7 +116,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                         <div>
                           <p className="studio-body-strong">{item.perfilNombre}</p>
                           <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
-                            {item.cantidad} UNIDADES {item.cantidadMerma > 0 && `• ${item.cantidadMerma} FALLIDAS`}
+                            {item.cantidad} UNIDADES {item.cantidadEntregada > 0 && `• ${item.cantidadEntregada} ENTREGADAS`} {item.cantidadMerma > 0 && `• ${item.cantidadMerma} FALLIDAS`}
                           </p>
 
                           {/* Stock & Production Metrics */}
@@ -225,24 +225,27 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                       <Package size={14} /> Listo para Entregar
                     </button>
                     <button 
+                      disabled={pedido.estado === 'ENTREGADO'}
                       onClick={() => handleStatusChange('ENTREGADO')}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100 transition-all"
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'ENTREGADO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 opacity-60 cursor-not-allowed' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100'}`}
                     >
-                      <CheckCircle2 size={14} /> Entregar y Cobrar Saldo
+                      <CheckCircle2 size={14} /> {pedido.estado === 'ENTREGADO' ? 'Entregado' : 'Entregar y Cobrar Saldo'}
                     </button>
                     <button 
+                      disabled={pedido.estado === 'DEVUELTO'}
                       onClick={() => handleStatusChange('DEVUELTO')}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all"
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'DEVUELTO' ? 'bg-amber-50 text-amber-700 border-amber-100 opacity-60 cursor-not-allowed' : 'text-amber-600 hover:bg-amber-50 border-transparent'}`}
                     >
                       <RefreshCcw size={14} /> Devolución
                     </button>
                     <button 
+                      disabled={pedido.estado === 'CANCELADO'}
                       onClick={() => handleStatusChange('CANCELADO')}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-red-500 hover:bg-red-50 transition-all"
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border ${pedido.estado === 'CANCELADO' ? 'bg-red-50 text-red-700 border-red-100 opacity-60 cursor-not-allowed' : 'text-red-500 hover:bg-red-50 border-transparent'}`}
                     >
                       <XCircle size={14} /> Anular Pedido
                     </button>
-                 </div>
+                  </div>
               </div>
             </div>
 

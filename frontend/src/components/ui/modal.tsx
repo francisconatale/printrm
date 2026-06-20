@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Click outside backdrop to close */}
       <div className="absolute inset-0" onClick={onClose} />
       
-      <div className={`bg-background rounded-[2rem] w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 z-10`}>
+      <div className={`bg-background rounded-[var(--radius-xl)] w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 z-10`}>
         <button 
           onClick={onClose}
           className="absolute right-8 top-8 p-2 hover:bg-muted/30 rounded-full transition-colors z-10"

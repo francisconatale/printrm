@@ -173,7 +173,7 @@ export function ProductosGalleryView() {
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                 <label htmlFor="search-productos" className="sr-only">Buscar producto</label>
                 <input 
                   id="search-productos"

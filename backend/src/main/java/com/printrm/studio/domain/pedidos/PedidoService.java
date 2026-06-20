@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,7 @@ public class PedidoService {
         if (request.getClienteId() != null) {
             cliente = clienteRepository.findById(request.getClienteId()).orElse(null);
         }
-
+            
         Pedido pedido = Pedido.builder()
                 .cliente(cliente)
                 .estado(Pedido.EstadoPedido.BORRADOR)
@@ -46,25 +47,23 @@ public class PedidoService {
 
         Pedido savedPedido = repository.save(pedido);
 
-        if (request.getItems() != null) {
-            for (ItemPedidoRequestDTO itemDto : request.getItems()) {
-                ItemPedido item = ItemPedido.builder()
-                        .pedido(savedPedido)
-                        .cantidad(itemDto.getCantidad())
-                        .precioPersonalizado(itemDto.getPrecioPersonalizado())
-                        .cantidadMerma(0)
-                        .build();
+        for (ItemPedidoRequestDTO itemDto : request.getItems()) {
+            ItemPedido item = ItemPedido.builder()
+                    .pedido(savedPedido)
+                    .cantidad(itemDto.getCantidad())
+                    .precioPersonalizado(itemDto.getPrecioPersonalizado())
+                    .cantidadMerma(0)
+                    .build();
 
-                if (itemDto.getProductoId() != null) {
-                    Producto prod = productoRepository.findById(itemDto.getProductoId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + itemDto.getProductoId()));
-                    item.setProducto(prod);
-                }
-                
-                item.calcularSubtotal();
-                itemRepository.save(item);
-                savedPedido.getItems().add(item);
+            if (itemDto.getProductoId() != null) {
+                Producto prod = productoRepository.findById(itemDto.getProductoId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + itemDto.getProductoId()));
+                item.setProducto(prod);
             }
+
+            item.calcularSubtotal();
+            itemRepository.save(item);
+            savedPedido.getItems().add(item);
         }
 
         savedPedido.calcularTotal();
@@ -111,25 +110,48 @@ public class PedidoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
         Pedido.EstadoPedido anterior = pedido.getEstado();
-        pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
 
         if ("ENTREGADO".equals(nuevoEstado)) {
-            // 1. Validar stock real disponible para todos los ítems de tipo producto
+            boolean yaEntregadoCompletamente = true;
+            for (ItemPedido item : pedido.getItems()) {
+                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                if (cantidadEntregada < cantidadTotal) {
+                    yaEntregadoCompletamente = false;
+                    break;
+                }
+            }
+
+            if (yaEntregadoCompletamente) {
+                throw new IllegalStateException("Este pedido ya fue entregado.");
+            }
+
+            // 1. Validar stock real disponible para todos los ítems de tipo producto (solo para las unidades pendientes de entrega)
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
                     int stockDisponible = item.getProducto().getCantidadStock();
-                    int cantidadRequerida = item.getCantidad() != null ? item.getCantidad() : 0;
-                    if (stockDisponible < cantidadRequerida) {
+                    int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                    int cantidadRequerida = cantidadTotal - cantidadEntregada;
+                    if (cantidadRequerida > 0 && stockDisponible < cantidadRequerida) {
                         throw new RuntimeException("Stock insuficiente para entregar el producto: " + item.getProducto().getNombre() 
                                 + " (Requerido: " + cantidadRequerida + ", Disponible: " + stockDisponible + ")");
                     }
                 }
             }
 
-            // 2. Descontar stock usando VentaService
+            // 2. Descontar stock usando VentaService e incrementar cantidadEntregada
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
-                    ventaService.registrarConsumoStock(item.getProducto().getId(), item.getCantidad() != null ? item.getCantidad() : 0);
+                    int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                    int cantidadRequerida = cantidadTotal - cantidadEntregada;
+                    if (cantidadRequerida > 0) {
+                        ventaService.registrarConsumoStock(item.getProducto().getId(), cantidadRequerida);
+                        item.setCantidadEntregada(cantidadTotal);
+                    }
+                } else {
+                    item.setCantidadEntregada(item.getCantidad());
                 }
             }
 
@@ -137,17 +159,26 @@ public class PedidoService {
             registrarIngresoPorVenta(pedido);
 
         } else if ("DEVUELTO".equals(nuevoEstado)) {
-            registrarReembolso(pedido);
-            // Reponer stock
+            boolean algunaUnidadDevuelta = false;
             for (ItemPedido item : pedido.getItems()) {
                 if (item.getProducto() != null) {
-                    productoService.updateStock(item.getProducto().getId().toString(), item.getCantidad() != null ? item.getCantidad() : 0);
+                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                    if (cantidadEntregada > 0) {
+                        productoService.updateStock(item.getProducto().getId().toString(), cantidadEntregada);
+                        item.setCantidadEntregada(0);
+                        algunaUnidadDevuelta = true;
+                    }
                 }
             }
+            if (!algunaUnidadDevuelta && anterior == Pedido.EstadoPedido.DEVUELTO) {
+                throw new IllegalStateException("Este pedido ya fue devuelto.");
+            }
+            registrarReembolso(pedido);
         } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
             registrarGastoProduccion(pedido);
         }
         
+        pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
         repository.save(pedido);
     }
 
@@ -276,11 +307,16 @@ public class PedidoService {
         dto.setTotal(pedido.getTotal());
         dto.setMontoPagado(pedido.getMontoPagado());
         dto.setSaldoPendiente(pedido.getTotal() - pedido.getMontoPagado());
+        LocalDateTime fecha = pedido.getFechaCreacion() != null
+                ? pedido.getFechaCreacion()
+                : (pedido.getFechaActualizacion() != null ? pedido.getFechaActualizacion() : LocalDateTime.now());
+        dto.setFechaCreacion(fecha);
         dto.setItems(pedido.getItems().stream().map(item -> {
             ItemPedidoResponseDTO itemDto = new ItemPedidoResponseDTO();
             itemDto.setId(item.getId().toString());
             itemDto.setCantidad(item.getCantidad());
             itemDto.setCantidadMerma(item.getCantidadMerma());
+            itemDto.setCantidadEntregada(item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0);
             itemDto.setSubtotal(item.getSubtotal());
             itemDto.setPrecioPersonalizado(item.getPrecioPersonalizado());
             
@@ -310,13 +346,17 @@ public class PedidoService {
                     .mapToInt(OrdenProduccion::getCantidad)
                     .sum();
                 
-                int cantidad = item.getCantidad() != null ? item.getCantidad() : 0;
-                int faltante = Math.max(0, cantidad - stockTotal - cantidadEnProduccion);
+                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                int cantidadPendiente = Math.max(0, cantidadTotal - cantidadEntregada);
+                int faltante = Math.max(0, cantidadPendiente - stockTotal - cantidadEnProduccion);
                 itemDto.setCantidadFaltante(faltante);
             } else {
                 itemDto.setPerfilNombre("Item Desconocido");
                 itemDto.setStockDisponible(0);
-                itemDto.setCantidadFaltante(item.getCantidad() != null ? item.getCantidad() : 0);
+                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                itemDto.setCantidadFaltante(Math.max(0, cantidadTotal - cantidadEntregada));
             }
             
             return itemDto;

@@ -13,6 +13,7 @@ export interface ItemPedido {
   perfilNombre: string;
   cantidad: number;
   cantidadMerma: number;
+  cantidadEntregada: number;
   subtotal: number;
   precioPersonalizado?: number;
   stockDisponible?: number;

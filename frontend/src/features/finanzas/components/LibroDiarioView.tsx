@@ -106,7 +106,7 @@ export function LibroDiarioView() {
               <div className="space-y-8 animate-in fade-in duration-300">
                 {/* Balance & Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm">
+                  <div className="bg-card border border-border/50 p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm">
                     <div className="flex justify-between items-start">
                       <div className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
                         <Wallet size={20} aria-hidden="true" />
@@ -123,10 +123,10 @@ export function LibroDiarioView() {
 
                 {/* Table Header & Search */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 border-t border-border/40">
-                  <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a]">Historial de Movimientos</h3>
+                  <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Historial de Movimientos</h3>
                   
                   <div className="relative w-full md:w-80">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                     <label htmlFor="search-libro" className="sr-only">Buscar por descripción</label>
                     <input 
                       id="search-libro"
@@ -134,7 +134,7 @@ export function LibroDiarioView() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Buscar por descripción..."
-                      className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                      className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                     />
                   </div>
                 </div>

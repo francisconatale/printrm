@@ -32,6 +32,9 @@ public class ItemPedido {
     @Builder.Default
     private Integer cantidadMerma = 0;
 
+    @Builder.Default
+    private Integer cantidadEntregada = 0;
+
     @Column(nullable = false)
     private Double subtotal;
 

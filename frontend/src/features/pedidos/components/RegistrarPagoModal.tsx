@@ -77,7 +77,7 @@ export function RegistrarPagoModal({ pedidoId, saldoPendiente, isOpen, onClose }
             min="0.01"
             value={monto}
             onChange={(e) => setMonto(e.target.value)}
-            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             placeholder="0.00"
             required
           />
@@ -92,7 +92,7 @@ export function RegistrarPagoModal({ pedidoId, saldoPendiente, isOpen, onClose }
             type="text"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
-            className="w-full bg-background border border-[#e0e0e0] rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
             placeholder="Ej: Seña del 50%, Pago total, Transferencia..."
           />
         </div>

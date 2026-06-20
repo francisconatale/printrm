@@ -73,7 +73,7 @@ export function ClientesListView() {
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
               <div className="relative w-full sm:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} aria-hidden="true" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                 <label htmlFor="search-clientes" className="sr-only">Buscar cliente</label>
                 <input 
                   id="search-clientes"
@@ -81,7 +81,7 @@ export function ClientesListView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar cliente..."
-                  className="w-full bg-background border border-[#e0e0e0] rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
               <button 

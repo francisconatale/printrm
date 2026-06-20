@@ -2,7 +2,7 @@ package com.printrm.studio.domain.pedidos;
 
 import lombok.Data;
 import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Data
 public class PedidoResponseDTO {
@@ -12,5 +12,6 @@ public class PedidoResponseDTO {
     private Double total;
     private Double montoPagado;
     private Double saldoPendiente;
+    private LocalDateTime fechaCreacion;
     private List<ItemPedidoResponseDTO> items;
 }

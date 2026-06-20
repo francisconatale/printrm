@@ -217,7 +217,7 @@ export function AgendaProduccionView() {
 
           {/* Filters Toolbar */}
           <div className="bg-card border border-border/40 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setFilterType('ALL')}
                 className={cn(
@@ -265,7 +265,7 @@ export function AgendaProduccionView() {
                   placeholder="Buscar producto, cliente..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-background border border-[#e0e0e0] rounded-full pl-9 pr-4 py-2 text-xs focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-border rounded-full pl-9 pr-4 py-2 text-xs focus:ring-2 focus:ring-black outline-none transition-all"
                 />
               </div>
 
@@ -285,9 +285,9 @@ export function AgendaProduccionView() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Column 1: En Cola */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[2rem] border border-border/30 flex flex-col min-h-[500px]">
+            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
               <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a] flex items-center gap-2">
+                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                   <Clock size={14} /> En Cola ({colaOrders.length})
                 </h3>
               </div>
@@ -303,9 +303,9 @@ export function AgendaProduccionView() {
             </div>
 
             {/* Column 2: En Proceso */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[2rem] border border-border/30 flex flex-col min-h-[500px]">
+            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
               <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a] flex items-center gap-2">
+                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                   <Wrench size={14} /> En Proceso ({procesoOrders.length})
                 </h3>
               </div>
@@ -321,9 +321,9 @@ export function AgendaProduccionView() {
             </div>
 
             {/* Column 3: Completadas */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[2rem] border border-border/30 flex flex-col min-h-[500px]">
+            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
               <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-[#7a7a7a] flex items-center gap-2">
+                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                   <Check size={14} /> Completadas ({finalizadasOrders.length})
                 </h3>
               </div>
