@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [2026-06-19] - Actualización de Skill revisar_tareas y Archivado de Especificación FIFO (006)
+### Descripción
+- **Customizations (Skills):** Se actualizó la skill `revisar_tareas` (`.agents/skills/revisar_tareas/SKILL.md`) para incorporar la instrucción de archivar automáticamente carpetas de especificaciones (`tasks.md`) cuyos checklists estén al 100% completados.
+- **Estructura del Proyecto (.specify):** Se archivó la especificación del sistema de lotes de inventario FIFO (`006-fifo-inventory`) moviéndola de `.specify/specs/` a `.specify/history/sprint-2/006-fifo-inventory/` dado que todas sus tareas asociadas estaban completadas.
+
+### Archivos Involucrados
+- `.agents/skills/revisar_tareas/SKILL.md` (modificado)
+- `.specify/specs/006-fifo-inventory/` (movido a `.specify/history/sprint-2/`)
+- `CHANGELOG.md` (modificado)
+
+## [2026-06-19] - Actualización de Reglas del Orquestador de SpecKit en GEMINI.md
+### Descripción
+- **Configuración de Agente (SpecKit):** Se actualizó el archivo `GEMINI.md` en la raíz del proyecto agregando una sección explícita de "Reglas de Orquestación".
+- Esto le permite al agente orquestador (Antigravity) reconocer automáticamente su rol, aplicar las `dispatch-rules.md` para separar selectivamente el contexto de frontend (`constitution-frontend.md`) y backend (`constitution-backend.md`), y seguir el flujo de orquestación definido en `orchestration-workflow.md` sin requerir recordatorios manuales por parte del usuario.
+
+### Archivos Involucrados
+- `GEMINI.md` (modificado)
+- `CHANGELOG.md` (modificado)
+
 ## [2026-06-19] - Botones de Transición de Estado de Órdenes en la Agenda (T013)
 ### Descripción
 - **Frontend (Producción):** Se agregaron botones de acción dinámicos en las tarjetas de las órdenes de producción dentro de la Agenda para avanzar el estado:

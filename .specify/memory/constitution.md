@@ -13,6 +13,8 @@ Sync Impact Report:
 
 # Calculadora 3D — Constitution
 
+**Agent Loading**: Cada agente carga los archivos que le corresponden según `.specify/memory/dispatch-rules.md`. El orquestador es quien lee ese archivo y distribuye el contexto a cada subagente. Ningún agente decide por sí mismo qué cargar — el orquestador se lo asigna.
+
 ## Core Principles
 
 ### I. Product Protagonist (Data-First)
@@ -69,16 +71,6 @@ Todo cambio en cualquier input del formulario debe disparar un recálculo inmedi
 ### Integración
 El frontend consume la API REST del backend. No existe lógica de negocio duplicada: las fórmulas de cálculo viven exclusivamente en el frontend como funciones puras testeables. El backend no recalcula; almacena los resultados tal como los envía el frontend.
 
-### Separación de responsabilidades
-| Responsabilidad | Frontend | Backend |
-|---|---|---|
-| Cálculo de costos | ✅ | ❌ |
-| Persistencia de perfiles | ❌ | ✅ |
-| Persistencia de historial | ❌ | ✅ |
-| Autocompletado de modelos | ✅ (data estática) | ❌ |
-| Exportación CSV/PDF | ✅ | ⚠️ (PDF en v2) |
-| Validación de inputs | ✅ (inmediata) | ✅ (de seguridad) |
-
 ## Reglas de Negocio (Canónicas)
 
 Estas fórmulas son la fuente de verdad. Cualquier implementación debe producir resultados idénticos.
@@ -119,6 +111,48 @@ Prohibido enviar inputs al backend para obtener resultados calculados. Las fórm
 | **Insumos extra** | Costos adicionales no energéticos ni de filamento (pintura, packaging, etc.). |
 | **Super-Card** | Contenedor principal de la app: white, rounded-2xl, border 0.5px. |
 
+## Backend Agent Rules
+
+Reglas de comportamiento para el agente backend. Se aplican cuando el scope es `backend-only` o cuando una tarea está marcada `[BE]`.
+
+### Stack
+Leer `.specify/memory/stack.md` para:
+- Lenguaje / Runtime (Java, Node.js, Python, etc.)
+- Framework (Spring Boot, Express, FastAPI, etc.)
+- Base de datos (SQLite, PostgreSQL, MongoDB, etc.)
+- ORM / Acceso a datos (JPA, Prisma, SQLAlchemy, etc.)
+- Build tool (Gradle, Maven, npm, etc.)
+- Testing tools
+
+### Arquitectura
+Leer `.specify/memory/enterprise-architecture-rules.md` y aplicar:
+- SOLID (SRP, OCP, LSP, ISP, DIP)
+- Capas: Presentation → Application → Data
+- Use Cases como única fuente de verdad para lógica de negocio
+- Dependency Injection vía interfaces
+
+### Responsabilidades
+1. **API Design**: Controllers/Adapters delgados — validar input, llamar use cases, devolver respuesta. NUNCA llamar otros controllers.
+2. **Business Logic**: En Use Cases / Services. Lógica pura, sin HTTP, sin detalles de base de datos. Cada use case tiene UNA responsabilidad.
+3. **Data Access**: Repositories detrás de interfaces (DIP). La lógica de negocio NUNCA está en repositories.
+4. **Errores**: Estructurados. Usar el formato que define esta constitution (`{ "error": "string", "code": "string" }`).
+5. **Testing**: Unit test a use cases (mock repositories). Integration test a repositories (BD real). Controller test solo para HTTP.
+
+### Before Coding
+1. Leer `.specify/memory/stack.md` — entender el stack
+2. Leer `.specify/memory/enterprise-architecture-rules.md` — entender principios de arquitectura
+3. Leer esta constitution — entender convenciones del proyecto
+4. Leer archivos vecinos — entender patrones existentes
+
+### Prohibido
+- Controllers llamando controllers
+- Lógica de negocio en repositories
+- Services conociendo HTTP
+- Lógica dispersa por múltiples capas
+- Violar SOLID sin justificación en el plan
+
+---
+
 ## Governance
 
 Esta constitución es la ley fundamental del proyecto. Cualquier implementación que viole estos principios debe justificarse en el Plan de Implementación correspondiente.
@@ -128,4 +162,4 @@ Esta constitución es la ley fundamental del proyecto. Cualquier implementación
 2. Actualizar versión (MAJOR para cambios de principios, MINOR para adiciones).
 3. Sincronizar todos los templates de specs.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-15 | **Last Amended**: 2026-06-15
+**Version**: 2.0.0 | **Ratified**: 2026-06-15 | **Last Amended**: 2026-06-20

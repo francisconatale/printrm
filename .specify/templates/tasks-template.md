@@ -7,17 +7,32 @@ description: "Task list template for feature implementation"
 
 **Input**: Design documents from `/specs/[###-feature-name]/`
 
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md
 
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
-## Format: `[ID] [P?] [Story] Description`
+Each endpoint task includes the **JSON contract** inline — la forma exacta que frontend mockea y backend implementa en paralelo.
+
+## Format: `[ID] [P?] [Story] [FE/BE] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
+- **[FE]**: Frontend task | **[BE]**: Backend task — trabajan en paralelo contra el mismo contrato
 - Include exact file paths in descriptions
+
+## File Splitting
+
+Al generar las tareas, se crean **tres archivos**:
+
+| Archivo | Contenido |
+|---------|-----------|
+| `tasks.md` | Master: fases, dependencias, contratos, modelos, servicios, tareas compartidas |
+| `tasks-be.md` | Solo tareas marcadas con **[BE]** — para el agente de backend |
+| `tasks-fe.md` | Solo tareas marcadas con **[FE]** — para el agente de frontend |
+
+Cada agente carga solo su archivo correspondiente + su constitution, sin ruido del otro lado.
 
 ## Path Conventions
 
@@ -34,7 +49,7 @@ description: "Task list template for feature implementation"
   - User stories from spec.md (with their priorities P1, P2, P3...)
   - Feature requirements from plan.md
   - Entities from data-model.md
-  - Endpoints from contracts/
+  - JSON contracts defined inline per user story
 
   Tasks MUST be organized by user story so each story can be:
   - Implemented independently
@@ -80,6 +95,25 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
+### Contract (JSON shapes for parallel FE/BE)
+
+```json
+{
+  "endpoints": [
+    {
+      "method": "[GET|POST|PUT|DELETE]",
+      "path": "/api/[resource]",
+      "request": { "[field]": "[type]" },
+      "response": { "[field]": "[type]" },
+      "errors": { "[code]": "condition" }
+    }
+  ],
+  "types": {
+    "[Entity]": { "[field]": "[type]" }
+  }
+}
+```
+
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
@@ -92,9 +126,12 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
 - [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
 - [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T015 [P] [US1] [BE] Implement `[METHOD] /api/[path]` en backend/src/api/[file].py
+      Contract: `{"request": {...}, "response": {...}}`
+- [ ] T016 [P] [US1] [FE] Consumir `[METHOD] /api/[path]` en frontend/src/services/[file].ts
+      Contract: `{"request": {...}, "response": {...}}`  ← mismo JSON que T015
+- [ ] T017 [US1] Add validation and error handling
+- [ ] T018 [US1] Add logging for user story 1 operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -106,17 +143,38 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
+### Contract (JSON shapes for parallel FE/BE)
+
+```json
+{
+  "endpoints": [
+    {
+      "method": "[GET|POST|PUT|DELETE]",
+      "path": "/api/[resource]",
+      "request": { "[field]": "[type]" },
+      "response": { "[field]": "[type]" }
+    }
+  ],
+  "types": {
+    "[Entity]": { "[field]": "[type]" }
+  }
+}
+```
+
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T020 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T021 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Create [Entity] model in src/models/[entity].py
-- [ ] T021 [US2] Implement [Service] in src/services/[service].py
-- [ ] T022 [US2] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T023 [US2] Integrate with User Story 1 components (if needed)
+- [ ] T022 [P] [US2] Create [Entity] model in src/models/[entity].py
+- [ ] T023 [US2] Implement [Service] in src/services/[service].py
+- [ ] T024 [P] [US2] [BE] Implement `[METHOD] /api/[path]` en backend/src/api/[file].py
+      Contract: `{"request": {...}, "response": {...}}`
+- [ ] T025 [P] [US2] [FE] Consumir `[METHOD] /api/[path]` en frontend/src/services/[file].ts
+      Contract: `{"request": {...}, "response": {...}}`
+- [ ] T026 [US2] Integrate with User Story 1 components (if needed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -128,16 +186,37 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
+### Contract (JSON shapes for parallel FE/BE)
+
+```json
+{
+  "endpoints": [
+    {
+      "method": "[GET|POST|PUT|DELETE]",
+      "path": "/api/[resource]",
+      "request": { "[field]": "[type]" },
+      "response": { "[field]": "[type]" }
+    }
+  ],
+  "types": {
+    "[Entity]": { "[field]": "[type]" }
+  }
+}
+```
+
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T027 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T028 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T029 [P] [US3] Create [Entity] model in src/models/[entity].py
+- [ ] T030 [US3] Implement [Service] in src/services/[service].py
+- [ ] T031 [P] [US3] [BE] Implement `[METHOD] /api/[path]` en backend/src/api/[file].py
+      Contract: `{"request": {...}, "response": {...}}`
+- [ ] T032 [P] [US3] [FE] Consumir `[METHOD] /api/[path]` en frontend/src/services/[file].ts
+      Contract: `{"request": {...}, "response": {...}}`
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -207,6 +286,12 @@ Task: "Integration test for [user journey] in tests/integration/test_[name].py"
 # Launch all models for User Story 1 together:
 Task: "Create [Entity1] model in src/models/[entity1].py"
 Task: "Create [Entity2] model in src/models/[entity2].py"
+
+# Launch FE and BE in parallel — mismo contrato JSON, cada agente carga su archivo:
+#   Agente BE → carga tasks-be.md + constitution-backend.md
+#   Agente FE → carga tasks-fe.md + constitution-frontend.md
+Task: "[BE] Implement GET /api/products en backend/src/api/products.py | Contract: {\"response\": {\"products\": [...]}}"
+Task: "[FE] Consumir GET /api/products en frontend/src/services/products.ts | Contract: {\"response\": {\"products\": [...]}}"
 ```
 
 ---

@@ -1,4 +1,4 @@
-description = "Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts."
+description = "Generate actionable, dependency-ordered tasks.md + tasks-be.md + tasks-fe.md for the feature, with inline JSON contracts per user story."
 
 prompt = """
 
@@ -65,18 +65,34 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Create parallel execution examples per user story
    - Validate task completeness (each user story has all needed tasks, independently testable)
 
-4. **Generate tasks.md**: Read the tasks template from TASKS_TEMPLATE (from the JSON output above) and use it as structure. If TASKS_TEMPLATE is empty, fall back to `.specify/templates/tasks-template.md`. Fill with:
-   - Correct feature name from plan.md
-   - Phase 1: Setup tasks (project initialization)
-   - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
-   - Phase 3+: One phase per user story (in priority order from spec.md)
-   - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks
-   - Final Phase: Polish & cross-cutting concerns
-   - All tasks must follow the strict checklist format (see Task Generation Rules below)
-   - Clear file paths for each task
-   - Dependencies section showing story completion order
-   - Parallel execution examples per story
-   - Implementation strategy section (MVP first, incremental delivery)
+4. **Generate task files**: Read the tasks template from TASKS_TEMPLATE (from the JSON output above) and use it as structure. If TASKS_TEMPLATE is empty, fall back to `.specify/templates/tasks-template.md`. Fill with:
+    - Correct feature name from plan.md
+    - Phase 1: Setup tasks (project initialization)
+    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
+    - Phase 3+: One phase per user story (in priority order from spec.md)
+    - Each phase includes: story goal, independent test criteria, JSON Contract block (endpoints + types), tests (if requested), implementation tasks
+    - Final Phase: Polish & cross-cutting concerns
+    - All tasks must follow the strict checklist format (see Task Generation Rules below)
+    - Clear file paths for each task
+    - Dependencies section showing story completion order
+    - Parallel execution examples per story
+    - Implementation strategy section (MVP first, incremental delivery)
+
+5. **Split into files according to scope** (all written to FEATURE_DIR):
+
+    Detect scope from `{{args}}`: if args start with `backend-only:` or `frontend-only:`, use that scope. Default is `full`.
+
+    | Scope | Files generated |
+    |-------|-----------------|
+    | `full` | `tasks.md` + `tasks-be.md` + `tasks-fe.md` |
+    | `backend-only` | `tasks.md` + `tasks-be.md` (no frontend tasks) |
+    | `frontend-only` | `tasks.md` + `tasks-fe.md` (no backend tasks) |
+
+    Filtering rules:
+    - `tasks-be.md` includes all [BE] tasks in order
+    - `tasks-fe.md` includes all [FE] tasks in order
+    - Both preserve the original Phase structure and Task IDs for cross-reference
+    - If a task has no [FE/BE] marker (e.g. models, services), it stays only in `tasks.md`
 
 ## Mandatory Post-Execution Hooks
 
@@ -113,8 +129,11 @@ Check if `.specify/extensions.yml` exists in the project root.
 
 ## Completion Report
 
-Output path to generated tasks.md and summary:
-- Total task count
+Output paths to generated files and summary:
+- `tasks.md` — master task list (phases, contracts, shared tasks)
+- `tasks-be.md` — backend-only tasks (for backend agent)
+- `tasks-fe.md` — frontend-only tasks (for frontend agent)
+- Total task count (master) and per-file counts
 - Task count per user story
 - Parallel opportunities identified
 - Independent test criteria for each story
@@ -136,7 +155,7 @@ The tasks.md should be immediately executable - each task must be specific enoug
 Every task MUST strictly follow this format:
 
 ```text
-- [ ] [TaskID] [P?] [Story?] Description with file path
+- [ ] [TaskID] [P?] [Story?] [FE/BE?] Description with file path
 ```
 
 **Format Components**:
@@ -150,7 +169,11 @@ Every task MUST strictly follow this format:
    - Foundational phase: NO story label  
    - User Story phases: MUST have story label
    - Polish phase: NO story label
-5. **Description**: Clear action with exact file path
+5. **[FE/BE] scope marker**: REQUIRED for endpoint/UI tasks only
+   - **[BE]**: Backend task (implement API endpoint, service, model)
+   - **[FE]**: Frontend task (consume API, build UI component)
+   - Omit for shared tasks (project setup, linting, docs, etc.)
+6. **Description**: Clear action with exact file path
 
 **Examples**:
 
@@ -158,10 +181,13 @@ Every task MUST strictly follow this format:
 - ✅ CORRECT: `- [ ] T005 [P] Implement authentication middleware in src/middleware/auth.py`
 - ✅ CORRECT: `- [ ] T012 [P] [US1] Create User model in src/models/user.py`
 - ✅ CORRECT: `- [ ] T014 [US1] Implement UserService in src/services/user_service.py`
+- ✅ CORRECT: `- [ ] T015 [P] [US1] [BE] Implement GET /api/products en backend/src/api/products.py | Contract: {"response": {"products": [{"id": "string", "name": "string"}]}}`
+- ✅ CORRECT: `- [ ] T016 [P] [US1] [FE] Consumir GET /api/products en frontend/src/services/products.ts | Contract: {"response": {"products": [{"id": "string", "name": "string"}]}}`
 - ❌ WRONG: `- [ ] Create User model` (missing ID and Story label)
 - ❌ WRONG: `T001 [US1] Create model` (missing checkbox)
 - ❌ WRONG: `- [ ] [US1] Create User model` (missing Task ID)
 - ❌ WRONG: `- [ ] T001 [US1] Create model` (missing file path)
+- ❌ WRONG: `- [ ] T015 [P] [US1] [BE] Implement products endpoint` (missing path + contract)
 
 ### Task Organization
 
@@ -175,8 +201,10 @@ Every task MUST strictly follow this format:
    - Mark story dependencies (most stories should be independent)
 
 2. **From Contracts**:
-   - Map each interface contract → to the user story it serves
-   - If tests requested: Each interface contract → contract test task [P] before implementation in that story's phase
+    - If `contracts/` exists: Map each interface contract → to the user story it serves
+    - If no `contracts/` directory: Define **inline JSON contracts** per user story (in the `### Contract` block)
+    - Each endpoint task [BE] and [FE] MUST include the same inline Contract JSON in its description
+    - If tests requested: Each interface contract → contract test task [P] before implementation in that story's phase
 
 3. **From Data Model**:
    - Map each entity to the user story(ies) that need it
@@ -200,5 +228,7 @@ Every task MUST strictly follow this format:
 ## Done When
 
 - [ ] tasks.md generated with all phases, task IDs, and file paths
+- [ ] tasks-be.md and tasks-fe.md generated from splitting [BE] and [FE] tasks
+- [ ] Each endpoint task includes inline Contract JSON (same shape in [BE] and [FE] pair)
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
-- [ ] Completion reported to user with task count, story breakdown, and MVP scope"""
+- [ ] Completion reported to user with task count, file breakdown, and MVP scope"""

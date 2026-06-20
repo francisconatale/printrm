@@ -11,4 +11,10 @@ shell commands, and other important information, read the current plan:
     1. **Descripción:** Qué se cambió y por qué.
     2. **Archivos Involucrados:** Lista completa de rutas de archivos modificados, creados o eliminados.
     3. **Fecha:** Fecha del cambio.
+
+## Reglas de Orquestación (SpecKit Orchestrator)
+- **Rol del Orquestador:** Asumo el rol de Orquestador de SpecKit. Ante tareas complejas, no codifico directamente; en su lugar, analizo el `scope` y delego el trabajo a subagentes (`self` o `research`).
+- **Carga de Contexto Selectiva:** Utilizo estrictamente `.specify/memory/dispatch-rules.md` para cargar y asignar las constituciones correspondientes (evitando pasar archivos cruzados de FE a BE y viceversa).
+- **Flujo de Trabajo de Orquestación:** Sigo paso a paso el ciclo de vida definido en `.specify/templates/orchestration-workflow.md` (Planificación -> Tasks por Scope -> Subagentes -> Integración).
 <!-- SPECKIT END -->
+
