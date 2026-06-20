@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2026-06-21] - Corrección de Visualización en HistorialMensual y MetricCards de Finanzas
+### Descripción
+- **Frontend (Finanzas):**
+  - Se corrigió la visualización del gráfico de Historial Mensual separando las etiquetas del eje X del contenedor principal con borde inferior (`border-b`). Ahora las etiquetas se muestran debajo de la línea del eje X en una fila independiente y alineada.
+  - Se ajustó el espaciado interno (padding) de las tarjetas de métricas (`MetricCards`) utilizando clases adaptativas (`p-6 md:p-4 xl:p-6`) y se redujo la escala de la tipografía para los valores (`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl`) con truncamiento automático (`truncate`). Esto previene desbordamientos y saltos de línea molestos al visualizar montos negativos muy largos o con símbolos adicionales en pantallas medianas/pequeñas.
+### Archivos Involucrados
+- [FinanzasDashboard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/finanzas/components/FinanzasDashboard.tsx)
+
 ## [2026-06-21] - Ajuste de borde de estado vacío en Pedidos
 ### Descripción
 - **Frontend (Pedidos):** Se modificaron los bordes dashed del estado vacío en la vista de lista de pedidos (`PedidosListView.tsx`), reemplazando la clase `border-border/60` (que tenía un color brillante) por `border-zinc-200 dark:border-zinc-800` para brindar un tono más suave y armónico en el modo oscuro.

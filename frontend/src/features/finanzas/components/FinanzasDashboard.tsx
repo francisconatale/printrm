@@ -145,7 +145,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         
         {/* Balance Card */}
-        <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
+        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
             <div className="size-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
               <DollarSign size={20} />
@@ -162,16 +162,16 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Neto</p>
-            <p className={`text-3xl font-bold tracking-tight mt-1 transition-all ${
+            <p className={`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 transition-all truncate ${
               metrics.balance >= 0 ? 'text-zinc-950 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'
-            }`}>
+            }`} title={formatCurrency(metrics.balance)}>
               {formatCurrency(metrics.balance)}
             </p>
           </div>
         </div>
 
         {/* Ingresos Card */}
-        <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
+        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
             <div className="size-10 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 flex items-center justify-center">
               <TrendingUp size={20} />
@@ -184,14 +184,14 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ingresos Netos</p>
-            <p className="text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
+            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50 truncate" title={formatCurrency(metrics.totalIngresosNetos)}>
               {formatCurrency(metrics.totalIngresosNetos)}
             </p>
           </div>
         </div>
 
         {/* Gastos Card */}
-        <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
+        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
             <div className="size-10 rounded-full bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400 flex items-center justify-center">
               <TrendingDown size={20} />
@@ -199,20 +199,20 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Gastos Totales</p>
-            <p className="text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50">
+            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50 truncate" title={formatCurrency(metrics.totalGastos)}>
               {formatCurrency(metrics.totalGastos)}
             </p>
           </div>
         </div>
 
         {/* ROI Card */}
-        <div className="bg-card border border-border/50 p-6 rounded-[2rem] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
+        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
             <div className="size-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
               <Percent size={20} />
             </div>
             <div className="group relative cursor-pointer">
-              <HelpCircle size={16} className="text-[#a0a0a0]" />
+              <HelpCircle size={16} className="text-muted-foreground" />
               <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-48 bg-black text-white text-[10px] p-2.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50 leading-relaxed font-sans">
                 ROI = (Balance / Gastos Totales) * 100. Representa el retorno sobre la inversión de fabricación de piezas y costos fijos.
               </div>
@@ -220,9 +220,9 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Retorno (ROI)</p>
-            <p className={`text-3xl font-bold tracking-tight mt-1 ${
+            <p className={`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 truncate ${
               metrics.roi >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
-            }`}>
+            }`} title={metrics.roi >= 1000 ? '> 1000%' : `${metrics.roi.toFixed(1)}%`}>
               {metrics.roi >= 1000 ? '> 1000%' : `${metrics.roi.toFixed(1)}%`}
             </p>
           </div>
@@ -234,7 +234,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Trend Bar Chart */}
-        <div className="lg:col-span-2 bg-card border border-border/50 p-8 rounded-[2rem] shadow-sm space-y-6">
+        <div className="lg:col-span-2 bg-card border border-border/50 p-8 rounded-[var(--radius-xl)] shadow-sm space-y-6">
           <div className="flex justify-between items-center">
             <div className="space-y-1">
               <h4 className="studio-body-strong">Historial Mensual</h4>
@@ -253,14 +253,14 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
 
           {/* Render Custom SVG Chart */}
-          <div className="h-64 flex flex-col justify-end pt-4">
+          <div className="h-64 flex flex-col pt-4">
             <div className="flex-1 w-full flex items-end justify-between px-2 md:px-8 border-b border-border/50 pb-2">
               {metrics.monthlyTrend.map(month => {
                 const incHeight = (month.ingresos / metrics.maxMonthlyVal) * 100;
                 const expHeight = (month.gastos / metrics.maxMonthlyVal) * 100;
 
                 return (
-                  <div key={month.key} className="flex flex-col items-center gap-2 group flex-1">
+                  <div key={month.key} className="flex flex-col items-center group flex-1">
                     {/* Bars Container */}
                     <div className="h-44 w-full flex justify-center items-end gap-1.5 relative">
                       
@@ -283,20 +283,25 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                         className={`w-3.5 md:w-5 rounded-t-[3px] bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-all duration-300`} 
                       />
                     </div>
-                    
-                    {/* Month Label */}
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold select-none">
-                      {month.label}
-                    </span>
                   </div>
                 );
               })}
+            </div>
+            {/* X-Axis Labels Row */}
+            <div className="flex justify-between px-2 md:px-8 pt-2">
+              {metrics.monthlyTrend.map(month => (
+                <div key={month.key} className="flex-1 text-center">
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold select-none">
+                    {month.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Expenses Category Breakdown */}
-        <div className="bg-card border border-border/50 p-8 rounded-[2rem] shadow-sm flex flex-col justify-between space-y-6">
+        <div className="bg-card border border-border/50 p-8 rounded-[var(--radius-xl)] shadow-sm flex flex-col justify-between space-y-6">
           <div className="space-y-1">
             <h4 className="studio-body-strong">Gastos por Categoría</h4>
             <p className="text-xs text-muted-foreground">Distribución neta por concepto.</p>
@@ -319,7 +324,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                   <div key={item.category} className="space-y-1.5">
                     <div className="flex justify-between text-xs font-medium">
                       <span className="text-foreground font-sans">{categoryLabels[item.category] || item.category}</span>
-                      <div className="space-x-2 text-[#7a7a7a]">
+                      <div className="space-x-2 text-muted-foreground">
                         <span>{formatCurrency(item.amount)}</span>
                         <span className="font-semibold text-zinc-950 dark:text-zinc-100">{percent.toFixed(0)}%</span>
                       </div>
