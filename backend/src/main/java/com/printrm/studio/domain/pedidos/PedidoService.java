@@ -311,7 +311,7 @@ public class PedidoService {
                     .sum();
                 
                 int cantidad = item.getCantidad() != null ? item.getCantidad() : 0;
-                int faltante = Math.max(0, cantidad - stockTotal - cantidadProducida - cantidadEnProduccion);
+                int faltante = Math.max(0, cantidad - stockTotal - cantidadEnProduccion);
                 itemDto.setCantidadFaltante(faltante);
             } else {
                 itemDto.setPerfilNombre("Item Desconocido");
