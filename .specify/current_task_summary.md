@@ -1,13 +1,8 @@
-# Tarea Actual: Ajustes en catálogo de stock (T027)
+# Estado de Tarea: Planificación de Estabilización (Ajustada)
 
-## Estado
-- [x] Eliminar columna 'Costo Fab.' de la tabla del catálogo en `ProductosGalleryView.tsx`.
-- [x] Exponer costos de materiales y energía en `PiezaSTLResponseDTO` en el backend y `PiezaSTL` en el frontend.
-- [x] Modificar celda de 'Precio Sug.' en `ProductosGalleryView.tsx` para mostrar tooltip con desglose de costos (Costo Material, Costo Energía, Total Costo de Producción).
+## Objetivo
+Planificar y detallar la resolución de los problemas críticos y lógicos seleccionados en el backend de printrm, omitiendo el historial de cálculos, notas de clientes y campos de DTOs descartados en sprints anteriores.
 
-## Archivos involucrados
-- `backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLResponseDTO.java`
-- `backend/src/main/java/com/printrm/studio/domain/biblioteca/PiezaSTLService.java`
-- `frontend/src/features/biblioteca/types/biblioteca.types.ts`
-- `frontend/src/features/stock/components/ProductosGalleryView.tsx`
-- `CHANGELOG.md`
+## Archivos Involucrados
+- `.specify/specs/009-correcciones-errores/plan.md`
+- `.specify/current_task_summary.md`
