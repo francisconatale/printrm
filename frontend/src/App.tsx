@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
@@ -12,13 +12,24 @@ import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
+import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
+import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
 
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
+  const [showOnboarding, setShowOnboarding] = useState(false)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
+  const { data: onboarding, isFetched } = useOnboardingStatus()
+
+  // IMPORTANT: useEffect must be called before any early return (Rules of Hooks)
+  useEffect(() => {
+    if (isFetched && onboarding && !onboarding.completado) {
+      setShowOnboarding(true)
+    }
+  }, [isFetched, onboarding])
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
@@ -78,9 +89,11 @@ function App() {
         </main>
       </AppShell>
       <Toaster richColors position="top-right" className="printrm-toaster" />
+      {showOnboarding && (
+        <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
+      )}
     </ThemeProvider>
   )
 }
 
 export default App
-
