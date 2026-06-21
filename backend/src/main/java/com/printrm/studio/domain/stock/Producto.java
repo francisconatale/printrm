@@ -21,9 +21,6 @@ public class Producto {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(columnDefinition = "TEXT")
-    private String descripcion;
-
     @ManyToMany
     @JoinTable(
         name = "producto_partes",

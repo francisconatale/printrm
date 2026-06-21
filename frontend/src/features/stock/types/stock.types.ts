@@ -10,10 +10,9 @@ export interface Lote {
 export interface Producto {
   id: string;
   nombre: string;
-  descripcion?: string;
-  partes: PiezaSTL[];
   cantidadStock: number;
   precioSugerido?: number;
+  partes: PiezaSTL[];
   lotes: Lote[];
   creadoEn: string;
   actualizadoEn: string;
@@ -21,7 +20,6 @@ export interface Producto {
 
 export interface ProductoCreate {
   nombre: string;
-  descripcion?: string;
   precioSugerido?: number;
   cantidadStock?: number;
   parteIds: string[];

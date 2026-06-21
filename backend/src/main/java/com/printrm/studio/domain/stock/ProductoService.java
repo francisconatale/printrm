@@ -41,7 +41,6 @@ public class ProductoService {
             new Producto();
 
         producto.setNombre(dto.getNombre());
-        producto.setDescripcion(dto.getDescripcion());
         producto.setPrecioSugerido(dto.getPrecioSugerido());
         
         // If it's a new product and has initial stock, we create an initial lot
@@ -75,7 +74,6 @@ public class ProductoService {
         return ProductoResponseDTO.builder()
                 .id(p.getId().toString())
                 .nombre(p.getNombre())
-                .descripcion(p.getDescripcion())
                 .cantidadStock(p.getCantidadStock())
                 .precioSugerido(p.getPrecioSugerido())
                 .creadoEn(p.getCreadoEn())

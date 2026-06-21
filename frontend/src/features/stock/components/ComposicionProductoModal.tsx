@@ -5,13 +5,12 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { CuboidIcon as Cube, Check, Plus } from 'lucide-react';
+import { CuboidIcon as Cube, Check, Plus, Tag } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
 import { useAjustes } from '../../ajustes/hooks/useAjustes';
 
 const productoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
-  descripcion: z.string().optional(),
   precioSugerido: z.number().min(0).optional().default(0),
   cantidadStock: z.number().min(0).default(0),
   parteIds: z.array(z.string()).min(1, "Debes seleccionar al menos una pieza STL"),
@@ -38,7 +37,6 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
     resolver: zodResolver(productoSchema),
     defaultValues: {
       nombre: '',
-      descripcion: '',
       precioSugerido: 0,
       cantidadStock: 0,
       parteIds: [],
@@ -63,7 +61,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
 
   React.useEffect(() => {
     const totalCostoBase = selectedPiezasData.reduce((sum, p) => sum + (p.costoBase || 0), 0);
-    const multiplier = 3;
+    const multiplier = 2;
     setValue('precioSugerido', Math.round(totalCostoBase * multiplier));
   }, [selectedPiezasData, ajustes, setValue]);
 
@@ -110,14 +108,25 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="prod-descripcion" className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400">Descripción</label>
-              <textarea
-                id="prod-descripcion"
-                {...register('descripcion')}
-                rows={4}
-                className="w-full bg-transparent border-b-2 border-zinc-200 dark:border-zinc-700 px-0 py-1.5 text-sm text-zinc-900 dark:text-zinc-100 focus:border-primary dark:focus:border-primary outline-none transition-colors resize-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
-                placeholder="Acabado, instrucciones de ensamble..."
-              />
+              <label htmlFor="prod-precio" className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
+                <Tag size={13} className="text-muted-foreground" />
+                Precio de Venta
+              </label>
+              <div className="flex items-center border-b-2 border-zinc-200 dark:border-zinc-700 focus-within:border-primary dark:focus-within:border-primary transition-colors">
+                <span className="text-sm font-medium text-zinc-400 dark:text-zinc-500 pr-1.5 select-none">$</span>
+                <input
+                  id="prod-precio"
+                  type="number"
+                  min="0"
+                  step="1"
+                  {...register('precioSugerido', { valueAsNumber: true })}
+                  className="w-full bg-transparent py-1.5 text-base font-medium text-zinc-900 dark:text-zinc-100 outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                  placeholder="0"
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug">
+                Precio independiente del costo FIFO. Se precarga con costo × 2 como sugerencia.
+              </p>
             </div>
           </div>
 
@@ -134,7 +143,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
               )}
             </div>
 
-            <div className="border border-zinc-200/60 dark:border-zinc-800/50 rounded-2xl overflow-hidden bg-background dark:bg-zinc-950/50 max-h-[340px] overflow-y-auto custom-scrollbar">
+            <div className="border border-zinc-200/60 dark:border-zinc-800/50 rounded-2xl overflow-hidden bg-zinc-50/50 dark:bg-zinc-950/50 max-h-[340px] overflow-y-auto custom-scrollbar">
               {!piezas || piezas.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-14 text-center">
                   <div className="size-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3">
@@ -152,10 +161,10 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                         key={pieza.id}
                         type="button"
                         onClick={() => toggleParte(pieza.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left border ${
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left ${
                           isSelected
-                            ? 'bg-primary/10 border-primary text-primary'
-                            : 'border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900/40'
+                            ? 'bg-primary/10 text-primary'
+                            : 'hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
                         }`}
                         aria-label={`${isSelected ? 'Quitar' : 'Agregar'} ${pieza.nombre}`}
                       >
@@ -206,19 +215,40 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
 
         {/* Resumen + Actions */}
         <div className="mt-8 pt-5 border-t border-zinc-200/60 dark:border-zinc-800/50">
-          {selectedPiezasData.length > 0 && (
-            <div className="flex items-center gap-4 mb-5 text-sm text-zinc-500 dark:text-zinc-400">
-              <span className="flex items-center gap-1.5">
-                <span className="font-semibold text-primary dark:text-primary">{selectedPiezasData.length}</span>
-                {selectedPiezasData.length === 1 ? 'pieza' : 'piezas'}
-              </span>
-              <span className="text-zinc-300 dark:text-zinc-700">/</span>
-              <span className="flex items-center gap-1.5">
-                <span className="font-semibold text-primary dark:text-primary">{formatWeight(totalWeight)}</span>
-                peso total
-              </span>
-            </div>
-          )}
+          {selectedPiezasData.length > 0 && (() => {
+            const costo = Math.round(selectedPiezasData.reduce((s, p) => s + (p.costoBase || 0), 0));
+            const precio = watch('precioSugerido') ?? 0;
+            const ganancia = precio - costo;
+            const margen = costo > 0 && precio > 0 ? ((ganancia / precio) * 100) : 0;
+            const isPositive = ganancia > 0;
+
+            return (
+              <div className="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/50">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Costo prod.</p>
+                    <p className="text-sm font-bold font-mono text-foreground">${costo.toLocaleString('es-AR')}</p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Precio venta</p>
+                    <p className="text-sm font-bold font-mono text-foreground">${precio > 0 ? precio.toLocaleString('es-AR') : '—'}</p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Ganancia</p>
+                    <p className={`text-sm font-bold font-mono ${precio > 0 ? (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500') : 'text-zinc-400'}`}>
+                      {precio > 0 ? `${isPositive ? '+' : ''}$${ganancia.toLocaleString('es-AR')}` : '—'}
+                    </p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Margen</p>
+                    <p className={`text-sm font-bold ${precio > 0 ? (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500') : 'text-zinc-400'}`}>
+                      {precio > 0 ? `${margen.toFixed(1)}%` : '—'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="flex items-center justify-end">
             <button

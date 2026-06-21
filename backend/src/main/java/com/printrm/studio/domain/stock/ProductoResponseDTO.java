@@ -12,7 +12,6 @@ import java.util.List;
 public class ProductoResponseDTO {
     private String id;
     private String nombre;
-    private String descripcion;
     private Integer cantidadStock;
     private Double precioSugerido;
     private List<PiezaSTLResponseDTO> partes;

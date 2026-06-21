@@ -46,9 +46,6 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
             </div>
             <div>
               <span className="text-sm font-semibold text-foreground">{producto.nombre}</span>
-              {producto.descripcion && (
-                <p className="text-[11px] text-muted-foreground truncate max-w-[260px]">{producto.descripcion}</p>
-              )}
             </div>
           </div>
         </td>
