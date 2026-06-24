@@ -1,8 +1,8 @@
 import React from 'react';
 import { useGetTransacciones, useGetBalance } from '../api/finanzas.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
-import { format } from 'date-fns/format';
-import { es } from 'date-fns/locale/es';
+import { fmtDate, fmtDateTime } from '../../../lib/date-utils';
+import { parseISO } from 'date-fns/parseISO';
 import { 
   Search, 
   Loader2, 
@@ -52,7 +52,7 @@ export function LibroDiarioView() {
 
   const groupedTransacciones = React.useMemo<TransactionItem[]>(() => {
     if (!transacciones) return [];
-    const sorted = [...transacciones].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    const sorted = [...transacciones].sort((a, b) => parseISO(b.fecha).getTime() - parseISO(a.fecha).getTime());
     const filtered = sorted.filter(t => 
       t.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.categoria.toLowerCase().includes(searchTerm.toLowerCase())
@@ -93,8 +93,8 @@ export function LibroDiarioView() {
     });
 
     return result.sort((a, b) => {
-      const dateA = new Date(a.isGroup ? a.fecha : a.tx.fecha).getTime();
-      const dateB = new Date(b.isGroup ? b.fecha : b.tx.fecha).getTime();
+      const dateA = parseISO(a.isGroup ? a.fecha : a.tx.fecha).getTime();
+      const dateB = parseISO(b.isGroup ? b.fecha : b.tx.fecha).getTime();
       return dateB - dateA;
     });
   }, [transacciones, searchTerm]);
@@ -233,7 +233,7 @@ export function LibroDiarioView() {
                                     </button>
                                   )}
                                   <div>
-                                    <span className="block">{format(new Date(item.isGroup ? item.fecha : item.tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
+                                    <span className="block">{fmtDateTime(item.isGroup ? item.fecha : item.tx.fecha)}</span>
                                     <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{item.isGroup ? item.id.slice(-6) : item.tx.id.slice(-6)}</span>
                                   </div>
                                 </div>
@@ -273,7 +273,7 @@ export function LibroDiarioView() {
                             {item.isGroup && expandedGroups[item.id] && item.txs.map(subTx => (
                               <tr key={subTx.id} className="bg-muted/10 border-l-2 border-l-primary/30">
                                 <td className="px-6 py-3 whitespace-nowrap text-[11px] text-muted-foreground pl-12">
-                                  <span className="block">{format(new Date(subTx.fecha), 'HH:mm', { locale: es })}</span>
+                                  <span className="block">{fmtDate(subTx.fecha, 'HH:mm')}</span>
                                 </td>
                                 <td className="px-6 py-3 text-xs text-muted-foreground">
                                   ↳ {subTx.descripcion}

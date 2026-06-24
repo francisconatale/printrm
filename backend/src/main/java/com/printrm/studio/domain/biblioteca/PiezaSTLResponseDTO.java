@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.biblioteca;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ public class PiezaSTLResponseDTO {
     private String perfilFilamentoNombre;
     private String perfilImpresionNombre;
     
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime creadoEn;
 }
 

@@ -3,8 +3,7 @@ import { useGetTransacciones } from '../../finanzas/api/finanzas.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Search, Loader2, Plus, ReceiptText, ChevronRight, RotateCcw } from 'lucide-react';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
-import { format } from 'date-fns/format';
-import { es } from 'date-fns/locale/es';
+import { fmtDateTime } from '../../../lib/date-utils';
 import { PedidoDetalleView } from '../../pedidos/components/PedidoDetalleView';
 import { CrearVentaModal } from './CrearVentaModal';
 import { DevolucionVentaModal } from './DevolucionVentaModal';
@@ -141,7 +140,7 @@ export function VentasListView() {
                       className={`transition-colors ${tx.pedidoId ? 'hover:bg-muted/5 cursor-pointer' : 'hover:bg-muted/5'} ${isRefund ? 'opacity-70' : ''}`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                        {format(new Date(tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}
+                        {fmtDateTime(tx.fecha)}
                       </td>
                       <td className="px-6 py-4">
                         <button

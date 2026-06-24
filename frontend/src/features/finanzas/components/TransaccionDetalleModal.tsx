@@ -2,8 +2,7 @@ import React from 'react';
 import { Modal } from '../../../components/ui/modal';
 import { Transaccion } from '../types/finanzas.types';
 import { useGetPedido } from '../../pedidos/api/pedidos.api';
-import { format } from 'date-fns/format';
-import { es } from 'date-fns/locale/es';
+import { fmtDateTime, formatCurrency } from '../../../lib/date-utils';
 import { ExternalLink } from 'lucide-react';
 import { EstadoBadge } from '../../pedidos/components/EstadoBadge';
 
@@ -13,12 +12,6 @@ interface TransaccionDetalleModalProps {
   onClose: () => void;
   onNavigateToPedido?: (pedidoId: string) => void;
 }
-
-const formatCurrency = (value: number) => {
-  const absValue = Math.abs(value);
-  const formatted = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(absValue);
-  return value < 0 ? `- ${formatted}` : formatted;
-};
 
 function PedidoInfo({ pedidoId, onNavigate }: { pedidoId: string; onNavigate?: (id: string) => void }) {
   const { data: pedido, isLoading } = useGetPedido(pedidoId);
@@ -128,7 +121,7 @@ export function TransaccionDetalleModal({ tx, isOpen, onClose, onNavigateToPedid
 
           <div className="bg-muted/10 p-4 rounded-xl border border-border/50">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Fecha</p>
-            <p className="studio-body-strong text-foreground">{format(new Date(tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</p>
+            <p className="studio-body-strong text-foreground">{fmtDateTime(tx.fecha)}</p>
           </div>
         </div>
 

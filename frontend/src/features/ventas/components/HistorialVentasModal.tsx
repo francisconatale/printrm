@@ -3,6 +3,7 @@ import { Modal } from '../../../components/ui/modal';
 import { Button } from '../../../components/ui/button';
 import { useGetVentas, useDevolverVenta } from '../api/ventas.api';
 import { Loader2, PackageSearch, RotateCcw, Minus, Plus, AlertTriangle } from 'lucide-react';
+import { fmtDateTime } from '../../../lib/date-utils';
 
 interface HistorialVentasModalProps {
   isOpen: boolean;
@@ -31,14 +32,7 @@ export function HistorialVentasModal({ isOpen, onClose }: HistorialVentasModalPr
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('es-AR', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const formatDate = (dateStr: string) => fmtDateTime(dateStr);
 
   const handleDevolver = (grupoId: string) => {
     const items = (cantidades[grupoId] ?? {});

@@ -10,6 +10,7 @@ public class OnboardingMapper {
                 .nombreUsuario(entity.getNombreUsuario())
                 .nombreEmprendimiento(entity.getNombreEmprendimiento())
                 .completado(entity.getCompletado())
+                .completadoEn(entity.getCompletadoEn())
                 .build();
     }
 }

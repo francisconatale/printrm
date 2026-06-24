@@ -2,6 +2,7 @@ export interface Onboarding {
   nombreUsuario: string;
   nombreEmprendimiento: string;
   completado: boolean;
+  completadoEn?: string;
 }
 
 export interface OnboardingFormData {

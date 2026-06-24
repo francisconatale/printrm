@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.venta;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +11,7 @@ public class VentaResponse {
     private Double total;
     private String compradorNombre;
     private String compradorEmail;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fecha;
     private boolean devueltoTotalmente;
     private List<ItemVentaResponse> items;

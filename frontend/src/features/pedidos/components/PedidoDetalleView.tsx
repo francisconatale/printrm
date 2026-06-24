@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetPedido, useUpdateEstadoPedido, useRegistrarPago } from '../api/pedidos.api';
+import { useGetPedido, useUpdateEstadoPedido } from '../api/pedidos.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { EstadoBadge } from './EstadoBadge';
 import { 
@@ -13,11 +13,8 @@ import {
   RefreshCcw,
   Calendar,
   User,
-  CreditCard,
-  ChevronRight
 } from 'lucide-react';
-import { format } from 'date-fns/format';
-import { es } from 'date-fns/locale/es';
+import { fmtDateFull, formatCurrency } from '../../../lib/date-utils';
 import { RegistrarPagoModal } from './RegistrarPagoModal';
 import { CrearOrdenVinculadaModal } from './CrearOrdenVinculadaModal';
 import { DevolverItemsPedidoModal } from './DevolverItemsPedidoModal';
@@ -28,9 +25,6 @@ interface PedidoDetalleViewProps {
   onBack: () => void;
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value);
-};
 
 export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) {
   const { data: pedido, isLoading, isError, error, refetch } = useGetPedido(pedidoId);
@@ -65,6 +59,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
 
   // Lifecycle steps for workflow timeline
   const workflowSteps = [
+    { key: 'BORRADOR', label: 'Borrador' },
     { key: 'COTIZADO', label: 'Cotizado' },
     { key: 'CONFIRMADO', label: 'Confirmado' },
     { key: 'EN_PRODUCCION', label: 'Producción' },
@@ -78,6 +73,8 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
   // Logical next state
   const getNextStep = (estado: string) => {
     switch (estado) {
+      case 'BORRADOR':
+        return { estado: 'COTIZADO', label: 'Cotizar Pedido', icon: <CheckCircle2 size={16} />, className: 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm' };
       case 'COTIZADO':
         return { estado: 'CONFIRMADO', label: 'Confirmar Pedido', icon: <CheckCircle2 size={16} />, className: 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm' };
       case 'CONFIRMADO':
@@ -113,7 +110,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
               <div>
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">Pedido #{pedido.id.substring(0, 8).toUpperCase()}</h1>
                 <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                  <User size={14} /> {pedido.clienteNombre} <span className="text-border">•</span> <Calendar size={14} /> Creado el {format(new Date(pedido.fechaCreacion), "dd 'de' MMMM, yyyy", { locale: es })}
+                  <User size={14} /> {pedido.clienteNombre} <span className="text-border">•</span> <Calendar size={14} /> Creado el {fmtDateFull(pedido.fechaCreacion)}
                 </p>
               </div>
               <div className="flex gap-2 items-center">
@@ -124,13 +121,14 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
             {/* Timeline / Progress */}
             {!isTerminalState && (
               <div className="bg-muted/30 px-6 py-4 border-b border-border flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm gap-4">
-                  <div className="flex flex-wrap gap-4 sm:gap-8 text-muted-foreground font-semibold">
+                <div className="flex flex-wrap gap-4 sm:gap-8 text-muted-foreground font-semibold">
                   {workflowSteps.map((step, idx) => {
                     const isCompleted = idx <= currentStepIndex;
                     const isCurrent = idx === currentStepIndex;
                     
                     let icon = null;
-                    if (step.key === 'COTIZADO' || step.key === 'CONFIRMADO') icon = <CheckCircle2 className="w-4 h-4" />;
+                    if (step.key === 'BORRADOR') icon = <Loader2 className="w-4 h-4" />;
+                    else if (step.key === 'COTIZADO' || step.key === 'CONFIRMADO') icon = <CheckCircle2 className="w-4 h-4" />;
                     else if (step.key === 'EN_PRODUCCION') icon = <Truck className="w-4 h-4" />;
                     else if (step.key === 'LISTO_PARA_ENTREGAR' || step.key === 'ENTREGADO') icon = <Package className="w-4 h-4" />;
                     
@@ -141,14 +139,19 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                     )
                   })}
                 </div>
-                {nextStep && (
-                  <button 
-                    onClick={() => handleStatusChange(nextStep.estado)}
-                    className={`px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center gap-2 ${nextStep.className}`}
-                  >
-                    {nextStep.icon} {nextStep.label}
-                  </button>
-                )}
+                <div className="flex flex-col items-end gap-1">
+                  {nextStep && (
+                    <button 
+                      onClick={() => handleStatusChange(nextStep.estado)}
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all flex items-center gap-2 ${nextStep.className}`}
+                    >
+                      {nextStep.icon} {nextStep.label}
+                    </button>
+                  )}
+                  {pedido.estado === 'BORRADOR' && (
+                    <span className="text-[10px] text-muted-foreground/50 italic">Los precios se actualizarán al cotizar</span>
+                  )}
+                </div>
               </div>
             )}
 
@@ -251,48 +254,25 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                 <div className="space-y-3">
                   <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Otras acciones</h2>
                   
-                  {isTerminalState ? (
-                    <div className="space-y-2">
-                      <div className="p-3 bg-muted rounded-xl text-center border border-border">
-                        <p className="text-xs font-semibold text-muted-foreground">Pedido finalizado o inactivo</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="w-full relative">
-                        <select 
-                          value={pedido.estado}
-                          onChange={(e) => handleStatusChange(e.target.value)}
-                          className="w-full appearance-none bg-background border border-border text-foreground text-sm font-semibold rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
-                        >
-                          {currentStepIndex < 1 && <option value="COTIZADO">Cotizado</option>}
-                          {currentStepIndex < 2 && <option value="CONFIRMADO">Confirmado</option>}
-                          {currentStepIndex < 3 && <option value="EN_PRODUCCION">En Producción</option>}
-                          {pedido.estado !== 'ENTREGADO' && <option value="LISTO_PARA_ENTREGAR">Listo para Entregar</option>}
-                          <option value="ENTREGADO">Entregado</option>
-                        </select>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground absolute right-3 top-3 rotate-90 pointer-events-none" />
-                      </div>
-
-                      <div className="space-y-2">
-                        <button 
-                          onClick={() => handleStatusChange('CANCELADO')}
-                          disabled={pedido.estado === 'CANCELADO' || pedido.estado === 'ENTREGADO'}
-                          className="w-full flex items-center gap-2 text-destructive bg-destructive/5 hover:bg-destructive/10 p-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-30 border border-transparent hover:border-destructive/20"
-                        >
-                          <XCircle size={16} /> Anular Pedido
-                        </button>
-                        {pedido.estado === 'ENTREGADO' && (
-                          <button 
-                            onClick={() => setShowDevolverModal(true)}
-                            className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors border border-transparent hover:border-amber-500/20"
-                          >
-                            <RefreshCcw size={16} /> Devolver Productos
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    {!isTerminalState && (
+                      <button 
+                        onClick={() => handleStatusChange('CANCELADO')}
+                        disabled={pedido.estado === 'CANCELADO' || pedido.estado === 'ENTREGADO'}
+                        className="w-full flex items-center gap-2 text-destructive bg-destructive/5 hover:bg-destructive/10 p-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-30 border border-transparent hover:border-destructive/20"
+                      >
+                        <XCircle size={16} /> Anular Pedido
+                      </button>
+                    )}
+                    {pedido.estado === 'ENTREGADO' && (
+                      <button 
+                        onClick={() => setShowDevolverModal(true)}
+                        className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors border border-transparent hover:border-amber-500/20"
+                      >
+                        <RefreshCcw size={16} /> Devolver Productos
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

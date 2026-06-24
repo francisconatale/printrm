@@ -176,6 +176,17 @@ export function AgendaProduccionView() {
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [mermaTarget, setMermaTarget] = React.useState<any>(null);
 
+  const grouped = React.useMemo(() => {
+    const map: Record<string, NonNullable<typeof ordenes>> = {};
+    for (const e of ESTADO_ORDER) map[e] = [];
+    for (const o of ordenes || []) {
+      map[o.estado]?.push(o);
+    }
+    return map;
+  }, [ordenes]);
+
+  const totalActive = (ordenes || []).filter(o => o.estado === 'COLA' || o.estado === 'IMPRIMIENDO').length;
+
   const handleStatusChange = (id: string, nuevoEstado: EstadoProduccion) => {
     updateEstado({ id, estado: nuevoEstado });
   };
@@ -201,17 +212,6 @@ export function AgendaProduccionView() {
       </div>
     );
   }
-
-  const grouped = React.useMemo(() => {
-    const map: Record<string, NonNullable<typeof ordenes>> = {};
-    for (const e of ESTADO_ORDER) map[e] = [];
-    for (const o of ordenes || []) {
-      map[o.estado]?.push(o);
-    }
-    return map;
-  }, [ordenes]);
-
-  const totalActive = (ordenes || []).filter(o => o.estado === 'COLA' || o.estado === 'IMPRIMIENDO').length;
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full animate-in fade-in duration-500 text-foreground">

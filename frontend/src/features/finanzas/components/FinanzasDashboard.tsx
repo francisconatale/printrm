@@ -9,7 +9,10 @@ import {
   AlertCircle,
   HelpCircle
 } from 'lucide-react';
-import { format, subMonths, parseISO, startOfMonth } from 'date-fns';
+import { format } from 'date-fns/format';
+import { subMonths } from 'date-fns/subMonths';
+import { parseISO } from 'date-fns/parseISO';
+import { startOfMonth } from 'date-fns/startOfMonth';
 import { es } from 'date-fns/locale/es';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 

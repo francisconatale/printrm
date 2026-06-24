@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, Package, Receipt, ArrowRight, ArrowLeft } from 'lucide-react';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { fmtDateShort, fmtDate } from '../../../lib/date-utils';
 import { Cliente } from '../types/clientes.types';
 import { useGetPedidos } from '../../pedidos/api/pedidos.api';
 import { useGetTransacciones } from '../../finanzas/api/finanzas.api';
@@ -91,7 +90,7 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose, onNavigateToPed
                     className="flex justify-between items-center p-3 rounded-lg border border-border bg-card hover:bg-muted/10 hover:border-primary/30 transition-all cursor-pointer"
                   >
                     <div>
-                      <p className="studio-body-strong">{format(new Date(pedido.fechaCreacion), 'dd MMM yyyy', { locale: es })}</p>
+                      <p className="studio-body-strong">{fmtDateShort(pedido.fechaCreacion)}</p>
                       <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
                         pedido.estado === 'ENTREGADO' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
                         pedido.estado === 'CANCELADO' ? 'bg-red-500/10 text-red-600 dark:text-red-400' :
@@ -147,7 +146,7 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose, onNavigateToPed
                       <p className={`studio-body-strong ${tx.tipo === 'INGRESO' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         {tx.tipo === 'INGRESO' ? '+' : '-'}${tx.monto?.toLocaleString()}
                       </p>
-                      <p className="text-xs text-muted-foreground">{format(new Date(tx.fecha), 'dd MMM yyyy', { locale: es })}</p>
+                      <p className="text-xs text-muted-foreground">{fmtDateShort(tx.fecha)}</p>
                     </div>
                   </div>
                 ))}

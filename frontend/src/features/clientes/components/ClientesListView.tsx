@@ -2,9 +2,8 @@ import React from 'react';
 import { useGetClientes, useCreateCliente, useUpdateCliente, useDeleteCliente } from '../api/clientes.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Plus, User, Mail, Phone, Notebook, Edit, Trash2, Search, Loader2 } from 'lucide-react';
-import { format } from 'date-fns/format';
-import { es } from 'date-fns/locale/es';
 import { ConfirmModal } from '../../../components/ui/confirm-modal';
+import { fmtDateShort } from '../../../lib/date-utils';
 import { ClienteForm } from './ClienteForm';
 import { Cliente } from '../types/clientes.types';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
@@ -174,7 +173,7 @@ export function ClientesListView({ onNavigateToPedido }: ClientesListViewProps) 
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden md:table-cell">{cliente.telefono || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground truncate max-w-xs hidden lg:table-cell">{cliente.notas || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">
-                        {cliente.fechaCreacion ? format(new Date(cliente.fechaCreacion), 'dd/MM/yyyy', { locale: es }) : '-'}
+                        {cliente.fechaCreacion ? fmtDateShort(cliente.fechaCreacion) : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

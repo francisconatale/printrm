@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.produccion;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,8 @@ public class OrdenProduccionResponseDTO {
     private String productoNombre;
     private Integer cantidad;
     private String estado;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaInicio;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaFin;
 }

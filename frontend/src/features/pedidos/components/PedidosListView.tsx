@@ -7,6 +7,7 @@ import { Plus, Search, Loader2, ShoppingBag, Eye } from 'lucide-react';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
+import { fmtDateTime } from '../../../lib/date-utils';
 
 export function PedidosListView({ initialPedidoId }: { initialPedidoId?: string | null }) {
   const [page, setPage] = React.useState(0);
@@ -162,13 +163,7 @@ export function PedidosListView({ initialPedidoId }: { initialPedidoId?: string 
                         ${pedido.saldoPendiente.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">
-                        {new Date(pedido.fechaCreacion).toLocaleDateString('es-ES', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {fmtDateTime(pedido.fechaCreacion)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                         <button

@@ -1,21 +1,13 @@
-import React from 'react';
 import { Modal } from '../../../components/ui/modal';
 import { Producto } from '../types/stock.types';
 import { Package, Calendar, TrendingUp, Layers, Info } from 'lucide-react';
+import { formatCurrency, fmtDateFull } from '../../../lib/date-utils';
 
 interface LotesProductoModalProps {
   isOpen: boolean;
   onClose: () => void;
   producto: Producto;
 }
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
-};
-
-const formatDate = (dateStr: string) => {
-  return new Intl.DateTimeFormat('es-AR', { dateStyle: 'long' }).format(new Date(dateStr));
-};
 
 export function LotesProductoModal({ isOpen, onClose, producto }: LotesProductoModalProps) {
   const totalValue = producto.lotes.reduce((sum, lote) => sum + (lote.cantidadActual * lote.costoUnitario), 0);
@@ -125,7 +117,7 @@ export function LotesProductoModal({ isOpen, onClose, producto }: LotesProductoM
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-1">
                         <Calendar size={11} className="shrink-0" />
-                        <span>Ingresado el {formatDate(lote.fechaCreacion)}</span>
+                        <span>Ingresado el {fmtDateFull(lote.fechaCreacion)}</span>
                       </div>
                     </div>
                   </div>

@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:
-.specify/specs/005-roadmap-phase-2/plan.md
+.specify/specs/012-filtros-fecha-listas/plan.md
 <!-- SPECKIT END -->
 ## Reglas de Flujo (SpecKit)
 - **Resumen de Tarea Obligatorio:** Antes de comenzar cualquier implementación, se debe crear o actualizar un archivo de "Estado de Tarea" (ej. `.specify/current_task_summary.md`) con un resumen minimalista.

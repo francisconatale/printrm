@@ -1,5 +1,6 @@
 package com.printrm.studio.domain.pedidos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public class PedidoResponseDTO {
     private Double total;
     private Double montoPagado;
     private Double saldoPendiente;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaCreacion;
     private List<ItemPedidoResponseDTO> items;
 }

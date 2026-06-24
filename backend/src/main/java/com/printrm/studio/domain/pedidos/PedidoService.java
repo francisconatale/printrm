@@ -105,6 +105,14 @@ public class PedidoService {
 
         validarTransicionEstado(pedido.getEstado(), nuevoEstado);
 
+        if (pedido.getEstado() == Pedido.EstadoPedido.BORRADOR && nuevoEstado == Pedido.EstadoPedido.COTIZADO) {
+            for (ItemPedido item : pedido.getItems()) {
+                item.calcularSubtotal();
+                itemRepository.save(item);
+            }
+            pedido.calcularTotal();
+        }
+
         if (nuevoEstado == Pedido.EstadoPedido.ENTREGADO) {
             procesarEntrega(pedido);
         } else if (nuevoEstado == Pedido.EstadoPedido.DEVUELTO) {
