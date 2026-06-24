@@ -136,10 +136,12 @@ class CostCalculationServiceTest {
         }
 
         @Test
-        @DisplayName("OK: margenError de 10% incrementa costoBase en 10%")
+        @DisplayName("OK: margenError de 10% se aplica sobre costoFilamento")
         void margenError10_porcentaje_seAplica() {
             CostCalculationResult r = service.calculate(100.0, 1, 0, 0.0, printerBase, filamentBase, ajustesDefault);
-            assertEquals(r.getSubtotal() * 1.1, r.getCostoBase(), 0.001);
+            double costoErrorEsperado = r.getCostoFilamento() * 0.1;
+            assertEquals(costoErrorEsperado, r.getCostoError(), 0.001);
+            assertEquals(r.getSubtotal() + costoErrorEsperado, r.getCostoBase(), 0.001);
         }
     }
 

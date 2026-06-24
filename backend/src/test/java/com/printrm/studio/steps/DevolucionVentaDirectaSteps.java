@@ -28,7 +28,7 @@ public class DevolucionVentaDirectaSteps {
 
     private UUID productoId;
     private double precioProducto;
-    private String grupoId;
+    private UUID grupoId;
 
     private double balanceAntes;
     private double balanceMedio;
@@ -69,7 +69,7 @@ public class DevolucionVentaDirectaSteps {
         item.setCantidad(cantidad);
         request.setItems(List.of(item));
         var response = ventaService.registrar(request);
-        grupoId = response.getGrupoId();
+        grupoId = UUID.fromString(response.getGrupoId());
     }
 
     @When("se venden {int} unidades del producto")
@@ -81,7 +81,7 @@ public class DevolucionVentaDirectaSteps {
         item.setCantidad(cantidad);
         request.setItems(List.of(item));
         var response = ventaService.registrar(request);
-        grupoId = response.getGrupoId();
+        grupoId = UUID.fromString(response.getGrupoId());
     }
 
     @When("se devuelve {int} unidad del producto")

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/ventas")
@@ -24,7 +25,7 @@ public class VentaController {
     }
 
     @PostMapping("/{grupoId}/devolucion")
-    public void devolver(@PathVariable String grupoId, @Valid @RequestBody DevolucionRequest request) {
+    public void devolver(@PathVariable UUID grupoId, @Valid @RequestBody DevolucionRequest request) {
         service.devolver(grupoId, request);
     }
 }

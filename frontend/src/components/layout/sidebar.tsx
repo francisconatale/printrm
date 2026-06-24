@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, List, ArrowUpDown, Users, Package, 
-  Printer, Sliders, Hammer, ArrowLeftRight, Pin, PinOff
+  Printer, Sliders, Hammer, ArrowLeftRight, Pin, PinOff, ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type ViewType = 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles' | 'production';
+export type ViewType = 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'sales' | 'reports' | 'profiles' | 'production';
 
 const NAV_ITEMS = [
   { icon: Printer,        label: 'Cotizador',       id: 'calculator' },
   { icon: Package,        label: 'Biblioteca STL',  id: 'inventory' },
   { icon: List,           label: 'Catálogo Stock',  id: 'stock' },
-  { icon: ArrowUpDown,    label: 'Pedidos / Ventas',id: 'orders' },
+  { icon: ArrowUpDown,    label: 'Pedidos',         id: 'orders' },
+  { icon: ShoppingBag,    label: 'Ventas',          id: 'sales' },
   { icon: Hammer,         label: 'Producción',      id: 'production' },
   { icon: Users,          label: 'Clientes',        id: 'customers' },
   { icon: Sliders,        label: 'Perfiles',        id: 'profiles' },

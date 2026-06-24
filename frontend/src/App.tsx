@@ -5,6 +5,7 @@ import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDa
 import { PiezasGalleryView } from './features/biblioteca/components/PiezasGalleryView'
 import { ClientesListView } from './features/clientes/components/ClientesListView'
 import { PedidosListView } from './features/pedidos/components/PedidosListView'
+import { VentasListView } from './features/ventas/components/VentasListView'
 import { ProductosGalleryView } from './features/stock/components/ProductosGalleryView'
 import { FinanzasDashboardView } from './features/finanzas/components/FinanzasDashboardView'
 import { TransaccionesView } from './features/finanzas/components/TransaccionesView'
@@ -15,13 +16,17 @@ import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
 import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
 import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
+import { LabPage } from './__design_lab/LabPage'
 
 function App() {
+  const isDesignLab = window.location.search.includes('design_lab=true')
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
   const { data: onboarding, isFetched } = useOnboardingStatus()
+
+  if (isDesignLab) return <LabPage />
 
   useEffect(() => {
     if (isFetched && onboarding && !onboarding.completado) {
@@ -69,6 +74,8 @@ function App() {
         return <ClientesListView />
       case 'orders':
         return <PedidosListView />
+      case 'sales':
+        return <VentasListView />
       case 'production':
         return <AgendaProduccionView />
       case 'finance':

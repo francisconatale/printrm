@@ -173,8 +173,11 @@ class PiezaSTLServiceIntegrationTest {
         PiezaSTLResponseDTO saved = piezaSTLService.save(buildMinimalRequest("para_borrar"));
 
         piezaSTLService.delete(saved.getId());
+        entityManager.flush();
 
-        assertThat(piezaSTLRepository.existsById(saved.getId())).isFalse();
+        PiezaSTL deleted = piezaSTLRepository.findById(saved.getId()).orElse(null);
+        assertThat(deleted).isNotNull();
+        assertThat(deleted.getDeleted()).isTrue();
     }
 
     // ─── FILE PERSISTENCE & COLLISION RESOLUTION ──────────────────────────────
