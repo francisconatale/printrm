@@ -80,7 +80,7 @@ export function CrearOrdenVinculadaModal({
           <p className="text-xs text-muted-foreground">Faltante neto sugerido: {cantidadRecomendada} unidades</p>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-[var(--studio-hairline)] pt-4">
+        <div className="flex justify-end gap-3 border-t border-[var(--border)] pt-4">
           <button
             type="button"
             onClick={onClose}

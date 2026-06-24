@@ -46,7 +46,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
   return (
     <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
-        <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mb-2">
+        <div className="col-span-full border-b border-[var(--border)] pb-2 mb-2">
           <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos de Ajustes de Impresión</h3>
         </div>
 
@@ -106,7 +106,7 @@ export const PrintProfileForm: React.FC<PrintProfileFormProps> = ({ initialData,
 
       </div>
 
-      <div className="pt-6 pb-2 mt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4">
+      <div className="pt-6 pb-2 mt-8 border-t border-[var(--border)] flex flex-col sm:flex-row gap-4">
         <button 
           type="button"
           onClick={onCancel}

@@ -3,6 +3,7 @@ import { useGetClientes } from '../../clientes/api/clientes.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { useCreatePedido } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
+import { Button } from '../../../components/ui/button';
 import { ProfileSelect } from '../../../components/ui/profile-select';
 import { Plus, Trash2, AlertCircle, User, ShoppingBag, DollarSign, Percent, TrendingUp } from 'lucide-react';
 
@@ -64,7 +65,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       };
       if (field === 'productoId') {
         const prodObj = productos?.find(p => p.id === value);
-        const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
+        const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
         // Default 200% margin (3x cost)
         copy[index].precioPersonalizado = prodCost * 3;
       }
@@ -121,7 +122,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     items.forEach(item => {
       if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
-        const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
+        const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
         const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
         
         totalPrecio += price * item.cantidad;
@@ -146,13 +147,13 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
 
   return (
     <Modal
-      title="Nuevo Pedido"
-      description="Creá un nuevo pedido seleccionando productos de catálogo."
+      title="Nueva Orden de Trabajo"
+      description="Creá un pedido estructurado seleccionando productos de la base de datos."
       isOpen={isOpen}
       onClose={onClose}
       size="5xl"
     >
-      <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+      <form onSubmit={handleSubmit} className="space-y-6 pt-2 pb-4">
         {error && (
           <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-xl border border-red-500/20 text-sm">
             <AlertCircle size={16} />
@@ -160,121 +161,88 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
           </div>
         )}
 
-        {/* Selector de Cliente con Diseño Premium */}
-        <div className="bg-muted/20 border border-border/60 rounded-2xl p-4 space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <User size={16} className="text-primary" />
-            <label className="text-xs font-semibold uppercase tracking-wider">Cliente Asignado</label>
+        {/* Encabezado: Cliente */}
+        <div className="bg-muted/10 border border-border/50 rounded-xl p-5 flex flex-col md:flex-row md:justify-between md:items-end gap-4 shadow-sm">
+          <div className="flex-1 max-w-md">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <User size={14} className="text-primary" /> Facturar a:
+            </label>
+            <ProfileSelect
+              placeholder="Buscar cliente por nombre o DNI..."
+              emptyLabel="Buscar cliente por nombre o DNI..."
+              value={clienteId}
+              onValueChange={setClienteId}
+              items={(clientes ?? []).map((c) => ({ value: c.id, label: c.nombre }))}
+            />
           </div>
-          <ProfileSelect
-            placeholder="Selecciona un cliente *"
-            emptyLabel="Selecciona un cliente *"
-            value={clienteId}
-            onValueChange={setClienteId}
-            items={(clientes ?? []).map((c) => ({ value: c.id, label: c.nombre }))}
-          />
+          <div className="text-right hidden md:block pb-1">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Fecha de Orden</p>
+            <p className="text-sm font-bold text-foreground">{new Date().toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+          </div>
         </div>
 
-        {/* Sección de Ítems */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center pb-2 border-b border-border/40">
-            <div className="flex items-center gap-2">
-              <ShoppingBag size={16} className="text-primary" />
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Productos en este Pedido</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleAddItem}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-200"
-            >
-              <Plus size={12} />
-              <span>Agregar Producto</span>
-            </button>
-          </div>
+        {/* Tabla de Productos (Estilo Factura) */}
+        <div className="border border-border/60 rounded-xl overflow-hidden bg-background shadow-sm">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-sm border-collapse min-w-[750px]">
+              <thead className="bg-muted/30">
+                <tr className="border-b-2 border-border text-foreground">
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground">Producto / Servicio</th>
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground text-center w-24">Cant.</th>
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground text-right w-28">Costo Base</th>
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground text-right w-32">Margen %</th>
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground text-right w-36">Precio Unit.</th>
+                  <th className="py-3.5 px-4 font-bold text-xs tracking-wider uppercase text-muted-foreground text-right w-32">Importe</th>
+                  <th className="py-3.5 px-4 w-12"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center text-muted-foreground bg-muted/5">
+                      <ShoppingBag size={40} className="mx-auto mb-4 opacity-20" />
+                      <p className="text-sm font-semibold">No hay líneas en la orden</p>
+                      <Button type="button" variant="outline" size="sm" onClick={handleAddItem} className="mt-5 rounded-full px-6">
+                        <Plus size={14} className="mr-1.5" /> Insertar Primera Línea
+                      </Button>
+                    </td>
+                  </tr>
+                ) : (
+                  items.map((item, index) => {
+                    const prodObj = productos?.find(p => p.id === item.productoId);
+                    const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
+                    const isEmptyRow = !item.productoId;
 
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center bg-muted/5 border border-dashed border-border rounded-2xl p-6">
-              <ShoppingBag size={32} className="text-muted-foreground/40 mb-3" />
-              <p className="text-sm font-semibold text-foreground/80">No hay productos agregados</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                Inicia el pedido agregando productos del catálogo.
-              </p>
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-primary text-white hover:opacity-90 active:scale-95 transition-all duration-200"
-              >
-                <Plus size={14} />
-                <span>Agregar Primer Producto</span>
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* Encabezados de Grilla */}
-              <div className="hidden md:flex gap-4 px-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider py-1.5">
-                <div className="flex-1">Producto *</div>
-                <div className="w-16 text-center">Cant.</div>
-                <div className="w-20 text-right">Costo Base</div>
-                <div className="w-20 text-right">Margen %</div>
-                <div className="w-24 text-right">Precio Unit.</div>
-                <div className="w-24 text-right">Subtotal</div>
-                <div className="w-8"></div>
-              </div>
+                    const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
+                    const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
 
-              {/* Lista de Filas de Items */}
-              <div className="space-y-1 max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
-                {items.map((item, index) => {
-                  const prodObj = productos?.find(p => p.id === item.productoId);
-                  const prodCost = prodObj ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : 0;
-                  const isEmptyRow = !item.productoId;
-
-                  const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
-                  const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
-
-                  return (
-                    <div 
-                      key={item.keyId} 
-                      className="flex flex-col md:flex-row md:items-center gap-3 py-3 border-b border-border/40 last:border-0"
-                    >
-                      {/* Selector de Producto */}
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Producto</label>
-                        <ProfileSelect
-                          placeholder="Selecciona un producto *"
-                          emptyLabel="Selecciona un producto *"
-                          value={item.productoId}
-                          onValueChange={(val) => handleItemChange(item.keyId, 'productoId', val)}
-                          items={(productos ?? []).map((p) => ({
-                            value: p.id,
-                            label: `${p.nombre} (Stock: ${p.cantidadStock})`,
-                          }))}
-                        />
-                      </div>
-
-                      <div className="flex flex-wrap md:flex-nowrap items-end md:items-center gap-3 flex-1 justify-between md:justify-end">
-                        {/* Cantidad */}
-                        <div className="w-16">
-                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Cant.</label>
+                    return (
+                      <tr key={item.keyId} className="border-b border-border/40 hover:bg-muted/10 transition-colors group">
+                        <td className="py-2.5 px-4">
+                          <ProfileSelect
+                            placeholder="Seleccionar producto..."
+                            emptyLabel="Seleccionar producto..."
+                            value={item.productoId}
+                            onValueChange={(val) => handleItemChange(item.keyId, 'productoId', val)}
+                            items={(productos ?? []).map((p) => ({
+                              value: p.id,
+                              label: `${p.nombre} (Stock: ${p.cantidadStock})`,
+                            }))}
+                          />
+                        </td>
+                        <td className="py-2.5 px-4">
                           <input
                             type="number"
                             min="1"
                             value={item.cantidad}
                             onChange={(e) => handleItemChange(item.keyId, 'cantidad', parseInt(e.target.value) || 0)}
-                            className="w-full bg-background border border-border rounded-xl px-2 py-1.5 text-center text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-lg px-2 py-2 text-center font-bold shadow-sm focus:ring-2 focus:ring-primary outline-none"
                           />
-                        </div>
-
-                        {/* Costo Base */}
-                        <div className="w-20 text-right">
-                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Costo</label>
-                          <span className="text-xs font-semibold text-muted-foreground block py-1.5">
-                            ${prodCost.toFixed(0)}
-                          </span>
-                        </div>
-
-                        {/* Margen % */}
-                        <div className="w-20 relative">
-                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Margen %</label>
+                        </td>
+                        <td className="py-2.5 px-4 text-right text-muted-foreground font-semibold">
+                          ${prodCost.toFixed(0)}
+                        </td>
+                        <td className="py-2.5 px-4">
                           <div className="relative">
                             <input
                               type="number"
@@ -286,21 +254,16 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                                 const calculatedPrice = prodCost * (1 + marginVal / 100);
                                 handleItemChange(item.keyId, 'precioPersonalizado', Math.round(calculatedPrice));
                               }}
-                              placeholder="200"
-                              className="w-full bg-background border border-border rounded-xl pl-2 pr-5 py-1.5 text-sm text-right font-semibold disabled:opacity-40 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                              className="w-full bg-primary/5 border border-primary/20 rounded-lg pl-2 pr-6 py-2 text-right font-bold text-primary shadow-sm disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
                             />
-                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-bold pointer-events-none">%</span>
+                            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-primary font-bold pointer-events-none">%</span>
                           </div>
-                        </div>
-
-                        {/* Precio Unitario Final */}
-                        <div className="w-24 relative">
-                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Precio Unit.</label>
+                        </td>
+                        <td className="py-2.5 px-4">
                           <div className="relative">
-                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">$</span>
+                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">$</span>
                             <input
                               type="number"
-                              step="1"
                               min="0"
                               value={isEmptyRow ? '' : Math.round(currentPrice)}
                               disabled={isEmptyRow}
@@ -308,97 +271,101 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                                 const priceVal = parseFloat(e.target.value) || 0;
                                 handleItemChange(item.keyId, 'precioPersonalizado', priceVal);
                               }}
-                              placeholder="0"
-                              className="w-full bg-primary/5 border border-primary/20 hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl pl-5 pr-2 py-1.5 text-sm text-right font-bold transition-all disabled:opacity-40 outline-none"
+                              className="w-full bg-background border border-border rounded-lg pl-6 pr-2 py-2 text-right font-bold shadow-sm disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
                             />
                           </div>
-                        </div>
-
-                        {/* Subtotal */}
-                        <div className="w-24 text-right">
-                          <label className="block md:hidden text-[10px] font-bold text-muted-foreground uppercase mb-1">Subtotal</label>
-                          <span className="font-bold text-sm text-foreground block py-1.5">
-                            ${Math.round(currentPrice * item.cantidad)}
-                          </span>
-                        </div>
-
-                        {/* Botón Eliminar */}
-                        <div className="pt-2 md:pt-0">
+                        </td>
+                        <td className="py-2.5 px-4 text-right font-black text-foreground">
+                          ${Math.round(currentPrice * item.cantidad).toLocaleString()}
+                        </td>
+                        <td className="py-2.5 px-4 text-center">
                           <button
                             type="button"
                             onClick={() => handleRemoveItem(item.keyId)}
-                            className="p-2 rounded-xl text-muted-foreground/60 hover:text-red-500 hover:bg-red-500/10 active:scale-95 transition-all cursor-pointer"
-                            title="Eliminar este ítem"
+                            className="text-muted-foreground/30 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30"
+                            title="Eliminar línea"
                           >
                             <Trash2 size={16} />
                           </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+                {items.length > 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-3 px-4 border-b border-border/40 bg-muted/5">
+                      <button
+                        type="button"
+                        onClick={handleAddItem}
+                        className="text-primary text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 hover:underline"
+                      >
+                        <Plus size={14} /> Insertar Nueva Línea
+                      </button>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        {/* Panel de Resumen de Finanzas (Minimalista sin bordes) */}
-        {totals.totalPrecio > 0 && (
-          <div className="flex flex-row flex-wrap justify-between gap-4 py-4 border-t border-b border-border/60">
-            <div className="flex-1 min-w-[100px]">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Productos</span>
-              <span className="text-sm font-semibold text-foreground">{totals.totalCantidad} unidades</span>
+        {/* Resumen de Totales y Finanzas (Estilo Factura) */}
+        <div className="flex flex-col md:flex-row justify-between items-start pt-6">
+          {/* Info extra */}
+          <div className="w-full md:w-1/2 text-muted-foreground text-xs p-5 bg-muted/10 rounded-xl border border-border/60 mb-4 md:mb-0 hidden md:block shadow-sm">
+            <p className="font-bold mb-3 uppercase tracking-wider text-foreground">Detalles Operativos</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="block opacity-70 mb-1">Total Unidades:</span>
+                <span className="font-bold text-foreground text-base">{totals.totalCantidad}</span>
+              </div>
+              <div>
+                <span className="block opacity-70 mb-1">Rentabilidad Promedio:</span>
+                <span className="font-bold text-primary text-base">{Math.round(totals.margenPromedio)}%</span>
+              </div>
             </div>
-            <div className="flex-1 min-w-[120px]">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Costo Estimado</span>
-              <span className="text-sm font-semibold text-foreground/80">${totals.totalCosto.toFixed(0)}</span>
+          </div>
+
+          {/* Totales */}
+          <div className="w-full md:w-80 space-y-3 bg-muted/5 p-5 rounded-xl border border-border/50 shadow-sm">
+            <div className="flex justify-between text-sm border-b border-border/60 pb-3">
+              <span className="text-muted-foreground font-semibold">Subtotal Costos Base</span>
+              <span className="font-bold">${totals.totalCosto.toLocaleString(undefined, { minimumFractionDigits: 0 })}</span>
             </div>
-            <div className="flex-1 min-w-[120px]">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                Ganancia <TrendingUp size={10} className="text-green-500" />
+            <div className="flex justify-between text-sm border-b border-border/60 pb-3">
+              <span className="text-muted-foreground font-semibold">Ganancia Proyectada</span>
+              <span className="font-bold text-green-600 dark:text-green-500">+${totals.gananciaEstimada.toLocaleString(undefined, { minimumFractionDigits: 0 })}</span>
+            </div>
+            <div className="flex justify-between items-end pt-2 pb-4">
+              <span className="font-black text-foreground uppercase tracking-wider text-sm">Total</span>
+              <span className="font-black text-foreground text-3xl leading-none">
+                ${totals.totalPrecio.toLocaleString(undefined, { minimumFractionDigits: 0 })}
               </span>
-              <span className="text-sm font-bold text-green-500">${totals.gananciaEstimada.toFixed(0)}</span>
             </div>
-            <div className="flex-1 min-w-[100px]">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Rentabilidad</span>
-              <span className="text-sm font-bold text-primary">{Math.round(totals.margenPromedio)}%</span>
+
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" type="button" onClick={onClose} className="w-1/3">
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="w-2/3 font-bold uppercase tracking-wider shadow-md"
+                disabled={!isFormValid}
+                isLoading={isCreating}
+                title={
+                  !clienteId
+                    ? "Seleccioná un cliente antes de confirmar"
+                    : !items.some(it => it.productoId)
+                    ? "Elegí al menos un producto para confirmar"
+                    : items.some(it => it.cantidad <= 0)
+                    ? "La cantidad de todos los ítems debe ser mayor a 0"
+                    : undefined
+                }
+              >
+                Emitir Pedido
+              </Button>
             </div>
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="flex justify-between items-center pt-2">
-          <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total del Pedido</p>
-            <p className="text-3xl font-extrabold text-foreground font-mono leading-none mt-1">
-              ${totals.totalPrecio.toLocaleString()}
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <button 
-              type="button" 
-              onClick={onClose} 
-              className="px-5 py-2.5 rounded-full border border-border hover:bg-muted text-sm font-medium active:scale-95 transition-all"
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              disabled={!isFormValid} 
-              title={
-                !clienteId 
-                  ? "Seleccioná un cliente antes de confirmar" 
-                  : !items.some(it => it.productoId) 
-                  ? "Elegí al menos un producto para confirmar"
-                  : items.some(it => it.cantidad <= 0)
-                  ? "La cantidad de todos los ítems debe ser mayor a 0"
-                  : undefined
-              }
-              className="studio-button-primary disabled:opacity-50"
-            >
-              {isCreating ? 'Procesando...' : 'Confirmar Pedido'}
-            </button>
           </div>
         </div>
       </form>

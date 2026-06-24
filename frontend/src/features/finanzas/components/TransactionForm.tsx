@@ -166,7 +166,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
         </div>
 
         {/* Acciones */}
-        <div className="flex justify-end gap-3 border-t border-[var(--studio-hairline)] pt-5 mt-8">
+        <div className="flex justify-end gap-3 border-t border-[var(--border)] pt-5 mt-8">
           <button
             type="button"
             onClick={onClose}

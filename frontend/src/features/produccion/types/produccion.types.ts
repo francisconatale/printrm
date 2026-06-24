@@ -1,4 +1,4 @@
-export type EstadoProduccion = 'COLA' | 'IMPRIMIENDO' | 'COMPLETADO' | 'CANCELADO';
+export type EstadoProduccion = 'COLA' | 'IMPRIMIENDO' | 'COMPLETADO' | 'CANCELADO' | 'MERMA';
 
 export interface OrdenProduccion {
   id: string;

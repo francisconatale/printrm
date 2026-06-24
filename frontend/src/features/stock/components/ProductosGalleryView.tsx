@@ -16,24 +16,28 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
   const { mutate: updateStock } = useUpdateStock();
   const [isLotesModalOpen, setIsLotesModalOpen] = React.useState(false);
 
+  const hasPartes = producto.partes && producto.partes.length > 0;
+
   const currentProductionCost = React.useMemo(() => {
-    return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
-  }, [producto.partes]);
+    if (hasPartes) {
+      return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
+    }
+    return producto.lotes?.[0]?.costoUnitario || 0;
+  }, [producto.partes, producto.lotes, hasPartes]);
 
   const costoMaterial = React.useMemo(() => {
-    return producto.partes.reduce((sum, p) => sum + (p.costoMaterial || 0), 0);
-  }, [producto.partes]);
+    return hasPartes ? producto.partes.reduce((sum, p) => sum + (p.costoMaterial || 0), 0) : 0;
+  }, [producto.partes, hasPartes]);
 
   const costoEnergia = React.useMemo(() => {
-    return producto.partes.reduce((sum, p) => sum + (p.costoEnergia || 0), 0);
-  }, [producto.partes]);
+    return hasPartes ? producto.partes.reduce((sum, p) => sum + (p.costoEnergia || 0), 0) : 0;
+  }, [producto.partes, hasPartes]);
 
   return (
     <>
-      <tr className="hover:bg-muted/15 transition-colors group border-b border-border">
-        <td className="px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="size-16 rounded-2xl bg-muted/50 border border-border/40 flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden">
+      <div className="bg-card p-4 rounded-2xl border border-border flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-all group relative">
+        <div className="flex items-center gap-4">
+            <div className="size-14 md:size-16 rounded-xl bg-muted/50 border border-border/40 flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden">
               {producto.partes?.[0]?.imagenBase64 ? (
                 <img 
                   src={producto.partes[0].imagenBase64} 
@@ -44,96 +48,98 @@ function ProductoRow({ producto, onDelete }: { producto: Producto; onDelete: (id
                 <Package size={24} aria-hidden="true" />
               )}
             </div>
-            <div>
-              <span className="text-sm font-semibold text-foreground">{producto.nombre}</span>
-            </div>
-          </div>
-        </td>
-        <td className="px-4 py-4 text-center">
-          <span className={`text-xs font-bold font-mono ${producto.cantidadStock > 0 ? 'text-foreground' : 'text-destructive'}`}>
-            {producto.cantidadStock} {producto.cantidadStock === 1 ? 'unidad' : 'unidades'}
-          </span>
-        </td>
-        <td className="px-4 py-4">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Layers size={12} aria-hidden="true" />
-            <span className="text-xs font-mono font-medium">{producto.partes.length} {producto.partes.length === 1 ? 'parte' : 'partes'}</span>
-          </div>
-        </td>
-        <td className="px-4 py-4">
-          <div className="relative group/tooltip inline-block">
-            <span className="text-sm font-bold text-foreground cursor-help border-b border-dashed border-muted-foreground/40 hover:border-foreground/80 transition-colors">
-              {formatCurrency(currentProductionCost)}
-            </span>
-            <div className="absolute z-50 invisible group-hover/tooltip:visible bg-card text-foreground text-xs rounded-2xl p-4 border border-border shadow-xl min-w-[230px] left-1/2 -translate-x-1/2 top-full mt-2.5 transition-all opacity-0 group-hover/tooltip:opacity-100 duration-200 pointer-events-none">
-              <div className="space-y-2 font-sans">
-                <p className="font-bold text-foreground border-b border-border/40 pb-1.5 mb-1.5 text-center">Esto es el costo de fabricar hoy</p>
-                <div className="flex justify-between gap-4 text-muted-foreground">
-                  <span>Costo Material:</span>
-                  <span className="font-bold text-foreground">{formatCurrency(costoMaterial)}</span>
-                </div>
-                <div className="flex justify-between gap-4 text-muted-foreground">
-                  <span>Costo Energía:</span>
-                  <span className="font-bold text-foreground">{formatCurrency(costoEnergia)}</span>
-                </div>
-                <div className="flex justify-between gap-4 pt-1.5 border-t border-border/40 text-foreground font-bold">
-                  <span>Total Costo Prod.:</span>
-                  <span className="font-bold text-foreground">{formatCurrency(currentProductionCost)}</span>
+            <div className="space-y-1">
+              <h3 className="font-semibold text-foreground text-base leading-none">{producto.nombre}</h3>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><Layers size={10} /> {producto.partes.length} partes</span>
+                <span>•</span>
+                <div className="relative group/tooltip inline-block cursor-help">
+                  <span className="border-b border-dashed border-muted-foreground/40 hover:border-foreground/80 transition-colors">
+                    Costo prod: {formatCurrency(currentProductionCost)}
+                  </span>
+                  <div className="absolute z-50 invisible group-hover/tooltip:visible bg-card text-foreground text-xs rounded-2xl p-4 border border-border shadow-xl min-w-[230px] left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 transition-all opacity-0 group-hover/tooltip:opacity-100 duration-200 pointer-events-none">
+                    {hasPartes ? (
+                      <div className="space-y-2 font-sans">
+                        <p className="font-bold text-foreground border-b border-border/40 pb-1.5 mb-1.5 text-center">Esto es el costo de fabricar hoy</p>
+                        <div className="flex justify-between gap-4 text-muted-foreground">
+                          <span>Costo Material:</span>
+                          <span className="font-bold text-foreground">{formatCurrency(costoMaterial)}</span>
+                        </div>
+                        <div className="flex justify-between gap-4 text-muted-foreground">
+                          <span>Costo Energía:</span>
+                          <span className="font-bold text-foreground">{formatCurrency(costoEnergia)}</span>
+                        </div>
+                        <div className="flex justify-between gap-4 pt-1.5 border-t border-border/40 text-foreground font-bold">
+                          <span>Total Costo Prod.:</span>
+                          <span className="font-bold text-foreground">{formatCurrency(currentProductionCost)}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 font-sans text-center">
+                        <p className="font-bold text-foreground border-b border-border/40 pb-1.5 mb-1.5">Costo de Stock (Lote actual)</p>
+                        <div className="flex justify-between gap-4 pt-1 text-foreground font-bold">
+                          <span>Costo Unitario:</span>
+                          <span className="font-bold text-foreground">{formatCurrency(currentProductionCost)}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-card" />
             </div>
-          </div>
-        </td>
-        <td className="px-4 py-4 text-center">
-          <span className="text-sm font-bold text-foreground font-mono">
-            {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : '—'}
-          </span>
-        </td>
-        <td className="px-4 py-4">
-          <div className="flex items-center gap-1 bg-muted/40 border border-border/50 rounded-full p-0.5 w-fit">
-            <button
-              onClick={() => updateStock({ id: producto.id, delta: -1 })}
-              disabled={producto.cantidadStock <= 0}
-              className="size-7 rounded-full hover:bg-card flex items-center justify-center transition-colors disabled:opacity-20 active:scale-90"
-              aria-label={`Disminuir stock de ${producto.nombre}`}
-              title={`Disminuir stock de ${producto.nombre}`}
-            >
-              <Minus size={12} aria-hidden="true" />
-            </button>
-            <button
-              onClick={() => updateStock({ id: producto.id, delta: 1 })}
-              className="size-7 rounded-full hover:bg-card flex items-center justify-center transition-colors active:scale-90"
-              aria-label={`Aumentar stock de ${producto.nombre}`}
-              title={`Aumentar stock de ${producto.nombre}`}
-            >
-              <Plus size={12} aria-hidden="true" />
-            </button>
-          </div>
-        </td>
-        <td className="px-6 py-4 text-right">
-          <div className="flex items-center justify-end gap-1.5">
-            {producto.lotes && producto.lotes.length > 0 && (
-              <button
-                onClick={() => setIsLotesModalOpen(true)}
-                className="size-8 rounded-xl hover:bg-muted flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground"
-                title="Ver lotes de stock"
-                aria-label={`Ver lotes de ${producto.nombre}`}
-              >
-                <ListFilter size={14} aria-hidden="true" />
-              </button>
-            )}
-            <button
-              onClick={() => onDelete(producto.id)}
-              className="size-8 rounded-xl hover:bg-destructive/10 flex items-center justify-center transition-colors text-muted-foreground hover:text-destructive"
-              title="Eliminar producto"
-              aria-label={`Eliminar producto ${producto.nombre}`}
-            >
-              <Trash2 size={14} aria-hidden="true" />
-            </button>
-          </div>
-        </td>
-      </tr>
+        </div>
+
+        <div className="flex items-center justify-between md:justify-end gap-6 md:gap-8 mt-2 md:mt-0 pt-4 md:pt-0 border-t border-border md:border-t-0">
+            <div className="text-left md:text-right">
+              <div className="text-sm font-bold text-foreground">
+                 Venta: {producto.precioSugerido ? formatCurrency(producto.precioSugerido) : '—'}
+              </div>
+              <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full mt-1.5 inline-flex items-center ${producto.cantidadStock > 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-destructive/10 text-destructive'}`}>
+                {producto.cantidadStock} en stock
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex items-center bg-muted/40 border border-border/50 rounded-lg p-1">
+                <button
+                  onClick={() => updateStock({ id: producto.id, delta: -1 })}
+                  disabled={producto.cantidadStock <= 0}
+                  className="p-1.5 hover:bg-card rounded-md text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
+                >
+                  <Minus size={14} />
+                </button>
+                <div className="w-8 flex items-center justify-center font-mono font-bold text-sm">
+                  {producto.cantidadStock}
+                </div>
+                <button
+                  onClick={() => updateStock({ id: producto.id, delta: 1 })}
+                  className="p-1.5 hover:bg-card rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                {producto.lotes && producto.lotes.length > 0 && (
+                  <button
+                    onClick={() => setIsLotesModalOpen(true)}
+                    className="size-8 rounded-lg hover:bg-muted flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground"
+                    title="Ver lotes de stock"
+                  >
+                    <ListFilter size={14} />
+                  </button>
+                )}
+                <button
+                  onClick={() => onDelete(producto.id)}
+                  className="size-8 rounded-lg hover:bg-destructive/10 flex items-center justify-center transition-colors text-muted-foreground hover:text-destructive"
+                  title="Eliminar producto"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+        </div>
+      </div>
       <LotesProductoModal
         isOpen={isLotesModalOpen}
         onClose={() => setIsLotesModalOpen(false)}
@@ -205,29 +211,14 @@ export function ProductosGalleryView() {
               <p className="studio-caption">Cargando catálogo...</p>
             </div>
           ) : filteredProductos.length > 0 ? (
-            <div className="border border-border rounded-2xl bg-card animate-in fade-in duration-500 shadow-sm">
-              <table className="w-full text-left text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="px-6 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider rounded-tl-2xl">Producto</th>
-                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-center">Stock</th>
-                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Partes</th>
-                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Costo Prod.</th>
-                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-center">Precio Venta</th>
-                    <th className="px-4 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider">Ajustar Stock</th>
-                    <th className="px-6 py-4 font-bold text-muted-foreground text-[10px] uppercase tracking-wider text-right rounded-tr-2xl">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {filteredProductos.map((prod) => (
-                    <ProductoRow
-                      key={prod.id}
-                      producto={prod}
-                      onDelete={(id) => setDeleteProductId(id)}
-                    />
-                  ))}
-                </tbody>
-              </table>
+            <div className="flex flex-col gap-3 animate-in fade-in duration-500">
+              {filteredProductos.map((prod) => (
+                <ProductoRow
+                  key={prod.id}
+                  producto={prod}
+                  onDelete={(id) => setDeleteProductId(id)}
+                />
+              ))}
             </div>
           ) : isSearching ? (
             <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
@@ -278,7 +269,8 @@ export function ProductosGalleryView() {
         description="¿Estás seguro de que quieres eliminar este producto del catálogo? Las piezas STL asociadas no se borrarán."
         confirmText="Eliminar"
         cancelText="Cancelar"
-        isDestructive={true}
+        cancelVariant="primary"
+        isDestructive={false}
       />
     </div>
   );

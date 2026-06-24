@@ -25,8 +25,6 @@ export const useGuardarPieza = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['piezas-stl'] });
     },
-    successMessage: 'Pieza guardada correctamente en la biblioteca.',
-    errorMessage: 'Error al guardar la pieza en la biblioteca.',
   });
 };
 

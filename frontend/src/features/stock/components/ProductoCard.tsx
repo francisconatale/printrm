@@ -26,18 +26,21 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
   
   // PRODUCTION COST: Aggregate of parts' costoBase (calculated centraly in the backend)
   const currentProductionCost = React.useMemo(() => {
-    return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
-  }, [producto.partes]);
+    if (producto.partes && producto.partes.length > 0) {
+      return producto.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0);
+    }
+    return producto.lotes?.[0]?.costoUnitario || 0;
+  }, [producto.partes, producto.lotes]);
 
   // If product has parts, use the first one for preview
   const firstPartUrl = `/test-cube.stl`; 
 
   return (
     <>
-      <div className="group relative bg-background dark:bg-zinc-950 border border-border dark:border-zinc-800 rounded-[var(--radius-xl)] overflow-hidden transition-all duration-300 hover:border-zinc-950 dark:hover:border-zinc-50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
+      <div className="group relative bg-background border border-border rounded-[var(--radius-xl)] overflow-hidden transition-all duration-300 hover:border-foreground hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
         
         {/* Preview Area */}
-        <div className="aspect-[4/3] w-full bg-muted dark:bg-zinc-900/50 relative overflow-hidden flex items-center justify-center border-b border-border/30">
+        <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden flex items-center justify-center border-b border-border/30">
           {producto.partes?.[0]?.imagenBase64 ? (
             <img 
               src={producto.partes[0].imagenBase64} 
@@ -51,14 +54,14 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
           )}
           
           {/* Stock Badge Overlay */}
-          <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-background/80 dark:bg-zinc-900/80 backdrop-blur-md border border-white/30 dark:border-zinc-800/30 shadow-sm flex items-center gap-2">
-            <Package size={12} className="text-zinc-500" aria-hidden="true" />
-            <span className="text-[10px] font-bold text-zinc-850 dark:text-zinc-200">{producto.cantidadStock} EN STOCK</span>
+          <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-md border border-white/30 shadow-sm flex items-center gap-2">
+            <Package size={12} className="text-muted-foreground" aria-hidden="true" />
+            <span className="text-[10px] font-bold text-foreground">{producto.cantidadStock} EN STOCK</span>
           </div>
 
           {/* Cost Info Overlay (Centralized Backend logic) */}
-          <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-zinc-900/70 dark:bg-black/70 backdrop-blur-md border border-white/10 dark:border-zinc-800/10 shadow-sm flex items-center gap-2 text-white">
-            <Coins size={10} className="text-zinc-300" aria-hidden="true" />
+          <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-foreground/10 backdrop-blur-md border border-white/10 shadow-sm flex items-center gap-2 text-white">
+            <Coins size={10} className="text-white/60" aria-hidden="true" />
             <span className="text-[9px] font-bold tracking-tight uppercase" title="Costo calculado centralmente por la API">
               Costo Fab: {formatCurrency(currentProductionCost)}
             </span>
@@ -71,7 +74,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
                 e.stopPropagation();
                 setIsLotesModalOpen(true);
               }}
-              className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-background/20 dark:bg-zinc-850/20 backdrop-blur-md border border-white/20 dark:border-zinc-700/20 text-white text-[10px] font-bold hover:bg-background hover:text-black dark:hover:bg-zinc-900 dark:hover:text-white transition-all group/btn shadow-lg"
+              className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-background/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold hover:bg-background hover:text-foreground transition-all group/btn shadow-lg"
               title="Ver desglose de inventario (FIFO)"
               aria-label={`Ver ${producto.lotes.length} lotes de ${producto.nombre}`}
             >
@@ -84,15 +87,15 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
           <div className="absolute top-4 right-4">
             <DropdownMenu>
               <DropdownMenuTrigger 
-                className="p-2 rounded-full bg-background/85 dark:bg-zinc-900/85 backdrop-blur-md border border-white/30 dark:border-zinc-800/30 shadow-sm hover:bg-background dark:hover:bg-zinc-950 transition-colors"
+                className="p-2 rounded-full bg-background/85 backdrop-blur-md border border-white/30 shadow-sm hover:bg-background transition-colors"
                 aria-label={`Opciones de producto para ${producto.nombre}`}
               >
-                <MoreVertical size={14} className="text-zinc-650" aria-hidden="true" />
+                <MoreVertical size={14} className="text-muted-foreground" aria-hidden="true" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
                   onClick={() => onDelete(producto.id)}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20"
+                  className="text-red-600 focus:text-red-600 focus:bg-destructive/10"
                 >
                   <Trash2 size={14} className="mr-2" aria-hidden="true" />
                   Eliminar Producto
@@ -103,30 +106,30 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
         </div>
 
         {/* Content Area */}
-        <div className="p-6 space-y-4 bg-background dark:bg-zinc-950">
+        <div className="p-6 space-y-4 bg-background">
           <div className="space-y-1">
-            <h3 className="studio-body-strong truncate text-lg text-zinc-900 dark:text-zinc-50" title={producto.nombre}>
+            <h3 className="studio-body-strong truncate text-lg text-foreground" title={producto.nombre}>
               {producto.nombre}
             </h3>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
               {producto.descripcion || 'Sin descripción disponible.'}
             </p>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-850">
+          <div className="flex items-center justify-between pt-2 border-t border-border">
             <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-widest">Costo Producción</span>
-              <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Costo Producción</span>
+              <span className="text-xl font-bold text-foreground">
                 {formatCurrency(currentProductionCost)}
               </span>
             </div>
 
             {/* Quick Stock Controls */}
-            <div className="flex items-center gap-1 bg-muted dark:bg-zinc-900 rounded-full p-1 border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-1 bg-muted rounded-full p-1 border border-border">
               <button 
                 onClick={() => updateStock({ id: producto.id, delta: -1 })}
                 disabled={producto.cantidadStock <= 0}
-                className="size-8 rounded-full hover:bg-background dark:hover:bg-zinc-805 flex items-center justify-center transition-colors disabled:opacity-30"
+                className="size-8 rounded-full hover:bg-background flex items-center justify-center transition-colors disabled:opacity-30"
                 aria-label={`Disminuir stock de ${producto.nombre}`}
                 title={`Disminuir stock de ${producto.nombre}`}
               >
@@ -134,7 +137,7 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
               </button>
               <button 
                 onClick={() => updateStock({ id: producto.id, delta: 1 })}
-                className="size-8 rounded-full hover:bg-background dark:hover:bg-zinc-805 flex items-center justify-center transition-colors shadow-sm"
+                className="size-8 rounded-full hover:bg-background flex items-center justify-center transition-colors shadow-sm"
                 aria-label={`Aumentar stock de ${producto.nombre}`}
                 title={`Aumentar stock de ${producto.nombre}`}
               >

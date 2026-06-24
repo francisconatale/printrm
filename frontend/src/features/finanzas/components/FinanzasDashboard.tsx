@@ -147,7 +147,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* Balance Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+             <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
               <DollarSign size={20} />
             </div>
             {metrics.balance >= 0 ? (
@@ -163,7 +163,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Neto</p>
             <p className={`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 transition-all truncate ${
-              metrics.balance >= 0 ? 'text-zinc-950 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'
+              metrics.balance >= 0 ? 'text-foreground' : 'text-red-600 dark:text-red-400'
             }`} title={formatCurrency(metrics.balance)}>
               {formatCurrency(metrics.balance)}
             </p>
@@ -173,7 +173,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* Ingresos Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 flex items-center justify-center">
+            <div className="size-10 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <TrendingUp size={20} />
             </div>
             {metrics.totalReembolsos < 0 && (
@@ -184,7 +184,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Ingresos Netos</p>
-            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50 truncate" title={formatCurrency(metrics.totalIngresosNetos)}>
+            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-foreground truncate" title={formatCurrency(metrics.totalIngresosNetos)}>
               {formatCurrency(metrics.totalIngresosNetos)}
             </p>
           </div>
@@ -193,13 +193,13 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* Gastos Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400 flex items-center justify-center">
+            <div className="size-10 rounded-full bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 flex items-center justify-center">
               <TrendingDown size={20} />
             </div>
           </div>
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Gastos Totales</p>
-            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-zinc-950 dark:text-zinc-50 truncate" title={formatCurrency(metrics.totalGastos)}>
+            <p className="text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 text-foreground truncate" title={formatCurrency(metrics.totalGastos)}>
               {formatCurrency(metrics.totalGastos)}
             </p>
           </div>
@@ -208,7 +208,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* ROI Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+            <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
               <Percent size={20} />
             </div>
             <div className="group relative cursor-pointer">
@@ -326,14 +326,14 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                       <span className="text-foreground font-sans">{categoryLabels[item.category] || item.category}</span>
                       <div className="space-x-2 text-muted-foreground">
                         <span>{formatCurrency(item.amount)}</span>
-                        <span className="font-semibold text-zinc-950 dark:text-zinc-100">{percent.toFixed(0)}%</span>
+                        <span className="font-semibold text-foreground">{percent.toFixed(0)}%</span>
                       </div>
                     </div>
                     {/* Progress Track */}
-                    <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                       <div 
                         style={{ width: `${percent}%` }}
-                        className={`h-full rounded-full transition-all duration-500 bg-zinc-900 dark:bg-zinc-200`}
+                        className={`h-full rounded-full transition-all duration-500 bg-foreground/70`}
                       />
                     </div>
                   </div>
@@ -350,7 +350,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
             <span>¿Registraste un gasto externo?</span>
             <button
               onClick={onOpenNewTransaction}
-              className="flex items-center gap-1 text-zinc-950 hover:underline hover:text-black font-semibold dark:text-zinc-100 active:scale-95 transition-all"
+              className="flex items-center gap-1 text-foreground hover:underline font-semibold active:scale-95 transition-all"
             >
               <Plus size={14} /> Registrar Gasto
             </button>

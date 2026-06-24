@@ -58,25 +58,6 @@
 }
 
 /* =============================================
-   DARK MODE — Variantes de tokens
-   ============================================= */
-.dark {
-  /* Override faltante que causaba jerarquía invertida */
-  --studio-tile-dark-1:     #1a1a1c;
-  --studio-tile-dark-2:     #1e1e20;
-
-  --studio-primary-on-dark:         var(--studio-ink);
-  --studio-on-dark:                 var(--studio-ink);
-
-  /* Sub-nav frosted oscuro */
-  --studio-subnav-bg:    rgba(28, 28, 30, 0.82);
-  --studio-subnav-color: var(--studio-ink);
-
-  /* Sombra de producto — más pronunciada sobre fondos oscuros */
-  --studio-product-shadow: 3px 5px 30px 0px rgba(0, 0, 0, 0.55);
-}
-
-/* =============================================
    TIPOGRAFÍA — Escala editorial Studio Tight
    (font-family heredada de html { font-family: 'Inter' })
    ============================================= */

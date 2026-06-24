@@ -1,7 +1,6 @@
 import React from 'react'
 import { PerfilSelector } from '../../features/perfiles/components/PerfilSelector'
 import { Perfil } from '../../features/perfiles/types/perfiles.types'
-import { ThemeToggle } from '../ui/theme-toggle'
 
 interface StudioSubNavProps {
   showPerfilSelector?: boolean
@@ -22,12 +21,7 @@ export function StudioSubNav({
         )}
       </div>
 
-      <div className="flex items-center gap-6">
-        <ThemeToggle 
-          className="text-muted-foreground hover:text-foreground transition-colors p-2" 
-          iconSize={20} 
-        />
-      </div>
+      <div className="flex items-center gap-6" />
     </nav>
   )
 }

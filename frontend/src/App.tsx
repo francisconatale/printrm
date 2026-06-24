@@ -10,12 +10,10 @@ import { LibroDiarioView } from './features/finanzas/components/LibroDiarioView'
 import { AgendaProduccionView } from './features/produccion/components/AgendaProduccionView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
-import { ThemeProvider } from './providers/ThemeProvider'
 import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
 import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
 import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
-
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
@@ -24,7 +22,6 @@ function App() {
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
   const { data: onboarding, isFetched } = useOnboardingStatus()
 
-  // IMPORTANT: useEffect must be called before any early return (Rules of Hooks)
   useEffect(() => {
     if (isFetched && onboarding && !onboarding.completado) {
       setShowOnboarding(true)
@@ -56,6 +53,7 @@ function App() {
             } : null}
             initialFile={selectedPieza ? new File([], selectedPieza.filePath) : null}
             onResetFile={() => setSelectedPieza(null)}
+            onGoToLibrary={() => setCurrentView('inventory')}
           />
         )
       case 'profiles':
@@ -81,7 +79,7 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
+    <>
       <AppShell>
         <Sidebar currentView={currentView} onViewChange={setCurrentView} />
         <main className="flex-1 overflow-y-auto">
@@ -92,7 +90,7 @@ function App() {
       {showOnboarding && (
         <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
       )}
-    </ThemeProvider>
+    </>
   )
 }
 

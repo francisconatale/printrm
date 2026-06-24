@@ -51,18 +51,20 @@ export const Modal: React.FC<ModalProps> = ({
         >
           <X size={20} className="text-muted-foreground" />
         </button>
-        <div className="p-10 pb-0 shrink-0">
-          <div className="mb-6">
-            <h2 className="studio-display-md !text-4xl tracking-tight">
-              {title}
-            </h2>
-            {description && (
-              <p className="studio-body text-muted-foreground mt-2">
-                {description}
-              </p>
-            )}
+        {title && (
+          <div className="p-10 pb-0 shrink-0">
+            <div className="mb-6">
+              <h2 className="studio-display-md !text-4xl tracking-tight">
+                {title}
+              </h2>
+              {description && (
+                <p className="studio-body text-muted-foreground mt-2">
+                  {description}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex-1 overflow-y-auto px-10 pb-12 custom-scrollbar">
           {children}
         </div>

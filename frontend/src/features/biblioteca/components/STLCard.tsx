@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { STLPreview } from './STLPreview';
-import { MoreVertical, Trash2, Box } from 'lucide-react';
+import { MoreVertical, Trash2, Eye, Box } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,10 +30,10 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => onViewDetail?.(pieza)}
-      className="group relative bg-background border border-[#e0e0e0] rounded-2xl overflow-hidden transition-all duration-300 hover:border-[#1d1d1f] hover:shadow-[3px_5px_30px_0px_rgba(0,0,0,0.08)] cursor-pointer"
+      className="group relative bg-background rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-border/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:border-foreground/30 transition-all duration-300 cursor-pointer"
     >
       {/* 3D Preview Area */}
-      <div className="aspect-square w-full bg-[#f5f5f7] dark:bg-neutral-800 relative overflow-hidden flex items-center justify-center">
+      <div className="aspect-square w-full bg-muted/40 relative overflow-hidden flex items-center justify-center">
         {hovered ? (
           <div className="w-full h-full animate-in fade-in duration-300">
             <STLPreview url={stlUrl} />
@@ -42,31 +42,30 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
           <img 
             src={pieza.imagenBase64} 
             alt={pieza.nombre} 
-            className="w-full h-full object-contain p-2 animate-in fade-in duration-300"
+            className="w-full h-full object-contain p-0 scale-125 animate-in fade-in duration-300 transition-transform duration-700 group-hover:scale-[1.35]"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 animate-in fade-in duration-300">
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 animate-in fade-in duration-300 transition-transform duration-700 group-hover:scale-105">
             <Box size={48} strokeWidth={1} />
           </div>
         )}
 
-        {/* Dynamic Cost Badge (Calculated by Backend) */}
-        {pieza.costoBase && pieza.costoBase > 0 && (
-          <div className="absolute top-3 left-3 z-10 bg-background/80 backdrop-blur-md border border-white/50 px-2 py-1 rounded-lg shadow-sm">
-            <p className="text-[9px] text-[#7a7a7a] leading-none uppercase font-bold tracking-tight">Costo</p>
-            <p className="text-xs font-mono font-bold text-zinc-900">{formatCurrency(pieza.costoBase)}</p>
+        {/* Dynamic Cost Badge (iOS Glassmorphism) */}
+        {pieza.costoBase && pieza.costoBase > 0 ? (
+          <div className="absolute top-4 left-4 z-10 bg-background/70 backdrop-blur-md border border-border/50 px-3 py-1.5 rounded-full shadow-sm">
+            <p className="text-[12px] font-bold text-foreground leading-none">{formatCurrency(pieza.costoBase)}</p>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Info Area */}
-      <div className="p-4 space-y-3">
-        <div className="flex justify-between items-start">
-          <div className="min-w-0 flex-1">
-            <h3 className="studio-body-strong truncate pr-2" title={pieza.nombre}>
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-4">
+          <div className="min-w-0 flex-1 pr-2">
+            <h3 className="font-semibold text-foreground text-[15px] truncate" title={pieza.nombre}>
               {pieza.nombre}
             </h3>
-            <p className="text-[10px] text-[#7a7a7a] uppercase tracking-wider font-semibold truncate">
+            <p className="text-[11px] text-muted-foreground font-medium truncate mt-0.5">
               {pieza.perfilFilamentoNombre || 'Material no definido'}
             </p>
           </div>
@@ -74,23 +73,21 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
           <div onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger 
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="size-8 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none"
                 aria-label={`Opciones para pieza ${pieza.nombre}`}
               >
-                <MoreVertical size={16} className="text-[#7a7a7a]" aria-hidden="true" />
+                <MoreVertical size={18} aria-hidden="true" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  onClick={() => onViewDetail?.(pieza)}
-                >
-                  <Box size={14} className="mr-2" aria-hidden="true" />
+              <DropdownMenuContent align="end" className="rounded-xl">
+                <DropdownMenuItem onClick={() => onViewDetail?.(pieza)}>
+                  <Eye size={16} className="mr-2" aria-hidden="true" />
                   Ver Detalle
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => onDelete(pieza.id)}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
                 >
-                  <Trash2 size={14} className="mr-2" aria-hidden="true" />
+                  <Trash2 size={16} className="mr-2" aria-hidden="true" />
                   Eliminar
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -98,26 +95,26 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-[#f0f0f0]">
-          <div className="flex gap-3">
+        <div className="flex items-center justify-between gap-2 mt-4 pt-4 border-t border-border/50">
+          <div className="flex gap-4">
             {pieza.pesoGramos && (
-              <div className="text-[10px]">
-                <span className="text-[#7a7a7a] block">PESO</span>
-                <span className="font-mono font-bold">{pieza.pesoGramos}g</span>
+              <div>
+                <span className="block text-[9px] uppercase tracking-wider text-muted-foreground font-bold">Peso</span>
+                <span className="text-[13px] font-semibold text-foreground">{pieza.pesoGramos}g</span>
               </div>
             )}
             {pieza.tiempoEstimado && (
-              <div className="text-[10px]">
-                <span className="text-[#7a7a7a] block">TIEMPO</span>
-                <span className="font-mono font-bold">{pieza.tiempoEstimado}</span>
+              <div>
+                <span className="block text-[9px] uppercase tracking-wider text-muted-foreground font-bold">Tiempo</span>
+                <span className="text-[13px] font-semibold text-foreground">{pieza.tiempoEstimado}</span>
               </div>
             )}
           </div>
-
+          
           <div onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => onPublish?.(pieza)}
-              className="px-3 py-1.5 rounded-full border border-[#e0e0e0] text-xs font-semibold hover:border-black transition-colors"
+              className="bg-[#007AFF] hover:bg-[#0062cc] active:opacity-60 text-white text-[12px] font-bold px-4 py-2 rounded-full transition-all shadow-sm"
               title={`Fabricar ${pieza.nombre} en Catálogo`}
               aria-label={`Fabricar pieza ${pieza.nombre} en Catálogo`}
             >

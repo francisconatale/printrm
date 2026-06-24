@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Camera, Play, Pause } from 'lucide-react';
-import { useTheme } from '../../../providers/ThemeProvider';
 import { STLModelViewer } from '../../../components/ui/stl-model-viewer';
 
 interface STLViewerProps {
@@ -92,8 +91,7 @@ const ViewerControls = ({
 };
 
 export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef, onInitialCapture }) => {
-  const { isDark } = useTheme();
-  const canvasBg = isDark ? '#1c1c1e' : '#f5f5f7';
+  const canvasBg = 'var(--muted)';
   const localCanvasRef = useRef<HTMLCanvasElement>(null);
   const activeCanvasRef = canvasRef || localCanvasRef;
   const [isLoading, setIsLoading] = React.useState(true);
@@ -152,6 +150,7 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef, onInitial
         onColorChange={setActiveColor}
       />
 
+      <div className="absolute inset-0 bg-[var(--muted)] -z-10" />
       <STLModelViewer
         ref={activeCanvasRef}
         url={blobUrl}
@@ -160,7 +159,6 @@ export const STLViewer: React.FC<STLViewerProps> = ({ file, canvasRef, onInitial
         enableControls={true}
         onLoaded={() => setIsLoading(false)}
         preserveDrawingBuffer={true}
-        backgroundColor={canvasBg}
         showEnvironment={true}
         onInitialCapture={onInitialCapture}
       />

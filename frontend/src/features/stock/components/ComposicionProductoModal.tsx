@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { useGetPiezas } from '../../biblioteca/api/biblioteca.api';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
+import { Button } from '../../../components/ui/button';
 import { CuboidIcon as Cube, Check, Plus, Tag } from 'lucide-react';
 import { ProductoCreate } from '../types/stock.types';
 import { useAjustes } from '../../ajustes/hooks/useAjustes';
@@ -23,7 +24,7 @@ interface ComposicionProductoModalProps {
 }
 
 const formatWeight = (grams?: number) => {
-  if (!grams) return '—';
+  if (!grams) return '\u2014';
   if (grams >= 1000) return `${(grams / 1000).toFixed(1)}kg`;
   return `${grams}g`;
 };
@@ -94,33 +95,33 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
           {/* Columna izquierda: Información */}
           <div className="sm:col-span-2 space-y-5">
             <div className="space-y-1.5">
-              <label htmlFor="prod-nombre" className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400">
-                Nombre <span className="text-red-400">*</span>
+              <label htmlFor="prod-nombre" className="text-[13px] font-medium text-muted-foreground">
+                Nombre <span className="text-destructive">*</span>
               </label>
               <input
                 id="prod-nombre"
                 {...register('nombre')}
-                className="w-full bg-transparent border-b-2 border-zinc-200 dark:border-zinc-700 px-0 py-1.5 text-base font-medium text-zinc-900 dark:text-zinc-100 focus:border-primary dark:focus:border-primary outline-none transition-colors placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                className="w-full bg-transparent border-b-2 border-border px-0 py-1.5 text-base font-medium text-foreground focus:border-primary outline-none transition-colors placeholder:text-muted-foreground/40"
                 placeholder="Ej: Lámpara de Escritorio"
                 required
               />
-              {errors.nombre && <p className="text-red-500 text-xs">{errors.nombre.message}</p>}
+              {errors.nombre && <p className="text-destructive text-xs">{errors.nombre.message}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="prod-precio" className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
+              <label htmlFor="prod-precio" className="text-[13px] font-medium text-muted-foreground flex items-center gap-1.5">
                 <Tag size={13} className="text-muted-foreground" />
                 Precio de Venta
               </label>
-              <div className="flex items-center border-b-2 border-zinc-200 dark:border-zinc-700 focus-within:border-primary dark:focus-within:border-primary transition-colors">
-                <span className="text-sm font-medium text-zinc-400 dark:text-zinc-500 pr-1.5 select-none">$</span>
+              <div className="flex items-center border-b-2 border-border focus-within:border-primary transition-colors">
+                <span className="text-sm font-medium text-muted-foreground pr-1.5 select-none">$</span>
                 <input
                   id="prod-precio"
                   type="number"
                   min="0"
                   step="1"
                   {...register('precioSugerido', { valueAsNumber: true })}
-                  className="w-full bg-transparent py-1.5 text-base font-medium text-zinc-900 dark:text-zinc-100 outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                  className="w-full bg-transparent py-1.5 text-base font-medium text-foreground outline-none placeholder:text-muted-foreground/40"
                   placeholder="0"
                 />
               </div>
@@ -133,27 +134,27 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
           {/* Columna derecha: STL List */}
           <div className="sm:col-span-3">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[13px] font-medium text-zinc-600 dark:text-zinc-400">
-                Piezas STL <span className="text-red-400">*</span>
+              <span className="text-[13px] font-medium text-muted-foreground">
+                Piezas STL <span className="text-destructive">*</span>
               </span>
               {selectedPartes.length > 0 && (
-                <span className="text-[11px] font-semibold text-primary dark:text-primary">
+                <span className="text-[11px] font-semibold text-primary">
                   {selectedPartes.length} de {piezas?.length || 0}
                 </span>
               )}
             </div>
 
-            <div className="border border-zinc-200/60 dark:border-zinc-800/50 rounded-2xl overflow-hidden bg-zinc-50/50 dark:bg-zinc-950/50 max-h-[340px] overflow-y-auto custom-scrollbar">
+            <div className="border border-border/50 rounded-2xl overflow-hidden bg-muted/30 max-h-[340px] overflow-y-auto custom-scrollbar">
               {!piezas || piezas.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-14 text-center">
-                  <div className="size-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-3">
-                    <Cube size={22} className="text-zinc-300 dark:text-zinc-600" />
+                  <div className="size-12 rounded-xl bg-muted flex items-center justify-center mb-3">
+                    <Cube size={22} className="text-muted-foreground/40" />
                   </div>
-                  <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Sin piezas disponibles</p>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Subí archivos STL primero.</p>
+                  <p className="text-sm font-semibold text-muted-foreground">Sin piezas disponibles</p>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">Subí archivos STL primero.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-zinc-100 dark:divide-zinc-800/40">
+                <div className="divide-y divide-border/30">
                   {piezas?.map(pieza => {
                     const isSelected = selectedPartes.includes(pieza.id);
                     return (
@@ -164,29 +165,29 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                         className={`w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left ${
                           isSelected
                             ? 'bg-primary/10 text-primary'
-                            : 'hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
+                            : 'hover:bg-muted/60'
                         }`}
                         aria-label={`${isSelected ? 'Quitar' : 'Agregar'} ${pieza.nombre}`}
                       >
                         <div className={`size-5 rounded flex items-center justify-center shrink-0 transition-all ${
                           isSelected
                             ? 'bg-primary border border-primary text-primary-foreground'
-                            : 'border-2 border-zinc-200 dark:border-zinc-700'
+                            : 'border-2 border-border'
                         }`} aria-hidden="true">
-                          {isSelected && <Check size={12} className="text-white dark:text-zinc-950" strokeWidth={3} />}
+                          {isSelected && <Check size={12} className="text-primary-foreground" strokeWidth={3} />}
                         </div>
 
-                        <div className="size-9 shrink-0 rounded-lg bg-muted dark:bg-zinc-900 border border-zinc-200/40 dark:border-zinc-800/40 overflow-hidden flex items-center justify-center">
+                        <div className="size-9 shrink-0 rounded-lg bg-muted border border-border/30 overflow-hidden flex items-center justify-center">
                           {pieza.imagenBase64 ? (
                             <img src={pieza.imagenBase64} alt="" className="w-full h-full object-contain p-0.5" />
                           ) : (
-                            <Cube size={14} className="text-zinc-300 dark:text-zinc-600" />
+                            <Cube size={14} className="text-muted-foreground/40" />
                           )}
                         </div>
 
                         <div className="flex-1 min-w-0">
                           <p className={`text-[13px] font-semibold truncate leading-tight ${
-                              isSelected ? 'text-primary' : 'text-zinc-800 dark:text-zinc-200'
+                              isSelected ? 'text-primary' : 'text-foreground'
                           }`}>
                             {pieza.nombre}
                           </p>
@@ -194,11 +195,11 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
                               isSelected
                                 ? 'bg-primary/15 text-primary'
-                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
+                                : 'bg-muted text-muted-foreground'
                             }`}>
                               {formatWeight(pieza.pesoGramos)}
                             </span>
-                            <span className={`text-[10px] ${isSelected ? 'text-primary/60' : 'text-zinc-400 dark:text-zinc-500'}`}>
+                            <span className={`text-[10px] ${isSelected ? 'text-primary/60' : 'text-muted-foreground/60'}`}>
                               {pieza.perfilFilamentoNombre || 'Sin filamento'}
                             </span>
                           </p>
@@ -208,13 +209,13 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                   })}
                 </div>
               )}
-              {errors.parteIds && <p className="text-red-500 text-xs px-4 py-2">{errors.parteIds.message}</p>}
+              {errors.parteIds && <p className="text-destructive text-xs px-4 py-2">{errors.parteIds.message}</p>}
             </div>
           </div>
         </div>
 
         {/* Resumen + Actions */}
-        <div className="mt-8 pt-5 border-t border-zinc-200/60 dark:border-zinc-800/50">
+        <div className="mt-8 pt-5 border-t border-border/50">
           {selectedPiezasData.length > 0 && (() => {
             const costo = Math.round(selectedPiezasData.reduce((s, p) => s + (p.costoBase || 0), 0));
             const precio = watch('precioSugerido') ?? 0;
@@ -223,26 +224,26 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
             const isPositive = ganancia > 0;
 
             return (
-              <div className="mb-5 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/50">
+              <div className="mb-5 p-4 rounded-2xl bg-muted/30 border border-border/50">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Costo prod.</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Costo prod.</p>
                     <p className="text-sm font-bold font-mono text-foreground">${costo.toLocaleString('es-AR')}</p>
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Precio venta</p>
-                    <p className="text-sm font-bold font-mono text-foreground">${precio > 0 ? precio.toLocaleString('es-AR') : '—'}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Precio venta</p>
+                    <p className="text-sm font-bold font-mono text-foreground">${precio > 0 ? precio.toLocaleString('es-AR') : '\u2014'}</p>
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Ganancia</p>
-                    <p className={`text-sm font-bold font-mono ${precio > 0 ? (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500') : 'text-zinc-400'}`}>
-                      {precio > 0 ? `${isPositive ? '+' : ''}$${ganancia.toLocaleString('es-AR')}` : '—'}
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ganancia</p>
+                    <p className={`text-sm font-bold font-mono ${precio > 0 ? (isPositive ? 'text-success' : 'text-destructive') : 'text-muted-foreground'}`}>
+                      {precio > 0 ? `${isPositive ? '+' : ''}$${ganancia.toLocaleString('es-AR')}` : '\u2014'}
                     </p>
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Margen</p>
-                    <p className={`text-sm font-bold ${precio > 0 ? (isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500') : 'text-zinc-400'}`}>
-                      {precio > 0 ? `${margen.toFixed(1)}%` : '—'}
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Margen</p>
+                    <p className={`text-sm font-bold ${precio > 0 ? (isPositive ? 'text-success' : 'text-destructive') : 'text-muted-foreground'}`}>
+                      {precio > 0 ? `${margen.toFixed(1)}%` : '\u2014'}
                     </p>
                   </div>
                 </div>
@@ -251,18 +252,14 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
           })()}
 
           <div className="flex items-center justify-end">
-            <button
+            <Button
               type="submit"
+              size="lg"
               disabled={isSaving || selectedPartes.length === 0 || !watch('nombre')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[var(--radius-pill)] bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              {isSaving ? 'Guardando...' : (
-                <>
-                  <Plus size={15} strokeWidth={2.5} />
-                  Crear Producto
-                </>
-              )}
-            </button>
+              <Plus size={15} strokeWidth={2.5} />
+              {isSaving ? 'Guardando...' : 'Crear Producto'}
+            </Button>
           </div>
         </div>
       </form>

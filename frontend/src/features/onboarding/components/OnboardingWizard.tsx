@@ -219,9 +219,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   }}
                   className="ob-printer-card"
                   style={{
-                    borderColor: active ? '#2563eb' : '#e5e7eb',
-                    color:       active ? '#2563eb' : '#374151',
-                    background:  active ? '#eff6ff' : '#fff',
+                    borderColor: active ? 'var(--primary)' : 'var(--border)',
+                    color:       active ? 'var(--primary)' : 'var(--foreground)',
+                    background:  active ? 'color-mix(in srgb, var(--primary) 10%, var(--background))' : 'var(--background)',
                   }}
                 >
                   <span className="ob-printer-name">{p.name}</span>
@@ -323,7 +323,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   value={form[f.key] as string}
                   onChange={e => update(f.key, e.target.value as any)}
                   className="ob-input"
-                  style={{ colorScheme: 'dark' }}
                 >
                   {f.options!.map(o => <option key={o} value={o}>{o === 'PC' ? 'Policarbonato' : o}</option>)}
                 </select>
@@ -365,45 +364,41 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
   return (
     <>
       <style>{`
-        /* Layout */
         .ob-root {
           position: fixed; inset: 0; z-index: 100;
           display: flex; flex-direction: column;
           align-items: center; justify-content: center;
-          background: #ffffff;
-          color: #111827;
-          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+          background: var(--background);
+          color: var(--foreground);
+          font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
           opacity: 0; transition: opacity 500ms ease;
         }
         .ob-root.ob-mounted { opacity: 1; }
 
-        /* Typography */
         .ob-display {
           font-size: clamp(3.5rem, 8vw, 6rem);
           font-weight: 700;
           letter-spacing: -0.04em;
           line-height: 1;
-          color: #111827;
+          color: var(--foreground);
         }
         .ob-brand {
           background: linear-gradient(135deg, #2563eb, #60a5fa);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
           font-weight: 600;
         }
-        .ob-lead  { font-size: 1.25rem; font-weight: 400; color: #6b7280; letter-spacing: -0.01em; }
-        .ob-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; letter-spacing: -0.03em; color: #111827; }
-        .ob-body  { font-size: 0.9375rem; color: #6b7280; line-height: 1.6; }
-        .ob-hint  { font-size: 0.75rem; color: #9ca3af; line-height: 1.5; margin-top: 2px; }
+        .ob-lead  { font-size: 1.25rem; font-weight: 400; color: var(--muted-foreground); letter-spacing: -0.01em; }
+        .ob-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; letter-spacing: -0.03em; color: var(--foreground); }
+        .ob-body  { font-size: 0.9375rem; color: var(--muted-foreground); line-height: 1.6; }
+        .ob-hint  { font-size: 0.75rem; color: var(--muted-foreground); line-height: 1.5; margin-top: 2px; }
 
-        /* Logo */
-        .ob-logo { color: #9ca3af; margin-bottom: 4px; }
+        .ob-logo { color: var(--muted-foreground); margin-bottom: 4px; }
 
-        /* Check ring */
         .ob-check-ring {
           width: 60px; height: 60px; border-radius: 50%;
-          border: 1.5px solid #e5e7eb;
+          border: 1.5px solid var(--border);
           display: flex; align-items: center; justify-content: center;
-          color: #2563eb;
+          color: var(--primary);
           animation: ob-ring-in 600ms cubic-bezier(.22,1,.36,1) both;
         }
         @keyframes ob-ring-in {
@@ -411,7 +406,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           to   { opacity:1; transform: scale(1); }
         }
 
-        /* Content container */
         .ob-content {
           width: 100%;
           max-width: 520px;
@@ -421,7 +415,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           align-items: center;
         }
 
-        /* Fields */
         .ob-fields {
           width: 100%;
           display: flex;
@@ -439,26 +432,25 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           font-weight: 600;
           letter-spacing: 0.08em;
           text-transform: uppercase;
-          color: #9ca3af;
+          color: var(--muted-foreground);
         }
         .ob-input {
           width: 100%;
           background: transparent;
           border: none;
-          border-bottom: 1px solid #e5e7eb;
-          color: #111827;
+          border-bottom: 1px solid var(--border);
+          color: var(--foreground);
           font-size: 1rem;
           padding: 0.5rem 0;
           outline: none;
           transition: border-color 200ms;
           font-family: inherit;
-          caret-color: #2563eb;
+          caret-color: var(--primary);
         }
-        .ob-input::placeholder { color: #d1d5db; }
-        .ob-input:focus { border-bottom-color: #2563eb; }
-        .ob-input option { background: #fff; color: #111827; }
+        .ob-input::placeholder { color: var(--muted-foreground); opacity: 0.6; }
+        .ob-input:focus { border-bottom-color: var(--primary); }
+        .ob-input option { background: var(--background); color: var(--foreground); }
 
-        /* Summary grid */
         .ob-summary-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -468,10 +460,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           max-width: 340px;
         }
         .ob-summary-item { display: flex; flex-direction: column; gap: 2px; }
-        .ob-summary-label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #9ca3af; }
-        .ob-summary-value { font-size: 0.9375rem; color: #374151; }
+        .ob-summary-label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); }
+        .ob-summary-value { font-size: 0.9375rem; color: var(--foreground); }
 
-        /* Footer */
         .ob-footer {
           position: fixed;
           bottom: 0; left: 0; right: 0;
@@ -481,7 +472,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           padding: 2rem 2.5rem;
         }
 
-        /* Dots */
         .ob-dots {
           display: flex;
           gap: 6px;
@@ -490,31 +480,31 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         .ob-dot {
           width: 5px; height: 5px;
           border-radius: 50%;
-          background: #e5e7eb;
+          background: var(--border);
           transition: all 300ms cubic-bezier(.22,1,.36,1);
         }
         .ob-dot.active {
           width: 20px;
           border-radius: 3px;
-          background: #2563eb;
+          background: var(--primary);
         }
 
-        /* Buttons */
         .ob-btn-back {
           display: flex; align-items: center; gap: 4px;
           font-size: 0.875rem; font-weight: 500;
-          color: #d1d5db;
+          color: var(--muted-foreground);
+          opacity: 0.5;
           background: none; border: none; cursor: pointer;
           padding: 8px; margin: -8px;
-          transition: color 200ms;
+          transition: color 200ms, opacity 200ms;
         }
-        .ob-btn-back:hover:not(:disabled) { color: #6b7280; }
+        .ob-btn-back:hover:not(:disabled) { opacity: 1; }
         .ob-btn-back:disabled { opacity: 0; pointer-events: none; }
 
         .ob-btn-next {
           display: flex; align-items: center; gap: 6px;
           font-size: 0.9375rem; font-weight: 600;
-          color: #2563eb;
+          color: var(--primary);
           background: none; border: none; cursor: pointer;
           padding: 8px; margin: -8px;
           transition: opacity 200ms, transform 200ms;
@@ -524,23 +514,20 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         .ob-btn-next:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
         .ob-btn-next:active:not(:disabled) { transform: translateX(4px); }
 
-        /* Error */
         .ob-error {
           position: fixed;
           top: 2rem; left: 50%; transform: translateX(-50%);
-          background: #fef2f2;
-          border: 1px solid #fecaca;
+          background: color-mix(in srgb, var(--destructive) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
           border-radius: 10px;
           padding: 0.625rem 1rem;
           font-size: 0.8125rem;
-          color: #dc2626;
+          color: var(--destructive);
           max-width: 360px;
           text-align: center;
           animation: ob-ring-in 300ms ease both;
         }
 
-        /* Spinner */
-        /* Printer preset grid */
         .ob-printer-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -554,13 +541,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           gap: 3px;
           padding: 10px 6px;
           border-radius: 10px;
-          border: 1.5px solid #e5e7eb;
+          border: 1.5px solid var(--border);
           cursor: pointer;
           transition: border-color 150ms, background 150ms, color 150ms;
           font-family: inherit;
           text-align: center;
         }
-        .ob-printer-card:hover { border-color: #93c5fd; background: #f8faff; }
+        .ob-printer-card:hover { border-color: var(--primary); opacity: 0.8; background: var(--muted); }
         .ob-printer-name { font-size: 0.75rem; font-weight: 600; line-height: 1.2; }
         .ob-printer-watts { font-size: 0.65rem; font-family: ui-monospace, monospace; opacity: 0.5; }
 

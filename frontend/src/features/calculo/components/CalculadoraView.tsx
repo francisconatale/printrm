@@ -7,7 +7,8 @@ import { PerfilForm } from '../../perfiles/components/PerfilForm'
 import { Modal } from '../../../components/ui/modal'
 import { ResultadoPanel } from '../components/ResultadoPanel'
 import { STLUpload } from '../components/STLUpload'
-import { SlicingConfigSelector } from '../components/SlicingConfigSelector'
+import { CalculadoraConfigSelector } from '../components/CalculadoraConfigSelector'
+import { CalculationSuccessModal } from '../components/CalculationSuccessModal'
 import { useCalculo } from '../hooks/useCalculo'
 import { PiezaInput } from '../types/calculo.types'
 import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo'
@@ -22,14 +23,16 @@ import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
 import { Perfil } from '../../perfiles/types/perfiles.types'
 import { parseEstimatedTime } from '../utils/calculos.utils'
 import { CalculoSnapshot } from '../types/calculo.types'
+import { formatCurrency } from '../../../lib/utils'
 
 interface CalculadoraViewProps {
   initialData?: CalculoSnapshot | null;
   initialFile?: File | null;
   onResetFile?: () => void;
+  onGoToLibrary?: () => void;
 }
 
-export function CalculadoraView({ initialData, initialFile, onResetFile }: CalculadoraViewProps) {
+export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToLibrary }: CalculadoraViewProps) {
   const { perfilActivo } = usePerfilActivo();
   const { data: printers } = useGetPerfiles();
   const { data: filaments } = useGetFilamentProfiles();
@@ -88,42 +91,35 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
   
   const [showPerfilModal, setShowPerfilModal] = React.useState(false);
   const [editingPerfil, setEditingPerfil] = React.useState<Perfil | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
-  const { mutate: createPerfil, isPending: isCreating } = useCreatePerfil();
-  const { mutate: updatePerfil, isPending: isUpdating } = useUpdatePerfil();
   const { mutate: sliceSTL, isPending: isSlicing } = useSliceSTL();
   const { mutate: guardarPieza, isPending: isSavingPieza } = useGuardarPieza();
 
-  const handlePerfilSubmit = (data: any) => {
-    console.log("StudioDashboard - Iniciando guardado de perfil:", { editingPerfil, data });
+  const { mutate: createPerfil, isPending: isCreating } = useCreatePerfil();
+  const { mutate: updatePerfil, isPending: isUpdating } = useUpdatePerfil();
+
+  const handlePerfilSubmit = (data: Partial<Perfil>) => {
     if (editingPerfil) {
-      updatePerfil({ id: editingPerfil.id, ...data }, {
-        onSuccess: () => {
-          console.log("Perfil actualizado con éxito");
-          setShowPerfilModal(false);
-          setEditingPerfil(null);
-          toast.success("Perfil de impresión actualizado correctamente");
-        },
-        onError: (err) => {
-          console.error("Error al actualizar perfil:", err);
-          toast.error("Error al actualizar el perfil.");
+      updatePerfil(
+        { id: editingPerfil.id, data },
+        {
+          onSuccess: () => {
+            toast.success('Perfil actualizado correctamente');
+            setShowPerfilModal(false);
+            setEditingPerfil(null);
+          },
         }
-      });
+      );
     } else {
-      createPerfil(data, {
-        onSuccess: (newPerfil) => {
-          console.log("Perfil creado con éxito:", newPerfil);
+      createPerfil(data as Omit<Perfil, 'id' | 'createdAt' | 'updatedAt'>, {
+        onSuccess: () => {
+          toast.success('Perfil creado correctamente');
           setShowPerfilModal(false);
-          toast.success("Perfil de impresión creado correctamente");
         },
-        onError: (err) => {
-          console.error("Error al crear perfil:", err);
-          toast.error("Error al crear el perfil.");
-        }
       });
     }
   };
-
 
 
   const handleSaveToLibrary = () => {
@@ -141,6 +137,13 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
       perfilFilamentoId: activeFilament?.id,
       perfilImpresionId: overrideConfigs.print || undefined,
       imagenBase64,
+    }, {
+      onSuccess: () => {
+        setShowSuccessModal(true);
+      },
+      onError: () => {
+        toast.error('Error al guardar la pieza');
+      }
     });
   };
 
@@ -156,7 +159,11 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
   };
 
   const handleAnalyze = () => {
-    if (!file || !perfilActivo) return;
+    if (!overrideConfigs.print || !overrideConfigs.filament || !overrideConfigs.printer) {
+      toast.error('Por favor, selecciona los 3 parámetros de impresión (Ajuste, Material e Impresora)');
+      return;
+    }
+    if (!file) return;
     setIsAnalyzing(true);
     sliceSTL(
       {
@@ -173,7 +180,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
             minutos,
             gramos: result.filamentUsedG || 0,
           });
-          toast.success('Archivo STL analizado con éxito');
         },
         onError: () => {
           toast.error('Error al analizar el archivo STL');
@@ -213,40 +219,52 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
       <main className="flex-1 overflow-hidden">
         {/* Operational Section - Studio Spacing */}
         <section className="px-8 md:px-12 py-6 bg-background h-full overflow-y-auto custom-scrollbar">
-          <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Input Column */}
-            <div className="lg:col-span-7 space-y-8">
+            <div className="lg:col-span-8 bg-card rounded-[1.5rem] border border-border shadow-sm p-6 space-y-10 border-t-[3px] border-t-primary">
               
-              <div className="space-y-8">
-                <STLUpload 
-                  file={file}
-                  onFileChange={setFile}
-                  isSlicing={isAnalyzing || isSlicing}
-                  onReset={handleResetAnalysis}
-                  canvasRef={canvasRef}
-                  onInitialCapture={(dataUrl) => {
-                    initialScreenshotRef.current = dataUrl;
-                  }}
-                />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-foreground font-medium">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">1</span>
+                  Sube el modelo STL
+                </div>
+                <div className="pl-9">
+                  <STLUpload 
+                    file={file}
+                    onFileChange={setFile}
+                    isSlicing={isAnalyzing || isSlicing}
+                    onReset={handleResetAnalysis}
+                    canvasRef={canvasRef}
+                    onInitialCapture={(dataUrl) => {
+                      initialScreenshotRef.current = dataUrl;
+                    }}
+                  />
+                </div>
+              </div>
 
-                <div className="pt-8 border-t border-border/60">
-                  <div className="mb-6">
-                    <h3 className="text-[10px] font-bold uppercase text-muted-foreground">Parámetros de Impresión</h3>
-                  </div>
-                  <SlicingConfigSelector
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-foreground font-medium">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">2</span>
+                  Selecciona los Parámetros
+                </div>
+                <div className="pl-9">
+                  <CalculadoraConfigSelector
                     selected={overrideConfigs}
                     onChange={handleOverrideConfigsChange}
                   />
                 </div>
-
               </div>
             </div>
 
             {/* Financial Column */}
-            <div className="lg:col-span-5">
-              <div className="sticky top-8">
-                <div className="p-7 border border-border/30 rounded-[var(--radius-xl)] bg-card animate-in fade-in duration-500">
+            <div className="lg:col-span-4">
+              <div className="sticky top-8 space-y-6">
+                <div className="bg-card rounded-[1.5rem] border border-border shadow-sm p-6 border-t-[3px] border-t-primary">
+                  <div className="flex items-center gap-3 text-foreground font-medium mb-6">
+                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">3</span>
+                    Resultado y Cotización
+                  </div>
                   <ResultadoPanel 
                     resultado={resultado}
                     onSaveToLibrary={handleSaveToLibrary}
@@ -258,6 +276,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
                     insumosExtra={piezaInput.insumosExtra}
                     onInsumosExtraChange={(v) => setPiezaInput(prev => ({ ...prev, insumosExtra: v }))}
                     onReset={handleResetAnalysis}
+                    isAnalyzeDisabled={!overrideConfigs.print || !overrideConfigs.filament || !overrideConfigs.printer}
                   />
                 </div>
               </div>
@@ -287,6 +306,24 @@ export function CalculadoraView({ initialData, initialFile, onResetFile }: Calcu
           isLoading={isCreating || isUpdating}
         />
       </Modal>
+
+      <CalculationSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        onGoToLibrary={() => {
+          setShowSuccessModal(false);
+          if (onGoToLibrary) onGoToLibrary();
+        }}
+        onNewCalculation={() => {
+          setShowSuccessModal(false);
+          handleResetAnalysis();
+        }}
+        summaryData={{
+          nombre: file?.name?.replace('.stl', '') || 'Pieza',
+          tiempoFormatted: resultado ? `${resultado.horas}h ${resultado.minutosAdicionales}m` : '',
+          precio: resultado ? formatCurrency(resultado.costoBase * 3) : '$0',
+        }}
+      />
     </div>
   )
 }

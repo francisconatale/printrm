@@ -23,7 +23,7 @@ export const AjustesFormFields: React.FC<AjustesFormFieldsProps> = ({
   return (
     <div className={isGrid ? 'grid grid-cols-2 gap-4' : 'space-y-4'}>
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-muted-foreground">
+        <label className="text-xs text-muted-foreground block mb-1">
           Precio Energía ($ / kWh)
         </label>
         <input
@@ -31,13 +31,13 @@ export const AjustesFormFields: React.FC<AjustesFormFieldsProps> = ({
           step="any"
           value={value.preciokWh || ''}
           onChange={(e) => handleChange('preciokWh', parseFloat(e.target.value) || 0)}
-          className={inputClassName || "w-full bg-transparent studio-caption font-semibold outline-none mt-1"}
+          className={inputClassName || "w-full p-2 bg-background border-b border-border focus:border-primary outline-none transition-all font-medium"}
           placeholder="0"
         />
       </div>
       {!isGrid && <div className="border-t border-border" />}
       <div className="space-y-1">
-        <label className="text-[10px] font-bold uppercase text-muted-foreground">
+        <label className="text-xs text-muted-foreground block mb-1">
           Margen de Seguridad / Error (%)
         </label>
         <input
@@ -45,7 +45,7 @@ export const AjustesFormFields: React.FC<AjustesFormFieldsProps> = ({
           step="any"
           value={value.margenError || ''}
           onChange={(e) => handleChange('margenError', parseFloat(e.target.value) || 0)}
-          className={inputClassName || "w-full bg-transparent studio-caption font-semibold outline-none mt-1"}
+          className={inputClassName || "w-full p-2 bg-background border-b border-border focus:border-primary outline-none transition-all font-medium"}
           placeholder="0"
         />
         {!isGrid && (

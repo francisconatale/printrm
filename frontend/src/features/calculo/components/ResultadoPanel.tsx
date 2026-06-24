@@ -18,6 +18,7 @@ interface ResultadoPanelProps {
   insumosExtra?: number;
   onInsumosExtraChange?: (v: number) => void;
   onReset?: () => void;
+  isAnalyzeDisabled?: boolean;
 }
 
 export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
@@ -31,6 +32,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
   insumosExtra = 0, 
   onInsumosExtraChange, 
   onReset,
+  isAnalyzeDisabled,
 }) => {
   const { ajustes, updateAjustes } = useAjustes();
   const { perfilActivo } = usePerfilActivo();
@@ -49,21 +51,11 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6 border-b border-[var(--border-subtle)] pb-4">
-        <span className="text-[10px] font-bold uppercase text-muted-foreground">Análisis de Producción</span>
+      <div className="flex items-center justify-between mb-6 border-b border-border pb-4">
+        <span className="text-sm font-medium text-foreground">Análisis de Producción</span>
         <div className="flex items-center gap-2">
-          {ajustes && hasResult && !isAnalyzing && (
-            <span className="text-[10px] font-bold bg-muted/30 px-2 py-1 rounded text-muted-foreground">
-              ERROR: {ajustes.margenError}%
-            </span>
-          )}
-          {hasResult && onReset && (
-            <button onClick={onReset}
-              className="size-6 rounded-full bg-muted/30 hover:bg-muted/30 flex items-center justify-center transition-colors"
-              title="Volver atrás">
-              <X size={12} className="text-muted-foreground" />
-            </button>
-          )}
+
+
         </div>
       </div>
 
@@ -89,6 +81,7 @@ export const ResultadoPanel: React.FC<ResultadoPanelProps> = ({
           isAnalyzing={!!isAnalyzing}
           hasFile={!!hasFile}
           onAnalyze={handleAnalyzeAndSave}
+          isAnalyzeDisabled={isAnalyzeDisabled}
         />
       )}
     </div>

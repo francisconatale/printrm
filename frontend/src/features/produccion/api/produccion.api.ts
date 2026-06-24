@@ -56,6 +56,19 @@ export const useUpdateEstadoOrden = () => {
       queryClient.invalidateQueries({ queryKey: ['ordenesProduccion'] });
       queryClient.invalidateQueries({ queryKey: ['pedidos'] });
       queryClient.invalidateQueries({ queryKey: ['productos'] });
+    }
+  });
+};
+
+export const useRegistrarMermaProduccion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, unidadesFallidas }: { id: string; unidadesFallidas: number }) => {
+      const { data } = await axios.post(`${API_URL}/${id}/merma?unidadesFallidas=${unidadesFallidas}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ordenesProduccion'] });
       queryClient.invalidateQueries({ queryKey: ['transacciones'] });
     }
   });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
+import { Button } from './button';
 
 interface ConfigSectionProps {
   title: string;
@@ -31,13 +32,10 @@ export const ConfigSection: React.FC<ConfigSectionProps> = ({
           <h2 className="studio-tagline">{title}</h2>
           <p className="studio-body text-xs text-muted-foreground mt-0.5">{description}</p>
         </div>
-        <button
-          onClick={onNew}
-          className="bg-primary text-white hover:opacity-85 active:scale-95 transition-all text-xs font-semibold rounded-full px-5 py-2.5 flex items-center gap-2"
-        >
+        <Button size="sm" onClick={onNew}>
           <Plus size={14} />
           {newButtonText}
-        </button>
+        </Button>
       </div>
 
       {isLoading ? (
@@ -50,12 +48,9 @@ export const ConfigSection: React.FC<ConfigSectionProps> = ({
         <div className="border border-border rounded-2xl p-12 text-center">
           <IconComponent size={36} className="mx-auto text-muted-foreground mb-4" />
           <p className="studio-tagline text-base text-foreground">No hay {label.toLowerCase()} configurados</p>
-          <button
-            onClick={onNew}
-            className="bg-primary text-white hover:opacity-85 active:scale-95 transition-all text-xs font-semibold rounded-full px-5 py-2.5 mx-auto mt-6"
-          >
+          <Button size="sm" onClick={onNew} className="mx-auto mt-6">
             {newButtonText}
-          </button>
+          </Button>
         </div>
       )}
     </div>

@@ -3,10 +3,6 @@
 @import "@fontsource-variable/inter";
 @import "./studio-theme.css";
 
-/* =============================================
-   SHADCN / TAILWIND — Tokens mapeados al
-   Design System de Printrm
-   ============================================= */
 
 :root {
   --background:        #ffffff;
@@ -16,6 +12,7 @@
   --muted-foreground:  #6b7280;
 
   --border:            #e5e7eb;
+  --border-subtle:     #f0f0f0;
   --input:             #e5e7eb;
   --ring:              #2563eb;
 
@@ -44,38 +41,6 @@
   --radius-lg:         1rem;
   --radius-xl:         1.5rem;
   --radius-pill:       9999px;
-}
-
-.dark {
-  --background:        #1c1c1e;
-  --foreground:        #f5f5f7;
-
-  --muted:             #2c2c2e;
-  --muted-foreground:  #9ca3af;
-
-  --border:            #3a3a3c;
-  --input:             #3a3a3c;
-
-  --primary:           #2997ff;        /* Apple blue para dark */
-  --primary-foreground:#ffffff;
-
-  --secondary:         #2c2c2e;
-  --secondary-foreground: #f5f5f7;
-
-  --destructive:       #ff453a;
-  --destructive-foreground: #ffffff;
-
-  --success:           #30d158;
-  --success-foreground:#ffffff;
-
-  --warning:           #ffd60a;
-  --warning-foreground:#111827;
-
-  --card:              #2c2c2e;
-  --card-foreground:   #f5f5f7;
-
-  --popover:           #2c2c2e;
-  --popover-foreground:#f5f5f7;
 }
 
 @tailwind base;
@@ -114,15 +79,14 @@
 @layer components {
   /* Botón primario — Action Blue, pill shape */
   .studio-button-primary {
-    @apply inline-flex items-center justify-center bg-primary text-white px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-95 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed !important;
+    @apply inline-flex items-center justify-center bg-primary text-white px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-[0.97] hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm !important;
     min-height: 44px;
-    /* Anular la transición global para no mezclar con active:scale */
     transition: opacity 200ms ease, transform 200ms ease !important;
   }
 
   /* Botón secundario — borde Action Blue */
   .studio-button-secondary-pill {
-    @apply inline-flex items-center justify-center bg-transparent text-primary border border-primary px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-95 hover:opacity-75 disabled:opacity-50 !important;
+    @apply inline-flex items-center justify-center bg-transparent text-primary border border-primary px-6 py-2.5 rounded-full text-[15px] font-medium active:scale-[0.97] hover:opacity-75 disabled:opacity-50 !important;
     min-height: 44px;
     transition: opacity 200ms ease, transform 200ms ease !important;
   }
@@ -148,8 +112,7 @@
    (sigue el estilo de Modal: bg-background,
     rounded-[2rem], borde sutil)
    ============================================= */
-.printrm-toaster[data-sonner-theme='light'],
-.printrm-toaster[data-sonner-theme='dark'] {
+.printrm-toaster {
   --normal-bg: var(--background);
   --normal-border: var(--border-subtle);
   --normal-text: var(--foreground);

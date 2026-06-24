@@ -1,6 +1,5 @@
 import React from 'react';
 import { Upload, FileText, AlertCircle, X } from 'lucide-react';
-import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo';
 import { STLViewer } from './STLViewer';
 
 interface STLUploadProps {
@@ -15,8 +14,6 @@ interface STLUploadProps {
 export const STLUpload: React.FC<STLUploadProps> = ({ 
   file, onFileChange, isSlicing, onReset, canvasRef, onInitialCapture
 }) => {
-  const { perfilActivo } = usePerfilActivo();
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       onFileChange(e.target.files[0]);
@@ -25,12 +22,12 @@ export const STLUpload: React.FC<STLUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className={`relative border border-[var(--border-subtle)] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-muted/20 p-0' : 'bg-muted/10 hover:bg-muted/20 p-12 text-center'}`}>
+      <div className={`relative border border-[var(--border)] rounded-[2.5rem] transition-all group overflow-hidden ${file ? 'bg-muted/20 p-0' : 'bg-muted/10 hover:bg-muted/20 p-12 text-center'}`}>
         
         {file ? (
           <div className="relative h-[320px] w-full">
             {/* Subtle Floating File Info */}
-            <div className="absolute top-4 left-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border-subtle)] shadow-sm pointer-events-none transition-all group-hover:bg-background/90">
+            <div className="absolute top-4 left-4 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border)] shadow-sm pointer-events-none transition-all group-hover:bg-background/90">
               <div className="size-6 rounded-full bg-background/50 flex items-center justify-center text-foreground">
                 <FileText size={12} />
               </div>
@@ -53,7 +50,7 @@ export const STLUpload: React.FC<STLUploadProps> = ({
 
             <button
               onClick={onReset}
-              className="absolute top-4 right-4 z-30 size-8 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border-subtle)] flex items-center justify-center text-muted-foreground hover:bg-background/90 hover:text-foreground transition-all shadow-sm"
+              className="absolute top-4 right-4 z-30 size-8 rounded-full bg-background/70 backdrop-blur-lg border border-[var(--border)] flex items-center justify-center text-muted-foreground hover:bg-background/90 hover:text-foreground transition-all shadow-sm"
               title="Volver atrás"
             >
               <X size={14} />
@@ -84,14 +81,7 @@ export const STLUpload: React.FC<STLUploadProps> = ({
         )}
       </div>
 
-      {!perfilActivo && file && (
-        <div className="flex items-center gap-3 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-4 rounded-[1.5rem] border border-amber-200 dark:border-amber-800/50 animate-in fade-in zoom-in-95">
-          <AlertCircle size={18} className="shrink-0" />
-          <p className="text-[12px] font-semibold">
-            Necesitás un **Perfil Activo** para analizar.
-          </p>
-        </div>
-      )}
+
 
     </div>
   );

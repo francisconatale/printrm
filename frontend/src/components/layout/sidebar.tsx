@@ -9,8 +9,6 @@ import {
   Hammer
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from '../ui/theme-toggle';
-
 export type ViewType = 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'reports' | 'profiles' | 'production';
 
 const NAV_ITEMS = [
@@ -63,7 +61,6 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       </ul>
 
       <div className="mt-auto flex flex-col items-center gap-4">
-        <ThemeToggle />
         <div className="size-10 overflow-hidden rounded-full border border-border bg-background flex items-center justify-center text-[10px] font-semibold text-foreground studio-nav-link">
           FB
         </div>

@@ -68,7 +68,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
     <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-8">
       
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-12 gap-y-6">
-          <div className="col-span-full border-b border-[var(--border-subtle)] pb-2 mb-2 flex items-center gap-2">
+          <div className="col-span-full border-b border-[var(--border)] pb-2 mb-2 flex items-center gap-2">
             <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground">Datos del Filamento</h3>
           </div>
 
@@ -163,7 +163,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
               <button
                 type="button"
                 onClick={() => colourInputRef.current?.click()}
-                className={`size-7 rounded-full border-2 border-dashed border-border flex items-center justify-center hover:border-[#7a7a7a] transition-all hover:scale-110 active:scale-95 ${
+                className={`size-7 rounded-full border-2 border-dashed border-border flex items-center justify-center hover:border-foreground/30 transition-all hover:scale-110 active:scale-95 ${
                   !PRESET_COLORS.some(c => c.toUpperCase() === selectedColour?.toUpperCase())
                     ? 'border-foreground ring-2 ring-foreground/20'
                     : ''
@@ -192,7 +192,7 @@ export const FilamentProfileForm: React.FC<FilamentProfileFormProps> = ({ initia
         </div>
       
 
-      <div className="pt-6 pb-2 mt-8 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row gap-4">
+      <div className="pt-6 pb-2 mt-8 border-t border-[var(--border)] flex flex-col sm:flex-row gap-4">
         <button 
           type="button"
           onClick={onCancel}

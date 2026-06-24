@@ -5,30 +5,26 @@ import {
 } from '../api/produccion.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { CrearOrdenIndependienteModal } from './CrearOrdenIndependienteModal';
+import { RegistrarMermaProduccionModal } from './RegistrarMermaProduccionModal';
 import { 
   Hammer, 
   Plus, 
   Clock, 
   Play, 
   Check, 
-  X, 
-  Search, 
-  User,
-  Package,
-  Wrench
+  X,
+  AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
-
 
 export function AgendaProduccionView() {
   const { data: ordenes, isLoading, isError, error, refetch } = useGetOrdenesProduccion();
   const { mutate: updateEstado, isPending: updating } = useUpdateEstadoOrden();
 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const [filterType, setFilterType] = React.useState<'ALL' | 'CLIENT' | 'STOCK'>('ALL');
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [showCanceled, setShowCanceled] = React.useState(false);
+  const [filterType, setFilterType] = React.useState<'ALL' | 'COLA' | 'IMPRIMIENDO'>('ALL');
+  const [mermaTarget, setMermaTarget] = React.useState<any>(null);
 
   const handleStatusChange = (id: string, nuevoEstado: any) => {
     updateEstado({ id, estado: nuevoEstado });
@@ -56,140 +52,22 @@ export function AgendaProduccionView() {
     );
   }
 
-  // Filter logic
-  const filteredOrdenes = (ordenes || []).filter((o) => {
-    // Search
-    const searchMatch = 
-      o.productoNombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      o.clienteNombre?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (!searchMatch) return false;
-
-    // Type
-    if (filterType === 'CLIENT' && !o.itemPedidoId) return false;
-    if (filterType === 'STOCK' && o.itemPedidoId) return false;
-
-    // Canceled
-    if (o.estado === 'CANCELADO' && !showCanceled) return false;
-
+  // Filtrar fuera las canceladas y completadas para la vista principal si queremos solo activas
+  // Aunque capaz conviene dejarlas, pero el rediseño se enfocaba en "Cola" e "Imprimiendo" principalmente.
+  // Vamos a dejar todo pero permitir filtrar.
+  const baseOrders = (ordenes || []).filter(o => o.estado !== 'CANCELADO');
+  
+  const filteredOrdenes = baseOrders.filter((o) => {
+    if (filterType === 'COLA' && o.estado !== 'COLA') return false;
+    if (filterType === 'IMPRIMIENDO' && o.estado !== 'IMPRIMIENDO') return false;
     return true;
   });
 
-  // Group by columns
-  const colaOrders = filteredOrdenes.filter(o => o.estado === 'COLA');
-  const procesoOrders = filteredOrdenes.filter(o => o.estado === 'IMPRIMIENDO');
-  const finalizadasOrders = filteredOrdenes.filter(o => o.estado === 'COMPLETADO');
-  const canceladasOrders = filteredOrdenes.filter(o => o.estado === 'CANCELADO');
-
-  const getStatusBadge = (estado: string) => {
-    const badges: Record<string, string> = {
-      COLA: 'bg-zinc-100 border-zinc-200 text-zinc-700 dark:bg-zinc-800/40 dark:text-zinc-300 dark:border-zinc-700/60',
-      IMPRIMIENDO: 'bg-blue-50 border-blue-100 text-blue-700 dark:bg-blue-900/10 dark:text-blue-400 dark:border-blue-800/40',
-      COMPLETADO: 'bg-emerald-50 border-emerald-100 text-emerald-700 dark:bg-emerald-950/10 dark:text-emerald-400 dark:border-emerald-900/40',
-      CANCELADO: 'bg-red-50 border-red-100 text-red-700 dark:bg-red-950/10 dark:text-red-400 dark:border-red-900/40'
-    };
-
-    const label: Record<string, string> = {
-      COLA: 'En Cola',
-      IMPRIMIENDO: 'Imprimiendo',
-      COMPLETADO: 'Completada',
-      CANCELADO: 'Cancelada'
-    };
-
-    return (
-      <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold border", badges[estado])}>
-        {label[estado] || estado}
-      </span>
-    );
-  };
-
-  const renderCard = (o: any) => (
-    <div 
-      key={o.id} 
-      className="bg-card border border-border/50 p-4 rounded-xl space-y-3 hover:border-border transition-all shadow-sm hover:shadow relative group"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="space-y-0.5">
-          <p className="text-[9px] text-muted-foreground font-mono">#{o.id.substring(0, 8)}</p>
-          <h4 className="studio-body-strong text-sm leading-tight">{o.productoNombre}</h4>
-        </div>
-        {o.itemPedidoId ? (
-          <span 
-            className="flex items-center gap-1 text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-full"
-            title={`Para pedido del cliente: ${o.clienteNombre}`}
-          >
-            <User size={10} aria-hidden="true" /> Cliente
-          </span>
-        ) : (
-          <span 
-            className="flex items-center gap-1 text-[9px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-full"
-            title="Para stock propio"
-          >
-            <Package size={10} aria-hidden="true" /> Stock
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between text-xs pt-1 border-t border-dashed border-border/60">
-        <div>
-          <span className="text-muted-foreground">Cantidad: </span>
-          <strong className="text-foreground">{o.cantidad} u.</strong>
-        </div>
-      </div>
-
-      {o.itemPedidoId && (
-        <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-          <span className="font-medium text-foreground">Destinatario:</span>
-          <span>{o.clienteNombre}</span>
-        </div>
-      )}
-
-      <div className="pt-2 flex justify-between gap-2">
-        <div className="flex gap-2">
-          {o.estado === 'COLA' && (
-            <button
-              onClick={() => handleStatusChange(o.id, 'IMPRIMIENDO')}
-              disabled={updating}
-              className="flex items-center gap-1 px-3 py-1 bg-black text-white hover:bg-zinc-800 dark:bg-background dark:text-black dark:hover:bg-zinc-200 text-xs font-bold rounded-lg transition-all"
-              aria-label="Iniciar orden de producción"
-            >
-              <Play size={10} aria-hidden="true" /> Iniciar
-            </button>
-          )}
-
-          {o.estado === 'IMPRIMIENDO' && (
-            <button
-              onClick={() => handleStatusChange(o.id, 'COMPLETADO')}
-              disabled={updating}
-              className="flex items-center gap-1 px-3 py-1 bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold rounded-lg transition-all"
-              aria-label="Completar orden de producción"
-            >
-              <Check size={10} aria-hidden="true" /> Completar
-            </button>
-          )}
-        </div>
-
-        {['COLA', 'IMPRIMIENDO'].includes(o.estado) && (
-          <button
-            onClick={() => handleStatusChange(o.id, 'CANCELADO')}
-            disabled={updating}
-            className="p-1.5 rounded-full border border-transparent text-muted-foreground hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all ml-auto flex items-center justify-center"
-            title="Cancelar Orden"
-            aria-label="Cancelar orden de producción"
-          >
-            <X size={14} aria-hidden="true" />
-          </button>
-        )}
-      </div>
-
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-        {getStatusBadge(o.estado)}
-      </div>
-    </div>
-  );
+  const countCola = baseOrders.filter(o => o.estado === 'COLA').length;
+  const countImprimiendo = baseOrders.filter(o => o.estado === 'IMPRIMIENDO').length;
 
   return (
-    <div className="flex flex-col w-full bg-background min-h-full animate-in fade-in duration-500">
+    <div className="flex flex-col w-full bg-[#f5f5f7] min-h-full animate-in fade-in duration-500 text-[#1d1d1f]">
       <StudioSubNav />
 
       <main className="flex-1 px-8 md:px-12 py-10 overflow-y-auto custom-scrollbar">
@@ -198,160 +76,143 @@ export function AgendaProduccionView() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="studio-display-md !text-4xl tracking-tight flex items-center gap-3">
-                <Hammer className="text-foreground shrink-0" size={32} aria-hidden="true" />
+              <h1 className="text-[34px] font-semibold tracking-[-0.011em] flex items-center gap-3">
+                <Hammer className="text-[#1d1d1f] shrink-0" size={32} aria-hidden="true" />
                 <span>Agenda de Producción</span>
               </h1>
-              <p className="studio-body text-muted-foreground">
-                Monitoreá las piezas en impresión. Al finalizarlas, se repondrá stock automáticamente y se registrarán los costos de filamento y energía.
+              <p className="text-[17px] text-[#7a7a7a]">
+                Control estricto de las piezas en cola e impresión.
               </p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="studio-button-primary flex items-center gap-2 self-start sm:self-center"
+              className="flex items-center gap-2 self-start sm:self-center px-5 py-2.5 bg-[#0066cc] text-white font-medium rounded-full hover:scale-95 transition-transform"
             >
               <Plus size={18} aria-hidden="true" />
               <span>Nueva Orden de Stock</span>
             </button>
           </div>
 
-          {/* Filters Toolbar */}
-          <div className="bg-card border border-border/40 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setFilterType('ALL')}
-                className={cn(
-                  "px-4 py-1.5 text-xs font-bold rounded-full transition-all border",
-                  filterType === 'ALL'
-                    ? "bg-zinc-100 border-zinc-200 text-foreground"
-                    : "hover:bg-zinc-50 border-transparent text-muted-foreground"
-                )}
-              >
-                Todas
-              </button>
-              <button
-                onClick={() => setFilterType('CLIENT')}
-                className={cn(
-                  "px-4 py-1.5 text-xs font-bold rounded-full transition-all border flex items-center gap-1.5",
-                  filterType === 'CLIENT'
-                    ? "bg-indigo-50 border-indigo-100 text-indigo-700"
-                    : "hover:bg-indigo-50/20 border-transparent text-muted-foreground"
-                )}
-              >
-                <User size={12} aria-hidden="true" />
-                <span>Para Clientes</span>
-              </button>
-              <button
-                onClick={() => setFilterType('STOCK')}
-                className={cn(
-                  "px-4 py-1.5 text-xs font-bold rounded-full transition-all border flex items-center gap-1.5",
-                  filterType === 'STOCK'
-                    ? "bg-teal-50 border-teal-100 text-teal-700"
-                    : "hover:bg-teal-50/20 border-transparent text-muted-foreground"
-                )}
-              >
-                <Package size={12} aria-hidden="true" />
-                <span>Reposición Stock</span>
-              </button>
+          {/* Tabla Principal */}
+          <div className="bg-white rounded-[18px] border border-[#e0e0e0] overflow-hidden shadow-sm">
+            <div className="p-5 border-b border-[#e0e0e0] flex items-center justify-between bg-white">
+              <h2 className="text-[17px] font-semibold tracking-[-0.022em]">Cola de Producción</h2>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setFilterType('ALL')}
+                  className={`px-3 py-1 rounded-full text-[12px] font-medium border transition-colors ${
+                    filterType === 'ALL' ? 'bg-[#f5f5f7] text-[#1d1d1f] border-[#e0e0e0]' : 'border-transparent text-[#7a7a7a] hover:bg-[#f5f5f7]'
+                  }`}
+                >
+                  Todas ({baseOrders.length})
+                </button>
+                <button 
+                  onClick={() => setFilterType('COLA')}
+                  className={`px-3 py-1 rounded-full text-[12px] font-medium border transition-colors ${
+                    filterType === 'COLA' ? 'bg-[#f5f5f7] text-[#1d1d1f] border-[#e0e0e0]' : 'border-transparent text-[#7a7a7a] hover:bg-[#f5f5f7]'
+                  }`}
+                >
+                  En Cola ({countCola})
+                </button>
+                <button 
+                  onClick={() => setFilterType('IMPRIMIENDO')}
+                  className={`px-3 py-1 rounded-full text-[12px] font-medium border transition-colors ${
+                    filterType === 'IMPRIMIENDO' ? 'bg-[#f5f5f7] text-[#1d1d1f] border-[#e0e0e0]' : 'border-transparent text-[#7a7a7a] hover:bg-[#f5f5f7]'
+                  }`}
+                >
+                  Imprimiendo ({countImprimiendo})
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 md:w-64">
-                <Search className="absolute left-3 top-2.5 text-muted-foreground" size={16} aria-hidden="true" />
-                <label htmlFor="search-agenda" className="sr-only">Buscar orden de producción</label>
-                <input
-                  id="search-agenda"
-                  type="text"
-                  placeholder="Buscar producto, cliente..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-background border border-border rounded-full pl-9 pr-4 py-2 text-xs focus:ring-2 focus:ring-black outline-none transition-all"
-                />
-              </div>
-
-              <label className="flex items-center gap-2 text-xs text-muted-foreground select-none cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showCanceled}
-                  onChange={(e) => setShowCanceled(e.target.checked)}
-                  className="rounded border-border text-black focus:ring-black"
-                />
-                <span>Ver Canceladas</span>
-              </label>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-[#e0e0e0] bg-[#f5f5f7]/50">
+                    <th className="py-3 px-6 text-[12px] font-medium text-[#7a7a7a] uppercase tracking-wider w-[50%]">Producto a Fabricar</th>
+                    <th className="py-3 px-6 text-[12px] font-medium text-[#7a7a7a] uppercase tracking-wider text-center">Unidades</th>
+                    <th className="py-3 px-6 text-[12px] font-medium text-[#7a7a7a] uppercase tracking-wider text-center">Estado</th>
+                    <th className="py-3 px-6 text-[12px] font-medium text-[#7a7a7a] uppercase tracking-wider text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrdenes.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center text-[#7a7a7a]">
+                        No hay órdenes para mostrar con los filtros actuales.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredOrdenes.map((o) => (
+                      <tr key={o.id} className="border-b border-[#e0e0e0] last:border-0 hover:bg-[#f5f5f7] transition-colors group">
+                        <td className="py-4 px-6 text-[17px] font-medium tracking-[-0.022em] text-[#1d1d1f]">
+                          {o.productoNombre}
+                        </td>
+                        <td className="py-4 px-6 text-[17px] font-mono text-center">
+                          {o.cantidad}
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          <span className={cn(
+                            "px-3 py-1 rounded-full text-[12px] font-medium border inline-flex items-center gap-1.5",
+                            o.estado === 'IMPRIMIENDO' ? 'bg-[#0066cc]/10 text-[#0066cc] border-[#0066cc]/20' :
+                            o.estado === 'COLA' ? 'bg-white text-[#333333] border-[#e0e0e0]' :
+                            o.estado === 'COMPLETADO' ? 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20' :
+                            o.estado === 'MERMA' ? 'bg-red-500/10 text-red-600 border-red-500/20' :
+                            'bg-[#f5f5f7] text-[#7a7a7a] border-transparent'
+                          )}>
+                            {o.estado === 'IMPRIMIENDO' && <span className="w-1.5 h-1.5 rounded-full bg-[#0066cc] animate-pulse" />}
+                            {o.estado}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {o.estado === 'COLA' && (
+                              <>
+                                <button 
+                                  disabled={updating}
+                                  onClick={() => handleStatusChange(o.id, 'IMPRIMIENDO')}
+                                  className="text-[#0066cc] font-medium text-[14px] hover:underline flex items-center gap-1 disabled:opacity-50"
+                                >
+                                  <Play size={14} fill="currentColor" /> Iniciar
+                                </button>
+                                <button 
+                                  disabled={updating}
+                                  onClick={() => handleStatusChange(o.id, 'CANCELADO')}
+                                  className="text-[#7a7a7a] hover:text-red-500 transition-colors disabled:opacity-50"
+                                  title="Cancelar Orden"
+                                >
+                                  <X size={16} />
+                                </button>
+                              </>
+                            )}
+                            {o.estado === 'IMPRIMIENDO' && (
+                              <>
+                                <button 
+                                  disabled={updating}
+                                  onClick={() => handleStatusChange(o.id, 'COMPLETADO')}
+                                  className="text-[#1d1d1f] font-medium text-[14px] hover:underline flex items-center gap-1 disabled:opacity-50"
+                                >
+                                  <Check size={14} /> Completar
+                                </button>
+                                <button 
+                                  disabled={updating}
+                                  onClick={() => setMermaTarget(o)}
+                                  className="text-red-500 font-medium text-[14px] hover:underline flex items-center gap-1 ml-2 disabled:opacity-50"
+                                  title="Marcar como Merma (Fallo)"
+                                >
+                                  <AlertTriangle size={14} /> Falló (Merma)
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-
-          {/* Kanban Board Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* Column 1: En Cola */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
-              <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                  <Clock size={14} /> En Cola ({colaOrders.length})
-                </h3>
-              </div>
-              <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
-                {colaOrders.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
-                    <p className="text-xs">No hay órdenes esperando en cola.</p>
-                  </div>
-                ) : (
-                  colaOrders.map(renderCard)
-                )}
-              </div>
-            </div>
-
-            {/* Column 2: En Proceso */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
-              <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                  <Wrench size={14} /> En Proceso ({procesoOrders.length})
-                </h3>
-              </div>
-              <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
-                {procesoOrders.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
-                    <p className="text-xs">No hay impresiones activas.</p>
-                  </div>
-                ) : (
-                  procesoOrders.map(renderCard)
-                )}
-              </div>
-            </div>
-
-            {/* Column 3: Completadas */}
-            <div className="space-y-4 bg-muted/10 p-5 rounded-[var(--radius-xl)] border border-border/30 dark:border-border/10 flex flex-col min-h-[500px]">
-              <div className="flex items-center justify-between pb-2 border-b border-border/40">
-                <h3 className="studio-caption-strong uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                  <Check size={14} /> Completadas ({finalizadasOrders.length})
-                </h3>
-              </div>
-              <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
-                {finalizadasOrders.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-8 text-muted-foreground">
-                    <p className="text-xs">No hay órdenes finalizadas recientemente.</p>
-                  </div>
-                ) : (
-                  finalizadasOrders.slice(0, 15).map(renderCard)
-                )}
-                {finalizadasOrders.length > 15 && (
-                  <p className="text-[10px] text-center text-muted-foreground pt-2">Mostrando las últimas 15 órdenes completadas.</p>
-                )}
-              </div>
-            </div>
-
-          </div>
-
-          {/* Show Canceled section only if checked */}
-          {showCanceled && canceladasOrders.length > 0 && (
-            <div className="space-y-4 pt-6 border-t border-border/40">
-              <h3 className="studio-caption-strong uppercase tracking-widest text-red-500">Órdenes Canceladas ({canceladasOrders.length})</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {canceladasOrders.map(renderCard)}
-              </div>
-            </div>
-          )}
 
         </div>
       </main>
@@ -359,6 +220,12 @@ export function AgendaProduccionView() {
       <CrearOrdenIndependienteModal 
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
+      />
+
+      <RegistrarMermaProduccionModal
+        isOpen={!!mermaTarget}
+        onClose={() => setMermaTarget(null)}
+        orden={mermaTarget}
       />
     </div>
   );

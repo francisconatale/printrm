@@ -3,7 +3,7 @@ import { useGetPiezas, useEliminarPieza } from '../api/biblioteca.api';
 import { STLCard } from './STLCard';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { Search, PackageOpen, Loader2 } from 'lucide-react';
-import { ConfirmModal } from '../../../components/ui/confirm-modal';
+import { EliminarPiezaModal } from './EliminarPiezaModal';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { ComposicionProductoModal } from '../../stock/components/ComposicionProductoModal';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
@@ -13,7 +13,7 @@ export function PiezasGalleryView() {
   const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [deletePieceId, setDeletePieceId] = React.useState<string | null>(null);
+  const [deletePiece, setDeletePiece] = React.useState<PiezaSTL | null>(null);
   const [publishPieceId, setPublishPieceId] = React.useState<string | null>(null);
   const [selectedPiezaDetail, setSelectedPiezaDetail] = React.useState<PiezaSTL | null>(null);
 
@@ -69,7 +69,10 @@ export function PiezasGalleryView() {
                 <STLCard 
                    key={pieza.id} 
                    pieza={pieza} 
-                   onDelete={(id) => setDeletePieceId(id)}
+                   onDelete={(id) => {
+                     const pieza = piezas?.find(p => p.id === id) || null;
+                     setDeletePiece(pieza);
+                   }}
                    onPublish={(pieza) => setPublishPieceId(pieza.id)}
                    onViewDetail={(pieza) => setSelectedPiezaDetail(pieza)}
                 />
@@ -106,20 +109,16 @@ export function PiezasGalleryView() {
         </div>
       </main>
 
-      <ConfirmModal
-        isOpen={deletePieceId !== null}
-        onClose={() => setDeletePieceId(null)}
+      <EliminarPiezaModal
+        pieza={deletePiece}
+        isOpen={deletePiece !== null}
+        onClose={() => setDeletePiece(null)}
         onConfirm={() => {
-          if (deletePieceId) {
-            eliminarPieza(deletePieceId);
-            setDeletePieceId(null);
+          if (deletePiece) {
+            eliminarPieza(deletePiece.id);
+            setDeletePiece(null);
           }
         }}
-        title="Eliminar Pieza"
-        description="¿Estás seguro de que quieres eliminar esta pieza de la biblioteca? Esta acción no se puede deshacer."
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        isDestructive={true}
       />
 
       <ComposicionProductoModal

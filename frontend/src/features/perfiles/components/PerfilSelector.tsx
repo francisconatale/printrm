@@ -72,7 +72,7 @@ export const PerfilSelector: React.FC<PerfilSelectorProps> = ({ onAddNew, onEdit
               ))}
             </div>
             
-            <div className="border-t border-[var(--border-subtle)] mt-2 pt-2 px-2">
+            <div className="border-t border-[var(--border)] mt-2 pt-2 px-2">
               <button 
                 onClick={() => {
                   onAddNew();

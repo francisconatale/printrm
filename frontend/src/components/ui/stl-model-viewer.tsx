@@ -139,7 +139,7 @@ export const STLModelViewer = React.forwardRef<HTMLCanvasElement, STLModelViewer
       <STLErrorBoundary>
         <Canvas
           ref={ref}
-          gl={{ antialias: true, preserveDrawingBuffer: shouldPreserve }}
+          gl={{ antialias: true, preserveDrawingBuffer: shouldPreserve, alpha: true }}
           camera={{ position: [0, 0, 100], fov: 45 }}
           style={{ width: '100%', height: '100%' }}
         >

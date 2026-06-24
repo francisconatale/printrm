@@ -2,6 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle } from 'lucide-react';
 import { useModalOverlay } from '../../hooks/useModalOverlay';
+import { Button } from './button';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface ConfirmModalProps {
   description: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
+  cancelVariant?: 'primary' | 'outline';
   isDestructive?: boolean;
   isLoading?: boolean;
 }
@@ -23,6 +25,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   description,
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
+  cancelVariant = 'outline',
   isDestructive = false,
   isLoading = false,
 }) => {
@@ -44,24 +47,17 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {description}
         </div>
         <div className="flex justify-end gap-3">
-          <button 
-            onClick={onClose} 
-            className="studio-button-secondary-pill !px-4 !py-2 text-xs font-semibold order-1"
-          >
+          <Button variant={cancelVariant} size="sm" onClick={onClose}>
             {cancelText}
-          </button>
-          <button 
-            disabled={isLoading}
-            onClick={() => {
-              onConfirm();
-            }} 
-            className={`rounded-full px-5 py-2 text-xs font-semibold transition-all order-2 text-white flex items-center gap-2 ${
-              isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:opacity-85'
-            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          </Button>
+          <Button
+            variant={isDestructive ? 'destructive' : 'primary'}
+            size="sm"
+            isLoading={isLoading}
+            onClick={onConfirm}
           >
-            {isLoading && <div className="size-3 border-2 border-white/20 border-t-white rounded-full animate-spin" />}
             {confirmText}
-          </button>
+          </Button>
         </div>
       </div>
     </div>,
