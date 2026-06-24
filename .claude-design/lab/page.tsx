@@ -2,59 +2,68 @@ import React from 'react';
 import { VariantA } from './variants/VariantA';
 import { VariantB } from './variants/VariantB';
 import { VariantC } from './variants/VariantC';
+import { VariantD } from './variants/VariantD';
+import { VariantE } from './variants/VariantE';
+import { FeedbackOverlay } from './feedback/FeedbackOverlay';
+import { LabShell } from './components/LabShell';
+import { Hammer, ArrowRight } from 'lucide-react';
 
-export const LabPage = () => {
+const variants = [
+  { id: 'A', name: 'Kanban Board', desc: 'Pipeline visual por columnas de estado. Ideal para ver el flujo de trabajo de un vistazo.', component: VariantA },
+  { id: 'B', name: 'Lista Moderna', desc: 'Filas espaciadas tipo Stripe con acciones siempre visibles. Búsqueda y filtros inline.', component: VariantB },
+  { id: 'C', name: 'Acordeón por Estado', desc: 'Tabla compacta agrupada por estado con secciones expandibles. Máxima info en mínimo espacio.', component: VariantC },
+  { id: 'D', name: 'Grid + Drawer', desc: 'Tarjetas visuales con panel lateral de detalles. Progressive disclosure.', component: VariantD },
+  { id: 'E', name: 'Línea de Tiempo', desc: 'Vista cronológica con progreso paso a paso. Ideal para seguimiento visual del avance.', component: VariantE },
+];
+
+export function DesignLabPage() {
   return (
-    <div className="min-h-screen bg-background p-10 max-w-5xl mx-auto space-y-12">
-      <header className="space-y-3">
-        <h1 className="text-3xl font-bold tracking-tight">Design Lab</h1>
-        <p className="text-muted-foreground">Explorando estructuras horizontales (Listas). Referencias: Stripe & Apple.</p>
-      </header>
+    <LabShell>
+      {/* Header */}
+      <div className="mb-10 space-y-2">
+        <div className="flex items-center gap-3">
+          <Hammer size={28} className="text-primary" />
+          <h1 className="studio-display-md">Agenda de Producción — Rediseño</h1>
+        </div>
+        <p className="studio-body text-muted-foreground max-w-2xl">
+          Replanteo completo desde cero. Se mantiene el modal <strong>"Nueva Orden de Stock"</strong>.
+          Cinco direcciones distintas explorando layout, interacción y densidad.
+        </p>
+        <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+          <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[11px] font-semibold">Design Lab</span>
+          <ArrowRight size={12} />
+          <span>Hacé clic en <strong>"Add Feedback"</strong> abajo a la derecha para comentar elementos específicos</span>
+        </div>
+      </div>
 
-      <main className="space-y-16">
-        
-        <section className="space-y-6" data-variant="A">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">A</span> 
-              Airy Apple List
-            </h2>
-            <p className="text-sm text-muted-foreground">Mucho espacio en blanco, tipografía grande, redondeado extremo. Súper limpio.</p>
-          </div>
-          <div className="p-4 bg-muted/20 border border-border/50 rounded-3xl">
-            <VariantA />
-          </div>
-        </section>
-
-        <section className="space-y-6" data-variant="B">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">B</span> 
-              Stripe Density Grid
-            </h2>
-            <p className="text-sm text-muted-foreground">Estructura tabular estricta. Cero bordes redondeados en la tarjeta. Acciones solo en hover.</p>
-          </div>
-          <div className="p-4 bg-muted/20 border border-border/50 rounded-xl">
-            <div className="bg-background border-y border-border/40">
-              <VariantB />
+      {/* Variant Grid */}
+      <div className="space-y-10">
+        {variants.map((v) => (
+          <section key={v.id} data-variant={v.id} className="border border-border rounded-[18px] p-6 bg-card">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[13px] font-bold shrink-0">
+                {v.id}
+              </span>
+              <div>
+                <h2 className="studio-caption-strong text-foreground">{v.name}</h2>
+                <p className="text-[12px] text-muted-foreground">{v.desc}</p>
+              </div>
             </div>
-          </div>
-        </section>
+            <div className="border border-border rounded-[14px] overflow-hidden bg-[#fafafa] p-6">
+              <v.component />
+            </div>
+          </section>
+        ))}
+      </div>
 
-        <section className="space-y-6" data-variant="C">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs">C</span> 
-              Compact Badges
-            </h2>
-            <p className="text-sm text-muted-foreground">Equilibrio. Minimalista pero con bordes visibles. La información está pegada para lectura rápida.</p>
-          </div>
-          <div className="p-4 bg-muted/20 border border-border/50 rounded-3xl">
-            <VariantC />
-          </div>
-        </section>
+      {/* Notes */}
+      <div className="mt-10 p-6 bg-muted/50 border border-border rounded-[18px] text-[13px] text-muted-foreground space-y-2">
+        <p className="font-semibold text-foreground">📐 Notas de diseño</p>
+        <p>Todas las variantes usan los tokens del design system existente: Action Blue (#0066cc), Inter, bordes sólidos, UI plana sin sombras.</p>
+        <p>El modal "Nueva Orden de Stock" (<code>CrearOrdenIndependienteModal</code>) se conserva tal cual está — su contenido no forma parte de esta exploración.</p>
+      </div>
 
-      </main>
-    </div>
+      <FeedbackOverlay targetName="AgendaProduccion" />
+    </LabShell>
   );
-};
+}

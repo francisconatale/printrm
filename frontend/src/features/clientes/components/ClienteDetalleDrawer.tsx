@@ -5,17 +5,21 @@ import { es } from 'date-fns/locale';
 import { Cliente } from '../types/clientes.types';
 import { useGetPedidos } from '../../pedidos/api/pedidos.api';
 import { useGetTransacciones } from '../../finanzas/api/finanzas.api';
+import { TransaccionDetalleModal } from '../../finanzas/components/TransaccionDetalleModal';
+import { Transaccion } from '../../finanzas/types/finanzas.types';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 interface ClienteDetalleDrawerProps {
   cliente: Cliente | null;
   isOpen: boolean;
   onClose: () => void;
+  onNavigateToPedido?: (pedidoId: string) => void;
 }
 
-export function ClienteDetalleDrawer({ cliente, isOpen, onClose }: ClienteDetalleDrawerProps) {
+export function ClienteDetalleDrawer({ cliente, isOpen, onClose, onNavigateToPedido }: ClienteDetalleDrawerProps) {
   const { data: pedidosData, isLoading: isLoadingPedidos, isError: isErrorPedidos, error: errorPedidos, refetch: refetchPedidos } = useGetPedidos(0, 10, cliente?.id);
   const { data: txData, isLoading: isLoadingTx, isError: isErrorTx, error: errorTx, refetch: refetchTx } = useGetTransacciones(0, 10, cliente?.id);
+  const [selectedTx, setSelectedTx] = React.useState<Transaccion | null>(null);
 
   if (!isOpen || !cliente) return null;
 
@@ -81,7 +85,11 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose }: ClienteDetall
             ) : (
               <div className="space-y-3">
                 {pedidos.map(pedido => (
-                  <div key={pedido.id} className="flex justify-between items-center p-3 rounded-lg border border-border bg-card hover:bg-muted/5 transition-colors">
+                  <div
+                    key={pedido.id}
+                    onClick={() => { onClose(); if (onNavigateToPedido) onNavigateToPedido(pedido.id); }}
+                    className="flex justify-between items-center p-3 rounded-lg border border-border bg-card hover:bg-muted/10 hover:border-primary/30 transition-all cursor-pointer"
+                  >
                     <div>
                       <p className="studio-body-strong">{format(new Date(pedido.fechaCreacion), 'dd MMM yyyy', { locale: es })}</p>
                       <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
@@ -121,15 +129,20 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose }: ClienteDetall
               <div className="space-y-3">
                 {transacciones.map(tx => (
                   <div key={tx.id} className="flex justify-between items-center p-3 rounded-lg border border-border bg-card hover:bg-muted/5 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${tx.tipo === 'INGRESO' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
-                        {tx.tipo === 'INGRESO' ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-full ${tx.tipo === 'INGRESO' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                          {tx.tipo === 'INGRESO' ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                        </div>
+                        <div>
+                          <p className="studio-body-strong">{tx.categoria}</p>
+                          <button
+                            onClick={() => setSelectedTx(tx)}
+                            className="text-xs text-muted-foreground truncate max-w-[200px] text-left hover:text-primary transition-colors"
+                          >
+                            {tx.descripcion}
+                          </button>
+                        </div>
                       </div>
-                      <div>
-                        <p className="studio-body-strong">{tx.categoria}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">{tx.descripcion}</p>
-                      </div>
-                    </div>
                     <div className="text-right">
                       <p className={`studio-body-strong ${tx.tipo === 'INGRESO' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         {tx.tipo === 'INGRESO' ? '+' : '-'}${tx.monto?.toLocaleString()}
@@ -144,6 +157,12 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose }: ClienteDetall
 
         </div>
       </div>
+
+      <TransaccionDetalleModal
+        tx={selectedTx!}
+        isOpen={!!selectedTx}
+        onClose={() => setSelectedTx(null)}
+      />
     </>
   );
 }

@@ -7,6 +7,8 @@ export interface Transaccion {
   categoria: CategoriaTransaccion;
   monto: number;
   descripcion: string;
+  cantidad?: number;
+  precioUnitario?: number;
   pedidoId?: string;
   grupoId?: string;
   productoId?: string;

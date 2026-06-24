@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { LoadingScreen } from './components/loading-screen'
 import { CalculadoraView } from './features/calculo/components/CalculadoraView'
 import { PerfilesDashboardView } from './features/perfiles/components/PerfilesDashboardView'
@@ -18,9 +18,26 @@ import { OnboardingWizard } from './features/onboarding/components/OnboardingWiz
 import { Toaster } from 'sonner'
 
 function App() {
+  const params = new URLSearchParams(window.location.search)
+  const isDesignLab = params.get('design_lab') === 'true'
+
+  if (isDesignLab) {
+    const DesignLabPage = React.lazy(() => import('../../.claude-design/lab/page').then(m => ({ default: m.DesignLabPage })))
+    return (
+      <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-background"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}>
+        <DesignLabPage />
+      </React.Suspense>
+    )
+  }
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
+  const navigateToPedidoRef = useRef<string | null>(null)
   const [showOnboarding, setShowOnboarding] = useState(false)
+
+  const handleNavigateToPedido = (pedidoId: string) => {
+    navigateToPedidoRef.current = pedidoId
+    setCurrentView('orders')
+  }
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
   const { data: onboarding, isFetched } = useOnboardingStatus()
 
@@ -29,6 +46,11 @@ function App() {
       setShowOnboarding(true)
     }
   }, [isFetched, onboarding])
+
+  // Clear pending pedido navigation when leaving orders view
+  useEffect(() => {
+    if (currentView !== 'orders') navigateToPedidoRef.current = null
+  }, [currentView])
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
@@ -67,9 +89,11 @@ function App() {
       case 'stock':
         return <ProductosGalleryView />
       case 'customers':
-        return <ClientesListView />
-      case 'orders':
-        return <PedidosListView />
+        return <ClientesListView onNavigateToPedido={handleNavigateToPedido} />
+      case 'orders': {
+        const pid = navigateToPedidoRef.current
+        return <PedidosListView key={pid || 'list'} initialPedidoId={pid} />
+      }
       case 'sales':
         return <VentasListView />
       case 'production':

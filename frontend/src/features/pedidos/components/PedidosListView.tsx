@@ -8,7 +8,7 @@ import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 
-export function PedidosListView() {
+export function PedidosListView({ initialPedidoId }: { initialPedidoId?: string | null }) {
   const [page, setPage] = React.useState(0);
   const { data, isLoading, error, refetch } = useGetPedidos(page, 10);
   const pedidos = data?.content;
@@ -16,8 +16,13 @@ export function PedidosListView() {
   const totalPages = pageObj?.totalPages ?? data?.totalPages ?? 0;
   const totalElements = pageObj?.totalElements ?? data?.totalElements ?? 0;
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(null);
+  const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(initialPedidoId ?? null);
   const [isCrearModalOpen, setIsCrearModalOpen] = React.useState(false);
+
+  // Sync prop changes after mount (e.g. navigating from client drawer)
+  React.useEffect(() => {
+    if (initialPedidoId) setSelectedPedidoId(initialPedidoId);
+  }, [initialPedidoId]);
 
   const filteredPedidos = React.useMemo(() => {
     if (!pedidos) return [];
@@ -194,6 +199,7 @@ export function PedidosListView() {
       <CrearPedidoModal
         isOpen={isCrearModalOpen}
         onClose={() => setIsCrearModalOpen(false)}
+        onCreated={(pedidoId) => setSelectedPedidoId(pedidoId)}
       />
     </div>
   );

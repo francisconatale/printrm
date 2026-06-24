@@ -68,7 +68,7 @@ public class VentaService {
         String cliente = pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Consumidor Final";
         String desc = descripcion != null
                 ? descripcion
-                : "Pago · $" + String.format("%.0f", monto) + " · " + cliente;
+                : "Pago · " + cliente;
         transaccionRepository.save(Transaccion.builder()
                 .tipo(Transaccion.TipoTransaccion.INGRESO)
                 .categoria(Transaccion.CategoriaTransaccion.VENTA)
@@ -83,7 +83,8 @@ public class VentaService {
         double saldoPendiente = pedido.getTotal() - pedido.getMontoPagado();
         if (saldoPendiente > 0) {
             String cliente = pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Consumidor Final";
-            registrarPago(pedido, saldoPendiente, "Saldo final · $" + String.format("%.0f", saldoPendiente) + " · " + cliente);
+            String orderRef = "Pedido #" + pedido.getId().toString().substring(0, 8).toUpperCase();
+            registrarPago(pedido, saldoPendiente, "Cobro al entregar · " + orderRef + " · " + cliente);
         }
     }
 
@@ -169,8 +170,6 @@ public class VentaService {
 
     private static Transaccion crearTransaccionIngreso(Producto producto, int cantidad, double precioUnitario,
                                                         double subtotal, UUID grupoId, String descBase) {
-        String montoStr = "$" + String.format("%.0f", subtotal);
-        String precioStr = "$" + String.format("%.0f", precioUnitario);
         return Transaccion.builder()
                 .tipo(Transaccion.TipoTransaccion.INGRESO)
                 .categoria(Transaccion.CategoriaTransaccion.VENTA)
@@ -179,7 +178,7 @@ public class VentaService {
                 .precioUnitario(precioUnitario)
                 .productoId(producto.getId())
                 .grupoId(grupoId)
-                .descripcion(descBase + " · " + cantidad + " × " + producto.getNombre() + " (" + precioStr + " c/u) · Total " + montoStr)
+                .descripcion(descBase + " · " + producto.getNombre())
                 .build();
     }
 

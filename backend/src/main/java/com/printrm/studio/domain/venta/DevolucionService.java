@@ -79,7 +79,6 @@ public class DevolucionService {
 
             productoService.updateStock(item.getProductoId().toString(), item.getCantidad());
 
-            String precioStr = "$" + String.format("%.0f", precioUnitario);
             transaccionRepository.save(Transaccion.builder()
                     .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
                     .categoria(Transaccion.CategoriaTransaccion.VENTA)
@@ -88,8 +87,7 @@ public class DevolucionService {
                     .precioUnitario(precioUnitario)
                     .productoId(item.getProductoId())
                     .grupoId(grupoId)
-                    .descripcion("↩ Devolución · " + item.getCantidad() + " × " + prodName
-                            + " (" + precioStr + " c/u) · Motivo: " + motivo)
+                    .descripcion("↩ Devolución: " + prodName)
                     .build());
 
             itemsDevueltos.add(DevolucionResponse.ItemDevuelto.builder()
@@ -162,7 +160,6 @@ public class DevolucionService {
             double subtotal = precioUnitario * item.getCantidad();
             totalReembolsado += subtotal;
 
-            String precioStr = "$" + String.format("%.0f", precioUnitario);
             transaccionRepository.save(Transaccion.builder()
                     .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
                     .categoria(Transaccion.CategoriaTransaccion.VENTA)
@@ -171,8 +168,7 @@ public class DevolucionService {
                     .precioUnitario(precioUnitario)
                     .productoId(item.getProductoId())
                     .pedidoId(pedido.getId())
-                    .descripcion("↩ Devolución · " + item.getCantidad() + " × " + itemPedido.getProducto().getNombre()
-                            + " (" + precioStr + " c/u) · Motivo: " + motivo)
+                    .descripcion("↩ Devolución: " + itemPedido.getProducto().getNombre())
                     .build());
 
             itemsDevueltos.add(DevolucionResponse.ItemDevuelto.builder()

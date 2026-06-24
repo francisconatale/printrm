@@ -3,9 +3,9 @@ import { useGetTransacciones, useGetBalance } from '../api/finanzas.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { format } from 'date-fns/format';
 import { es } from 'date-fns/locale/es';
-import { 
-  Search, 
-  Loader2, 
+import {
+  Search,
+  Loader2,
   Wallet,
   ReceiptText,
   Plus,
@@ -13,19 +13,20 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { TransactionForm } from './TransactionForm';
+import { TransaccionDetalleModal } from './TransaccionDetalleModal';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { Transaccion } from '../types/finanzas.types';
-
-type TransactionItem = 
-  | { isGroup: false; tx: Transaccion }
-  | { isGroup: true; id: string; txs: Transaccion[]; montoTotal: number; fecha: string; descripcion: string; categoria: string; tipo: 'INGRESO' | 'EGRESO' | 'REEMBOLSO' };
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
   const formatted = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(absValue);
   return value < 0 ? `- ${formatted}` : formatted;
 };
+
+type TransactionItem = 
+  | { isGroup: false; tx: Transaccion }
+  | { isGroup: true; id: string; txs: Transaccion[]; montoTotal: number; fecha: string; descripcion: string; categoria: string; tipo: 'INGRESO' | 'EGRESO' | 'REEMBOLSO' };
 
 export function TransaccionesView() {
   const [page, setPage] = React.useState(0);
@@ -39,6 +40,7 @@ export function TransaccionesView() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({});
+  const [selectedTx, setSelectedTx] = React.useState<Transaccion | null>(null);
 
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
@@ -202,9 +204,20 @@ export function TransaccionesView() {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-sm studio-body-strong text-foreground">
-                              {item.isGroup ? item.descripcion : item.tx.descripcion}
-                              {item.isGroup && <span className="ml-2 text-[10px] text-muted-foreground font-normal">({item.txs.length} items)</span>}
+                            <td className="px-6 py-4">
+                              {item.isGroup ? (
+                                <span className="text-sm studio-body-strong text-foreground">
+                                  {item.descripcion}
+                                  <span className="ml-2 text-[10px] text-muted-foreground font-normal">({item.txs.length} items)</span>
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setSelectedTx(item.tx); }}
+                                  className="text-sm studio-body-strong text-foreground text-left hover:text-primary transition-colors"
+                                >
+                                  {item.tx.descripcion}
+                                </button>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
@@ -288,6 +301,12 @@ export function TransaccionesView() {
       <TransactionForm 
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
+      />
+
+      <TransaccionDetalleModal
+        tx={selectedTx!}
+        isOpen={!!selectedTx}
+        onClose={() => setSelectedTx(null)}
       />
     </div>
   );

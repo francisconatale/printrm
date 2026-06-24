@@ -11,7 +11,11 @@ import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { ClienteDetalleDrawer } from './ClienteDetalleDrawer';
 
-export function ClientesListView() {
+interface ClientesListViewProps {
+  onNavigateToPedido?: (pedidoId: string) => void;
+}
+
+export function ClientesListView({ onNavigateToPedido }: ClientesListViewProps) {
   const [page, setPage] = React.useState(0);
   const { data, isLoading, isError, error, refetch } = useGetClientes(page, 10);
   const clientes = data?.content;
@@ -248,6 +252,7 @@ export function ClientesListView() {
         cliente={selectedCliente}
         isOpen={!!selectedCliente}
         onClose={() => setSelectedCliente(null)}
+        onNavigateToPedido={onNavigateToPedido}
       />
     </div>
   );

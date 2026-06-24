@@ -8,6 +8,8 @@ import { es } from 'date-fns/locale/es';
 import { PedidoDetalleView } from '../../pedidos/components/PedidoDetalleView';
 import { CrearVentaModal } from './CrearVentaModal';
 import { DevolucionVentaModal } from './DevolucionVentaModal';
+import { TransaccionDetalleModal } from '../../finanzas/components/TransaccionDetalleModal';
+import { Transaccion } from '../../finanzas/types/finanzas.types';
 
 export function VentasListView() {
   const [page, setPage] = React.useState(0);
@@ -15,6 +17,7 @@ export function VentasListView() {
   const [isCrearVentaOpen, setIsCrearVentaOpen] = React.useState(false);
   const [returnGrupoId, setReturnGrupoId] = React.useState<string | null>(null);
   const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(null);
+  const [selectedTx, setSelectedTx] = React.useState<Transaccion | null>(null);
 
   // Fetch all transactions
   const { data, isLoading, error, refetch } = useGetTransacciones(page, 500);
@@ -140,11 +143,16 @@ export function VentasListView() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {format(new Date(tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold flex items-center gap-2">
-                        {isRefund && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-1.5 py-0.5 rounded shrink-0">Dev.</span>
-                        )}
-                        <span className={isRefund ? 'text-destructive' : 'text-foreground'}>{tx.descripcion}</span>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setSelectedTx(tx); }}
+                          className="text-sm font-semibold flex items-center gap-2 text-left hover:text-primary transition-colors"
+                        >
+                          {isRefund && (
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-destructive bg-destructive/10 px-1.5 py-0.5 rounded shrink-0">Dev.</span>
+                          )}
+                          <span className={isRefund ? 'text-destructive' : 'text-foreground'}>{tx.descripcion}</span>
+                        </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <span className="text-[10px] font-mono text-muted-foreground bg-muted/20 px-2 py-0.5 rounded-md border border-border/50">
@@ -190,6 +198,12 @@ export function VentasListView() {
         isOpen={!!returnGrupoId}
         grupoId={returnGrupoId || ''}
         onClose={() => { setReturnGrupoId(null); refetch(); }}
+      />
+
+      <TransaccionDetalleModal
+        tx={selectedTx!}
+        isOpen={!!selectedTx}
+        onClose={() => setSelectedTx(null)}
       />
     </div>
   );

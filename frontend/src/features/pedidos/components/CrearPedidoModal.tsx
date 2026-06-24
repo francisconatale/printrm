@@ -10,6 +10,7 @@ import { Trash2, AlertCircle, User, Box, Search, CheckCircle2 } from 'lucide-rea
 interface CrearPedidoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: (pedidoId: string) => void;
 }
 
 interface ItemFormState {
@@ -18,7 +19,7 @@ interface ItemFormState {
   cantidad: number;
 }
 
-export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
+export function CrearPedidoModal({ isOpen, onClose, onCreated }: CrearPedidoModalProps) {
   const { data: clientesData } = useGetClientes(0, 200);
   const { data: productosData } = useGetProductos(0, 200);
   const clientes = clientesData?.content || [];
@@ -84,11 +85,11 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         }))
       },
       {
-        onSuccess: () => {
+        onSuccess: (created) => {
           onClose();
-          // Reset states on success
           setClienteId('');
           setItems([]);
+          if (created?.id && onCreated) onCreated(created.id);
         },
         onError: (err: any) => {
           setError('Error al crear el pedido: ' + (err.response?.data?.message || err.message));
