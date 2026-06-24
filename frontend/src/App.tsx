@@ -6,7 +6,8 @@ import { PiezasGalleryView } from './features/biblioteca/components/PiezasGaller
 import { ClientesListView } from './features/clientes/components/ClientesListView'
 import { PedidosListView } from './features/pedidos/components/PedidosListView'
 import { ProductosGalleryView } from './features/stock/components/ProductosGalleryView'
-import { LibroDiarioView } from './features/finanzas/components/LibroDiarioView'
+import { FinanzasDashboardView } from './features/finanzas/components/FinanzasDashboardView'
+import { TransaccionesView } from './features/finanzas/components/TransaccionesView'
 import { AgendaProduccionView } from './features/produccion/components/AgendaProduccionView'
 import { AppShell } from './components/layout/app-shell'
 import { Sidebar, ViewType } from './components/layout/sidebar'
@@ -14,7 +15,6 @@ import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
 import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
 import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
-import { LabPage } from '../../.claude-design/lab/page'
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
@@ -28,10 +28,6 @@ function App() {
       setShowOnboarding(true)
     }
   }, [isFetched, onboarding])
-
-  if (new URLSearchParams(window.location.search).get('design_lab') === 'true') {
-    return <LabPage />
-  }
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
@@ -77,7 +73,9 @@ function App() {
         return <AgendaProduccionView />
       case 'finance':
       case 'dashboard':
-        return <LibroDiarioView />
+        return <FinanzasDashboardView />
+      case 'transactions':
+        return <TransaccionesView />
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>
     }

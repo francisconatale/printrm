@@ -2,7 +2,7 @@ import React from 'react';
 import { useCreateOrdenIndependiente } from '../api/produccion.api';
 import { useGetProductos } from '../../stock/api/productos.api';
 import { Modal } from '../../../components/ui/modal';
-import { ProfileSelect } from '../../../components/ui/profile-select';
+import { SearchableSelect } from '../../../components/ui/searchable-select';
 import { AlertCircle, Package } from 'lucide-react';
 
 interface CrearOrdenIndependienteModalProps {
@@ -72,7 +72,7 @@ export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenInde
           <label className="studio-caption font-semibold flex items-center gap-2">
             <Package size={14} /> Producto *
           </label>
-          <ProfileSelect
+          <SearchableSelect
             placeholder="Seleccionar Producto..."
             emptyLabel="Seleccionar Producto..."
             value={productoId}

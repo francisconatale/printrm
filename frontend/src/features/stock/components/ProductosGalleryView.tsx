@@ -11,6 +11,9 @@ import { EditarProductoModal } from './EditarProductoModal';
 import { AgregarStockModal } from './AgregarStockModal';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 
+import { VentaModal } from '../../ventas/components/VentaModal';
+import { HistorialVentasModal } from '../../ventas/components/HistorialVentasModal';
+
 import { ProductoCard } from './ProductoCard';
 
 export function ProductosGalleryView() {
@@ -25,6 +28,8 @@ export function ProductosGalleryView() {
   const [deleteProductId, setDeleteProductId] = React.useState<string | null>(null);
   const [editProducto, setEditProducto] = React.useState<Producto | null>(null);
   const [addStockProducto, setAddStockProducto] = React.useState<Producto | null>(null);
+  const [sellProducto, setSellProducto] = React.useState<Producto | null>(null);
+  const [showHistorial, setShowHistorial] = React.useState(false);
 
   const filteredProductos = React.useMemo(() => {
     if (!productos) return [];
@@ -67,6 +72,12 @@ export function ProductosGalleryView() {
                   className="w-full bg-muted/30 dark:bg-muted/15 border border-border/60 rounded-full pl-10 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 />
               </div>
+              <button
+                onClick={() => setShowHistorial(true)}
+                className="studio-button-secondary-pill flex items-center gap-2"
+              >
+                <span>Historial Ventas</span>
+              </button>
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="studio-button-primary flex items-center gap-2"
@@ -95,6 +106,7 @@ export function ProductosGalleryView() {
                     onDelete={(id) => setDeleteProductId(id)}
                     onEdit={(p) => setEditProducto(p)}
                     onAddStock={(p) => setAddStockProducto(p)}
+                    onSell={(p) => setSellProducto(p)}
                   />
                 ))}
               </div>
@@ -157,6 +169,19 @@ export function ProductosGalleryView() {
           producto={addStockProducto}
         />
       )}
+
+      {sellProducto && (
+        <VentaModal
+          isOpen={true}
+          onClose={() => setSellProducto(null)}
+          producto={sellProducto}
+        />
+      )}
+
+      <HistorialVentasModal
+        isOpen={showHistorial}
+        onClose={() => setShowHistorial(false)}
+      />
 
       <ConfirmModal
         isOpen={deleteProductId !== null}

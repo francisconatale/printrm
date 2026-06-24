@@ -1,4 +1,4 @@
-package com.printrm.studio.domain.pedidos;
+package com.printrm.studio.domain.venta;
 
 import com.printrm.studio.domain.finanzas.Transaccion;
 import com.printrm.studio.domain.finanzas.TransaccionRepository;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,48 +40,53 @@ public class VentaServiceIntegrationTest {
     private TransaccionRepository transaccionRepository;
 
     private Producto producto;
+    private UUID productoId;
 
     @BeforeEach
     public void setUp() {
         producto = testDataFactory.crearProductoVacio(300.0);
-        
-        // Add initial stock via updateStock or addStock
+        productoId = producto.getId();
         productoService.addStock(producto.getId(), 10, 150.0);
     }
 
     @Test
     @DisplayName("Debe registrar la venta correctamente descontando stock y registrando transacción de ingreso")
     public void testRegistrarVentaExitoso() {
-        UUID pedidoId = UUID.randomUUID();
-        int stockInicial = productoRepository.findById(producto.getId()).get().getCantidadStock();
+        int stockInicial = productoRepository.findById(productoId).get().getCantidadStock();
         assertEquals(10, stockInicial);
 
-        ventaService.registrarVenta(producto.getId(), 3, 300.0, pedidoId);
+        VentaRequest request = new VentaRequest();
+        VentaRequest.ItemVenta item = new VentaRequest.ItemVenta();
+        item.setProductoId(productoId);
+        item.setCantidad(3);
+        request.setItems(List.of(item));
 
-        // Verificar stock descontado
-        Producto productoActualizado = productoRepository.findById(producto.getId()).orElse(null);
+        VentaResponse response = ventaService.registrar(request);
+
+        assertNotNull(response.getGrupoId());
+        assertEquals(900.0, response.getTotal());
+
+        Producto productoActualizado = productoRepository.findById(productoId).orElse(null);
         assertNotNull(productoActualizado);
         assertEquals(7, productoActualizado.getCantidadStock());
 
-        // Verificar transacción registrada
-        List<Transaccion> transacciones = transaccionRepository.findByTipo(Transaccion.TipoTransaccion.INGRESO);
-        Transaccion ventaTx = transacciones.stream()
-                .filter(t -> t.getCategoria() == Transaccion.CategoriaTransaccion.VENTA 
-                        && t.getPedidoId() != null 
-                        && t.getPedidoId().equals(pedidoId))
-                .findFirst().orElse(null);
-
-        assertNotNull(ventaTx);
-        assertEquals(900.0, ventaTx.getMonto());
-        assertTrue(ventaTx.getDescripcion().contains("Producto Vacio"));
+        List<Transaccion> transacciones = transaccionRepository.findByGrupoIdAndTipo(
+                UUID.fromString(response.getGrupoId()), Transaccion.TipoTransaccion.INGRESO);
+        assertEquals(1, transacciones.size());
+        assertEquals(900.0, transacciones.get(0).getMonto());
     }
 
     @Test
     @DisplayName("Debe fallar al registrar venta si no hay stock suficiente")
     public void testRegistrarVentaStockInsuficiente() {
-        UUID pedidoId = UUID.randomUUID();
+        VentaRequest request = new VentaRequest();
+        VentaRequest.ItemVenta item = new VentaRequest.ItemVenta();
+        item.setProductoId(productoId);
+        item.setCantidad(15);
+        request.setItems(List.of(item));
+
         assertThrows(RuntimeException.class, () -> {
-            ventaService.registrarVenta(producto.getId(), 15, 300.0, pedidoId);
+            ventaService.registrar(request);
         });
     }
 }

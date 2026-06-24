@@ -29,15 +29,15 @@ export function PaginationBar({ page, totalPages, totalElements, size, onPageCha
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-t border-border">
-      <p className="text-xs text-muted-foreground">
-        {startItem}–{endItem} de {totalElements}
+    <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-6 border-t border-border gap-4 sm:gap-0">
+      <p className="text-xs text-muted-foreground font-medium">
+        Mostrando {startItem}–{endItem} de {totalElements}
       </p>
-      <div className="flex items-center gap-1">
+      <div className="inline-flex items-center gap-1.5 p-1 bg-muted/40 backdrop-blur-md rounded-full border border-border/60 shadow-sm">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 0}
-          className="p-1.5 rounded-lg hover:bg-muted/30 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-background transition-all disabled:opacity-30 disabled:pointer-events-none"
           aria-label="Página anterior"
         >
           <ChevronLeft size={16} />
@@ -46,10 +46,10 @@ export function PaginationBar({ page, totalPages, totalElements, size, onPageCha
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`min-w-[32px] h-8 rounded-lg text-xs font-medium transition-colors ${
+            className={`w-8 h-8 rounded-full text-sm font-semibold transition-all ${
               p === page
-                ? 'bg-foreground text-background'
-                : 'text-muted-foreground hover:bg-muted/30'
+                ? 'bg-foreground text-background shadow-md'
+                : 'text-muted-foreground hover:text-foreground hover:bg-background'
             }`}
           >
             {p + 1}
@@ -58,7 +58,7 @@ export function PaginationBar({ page, totalPages, totalElements, size, onPageCha
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages - 1}
-          className="p-1.5 rounded-lg hover:bg-muted/30 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+          className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-background transition-all disabled:opacity-30 disabled:pointer-events-none"
           aria-label="Página siguiente"
         >
           <ChevronRight size={16} />

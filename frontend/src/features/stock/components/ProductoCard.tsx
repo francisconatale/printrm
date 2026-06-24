@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Producto } from '../types/stock.types';
-import { Plus, Minus, MoreVertical, Trash2, ListFilter, PackageOpen, Edit3 } from 'lucide-react';
+import { Plus, Minus, MoreVertical, Trash2, ListFilter, PackageOpen, Edit3, ShoppingCart } from 'lucide-react';
 import { useUpdateStock } from '../api/productos.api';
 import {
   DropdownMenu,
@@ -15,13 +15,14 @@ interface ProductoCardProps {
   onDelete: (id: string) => void;
   onEdit?: (producto: Producto) => void;
   onAddStock?: (producto: Producto) => void;
+  onSell?: (producto: Producto) => void;
 }
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete, onEdit, onAddStock }) => {
+export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete, onEdit, onAddStock, onSell }) => {
   const { mutate: updateStock } = useUpdateStock();
   const [isLotesModalOpen, setIsLotesModalOpen] = useState(false);
   
@@ -105,6 +106,14 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete, 
             title="Disminuir stock"
           >
             <Minus size={16} />
+          </button>
+          <button
+            onClick={() => onSell?.(producto)}
+            disabled={producto.cantidadStock <= 0}
+            className="p-1.5 text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-md transition-colors duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            title={producto.cantidadStock > 0 ? "Vender" : "Sin stock"}
+          >
+            <ShoppingCart size={16} />
           </button>
           <button 
             onClick={() => onAddStock ? onAddStock(producto) : updateStock({ id: producto.id, delta: 1 })}

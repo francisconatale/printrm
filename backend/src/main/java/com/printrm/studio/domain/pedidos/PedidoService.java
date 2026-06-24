@@ -33,7 +33,7 @@ public class PedidoService {
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
     private final OrdenProduccionRepository ordenProduccionRepository;
-    private final VentaService ventaService;
+    private final com.printrm.studio.domain.venta.VentaService ventaService;
     private final PedidoMapper mapper;
 
     @Transactional
@@ -159,7 +159,7 @@ public class PedidoService {
             
             if (item.getProducto() != null && cantidadRequerida > 0) {
                 productoService.validarStockDisponible(item.getProducto(), cantidadRequerida);
-                ventaService.registrarConsumoStock(item.getProducto().getId(), cantidadRequerida);
+                productoService.updateStock(item.getProducto().getId().toString(), -cantidadRequerida);
                 
                 item.setCantidadEntregada(cantidadTotal);
                 itemRepository.save(item);
@@ -187,7 +187,8 @@ public class PedidoService {
         if (!algunaUnidadDevuelta && pedido.getEstado() == Pedido.EstadoPedido.DEVUELTO) {
             throw new IllegalStateException("Este pedido ya fue devuelto.");
         }
-        ventaService.registrarReembolso(pedido);
+        double totalReembolso = pedido.getMontoPagado() != null ? pedido.getMontoPagado() : 0;
+        ventaService.registrarReembolso(pedido.getId(), totalReembolso, "Reembolso por pedido cancelado/devuelto");
     }
 
     @Transactional

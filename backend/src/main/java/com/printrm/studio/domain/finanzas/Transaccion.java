@@ -21,6 +21,8 @@ public class Transaccion {
     private CategoriaTransaccion categoria;
 
     private Double monto;
+    private Integer cantidad;
+    private Double precioUnitario;
 
     private String descripcion;
     private UUID pedidoId;

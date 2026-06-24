@@ -7,8 +7,7 @@ import {
   Percent, 
   Loader2, 
   AlertCircle,
-  HelpCircle,
-  Plus
+  HelpCircle
 } from 'lucide-react';
 import { format, subMonths, parseISO, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale/es';
@@ -347,15 +346,6 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
             </div>
           )}
 
-          <div className="border-t border-border/50 pt-4 flex justify-between items-center text-xs text-muted-foreground">
-            <span>¿Registraste un gasto externo?</span>
-            <button
-              onClick={onOpenNewTransaction}
-              className="flex items-center gap-1 text-foreground hover:underline font-semibold active:scale-95 transition-all"
-            >
-              <Plus size={14} /> Registrar Gasto
-            </button>
-          </div>
 
         </div>
 
