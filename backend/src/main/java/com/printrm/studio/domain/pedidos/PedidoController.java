@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +21,15 @@ public class PedidoController {
     @GetMapping
     public Page<PedidoResponseDTO> getAll(
             @PageableDefault(size = 20) Pageable pageable,
-            @RequestParam(required = false) String clienteId) {
+            @RequestParam(required = false) String clienteId,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta) {
+        LocalDateTime desde = fechaDesde != null ? LocalDateTime.parse(fechaDesde) : null;
+        LocalDateTime hasta = fechaHasta != null ? LocalDateTime.parse(fechaHasta) : null;
         if (clienteId != null && !clienteId.isBlank()) {
-            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable);
+            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable, desde, hasta);
         }
-        return service.getAll(pageable);
+        return service.getAll(pageable, desde, hasta);
     }
 
     @GetMapping("/{id}")

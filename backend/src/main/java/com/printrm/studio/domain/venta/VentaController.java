@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,8 +21,12 @@ public class VentaController {
     }
 
     @GetMapping
-    public List<VentaResponse> listar() {
-        return service.listar();
+    public List<VentaResponse> listar(
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta) {
+        LocalDateTime desde = fechaDesde != null ? LocalDateTime.parse(fechaDesde) : null;
+        LocalDateTime hasta = fechaHasta != null ? LocalDateTime.parse(fechaHasta) : null;
+        return service.listar(desde, hasta);
     }
 
     @PostMapping("/{grupoId}/devolucion")

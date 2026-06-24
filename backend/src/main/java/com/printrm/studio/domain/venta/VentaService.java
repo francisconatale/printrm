@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,9 +32,15 @@ public class VentaService {
         return buildResponse(request, grupoId, items);
     }
 
-    public List<VentaResponse> listar() {
-        List<Transaccion> transacciones = transaccionRepository
-                .findByTipoAndCategoriaOrderByFechaDesc(Transaccion.TipoTransaccion.INGRESO, Transaccion.CategoriaTransaccion.VENTA);
+    public List<VentaResponse> listar(LocalDateTime fechaDesde, LocalDateTime fechaHasta) {
+        List<Transaccion> transacciones;
+        if (fechaDesde != null && fechaHasta != null) {
+            transacciones = transaccionRepository
+                    .findByTipoAndCategoriaAndFechaBetweenOrderByFechaDesc(Transaccion.TipoTransaccion.INGRESO, Transaccion.CategoriaTransaccion.VENTA, fechaDesde, fechaHasta);
+        } else {
+            transacciones = transaccionRepository
+                    .findByTipoAndCategoriaOrderByFechaDesc(Transaccion.TipoTransaccion.INGRESO, Transaccion.CategoriaTransaccion.VENTA);
+        }
 
         Map<UUID, List<Transaccion>> agrupadas = transacciones.stream()
                 .filter(t -> t.getGrupoId() != null)

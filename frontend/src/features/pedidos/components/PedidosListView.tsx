@@ -8,10 +8,13 @@ import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { fmtDateTime } from '../../../lib/date-utils';
+import { DateRangePicker, useDateRange } from '../../../components/ui/date-range-picker';
 
 export function PedidosListView({ initialPedidoId }: { initialPedidoId?: string | null }) {
   const [page, setPage] = React.useState(0);
-  const { data, isLoading, error, refetch } = useGetPedidos(page, 10);
+  const dateRangeHook = useDateRange();
+  const { fechaDesde, fechaHasta, dateRange, setRange } = dateRangeHook;
+  const { data, isLoading, error, refetch } = useGetPedidos(page, 10, undefined, fechaDesde, fechaHasta);
   const pedidos = data?.content;
   const pageObj = data?.page;
   const totalPages = pageObj?.totalPages ?? data?.totalPages ?? 0;
@@ -64,7 +67,14 @@ export function PedidosListView({ initialPedidoId }: { initialPedidoId?: string 
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <div className="relative w-full sm:w-80">
+              <DateRangePicker
+                value={dateRange}
+                onChange={(range) => {
+                  setRange(range);
+                  setPage(0);
+                }}
+              />
+              <div className="relative w-full sm:w-72">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                 <label htmlFor="search-pedidos" className="sr-only">Buscar pedido</label>
                 <input

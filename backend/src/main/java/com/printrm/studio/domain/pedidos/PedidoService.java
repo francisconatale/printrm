@@ -279,7 +279,11 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PedidoResponseDTO> getAll(Pageable pageable) {
+    public Page<PedidoResponseDTO> getAll(Pageable pageable, LocalDateTime fechaDesde, LocalDateTime fechaHasta) {
+        if (fechaDesde != null && fechaHasta != null) {
+            return repository.findByFechaCreacionBetween(fechaDesde, fechaHasta, pageable)
+                    .map(mapper::toDto);
+        }
         return repository.findAll(pageable)
                 .map(mapper::toDto);
     }
@@ -292,7 +296,11 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PedidoResponseDTO> getByCliente(UUID clienteId, Pageable pageable) {
+    public Page<PedidoResponseDTO> getByCliente(UUID clienteId, Pageable pageable, LocalDateTime fechaDesde, LocalDateTime fechaHasta) {
+        if (fechaDesde != null && fechaHasta != null) {
+            return repository.findByClienteIdAndFechaCreacionBetween(clienteId, fechaDesde, fechaHasta, pageable)
+                    .map(mapper::toDto);
+        }
         return repository.findByClienteId(clienteId, pageable)
                 .map(mapper::toDto);
     }

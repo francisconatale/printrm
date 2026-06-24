@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,7 +18,10 @@ public class TransaccionService {
         return repository.findAll();
     }
 
-    public Page<Transaccion> getAll(Pageable pageable) {
+    public Page<Transaccion> getAll(Pageable pageable, LocalDateTime fechaDesde, LocalDateTime fechaHasta) {
+        if (fechaDesde != null && fechaHasta != null) {
+            return repository.findByFechaBetween(fechaDesde, fechaHasta, pageable);
+        }
         return repository.findAll(pageable);
     }
 
@@ -52,7 +56,10 @@ public class TransaccionService {
         }
     }
 
-    public Page<Transaccion> getByCliente(java.util.UUID clienteId, Pageable pageable) {
+    public Page<Transaccion> getByCliente(java.util.UUID clienteId, Pageable pageable, LocalDateTime fechaDesde, LocalDateTime fechaHasta) {
+        if (fechaDesde != null && fechaHasta != null) {
+            return repository.findByClienteIdAndFechaBetween(clienteId, fechaDesde, fechaHasta, pageable);
+        }
         return repository.findByClienteId(clienteId, pageable);
     }
 }

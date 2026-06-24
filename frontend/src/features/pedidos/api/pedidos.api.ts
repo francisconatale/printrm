@@ -6,11 +6,12 @@ import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/pedidos';
 
-export const useGetPedidos = (page = 0, size = 20, clienteId?: string) => {
+export const useGetPedidos = (page = 0, size = 20, clienteId?: string, fechaDesde?: string, fechaHasta?: string) => {
   return useQuery<PaginatedResponse<Pedido>>({
-    queryKey: ['pedidos', page, size, clienteId],
+    queryKey: ['pedidos', page, size, clienteId, fechaDesde, fechaHasta],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL, { params: { page, size, clienteId } });
+      const params: Record<string, string | number | undefined> = { page, size, clienteId, fechaDesde, fechaHasta };
+      const { data } = await axios.get(API_URL, { params });
       return data;
     }
   });

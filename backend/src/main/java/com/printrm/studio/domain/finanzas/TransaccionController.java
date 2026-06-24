@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,11 +24,15 @@ public class TransaccionController {
     @GetMapping
     public Page<Transaccion> getAll(
             @PageableDefault(size = 20) Pageable pageable,
-            @RequestParam(required = false) String clienteId) {
+            @RequestParam(required = false) String clienteId,
+            @RequestParam(required = false) String fechaDesde,
+            @RequestParam(required = false) String fechaHasta) {
+        LocalDateTime desde = fechaDesde != null ? LocalDateTime.parse(fechaDesde) : null;
+        LocalDateTime hasta = fechaHasta != null ? LocalDateTime.parse(fechaHasta) : null;
         if (clienteId != null && !clienteId.isBlank()) {
-            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable);
+            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable, desde, hasta);
         }
-        return service.getAll(pageable);
+        return service.getAll(pageable, desde, hasta);
     }
 
     @GetMapping("/balance")

@@ -21,11 +21,12 @@ export const useRegistrarVenta = () => {
   });
 };
 
-export const useGetVentas = () => {
+export const useGetVentas = (fechaDesde?: string, fechaHasta?: string) => {
   return useQuery<VentaResponse[]>({
-    queryKey: ['ventas'],
+    queryKey: ['ventas', fechaDesde, fechaHasta],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const params: Record<string, string | undefined> = { fechaDesde, fechaHasta };
+      const { data } = await axios.get(API_URL, { params });
       return data;
     }
   });

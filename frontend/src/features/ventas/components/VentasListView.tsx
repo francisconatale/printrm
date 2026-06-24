@@ -9,6 +9,7 @@ import { CrearVentaModal } from './CrearVentaModal';
 import { DevolucionVentaModal } from './DevolucionVentaModal';
 import { TransaccionDetalleModal } from '../../finanzas/components/TransaccionDetalleModal';
 import { Transaccion } from '../../finanzas/types/finanzas.types';
+import { DateRangePicker, useDateRange } from '../../../components/ui/date-range-picker';
 
 export function VentasListView() {
   const [page, setPage] = React.useState(0);
@@ -17,9 +18,11 @@ export function VentasListView() {
   const [returnGrupoId, setReturnGrupoId] = React.useState<string | null>(null);
   const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(null);
   const [selectedTx, setSelectedTx] = React.useState<Transaccion | null>(null);
+  const dateRangeHook = useDateRange();
+  const { fechaDesde, fechaHasta, dateRange, setRange } = dateRangeHook;
 
   // Fetch all transactions
-  const { data, isLoading, error, refetch } = useGetTransacciones(page, 500);
+  const { data, isLoading, error, refetch } = useGetTransacciones(page, 500, undefined, fechaDesde, fechaHasta);
 
   // Filter SALES transactions (both income and refunds)
   const ventas = useMemo(() => {
@@ -60,7 +63,14 @@ export function VentasListView() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <div className="relative w-full sm:w-80">
+              <DateRangePicker
+                value={dateRange}
+                onChange={(range) => {
+                  setRange(range);
+                  setPage(0);
+                }}
+              />
+              <div className="relative w-full sm:w-72">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} aria-hidden="true" />
                 <label htmlFor="search-clientes" className="sr-only">Buscar clientes</label>
                 <input

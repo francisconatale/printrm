@@ -23,5 +23,12 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, UUID> 
 
     @Query("SELECT t FROM Transaccion t WHERE t.pedidoId IN (SELECT p.id FROM Pedido p WHERE p.cliente.id = :clienteId) ORDER BY t.fecha DESC")
     Page<Transaccion> findByClienteId(@Param("clienteId") UUID clienteId, Pageable pageable);
+
+    Page<Transaccion> findByFechaBetween(LocalDateTime desde, LocalDateTime hasta, Pageable pageable);
+
+    @Query("SELECT t FROM Transaccion t WHERE t.pedidoId IN (SELECT p.id FROM Pedido p WHERE p.cliente.id = :clienteId) AND t.fecha BETWEEN :desde AND :hasta ORDER BY t.fecha DESC")
+    Page<Transaccion> findByClienteIdAndFechaBetween(@Param("clienteId") UUID clienteId, @Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta, Pageable pageable);
+
+    List<Transaccion> findByTipoAndCategoriaAndFechaBetweenOrderByFechaDesc(Transaccion.TipoTransaccion tipo, Transaccion.CategoriaTransaccion categoria, LocalDateTime desde, LocalDateTime hasta);
 }
 
