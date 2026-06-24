@@ -4,13 +4,14 @@ import {
   Printer, Sliders, Hammer, ArrowLeftRight, Pin, PinOff, ShoppingBag
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useOnboardingStatus } from '../../features/onboarding/hooks/useOnboarding';
 
 export type ViewType = 'dashboard' | 'calculator' | 'transactions' | 'finance' | 'customers' | 'inventory' | 'stock' | 'orders' | 'sales' | 'reports' | 'profiles' | 'production';
 
 const NAV_ITEMS = [
   { icon: Printer,        label: 'Cotizador',       id: 'calculator' },
-  { icon: Package,        label: 'Biblioteca STL',  id: 'inventory' },
-  { icon: List,           label: 'Catálogo Stock',  id: 'stock' },
+  { icon: Package,        label: 'Biblioteca',  id: 'inventory' },
+  { icon: List,           label: 'Catálogo',  id: 'stock' },
   { icon: ArrowUpDown,    label: 'Pedidos',         id: 'orders' },
   { icon: ShoppingBag,    label: 'Ventas',          id: 'sales' },
   { icon: Hammer,         label: 'Producción',      id: 'production' },
@@ -29,6 +30,7 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
   const [pinned, setPinned] = useState(false);
   const [hovered, setHovered] = useState(false);
   const expanded = pinned || hovered;
+  const { data: onboarding } = useOnboardingStatus();
 
   return (
     <nav
@@ -41,31 +43,16 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Logo + pin */}
-      <div className="flex items-center px-3 mb-6 h-10 shrink-0">
-        <div className="size-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground text-[11px] font-black shrink-0 shadow-sm">
-          P
-        </div>
-        <div
-          className="flex items-center justify-between flex-1 ml-2.5"
-          style={{
-            opacity: expanded ? 1 : 0,
-            transform: expanded ? 'translateX(0)' : 'translateX(-6px)',
-            transition: 'opacity 180ms ease, transform 180ms ease',
-            transitionDelay: expanded ? '80ms' : '0ms',
-            pointerEvents: expanded ? 'auto' : 'none',
-          }}
+      {/* Pin toggle */}
+      <div className="flex justify-end px-3 mb-6 h-10 shrink-0">
+        <button
+          onClick={() => setPinned(p => !p)}
+          aria-label={pinned ? 'Desanclar sidebar' : 'Anclar sidebar'}
+          title={pinned ? 'Desanclar sidebar' : 'Anclar sidebar'}
+          className="size-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/[0.06] transition-colors shrink-0"
         >
-          <span className="text-sm font-bold text-foreground tracking-tight whitespace-nowrap">PrintRM</span>
-          <button
-            onClick={() => setPinned(p => !p)}
-            aria-label={pinned ? 'Desanclar sidebar' : 'Anclar sidebar'}
-            title={pinned ? 'Desanclar sidebar' : 'Anclar sidebar'}
-            className="size-7 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/[0.06] transition-colors shrink-0"
-          >
-            {pinned ? <PinOff size={13} /> : <Pin size={13} />}
-          </button>
-        </div>
+          {pinned ? <PinOff size={13} /> : <Pin size={13} />}
+        </button>
       </div>
 
       {/* Nav items */}
@@ -131,7 +118,12 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
       <div className="px-2.5 mt-3 pt-3 border-t border-border/50 shrink-0">
         <div className="flex items-center gap-3 px-2 py-1.5">
           <div className="size-8 rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary shrink-0">
-            FB
+            {onboarding?.nombreUsuario
+              ?.split(' ')
+              .filter(Boolean)
+              .slice(0, 2)
+              .map(w => w[0].toUpperCase())
+              .join('') || '?'}
           </div>
           <div
             style={{
@@ -143,10 +135,24 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
               overflow: 'hidden',
             }}
           >
-            <p className="text-[12px] font-semibold text-foreground leading-none whitespace-nowrap">Francisco B.</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">Admin</p>
+            <p className="text-[12px] font-semibold text-foreground leading-none whitespace-nowrap">{onboarding?.nombreUsuario || 'Usuario'}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">{onboarding?.nombreEmprendimiento || 'Emprendimiento'}</p>
           </div>
         </div>
+      </div>
+
+      {/* Dev footer */}
+      <div className="px-2.5 mt-2 pt-2 border-t border-border/50">
+        <p
+          className="text-[9px] text-muted-foreground/40 text-center whitespace-nowrap"
+          style={{
+            opacity: expanded ? 1 : 0,
+            transition: 'opacity 180ms ease',
+            transitionDelay: expanded ? '80ms' : '0ms',
+          }}
+        >
+          Desarrollado por HITLABS
+        </p>
       </div>
     </nav>
   );

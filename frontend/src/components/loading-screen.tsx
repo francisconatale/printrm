@@ -16,7 +16,7 @@ export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
         
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            PrintRM Studio
+            Printly
           </h2>
           <p className="text-sm text-muted-foreground">
             {error ? (

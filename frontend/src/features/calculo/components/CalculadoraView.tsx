@@ -3,8 +3,6 @@ import { toast } from 'sonner'
 
 
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav'
-import { PerfilForm } from '../../perfiles/components/PerfilForm'
-import { Modal } from '../../../components/ui/modal'
 import { ResultadoPanel } from '../components/ResultadoPanel'
 import { STLUpload } from '../components/STLUpload'
 import { CalculadoraConfigSelector } from '../components/CalculadoraConfigSelector'
@@ -12,15 +10,12 @@ import { CalculationSuccessModal } from '../components/CalculationSuccessModal'
 import { useCalculo } from '../hooks/useCalculo'
 import { PiezaInput } from '../types/calculo.types'
 import { usePerfilActivo } from '../../perfiles/hooks/usePerfilActivo'
-import { 
-  useCreatePerfil, 
-  useUpdatePerfil,
+import {
   useGetPerfiles,
   useGetFilamentProfiles,
 } from '../../perfiles/api/perfiles.api'
 import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
-import { Perfil } from '../../perfiles/types/perfiles.types'
 import { parseEstimatedTime } from '../utils/calculos.utils'
 import { CalculoSnapshot } from '../types/calculo.types'
 import { formatCurrency } from '../../../lib/utils'
@@ -91,38 +86,10 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
   const calculationQuery = useCalculo(piezaInput, activePrinter, activeFilament);
   const resultado = calculationQuery.data || null;
   
-  const [showPerfilModal, setShowPerfilModal] = React.useState(false);
-  const [editingPerfil, setEditingPerfil] = React.useState<Perfil | null>(null);
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
   const { mutate: sliceSTL, isPending: isSlicing } = useSliceSTL();
   const { mutate: guardarPieza, isPending: isSavingPieza } = useGuardarPieza();
-
-  const { mutate: createPerfil, isPending: isCreating } = useCreatePerfil();
-  const { mutate: updatePerfil, isPending: isUpdating } = useUpdatePerfil();
-
-  const handlePerfilSubmit = (data: Partial<Perfil>) => {
-    if (editingPerfil) {
-      updatePerfil(
-        { id: editingPerfil.id, data },
-        {
-          onSuccess: () => {
-            toast.success('Perfil actualizado correctamente');
-            setShowPerfilModal(false);
-            setEditingPerfil(null);
-          },
-        }
-      );
-    } else {
-      createPerfil(data as Omit<Perfil, 'id' | 'createdAt' | 'updatedAt'>, {
-        onSuccess: () => {
-          toast.success('Perfil creado correctamente');
-          setShowPerfilModal(false);
-        },
-      });
-    }
-  };
-
 
   const handleSaveToLibrary = () => {
     if (!file || !resultado) return;
@@ -208,17 +175,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
-      <StudioSubNav
-        showPerfilSelector
-        onAddPerfil={() => {
-          setEditingPerfil(null)
-          setShowPerfilModal(true)
-        }}
-        onEditPerfil={(perfil) => {
-          setEditingPerfil(perfil)
-          setShowPerfilModal(true)
-        }}
-      />
+      <StudioSubNav />
 
       <main className="flex-1 overflow-hidden">
         {/* Operational Section - Studio Spacing */}
@@ -294,27 +251,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
           </div>
         </section>
       </main>
-
-      {/* Modal - The Floating Canvas */}
-      <Modal
-        isOpen={showPerfilModal}
-        onClose={() => {
-          setShowPerfilModal(false);
-          setEditingPerfil(null);
-        }}
-        title={editingPerfil ? 'Ajustar Perfil' : 'Nuevo Perfil'}
-        description="Configurá las especificaciones de hardware y el motor de slicing para esta unidad."
-      >
-        <PerfilForm 
-          initialData={editingPerfil}
-          onSubmit={handlePerfilSubmit}
-          onCancel={() => {
-            setShowPerfilModal(false);
-            setEditingPerfil(null);
-          }}
-          isLoading={isCreating || isUpdating}
-        />
-      </Modal>
 
       <CalculationSuccessModal
         isOpen={showSuccessModal}

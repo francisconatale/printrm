@@ -213,7 +213,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           <div className="space-y-3">
             <h1 className="ob-display">Hola</h1>
             <p className="ob-lead">
-              Bienvenido a <span className="ob-brand">PrintRM Studio</span>
+              Bienvenido a <span className="ob-brand">Printly</span>
             </p>
             <p className="ob-body">
               Te llevará menos de dos minutos configurar todo.
