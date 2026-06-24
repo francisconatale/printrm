@@ -2,6 +2,9 @@ package com.printrm.studio.domain.perfil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +19,8 @@ public class FilamentProfileController {
     private final FilamentProfileService service;
 
     @GetMapping
-    public List<FilamentProfileResponseDTO> findAll() {
-        return service.findAll();
+    public Page<FilamentProfileResponseDTO> findAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")

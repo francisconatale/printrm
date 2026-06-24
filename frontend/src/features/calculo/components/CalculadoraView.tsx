@@ -34,8 +34,10 @@ interface CalculadoraViewProps {
 
 export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToLibrary }: CalculadoraViewProps) {
   const { perfilActivo } = usePerfilActivo();
-  const { data: printers } = useGetPerfiles();
-  const { data: filaments } = useGetFilamentProfiles();
+  const { data: printersData } = useGetPerfiles(0, 100);
+  const { data: filamentsData } = useGetFilamentProfiles(0, 100);
+  const printers = printersData?.content;
+  const filaments = filamentsData?.content;
 
   const [file, setFile] = React.useState<File | null>(null);
   const [overrideConfigs, setOverrideConfigs] = React.useState({ print: '', filament: '', printer: '' });

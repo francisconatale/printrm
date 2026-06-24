@@ -13,6 +13,8 @@ import com.printrm.studio.domain.stock.Producto;
 import com.printrm.studio.domain.stock.ProductoRepository;
 import com.printrm.studio.domain.stock.ProductoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,10 @@ public class OrdenProduccionService {
 
     public List<OrdenProduccion> getAll() {
         return repository.findAll();
+    }
+
+    public Page<OrdenProduccion> getAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public OrdenProduccion getById(UUID id) {

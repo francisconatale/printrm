@@ -1,6 +1,9 @@
 package com.printrm.studio.domain.finanzas;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,8 +20,8 @@ public class TransaccionController {
     private final TransaccionService service;
 
     @GetMapping
-    public List<Transaccion> getAll() {
-        return service.getAll();
+    public Page<Transaccion> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @GetMapping("/balance")

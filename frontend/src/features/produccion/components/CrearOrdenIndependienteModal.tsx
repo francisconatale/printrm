@@ -11,7 +11,8 @@ interface CrearOrdenIndependienteModalProps {
 }
 
 export function CrearOrdenIndependienteModal({ isOpen, onClose }: CrearOrdenIndependienteModalProps) {
-  const { data: productos, isLoading: loadingProductos } = useGetProductos();
+  const { data: productosData, isLoading: loadingProductos } = useGetProductos(0, 200);
+  const productos = productosData?.content;
   const { mutate: crearOrden, isPending } = useCreateOrdenIndependiente();
 
   const [productoId, setProductoId] = React.useState<string>('');

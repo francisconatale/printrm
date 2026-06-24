@@ -6,11 +6,16 @@ import { Search, PackageOpen, Loader2 } from 'lucide-react';
 import { EliminarPiezaModal } from './EliminarPiezaModal';
 import { PiezaSTL } from '../types/biblioteca.types';
 import { ComposicionProductoModal } from '../../stock/components/ComposicionProductoModal';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PiezaDetailModal } from './PiezaDetailModal';
 
 export function PiezasGalleryView() {
-  const { data: piezas, isLoading, isError, error, refetch } = useGetPiezas();
+  const [page, setPage] = React.useState(0);
+  const { data: piezasData, isLoading, isError, error, refetch } = useGetPiezas(page, 10);
+  const piezas = piezasData?.content;
+  const totalPages = piezasData?.totalPages ?? 0;
+  const totalElements = piezasData?.totalElements ?? 0;
   const { mutate: eliminarPieza } = useEliminarPieza();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [deletePiece, setDeletePiece] = React.useState<PiezaSTL | null>(null);
@@ -64,20 +69,29 @@ export function PiezasGalleryView() {
               <p className="studio-caption">Cargando biblioteca...</p>
             </div>
           ) : filteredPiezas.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 animate-in fade-in duration-700">
-              {filteredPiezas.map((pieza) => (
-                <STLCard 
-                   key={pieza.id} 
-                   pieza={pieza} 
-                   onDelete={(id) => {
-                     const pieza = piezas?.find(p => p.id === id) || null;
-                     setDeletePiece(pieza);
-                   }}
-                   onPublish={(pieza) => setPublishPieceId(pieza.id)}
-                   onViewDetail={(pieza) => setSelectedPiezaDetail(pieza)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 animate-in fade-in duration-700">
+                {filteredPiezas.map((pieza) => (
+                  <STLCard 
+                     key={pieza.id} 
+                     pieza={pieza} 
+                     onDelete={(id) => {
+                       const pieza = piezas?.find(p => p.id === id) || null;
+                       setDeletePiece(pieza);
+                     }}
+                     onPublish={(pieza) => setPublishPieceId(pieza.id)}
+                     onViewDetail={(pieza) => setSelectedPiezaDetail(pieza)}
+                  />
+                ))}
+              </div>
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                size={10}
+                onPageChange={setPage}
+              />
+            </>
           ) : isSearching ? (
             <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
               <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">

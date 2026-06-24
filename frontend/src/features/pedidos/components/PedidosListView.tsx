@@ -6,9 +6,15 @@ import { PedidoDetalleView } from './PedidoDetalleView';
 import { Plus, Search, Loader2, ShoppingBag, Eye } from 'lucide-react';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 
 export function PedidosListView() {
-  const { data: pedidos, isLoading, error, refetch } = useGetPedidos();
+  const [page, setPage] = React.useState(0);
+  const { data, isLoading, error, refetch } = useGetPedidos(page, 10);
+  const pedidos = data?.content;
+  const pageObj = data?.page;
+  const totalPages = pageObj?.totalPages ?? data?.totalPages ?? 0;
+  const totalElements = pageObj?.totalElements ?? data?.totalElements ?? 0;
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedPedidoId, setSelectedPedidoId] = React.useState<string | null>(null);
   const [isCrearModalOpen, setIsCrearModalOpen] = React.useState(false);
@@ -31,6 +37,11 @@ export function PedidosListView() {
   }
 
   const isSearching = searchTerm.trim().length > 0;
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setSearchTerm('');
+  };
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
@@ -168,6 +179,13 @@ export function PedidosListView() {
                   ))}
                 </tbody>
               </table>
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                size={10}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

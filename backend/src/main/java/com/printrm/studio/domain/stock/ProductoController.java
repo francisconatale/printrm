@@ -1,6 +1,9 @@
 package com.printrm.studio.domain.stock;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -12,8 +15,8 @@ public class ProductoController {
     private final ProductoService service;
 
     @GetMapping
-    public List<ProductoResponseDTO> getAll() {
-        return service.getAll();
+    public Page<ProductoResponseDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @PostMapping

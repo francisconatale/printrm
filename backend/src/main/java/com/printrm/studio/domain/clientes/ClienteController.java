@@ -1,6 +1,9 @@
 package com.printrm.studio.domain.clientes;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +18,8 @@ public class ClienteController {
     private final ClienteService service;
 
     @GetMapping
-    public List<ClienteDTO> getAll() {
-        return service.getAll();
+    public Page<ClienteDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")

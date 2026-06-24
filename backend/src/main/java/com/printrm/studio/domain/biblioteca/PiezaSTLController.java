@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +27,8 @@ public class PiezaSTLController {
     private String basePath;
 
     @GetMapping
-    public List<PiezaSTLResponseDTO> getAll() {
-        return service.getAll();
+    public Page<PiezaSTLResponseDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @PostMapping

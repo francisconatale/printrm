@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../../../lib/api-client';
+import { apiClient, PaginatedResponse } from '../../../lib/api-client';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 import { 
   Perfil, 
@@ -25,10 +25,10 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
   entitySingular: string
 ) {
   return {
-    useGet: () => useQuery<T[]>({
-      queryKey: [queryKey],
+    useGet: (page = 0, size = 100) => useQuery<PaginatedResponse<T>>({
+      queryKey: [queryKey, page, size],
       queryFn: async () => {
-        const { data } = await apiClient.get<T[]>(url);
+        const { data } = await apiClient.get<PaginatedResponse<T>>(url, { params: { page, size } });
         return data;
       },
     }),

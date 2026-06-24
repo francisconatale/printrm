@@ -1,6 +1,8 @@
 package com.printrm.studio.domain.perfil;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,11 @@ public class FilamentProfileService {
         return repository.findAll().stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    public Page<FilamentProfileResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toResponseDto);
     }
 
     public FilamentProfileResponseDTO findById(UUID id) {

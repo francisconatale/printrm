@@ -30,7 +30,8 @@ const formatWeight = (grams?: number) => {
 };
 
 export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }: ComposicionProductoModalProps) {
-  const { data: piezas } = useGetPiezas();
+  const { data: piezasData } = useGetPiezas(0, 200);
+  const piezas = piezasData?.content;
   const { mutate: saveProducto, isPending: isSaving } = useSaveProducto();
   const { ajustes } = useAjustes();
 

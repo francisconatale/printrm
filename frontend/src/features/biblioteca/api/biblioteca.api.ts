@@ -1,15 +1,15 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../../../lib/api-client';
+import { apiClient, PaginatedResponse } from '../../../lib/api-client';
 import { PiezaSTL, PiezaSTLCreate } from '../types/biblioteca.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 
 const API_URL = '/v1/biblioteca';
 
-export const useGetPiezas = () => {
-  return useQuery<PiezaSTL[]>({
-    queryKey: ['piezas-stl'],
+export const useGetPiezas = (page = 0, size = 100) => {
+  return useQuery<PaginatedResponse<PiezaSTL>>({
+    queryKey: ['piezas-stl', page, size],
     queryFn: async () => {
-      const { data } = await apiClient.get<PiezaSTL[]>(API_URL);
+      const { data } = await apiClient.get<PaginatedResponse<PiezaSTL>>(API_URL, { params: { page, size } });
       return data;
     }
   });

@@ -15,11 +15,16 @@ import {
   X,
   AlertTriangle
 } from 'lucide-react';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { cn } from '@/lib/utils';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 export function AgendaProduccionView() {
-  const { data: ordenes, isLoading, isError, error, refetch } = useGetOrdenesProduccion();
+  const [page, setPage] = React.useState(0);
+  const { data: ordenesData, isLoading, isError, error, refetch } = useGetOrdenesProduccion(page, 10);
+  const ordenes = ordenesData?.content;
+  const totalPages = ordenesData?.totalPages ?? 0;
+  const totalElements = ordenesData?.totalElements ?? 0;
   const { mutate: updateEstado, isPending: updating } = useUpdateEstadoOrden();
 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -212,6 +217,13 @@ export function AgendaProduccionView() {
                 </tbody>
               </table>
             </div>
+            <PaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalElements={totalElements}
+              size={10}
+              onPageChange={setPage}
+            />
           </div>
 
         </div>

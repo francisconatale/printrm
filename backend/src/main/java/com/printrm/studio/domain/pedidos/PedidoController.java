@@ -2,6 +2,9 @@ package com.printrm.studio.domain.pedidos;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +18,8 @@ public class PedidoController {
     private final PedidoService service;
 
     @GetMapping
-    public List<PedidoResponseDTO> getAll() {
-        return service.getAll();
+    public Page<PedidoResponseDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")

@@ -13,8 +13,10 @@ interface CrearPedidoModalProps {
 }
 
 export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
-  const { data: clientes } = useGetClientes();
-  const { data: productos } = useGetProductos();
+  const { data: clientesData } = useGetClientes(0, 200);
+  const { data: productosData } = useGetProductos(0, 200);
+  const clientes = clientesData?.content;
+  const productos = productosData?.content;
   const { mutate: createPedido, isPending: isCreating } = useCreatePedido();
 
   interface ItemFormState {

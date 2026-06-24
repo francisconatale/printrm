@@ -2,14 +2,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Cliente, ClienteCreate, ClienteUpdate } from '../types/clientes.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
+import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/clientes';
 
-export const useGetClientes = () => {
-  return useQuery<Cliente[]>({
-    queryKey: ['clientes'],
+export const useGetClientes = (page = 0, size = 100) => {
+  return useQuery<PaginatedResponse<Cliente>>({
+    queryKey: ['clientes', page, size],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await axios.get(API_URL, { params: { page, size } });
       return data;
     }
   });

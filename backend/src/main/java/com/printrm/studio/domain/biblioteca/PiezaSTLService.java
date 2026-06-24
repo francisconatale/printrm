@@ -7,6 +7,8 @@ import com.printrm.studio.domain.calculo.CostCalculationService;
 import com.printrm.studio.domain.perfil.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,12 @@ public class PiezaSTLService {
         return repository.findAllByDeletedFalseOrderByCreadoEnDesc().stream()
                 .map(pieza -> mapper.toDto(pieza, ajustes))
                 .collect(Collectors.toList());
+    }
+
+    public Page<PiezaSTLResponseDTO> getAll(Pageable pageable) {
+        AjustesDTO ajustes = ajustesService.getAjustes();
+        return repository.findAllByDeletedFalse(pageable)
+                .map(pieza -> mapper.toDto(pieza, ajustes));
     }
 
     @Transactional

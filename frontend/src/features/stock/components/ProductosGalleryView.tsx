@@ -9,11 +9,16 @@ import { Producto } from '../types/stock.types';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { EditarProductoModal } from './EditarProductoModal';
 import { AgregarStockModal } from './AgregarStockModal';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 
 import { ProductoCard } from './ProductoCard';
 
 export function ProductosGalleryView() {
-  const { data: productos, isLoading, isError, error, refetch } = useGetProductos();
+  const [page, setPage] = React.useState(0);
+  const { data, isLoading, isError, error, refetch } = useGetProductos(page, 10);
+  const productos = data?.content;
+  const totalPages = data?.totalPages ?? 0;
+  const totalElements = data?.totalElements ?? 0;
   const { mutate: deleteProducto } = useDeleteProducto();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -29,6 +34,11 @@ export function ProductosGalleryView() {
   }, [productos, searchTerm]);
 
   const isSearching = searchTerm.trim().length > 0;
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setSearchTerm('');
+  };
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
@@ -76,17 +86,26 @@ export function ProductosGalleryView() {
               <p className="studio-caption">Cargando catálogo...</p>
             </div>
           ) : filteredProductos.length > 0 ? (
-            <div className="flex flex-col gap-3 animate-in fade-in duration-500">
-              {filteredProductos.map((prod) => (
-                <ProductoCard
-                  key={prod.id}
-                  producto={prod}
-                  onDelete={(id) => setDeleteProductId(id)}
-                  onEdit={(p) => setEditProducto(p)}
-                  onAddStock={(p) => setAddStockProducto(p)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="flex flex-col gap-3 animate-in fade-in duration-500">
+                {filteredProductos.map((prod) => (
+                  <ProductoCard
+                    key={prod.id}
+                    producto={prod}
+                    onDelete={(id) => setDeleteProductId(id)}
+                    onEdit={(p) => setEditProducto(p)}
+                    onAddStock={(p) => setAddStockProducto(p)}
+                  />
+                ))}
+              </div>
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                size={10}
+                onPageChange={handlePageChange}
+              />
+            </>
           ) : isSearching ? (
             <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
               <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">

@@ -1,6 +1,9 @@
 package com.printrm.studio.domain.produccion;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +19,8 @@ public class OrdenProduccionController {
     private final OrdenProduccionMapper mapper;
 
     @GetMapping
-    public List<OrdenProduccionResponseDTO> getAll() {
-        return service.getAll().stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    public Page<OrdenProduccionResponseDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getAll(pageable).map(mapper::toDto);
     }
 
     @GetMapping("/{id}")

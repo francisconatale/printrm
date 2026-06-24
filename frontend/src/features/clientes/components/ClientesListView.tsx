@@ -8,9 +8,14 @@ import { ConfirmModal } from '../../../components/ui/confirm-modal';
 import { ClienteForm } from './ClienteForm';
 import { Cliente } from '../types/clientes.types';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 
 export function ClientesListView() {
-  const { data: clientes, isLoading, isError, error, refetch } = useGetClientes();
+  const [page, setPage] = React.useState(0);
+  const { data, isLoading, isError, error, refetch } = useGetClientes(page, 10);
+  const clientes = data?.content;
+  const totalPages = data?.totalPages ?? 0;
+  const totalElements = data?.totalElements ?? 0;
   const { mutate: createCliente, isPending: isCreating } = useCreateCliente();
   const { mutate: updateCliente, isPending: isUpdating } = useUpdateCliente();
   const { mutate: deleteCliente, isPending: isDeleting } = useDeleteCliente();
@@ -56,6 +61,11 @@ export function ClientesListView() {
 
   const isMutationLoading = isCreating || isUpdating;
   const isSearching = searchTerm.trim().length > 0;
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setSearchTerm('');
+  };
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full">
@@ -186,6 +196,13 @@ export function ClientesListView() {
                   ))}
                 </tbody>
               </table>
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                size={10}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

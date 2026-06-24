@@ -1,14 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { OrdenProduccion, OrdenProduccionRequest, EstadoProduccion } from '../types/produccion.types';
+import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/produccion/ordenes';
 
-export const useGetOrdenesProduccion = () => {
-  return useQuery<OrdenProduccion[]>({
-    queryKey: ['ordenesProduccion'],
+export const useGetOrdenesProduccion = (page = 0, size = 20) => {
+  return useQuery<PaginatedResponse<OrdenProduccion>>({
+    queryKey: ['ordenesProduccion', page, size],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await axios.get(API_URL, { params: { page, size } });
       return data;
     }
   });

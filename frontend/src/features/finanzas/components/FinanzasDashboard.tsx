@@ -26,7 +26,8 @@ const formatCurrency = (value: number) => {
 };
 
 export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: FinanzasDashboardProps) {
-  const { data: transacciones, isLoading, error } = useGetTransacciones();
+  const { data: transaccionesData, isLoading, error } = useGetTransacciones(0, 1000);
+  const transacciones = transaccionesData?.content;
 
   const metrics = React.useMemo(() => {
     if (!transacciones) return null;

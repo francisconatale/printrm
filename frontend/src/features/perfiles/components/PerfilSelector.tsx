@@ -10,7 +10,8 @@ interface PerfilSelectorProps {
 }
 
 export const PerfilSelector: React.FC<PerfilSelectorProps> = ({ onAddNew, onEdit }) => {
-  const { data: perfiles, isLoading } = useGetPerfiles();
+  const { data: perfilesData, isLoading } = useGetPerfiles(0, 100);
+  const perfiles = perfilesData?.content;
   const { perfilActivo, setPerfilActivo } = usePerfilActivo();
   const [isOpen, setIsOpen] = React.useState(false);
 

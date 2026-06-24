@@ -1,6 +1,8 @@
 package com.printrm.studio.domain.clientes;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,11 @@ public class ClienteService {
         return repository.findAll().stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public Page<ClienteDTO> getAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
     }
 
     public ClienteDTO getById(UUID id) {

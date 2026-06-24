@@ -16,6 +16,7 @@ import {
 import { FinanzasDashboard } from './FinanzasDashboard';
 import { TransactionForm } from './TransactionForm';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { Transaccion } from '../types/finanzas.types';
 
 type TransactionItem = 
@@ -29,7 +30,13 @@ const formatCurrency = (value: number) => {
 };
 
 export function LibroDiarioView() {
-  const { data: transacciones, isLoading: isTransaccionesLoading, isError: isTransaccionesError, error: transaccionesError, refetch: refetchTransacciones } = useGetTransacciones();
+  const [page, setPage] = React.useState(0);
+  const { data: transaccionesData, isLoading: isTransaccionesLoading, isError: isTransaccionesError, error: transaccionesError, refetch: refetchTransacciones } = useGetTransacciones(page, 20);
+  const transacciones = transaccionesData?.content;
+  const pageObj = transaccionesData?.page;
+  const totalPages = pageObj?.totalPages ?? transaccionesData?.totalPages ?? 0;
+  const totalElements = pageObj?.totalElements ?? transaccionesData?.totalElements ?? 0;
+  
   const { data: balance, isLoading: isBalanceLoading, isError: isBalanceError, error: balanceError, refetch: refetchBalance } = useGetBalance();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [activeTab, setActiveTab] = React.useState<'dashboard' | 'ledger'>('dashboard');
@@ -272,6 +279,13 @@ export function LibroDiarioView() {
                         ))}
                       </tbody>
                     </table>
+                    <PaginationBar
+                      page={page}
+                      size={20}
+                      totalElements={totalElements}
+                      totalPages={totalPages}
+                      onPageChange={(p) => setPage(p)}
+                    />
                   </div>
                 ) : isSearching ? (
                   <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">

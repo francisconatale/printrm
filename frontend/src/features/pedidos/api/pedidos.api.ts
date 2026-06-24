@@ -2,14 +2,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Pedido, PedidoCreate, EstadoPedido } from '../types/pedidos.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
+import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/pedidos';
 
-export const useGetPedidos = () => {
-  return useQuery<Pedido[]>({
-    queryKey: ['pedidos'],
+export const useGetPedidos = (page = 0, size = 20) => {
+  return useQuery<PaginatedResponse<Pedido>>({
+    queryKey: ['pedidos', page, size],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await axios.get(API_URL, { params: { page, size } });
       return data;
     }
   });

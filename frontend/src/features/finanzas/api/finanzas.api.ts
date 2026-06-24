@@ -2,14 +2,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Transaccion } from '../types/finanzas.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
+import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/transacciones';
 
-export const useGetTransacciones = () => {
-  return useQuery<Transaccion[]>({
-    queryKey: ['transacciones'],
+export const useGetTransacciones = (page = 0, size = 20) => {
+  return useQuery<PaginatedResponse<Transaccion>>({
+    queryKey: ['transacciones', page, size],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await axios.get(API_URL, { params: { page, size } });
       return data;
     }
   });

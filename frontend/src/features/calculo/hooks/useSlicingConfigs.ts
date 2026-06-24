@@ -13,9 +13,12 @@ export interface SlicerProfileOptions {
  * (impresora, filamento, ajuste de impresión) como listas para ProfileSelect.
  */
 export function useSlicerProfiles(): SlicerProfileOptions {
-  const { data: printers = [], isLoading: loadingPrinters } = useGetPerfiles();
-  const { data: filaments = [], isLoading: loadingFilaments } = useGetFilamentProfiles();
-  const { data: prints = [], isLoading: loadingPrints } = useGetPrintProfiles();
+  const { data: printersData, isLoading: loadingPrinters } = useGetPerfiles(0, 100);
+  const { data: filamentsData, isLoading: loadingFilaments } = useGetFilamentProfiles(0, 100);
+  const { data: printsData, isLoading: loadingPrints } = useGetPrintProfiles(0, 100);
+  const printers = printersData?.content ?? [];
+  const filaments = filamentsData?.content ?? [];
+  const prints = printsData?.content ?? [];
 
   return {
     printers: printers.map((p) => ({

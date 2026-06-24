@@ -77,17 +77,17 @@ export const PerfilesDashboardView: React.FC = () => {
   const [deletingItem, setDeletingItem] = useState<any | null>(null);
 
   // API hooks (called at top level)
-  const printersQuery = useGetPerfiles();
+  const printersQuery = useGetPerfiles(0, 100);
   const printerCreate = useCreatePerfil();
   const printerUpdate = useUpdatePerfil();
   const printerDelete = useDeletePerfil();
 
-  const filamentsQuery = useGetFilamentProfiles();
+  const filamentsQuery = useGetFilamentProfiles(0, 100);
   const filamentCreate = useCreateFilamentProfile();
   const filamentUpdate = useUpdateFilamentProfile();
   const filamentDelete = useDeleteFilamentProfile();
 
-  const printsQuery = useGetPrintProfiles();
+  const printsQuery = useGetPrintProfiles(0, 100);
   const printCreate = useCreatePrintProfile();
   const printUpdate = useUpdatePrintProfile();
   const printDelete = useDeletePrintProfile();
@@ -117,7 +117,7 @@ export const PerfilesDashboardView: React.FC = () => {
         modalTitleEdit: 'Editar Impresora',
         modalDescription: 'Configurá el hardware de la impresora y sus parámetros de slicing en base de datos.',
         deleteTitle: '¿Eliminar Impresora?',
-        items: printersQuery.data || [],
+        items: printersQuery.data?.content || [],
         isLoading: printersQuery.isLoading,
         createMutation: printerCreate,
         updateMutation: printerUpdate,
@@ -136,7 +136,7 @@ export const PerfilesDashboardView: React.FC = () => {
         modalTitleEdit: 'Editar Filamento',
         modalDescription: 'Configurá el material, densidad, diámetro y costo de filamento.',
         deleteTitle: '¿Eliminar Filamento?',
-        items: filamentsQuery.data || [],
+        items: filamentsQuery.data?.content || [],
         isLoading: filamentsQuery.isLoading,
         createMutation: filamentCreate,
         updateMutation: filamentUpdate,
@@ -155,7 +155,7 @@ export const PerfilesDashboardView: React.FC = () => {
         modalTitleEdit: 'Editar Ajuste',
         modalDescription: 'Configurá las capas, perímetros y relleno para el motor de cálculo.',
         deleteTitle: '¿Eliminar Ajuste de Impresión?',
-        items: printsQuery.data || [],
+        items: printsQuery.data?.content || [],
         isLoading: printsQuery.isLoading,
         createMutation: printCreate,
         updateMutation: printUpdate,

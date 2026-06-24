@@ -2,14 +2,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Producto, ProductoCreate } from '../types/stock.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
+import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/productos';
 
-export const useGetProductos = () => {
-  return useQuery<Producto[]>({
-    queryKey: ['productos'],
+export const useGetProductos = (page = 0, size = 100) => {
+  return useQuery<PaginatedResponse<Producto>>({
+    queryKey: ['productos', page, size],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL);
+      const { data } = await axios.get(API_URL, { params: { page, size } });
       return data;
     }
   });

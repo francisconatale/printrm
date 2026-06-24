@@ -11,6 +11,8 @@ import com.printrm.studio.domain.produccion.OrdenProduccion;
 import com.printrm.studio.domain.produccion.OrdenProduccionRepository;
 import com.printrm.studio.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -242,6 +244,12 @@ public class PedidoService {
         return repository.findAll().stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PedidoResponseDTO> getAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
     }
 
     @Transactional(readOnly = true)
