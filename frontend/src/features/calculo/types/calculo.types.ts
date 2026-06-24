@@ -13,6 +13,7 @@ export interface ResultadoCalculo {
   costoEnergia: number;
   costoFilamento: number;
   costoDesgaste: number;
+  costoError: number;
   subtotal: number;
   costoBase: number;          // subtotal × (1 + margenError/100)
   precioVenta: number;        // costoBase × multiplicador
@@ -34,6 +35,7 @@ export interface CalculoSnapshot {
   costoEnergia: number;
   costoFilamento: number;
   costoDesgaste: number;
+  costoError: number;
   subtotal: number;
   costoBase: number;
   precioVenta: number;

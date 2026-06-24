@@ -59,6 +59,13 @@ export const ResultadosBreakdown: React.FC<ResultadosBreakdownProps> = ({
             <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoFilamento)}</span>
           </div>
 
+          {resultado.costoError > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="studio-caption text-muted-foreground">Margen de Error</span>
+              <span className="studio-caption font-semibold text-foreground">{formatCurrency(resultado.costoError)}</span>
+            </div>
+          )}
+
           <div className="flex justify-between items-center">
             <span className="studio-caption text-muted-foreground">Insumos Extra</span>
             <div className="flex items-center gap-1">

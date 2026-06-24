@@ -21,7 +21,6 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
     keyId: string;
     productoId: string;
     cantidad: number;
-    precioPersonalizado?: number;
   }
 
   const [clienteId, setClienteId] = React.useState<string>('');
@@ -63,12 +62,6 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         ...copy[index],
         [field]: value
       };
-      if (field === 'productoId') {
-        const prodObj = productos?.find(p => p.id === value);
-        const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
-        // Default 200% margin (3x cost)
-        copy[index].precioPersonalizado = prodCost * 3;
-      }
       return copy;
     });
   };
@@ -98,8 +91,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
         clienteId,
         items: validItems.map(it => ({
           productoId: it.productoId,
-          cantidad: it.cantidad,
-          precioPersonalizado: it.precioPersonalizado
+          cantidad: it.cantidad
         }))
       },
       {
@@ -123,7 +115,7 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
       if (item.productoId) {
         const prodObj = productos?.find(p => p.id === item.productoId);
         const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
-        const price = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
+        const price = prodObj?.precioSugerido || 0;
         
         totalPrecio += price * item.cantidad;
         totalCosto += prodCost * item.cantidad;
@@ -213,8 +205,8 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                     const prodCost = prodObj ? (prodObj.partes?.length > 0 ? prodObj.partes.reduce((sum, p) => sum + (p.costoBase || 0), 0) : (prodObj.lotes?.[0]?.costoUnitario || 0)) : 0;
                     const isEmptyRow = !item.productoId;
 
-                    const currentPrice = item.precioPersonalizado !== undefined ? item.precioPersonalizado : (prodCost * 3);
-                    const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 200;
+                    const currentPrice = prodObj?.precioSugerido || 0;
+                    const marginPercent = prodCost > 0 ? Math.round(((currentPrice - prodCost) / prodCost) * 100) : 0;
 
                     return (
                       <tr key={item.keyId} className="border-b border-border/40 hover:bg-muted/10 transition-colors group">
@@ -244,35 +236,18 @@ export function CrearPedidoModal({ isOpen, onClose }: CrearPedidoModalProps) {
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="relative">
-                            <input
-                              type="number"
-                              min="-100"
-                              value={isEmptyRow ? '' : marginPercent}
-                              disabled={isEmptyRow}
-                              onChange={(e) => {
-                                const marginVal = parseFloat(e.target.value) || 0;
-                                const calculatedPrice = prodCost * (1 + marginVal / 100);
-                                handleItemChange(item.keyId, 'precioPersonalizado', Math.round(calculatedPrice));
-                              }}
-                              className="w-full bg-primary/5 border border-primary/20 rounded-lg pl-2 pr-6 py-2 text-right font-bold text-primary shadow-sm disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
-                            />
+                            <span className="block w-full bg-primary/5 border border-primary/10 rounded-lg pl-2 pr-6 py-2 text-right font-bold text-primary shadow-sm opacity-60">
+                              {isEmptyRow ? '-' : marginPercent}
+                            </span>
                             <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-primary font-bold pointer-events-none">%</span>
                           </div>
                         </td>
                         <td className="py-2.5 px-4">
                           <div className="relative">
                             <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">$</span>
-                            <input
-                              type="number"
-                              min="0"
-                              value={isEmptyRow ? '' : Math.round(currentPrice)}
-                              disabled={isEmptyRow}
-                              onChange={(e) => {
-                                const priceVal = parseFloat(e.target.value) || 0;
-                                handleItemChange(item.keyId, 'precioPersonalizado', priceVal);
-                              }}
-                              className="w-full bg-background border border-border rounded-lg pl-6 pr-2 py-2 text-right font-bold shadow-sm disabled:opacity-40 focus:ring-2 focus:ring-primary outline-none"
-                            />
+                            <span className="block w-full bg-muted/20 border border-border rounded-lg pl-6 pr-2 py-2 text-right font-bold shadow-sm opacity-60">
+                              {isEmptyRow ? '-' : Math.round(currentPrice)}
+                            </span>
                           </div>
                         </td>
                         <td className="py-2.5 px-4 text-right font-black text-foreground">

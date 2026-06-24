@@ -8,10 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AjustesService {
 
     private final AjustesRepository ajustesRepository;
+    private final AjustesMapper mapper;
     private static final Long AJUSTES_ID = 1L;
 
-    public AjustesService(AjustesRepository ajustesRepository) {
+    public AjustesService(AjustesRepository ajustesRepository, AjustesMapper mapper) {
         this.ajustesRepository = ajustesRepository;
+        this.mapper = mapper;
     }
 
     @PostConstruct
@@ -29,14 +31,12 @@ public class AjustesService {
 
     public AjustesDTO getAjustes() {
         return ajustesRepository.findById(AJUSTES_ID)
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .orElseGet(() -> {
-                    // Fallback to first available or default if not found
                     return ajustesRepository.findAll().stream()
                             .findFirst()
-                            .map(this::mapToDTO)
+                            .map(mapper::toDto)
                             .orElseGet(() -> {
-                                // Last resort: Hardcoded defaults to avoid 500
                                 return AjustesDTO.builder()
                                         .preciokWh(50.0)
                                         .margenError(10.0)
@@ -55,13 +55,6 @@ public class AjustesService {
         ajustes.setMargenError(dto.getMargenError());
 
         Ajustes saved = ajustesRepository.save(ajustes);
-        return mapToDTO(saved);
-    }
-
-    private AjustesDTO mapToDTO(Ajustes ajustes) {
-        return AjustesDTO.builder()
-                .preciokWh(ajustes.getPreciokWh())
-                .margenError(ajustes.getMargenError())
-                .build();
+        return mapper.toDto(saved);
     }
 }

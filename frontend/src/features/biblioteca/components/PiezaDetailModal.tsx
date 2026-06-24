@@ -77,6 +77,9 @@ export const PiezaDetailModal: React.FC<PiezaDetailModalProps> = ({ pieza, isOpe
                <div className="space-y-2 text-xs text-muted-foreground">
                  <div className="flex justify-between"><span>Material</span><span>{formatCurrency(pieza.costoMaterial)}</span></div>
                  <div className="flex justify-between"><span>Energía</span><span>{formatCurrency(pieza.costoEnergia)}</span></div>
+                 {!!pieza.costoError && pieza.costoError > 0 && (
+                   <div className="flex justify-between"><span>Margen de Error</span><span>{formatCurrency(pieza.costoError)}</span></div>
+                 )}
                </div>
             </div>
 

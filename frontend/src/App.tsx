@@ -14,6 +14,7 @@ import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
 import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
 import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
+import { LabPage } from '../../.claude-design/lab/page'
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
@@ -27,6 +28,10 @@ function App() {
       setShowOnboarding(true)
     }
   }, [isFetched, onboarding])
+
+  if (new URLSearchParams(window.location.search).get('design_lab') === 'true') {
+    return <LabPage />
+  }
 
   if (!isBackendReady) {
     return <LoadingScreen retryCount={retryCount} error={error} />
@@ -95,3 +100,4 @@ function App() {
 }
 
 export default App
+

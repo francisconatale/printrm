@@ -14,6 +14,7 @@ public class PiezaSTLResponseDTO {
     private Double costoBase;
     private Double costoMaterial;
     private Double costoEnergia;
+    private Double costoError;
     private String imagenBase64;
     
     private String perfilImpresoraNombre;

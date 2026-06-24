@@ -1,5 +1,114 @@
 # CHANGELOG
 
+## [2026-06-24] - Desglose de Costo de Error (T003)
+### Descripción
+- **Backend (Cálculos):**
+  - Se modificó `CostCalculationService` para no sumar el margen de error directamente a `totalFilamento`. En lugar de eso, se expone explícitamente en el nuevo campo `costoError`.
+  - Se agregó el campo `costoError` en `CostCalculationResult` y `CalculoResponseDTO`.
+- **Frontend (Cálculos):**
+  - Se actualizó `calculo.types.ts` (`ResultadoCalculo`, `CalculoSnapshot`) para incluir `costoError`.
+  - Se actualizó `ResultadosBreakdown.tsx` para mostrar explícitamente el "Margen de Error" cuando sea mayor a 0.
+  - Se actualizó la vista detallada de la biblioteca (`PiezaDetailModal.tsx`) para incluir el "Margen de Error" en el desglose inferior junto a Material y Energía.
+  - Se incluyó `costoError` (como Margen de Error) en las exportaciones a texto y CSV en `export.utils.ts`.
+### Archivos Involucrados
+- [CostCalculationResult.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/calculo/CostCalculationResult.java)
+- [CalculoResponseDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/calculo/CalculoResponseDTO.java)
+- [CostCalculationService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/calculo/CostCalculationService.java)
+- [calculo.types.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/types/calculo.types.ts)
+- [ResultadosBreakdown.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/ResultadosBreakdown.tsx)
+- [export.utils.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/utils/export.utils.ts)
+
+## [2026-06-23] - Refactorización de PedidoService.cambiarEstado (Clean Code)
+### Descripción
+- **Backend (Pedidos):**
+  - Se refactorizó el método `cambiarEstado` en `PedidoService`, el cual agrupaba múltiples responsabilidades y era demasiado largo.
+  - Se aplicaron principios de Clean Code extrayendo la lógica en métodos privados más descriptivos y de única responsabilidad: `parseEstado`, `validarTransicionEstado`, `procesarEntrega` y `procesarDevolucion`.
+  - El método principal `cambiarEstado` quedó mucho más limpio, actuando meramente como orquestador del flujo.
+### Archivos Involucrados
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)## [2026-06-23] - Eliminación de funcionalidad precioPersonalizado
+### Descripción
+- **Backend (Pedidos):**
+  - Se eliminó el campo `precioPersonalizado` de `ItemPedido`, `ItemPedidoRequestDTO` y `ItemPedidoResponseDTO`.
+  - Se actualizó el método `calcularSubtotal` en `ItemPedido` para usar estrictamente el `precioSugerido` del `Producto`.
+  - Se removieron las asignaciones y referencias al campo en `PedidoService`.
+- **Frontend (Pedidos):**
+  - Se eliminó el campo de las interfaces `ItemPedido` y `ItemPedidoRequest` en `pedidos.types.ts`.
+  - Se modificó el `CrearPedidoModal.tsx`, transformando las columnas editables de margen porcentual y precio unitario en indicadores de solo lectura basados en el `precioSugerido` del backend, impidiendo la alteración de precios por ítem.
+### Archivos Involucrados
+- [ItemPedido.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedido.java)
+- [ItemPedidoRequestDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoRequestDTO.java)
+- [ItemPedidoResponseDTO.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/ItemPedidoResponseDTO.java)
+- [PedidoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/pedidos/PedidoService.java)
+- [pedidos.types.ts](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/types/pedidos.types.ts)
+- [CrearPedidoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/CrearPedidoModal.tsx)## [2026-06-23] - Manejo de origen de órdenes de producción por defecto (Stock)
+### Descripción
+- **Backend (Producción):**
+  - Se modificó la entidad `OrdenProduccion` para remover la propiedad redundante `nullable = true` del campo `itemPedido`.
+  - Se agregó el campo enumerado `origen` de tipo `TipoOrigen` (con valores `PEDIDO_CLIENTE`, `STOCK_INTERNO`, `MANTENIMIENTO`), el cual por defecto guarda `STOCK_INTERNO` cuando no es una orden proveniente de un pedido de cliente.
+  - Se agregó el campo `referenciaOrigen` para almacenar detalles contextuales en caso de órdenes sin `itemPedido`.
+### Archivos Involucrados
+- [OrdenProduccion.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/produccion/OrdenProduccion.java)
+## [2026-06-23] - Rediseño de CrearPedidoModal (Estilo Factura)
+### Descripción
+- **Frontend (Pedidos):**
+  - Se reconstruyó por completo el layout del modal `CrearPedidoModal.tsx` utilizando la arquitectura "Variant 1 - Estilo Factura".
+  - Se reemplazó la confusa cuadrícula basada en Flexbox por una tabla HTML real `<table>` con scroll horizontal (`overflow-x-auto`), asegurando que las columnas siempre estén alineadas independientemente del tamaño del contenido.
+  - El selector de cliente ahora se ubica en un bloque compacto en el encabezado.
+  - Los totales financieros se reubicaron en un panel lateral inferior derecho, emulando la estructura clásica de facturación y ERPs, haciéndolo mucho más ordenado y predecible.
+### Archivos Involucrados
+- [CrearPedidoModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/pedidos/components/CrearPedidoModal.tsx)
+
+## [2026-06-23] - Rediseño de DropdownMenu a Estilo Material 3
+### Descripción
+- **Frontend (UI):**
+  - Se actualizó el componente base `dropdown-menu.tsx` para adoptar el estilo visual Variant C (Material 3).
+  - Se modificó el contenedor principal `DropdownMenuContent` con bordes muy redondeados (`rounded-[1.75rem]`), fondos tonales claros/oscuros (`bg-[#F3EDF7]`/`bg-[#2B2930]`) y sombras prominentes.
+  - Los ítems de menú (`DropdownMenuItem`) ahora ocupan todo el ancho sin bordes internos, con padding generoso (`py-3 px-6`), tipografía separada (`tracking-wide`) y colores de interacción específicos de la paleta tonal de M3 (morados para hover normal, rojos oscuros para estado destructivo).
+### Archivos Involucrados
+- [dropdown-menu.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/components/ui/dropdown-menu.tsx)
+
+## [2026-06-23] - Rediseño de STLCard a Estilo iOS
+### Descripción
+- **Frontend (Biblioteca):**
+  - Se rediseñó el componente base de la tarjeta (`STLCard.tsx`) adoptando el estilo Variant A (iOS / Apple).
+  - Se aplicaron bordes altamente redondeados (`rounded-[2rem]`) para suavizar el aspecto del grid de piezas.
+  - Se agregó un efecto de "Glassmorphism" translúcido en el badge del costo sobre el modelo 3D.
+  - Se actualizó el botón de fabricación con los colores y microinteracciones de estilo Apple (azul vibrante `bg-[#007AFF]`, opacidad al presionar).
+### Archivos Involucrados
+- [STLCard.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/STLCard.tsx)
+
+## [2026-06-23] - Rediseño Minimalista Editorial de PiezaDetailModal
+### Descripción
+- **Frontend (Biblioteca):**
+  - Se rediseñó el componente `PiezaDetailModal.tsx` adoptando un estilo visual "Minimalista / Editorial" (Variant D del Design Lab).
+  - Se eliminó el título superior genérico del modal para integrar el nombre de la pieza y su ID directamente flotando sobre el lienzo del visor 3D, ganando espacio y espectacularidad.
+  - Se adoptó una estética libre de contenedores pesados para los datos, usando tipografía fina (font-light), mayúsculas espaciadas (tracking-widest) para los rótulos, y líneas separadoras simples para una lectura de costos muy limpia.
+  - Se modificó `modal.tsx` para permitir títulos opcionales, evitando que se renderice el espacio del encabezado si se omite el `title`.
+### Archivos Involucrados
+- [PiezaDetailModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/biblioteca/components/PiezaDetailModal.tsx)
+- [modal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/components/ui/modal.tsx)
+
+## [2026-06-23] - Rediseño de Botones de Interacción a Estilo iOS
+### Descripción
+- **Frontend (UI):**
+  - Se rediseñó el componente base de botón (`button.tsx`) adoptando un estilo visual premium tipo iOS / Apple (Variant B del Design Lab).
+  - Se implementaron colores característicos (azul de iOS `bg-[#007AFF]`, rojos para estados destructivos), bordes completamente redondeados (`rounded-full`), y micro-interacciones suaves de opacidad al presionar (`active:opacity-60`).
+  - Se refactorizaron y simplificaron los tamaños disponibles para una jerarquía más clara.
+### Archivos Involucrados
+- [button.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/components/ui/button.tsx)
+
+## [2026-06-23] - Modal de Éxito Post-Cálculo y Eliminación de Toast (T002)
+### Descripción
+- **Frontend (Calculadora):**
+  - Se implementó un modal de éxito enfocado (`CalculationSuccessModal.tsx`) tras guardar un cálculo, reemplazando el Toast genérico.
+  - El modal provee un resumen visual del cálculo (nombre, tiempo y precio de venta sugerido).
+  - Incluye acciones inmediatas para "Ir a Biblioteca" o hacer un "Nuevo Cálculo".
+  - Se eliminó el toast genérico que aparecía tras analizar exitosamente un modelo STL para reducir la saturación de notificaciones.
+### Archivos Involucrados
+- [CalculationSuccessModal.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/CalculationSuccessModal.tsx)
+- [CalculadoraView.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/features/calculo/components/CalculadoraView.tsx)
+- [App.tsx](file:///C:/Users/franc/OneDrive/Desktop/printrm/frontend/src/App.tsx)
+
 ## [2026-06-21] - Rediseño estilo iPhone de PedidoDetalleView y validación de estado
 ### Descripción
 - **Frontend (Pedidos):**

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "design-lab": {
+      "source": "0xdesign/design-plugin",
+      "sourceType": "github",
+      "skillPath": "design-and-refine/skills/design-lab/SKILL.md",
+      "computedHash": "8879d318fcedccbae872a06b3d9a4ed3c5e75340a96d9c6baf765a4b19593c25"
+    },
+    "oklch-skill": {
+      "source": "jakubkrehel/oklch-skill",
+      "sourceType": "github",
+      "skillPath": "skills/oklch-skill/SKILL.md",
+      "computedHash": "e627c78e72955352f1efff3771e788a9ac174628fe3238738d1ee6912effdefd"
+    }
+  }
+}

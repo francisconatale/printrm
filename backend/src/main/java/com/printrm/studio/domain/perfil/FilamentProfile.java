@@ -36,9 +36,6 @@ public class FilamentProfile {
     @Column(length = 7)
     private String colour; // #HEX
 
-    @Column(name = "filament_config")
-    private String filamentConfig;
-
     @CreationTimestamp
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;

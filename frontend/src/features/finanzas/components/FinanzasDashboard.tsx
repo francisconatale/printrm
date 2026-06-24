@@ -333,7 +333,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                     <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                       <div 
                         style={{ width: `${percent}%` }}
-                        className={`h-full rounded-full transition-all duration-500 bg-foreground/70`}
+                        className={`h-full rounded-full transition-all duration-500 bg-foreground opacity-70`}
                       />
                     </div>
                   </div>

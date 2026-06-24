@@ -16,24 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-package com.printrm.studio.domain.produccion;
-
-import com.printrm.studio.domain.pedidos.ItemPedido;
-import com.printrm.studio.domain.stock.Producto;
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Entity
-@Table(name = "ordenes_produccion")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class OrdenProduccion {
 
     @Id
@@ -60,8 +42,6 @@ public class OrdenProduccion {
     @Builder.Default
     private TipoOrigen origen = TipoOrigen.STOCK_INTERNO;
 
-    private String referenciaOrigen;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaInicio;
@@ -73,6 +53,6 @@ public class OrdenProduccion {
     }
 
     public enum TipoOrigen {
-        PEDIDO_CLIENTE, STOCK_INTERNO, MANTENIMIENTO
+        PEDIDO_CLIENTE, STOCK_INTERNO
     }
 }

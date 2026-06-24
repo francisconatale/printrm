@@ -13,17 +13,18 @@ import java.util.stream.Collectors;
 public class OrdenProduccionController {
 
     private final OrdenProduccionService service;
+    private final OrdenProduccionMapper mapper;
 
     @GetMapping
     public List<OrdenProduccionResponseDTO> getAll() {
         return service.getAll().stream()
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public OrdenProduccionResponseDTO getById(@PathVariable String id) {
-        return mapToDTO(service.getById(UUID.fromString(id)));
+        return mapper.toDto(service.getById(UUID.fromString(id)));
     }
 
     @PostMapping("/vinculada")
@@ -32,7 +33,7 @@ public class OrdenProduccionController {
                 com.printrm.studio.utils.UUIDUtils.parseUUID(dto.getItemPedidoId()),
                 dto.getCantidad()
         );
-        return mapToDTO(o);
+        return mapper.toDto(o);
     }
 
     @PostMapping("/independiente")
@@ -41,13 +42,13 @@ public class OrdenProduccionController {
                 com.printrm.studio.utils.UUIDUtils.parseUUID(dto.getProductoId()),
                 dto.getCantidad()
         );
-        return mapToDTO(o);
+        return mapper.toDto(o);
     }
 
     @PatchMapping("/{id}/estado")
     public OrdenProduccionResponseDTO updateStatus(@PathVariable String id, @RequestParam String estado) {
         OrdenProduccion o = service.cambiarEstado(UUID.fromString(id), estado);
-        return mapToDTO(o);
+        return mapper.toDto(o);
     }
 
     @PostMapping("/{id}/merma")
@@ -55,23 +56,6 @@ public class OrdenProduccionController {
             @PathVariable String id,
             @RequestParam Integer unidadesFallidas) {
         OrdenProduccion o = service.registrarMermaParcial(UUID.fromString(id), unidadesFallidas);
-        return mapToDTO(o);
-    }
-
-    private OrdenProduccionResponseDTO mapToDTO(OrdenProduccion o) {
-        return OrdenProduccionResponseDTO.builder()
-                .id(o.getId().toString())
-                .itemPedidoId(o.getItemPedido() != null ? o.getItemPedido().getId().toString() : null)
-                .pedidoId(o.getItemPedido() != null ? o.getItemPedido().getPedido().getId().toString() : null)
-                .clienteNombre(o.getItemPedido() != null && o.getItemPedido().getPedido().getCliente() != null 
-                        ? o.getItemPedido().getPedido().getCliente().getNombre() 
-                        : (o.getItemPedido() != null ? "Consumidor Final" : "Stock Propio"))
-                .productoId(o.getProducto() != null ? o.getProducto().getId().toString() : null)
-                .productoNombre(o.getProducto() != null ? o.getProducto().getNombre() : "Pieza Cotizada")
-                .cantidad(o.getCantidad())
-                .estado(o.getEstado().name())
-                .fechaInicio(o.getFechaInicio())
-                .fechaFin(o.getFechaFin())
-                .build();
+        return mapper.toDto(o);
     }
 }

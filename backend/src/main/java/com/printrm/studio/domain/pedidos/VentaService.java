@@ -43,4 +43,40 @@ public class VentaService {
     public void registrarConsumoStock(UUID productoId, int cantidad) {
         productoService.updateStock(productoId.toString(), -cantidad);
     }
+
+    @Transactional
+    public void registrarPago(Pedido pedido, Double monto, String descripcion) {
+        pedido.setMontoPagado(pedido.getMontoPagado() + monto);
+        transaccionRepository.save(Transaccion.builder()
+                .tipo(Transaccion.TipoTransaccion.INGRESO)
+                .categoria(Transaccion.CategoriaTransaccion.VENTA)
+                .monto(monto)
+                .pedidoId(pedido.getId())
+                .descripcion(descripcion != null ? descripcion : "Pago parcial / Seña")
+                .build());
+    }
+
+    @Transactional
+    public void registrarCobroSaldo(Pedido pedido) {
+        double saldoPendiente = pedido.getTotal() - pedido.getMontoPagado();
+        if (saldoPendiente > 0) {
+            registrarPago(pedido, saldoPendiente, "Cobro de saldo restante al entregar");
+        }
+    }
+
+    @Transactional
+    public void registrarReembolso(Pedido pedido) {
+        boolean yaRegistrado = transaccionRepository.existsByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.REEMBOLSO);
+        if (yaRegistrado) return;
+
+        if (pedido.getMontoPagado() > 0) {
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
+                    .categoria(Transaccion.CategoriaTransaccion.VENTA)
+                    .monto(-pedido.getMontoPagado())
+                    .pedidoId(pedido.getId())
+                    .descripcion("Reembolso por pedido cancelado/devuelto")
+                    .build());
+        }
+    }
 }

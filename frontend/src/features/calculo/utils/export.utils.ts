@@ -17,6 +17,7 @@ export function generateSummaryText(
     line,
     `Energía:    ${formatCurrency(resultado.costoEnergia)}`,
     `Filamento:  ${formatCurrency(resultado.costoFilamento)}`,
+    ...(resultado.costoError > 0 ? [`Margen Error: ${formatCurrency(resultado.costoError)}`] : []),
     `Máquina:    ${formatCurrency(resultado.costoDesgaste)}`,
     `Insumos:    ${formatCurrency(insumosExtra)}`,
     `Costo base: ${formatCurrency(resultado.costoBase)}`,
@@ -77,7 +78,7 @@ export function downloadCSV(
 ): void {
   const headers = [
     'fecha', 'perfil', 'horas', 'minutos', 'gramos', 'insumos_extra', 'multiplicador',
-    'costo_energia', 'costo_filamento', 'costo_desgaste', 'subtotal', 'costo_base', 'precio_venta'
+    'costo_energia', 'costo_filamento', 'costo_error', 'costo_desgaste', 'subtotal', 'costo_base', 'precio_venta'
   ].join(',');
 
   const date = new Date().toISOString();
@@ -91,6 +92,7 @@ export function downloadCSV(
     multiplicador,
     resultado.costoEnergia,
     resultado.costoFilamento,
+    resultado.costoError,
     resultado.costoDesgaste,
     resultado.subtotal,
     resultado.costoBase,

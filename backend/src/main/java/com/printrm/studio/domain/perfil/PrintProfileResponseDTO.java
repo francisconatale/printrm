@@ -19,7 +19,6 @@ public class PrintProfileResponseDTO {
     private Integer perimeters;
     private String fillDensity;
     private Double speedPrint;
-    private String printConfig;
     private LocalDateTime creadoEn;
     private LocalDateTime actualizadoEn;
 }

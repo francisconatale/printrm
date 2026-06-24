@@ -10,10 +10,12 @@ import java.time.LocalDateTime;
 public class OnboardingService {
 
     private final OnboardingRepository repository;
+    private final OnboardingMapper mapper;
     private static final Long ONBOARDING_ID = 1L;
 
-    public OnboardingService(OnboardingRepository repository) {
+    public OnboardingService(OnboardingRepository repository, OnboardingMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @PostConstruct
@@ -30,7 +32,7 @@ public class OnboardingService {
 
     public OnboardingDTO getStatus() {
         return repository.findById(ONBOARDING_ID)
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .orElseGet(() -> OnboardingDTO.builder()
                         .completado(false)
                         .build());
@@ -47,14 +49,6 @@ public class OnboardingService {
         onboarding.setCompletadoEn(LocalDateTime.now());
 
         Onboarding saved = repository.save(onboarding);
-        return mapToDTO(saved);
-    }
-
-    private OnboardingDTO mapToDTO(Onboarding entity) {
-        return OnboardingDTO.builder()
-                .nombreUsuario(entity.getNombreUsuario())
-                .nombreEmprendimiento(entity.getNombreEmprendimiento())
-                .completado(entity.getCompletado())
-                .build();
+        return mapper.toDto(saved);
     }
 }

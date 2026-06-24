@@ -29,7 +29,8 @@ public class Pedido {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoPedido estado;
+    @Builder.Default
+    private EstadoPedido estado = EstadoPedido.BORRADOR;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

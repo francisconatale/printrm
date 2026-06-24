@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -20,11 +19,6 @@ public class PerfilController {
     @GetMapping
     public List<PerfilResponseDTO> findAll() {
         return service.findAll();
-    }
-
-    @GetMapping("/configs")
-    public Map<String, List<String>> getSlicerConfigs() {
-        return service.getSlicerConfigs();
     }
 
     @GetMapping("/{id}")

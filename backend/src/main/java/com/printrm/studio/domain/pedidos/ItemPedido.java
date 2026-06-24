@@ -38,12 +38,9 @@ public class ItemPedido {
     @Column(nullable = false)
     private Double subtotal;
 
-    private Double precioPersonalizado;
-
     public void calcularSubtotal() {
         if (cantidad != null) {
-            Double precio = (precioPersonalizado != null) ? precioPersonalizado :
-                            (producto != null && producto.getPrecioSugerido() != null ? producto.getPrecioSugerido() : 0.0);
+            Double precio = (producto != null && producto.getPrecioSugerido() != null) ? producto.getPrecioSugerido() : 0.0;
             this.subtotal = precio * cantidad;
         } else {
             this.subtotal = 0.0;

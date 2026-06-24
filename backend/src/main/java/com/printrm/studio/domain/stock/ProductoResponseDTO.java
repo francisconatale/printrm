@@ -1,14 +1,18 @@
 package com.printrm.studio.domain.stock;
 
 import com.printrm.studio.domain.biblioteca.PiezaSTLResponseDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductoResponseDTO {
     private String id;
     private String nombre;
@@ -21,6 +25,8 @@ public class ProductoResponseDTO {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoteDTO {
         private String id;
         private Integer cantidadActual;

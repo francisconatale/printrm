@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Producto } from '../types/stock.types';
-import { STLPreview } from '../../biblioteca/components/STLPreview';
-import { Plus, Minus, Package, MoreVertical, Trash2, Coins, ListFilter, Box } from 'lucide-react';
+import { Plus, Minus, MoreVertical, Trash2, ListFilter, PackageOpen, Edit3 } from 'lucide-react';
 import { useUpdateStock } from '../api/productos.api';
 import {
   DropdownMenu,
@@ -14,13 +13,15 @@ import { LotesProductoModal } from './LotesProductoModal';
 interface ProductoCardProps {
   producto: Producto;
   onDelete: (id: string) => void;
+  onEdit?: (producto: Producto) => void;
+  onAddStock?: (producto: Producto) => void;
 }
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 };
 
-export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }) => {
+export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete, onEdit, onAddStock }) => {
   const { mutate: updateStock } = useUpdateStock();
   const [isLotesModalOpen, setIsLotesModalOpen] = useState(false);
   
@@ -32,119 +33,112 @@ export const ProductoCard: React.FC<ProductoCardProps> = ({ producto, onDelete }
     return producto.lotes?.[0]?.costoUnitario || 0;
   }, [producto.partes, producto.lotes]);
 
-  // If product has parts, use the first one for preview
-  const firstPartUrl = `/test-cube.stl`; 
-
   return (
     <>
-      <div className="group relative bg-background border border-border rounded-[var(--radius-xl)] overflow-hidden transition-all duration-300 hover:border-foreground hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 flex items-center gap-4 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/50">
         
-        {/* Preview Area */}
-        <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden flex items-center justify-center border-b border-border/30">
+        {/* Icon / Image Placeholder */}
+        <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center justify-center shrink-0 overflow-hidden">
           {producto.partes?.[0]?.imagenBase64 ? (
             <img 
               src={producto.partes[0].imagenBase64} 
               alt={producto.nombre} 
-              className="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-102"
+              className="w-full h-full object-cover"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center text-muted-foreground/30">
-              <Box size={36} strokeWidth={1.5} />
-            </div>
+            <PackageOpen className="text-slate-400 dark:text-slate-500 w-5 h-5" />
           )}
-          
-          {/* Stock Badge Overlay */}
-          <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-md border border-white/30 shadow-sm flex items-center gap-2">
-            <Package size={12} className="text-muted-foreground" aria-hidden="true" />
-            <span className="text-[10px] font-bold text-foreground">{producto.cantidadStock} EN STOCK</span>
-          </div>
+        </div>
 
-          {/* Cost Info Overlay (Centralized Backend logic) */}
-          <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-foreground/10 backdrop-blur-md border border-white/10 shadow-sm flex items-center gap-2 text-white">
-            <Coins size={10} className="text-white/60" aria-hidden="true" />
-            <span className="text-[9px] font-bold tracking-tight uppercase" title="Costo calculado centralmente por la API">
-              Costo Fab: {formatCurrency(currentProductionCost)}
+        {/* Main Info */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-slate-900 dark:text-slate-100 text-[15px] leading-snug truncate" title={producto.nombre}>
+            {producto.nombre}
+          </h3>
+          <p className="text-[13px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title={(producto as any).descripcion || 'Sin descripción disponible.'}>
+            {(producto as any).descripcion || 'Sin descripción disponible.'}
+          </p>
+        </div>
+
+        {/* Metrics */}
+        <div className="flex items-center gap-6 px-4">
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Stock</span>
+            <span className={`text-[13px] font-semibold ${producto.cantidadStock > 0 ? 'text-slate-700 dark:text-slate-300' : 'text-red-600 dark:text-red-400'}`}>
+              {producto.cantidadStock}
             </span>
           </div>
-
-          {/* Lots Breakdown Indicator (Clickable) */}
-          {producto.lotes && producto.lotes.length > 0 && (
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsLotesModalOpen(true);
-              }}
-              className="absolute bottom-4 right-4 flex items-center gap-1.5 h-8 px-2.5 rounded-full bg-background/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold hover:bg-background hover:text-foreground transition-all group/btn shadow-lg"
-              title="Ver desglose de inventario (FIFO)"
-              aria-label={`Ver ${producto.lotes.length} lotes de ${producto.nombre}`}
-            >
-              <ListFilter size={12} className="group-hover/btn:rotate-180 transition-transform duration-500" aria-hidden="true" />
-              <span>{producto.lotes.length} {producto.lotes.length === 1 ? 'Lote' : 'Lotes'}</span>
-            </button>
-          )}
-
-          {/* Options Menu */}
-          <div className="absolute top-4 right-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger 
-                className="p-2 rounded-full bg-background/85 backdrop-blur-md border border-white/30 shadow-sm hover:bg-background transition-colors"
-                aria-label={`Opciones de producto para ${producto.nombre}`}
-              >
-                <MoreVertical size={14} className="text-muted-foreground" aria-hidden="true" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  onClick={() => onDelete(producto.id)}
-                  className="text-red-600 focus:text-red-600 focus:bg-destructive/10"
-                >
-                  <Trash2 size={14} className="mr-2" aria-hidden="true" />
-                  Eliminar Producto
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Costo</span>
+            <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
+              {formatCurrency(currentProductionCost)}
+            </span>
+          </div>
+          <div className="flex flex-col items-end">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">Venta</span>
+            <span className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">
+              {formatCurrency(producto.precioSugerido || 0)}
+            </span>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="p-6 space-y-4 bg-background">
-          <div className="space-y-1">
-            <h3 className="studio-body-strong truncate text-lg text-foreground" title={producto.nombre}>
-              {producto.nombre}
-            </h3>
-            <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
-              {producto.descripcion || 'Sin descripción disponible.'}
-            </p>
+        {/* Lotes Button */}
+        {producto.lotes && producto.lotes.length > 0 && (
+          <div className="flex items-center px-2">
+            <button 
+              onClick={() => setIsLotesModalOpen(true)}
+              className="flex items-center gap-1 text-[11px] font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+              title="Ver desglose de inventario (FIFO)"
+            >
+              <ListFilter size={14} />
+              <span>{producto.lotes.length} {producto.lotes.length === 1 ? 'Lote' : 'Lotes'}</span>
+            </button>
           </div>
+        )}
 
-          <div className="flex items-center justify-between pt-2 border-t border-border">
-            <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Costo Producción</span>
-              <span className="text-xl font-bold text-foreground">
-                {formatCurrency(currentProductionCost)}
-              </span>
-            </div>
+        {/* Actions */}
+        <div className="flex items-center gap-1 pl-4 border-l border-slate-200 dark:border-slate-800">
+          <button 
+            onClick={() => updateStock({ id: producto.id, delta: -1 })}
+            disabled={producto.cantidadStock <= 0}
+            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Disminuir stock"
+          >
+            <Minus size={16} />
+          </button>
+          <button 
+            onClick={() => onAddStock ? onAddStock(producto) : updateStock({ id: producto.id, delta: 1 })}
+            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors duration-200 cursor-pointer"
+            title="Aumentar stock"
+          >
+            <Plus size={16} />
+          </button>
+          <div className="w-px h-4 bg-slate-200 dark:bg-slate-800 mx-1" />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors duration-200 cursor-pointer focus:outline-none">
+              <MoreVertical size={16} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {onEdit && (
+                <DropdownMenuItem 
+                  onClick={() => onEdit(producto)}
+                  className="cursor-pointer"
+                >
+                  <Edit3 size={14} className="mr-2" />
+                  Editar Producto
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem 
+                onClick={() => onDelete(producto.id)}
+                className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 cursor-pointer"
+              >
+                <Trash2 size={14} className="mr-2" />
+                Eliminar Producto
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            {/* Quick Stock Controls */}
-            <div className="flex items-center gap-1 bg-muted rounded-full p-1 border border-border">
-              <button 
-                onClick={() => updateStock({ id: producto.id, delta: -1 })}
-                disabled={producto.cantidadStock <= 0}
-                className="size-8 rounded-full hover:bg-background flex items-center justify-center transition-colors disabled:opacity-30"
-                aria-label={`Disminuir stock de ${producto.nombre}`}
-                title={`Disminuir stock de ${producto.nombre}`}
-              >
-                <Minus size={14} aria-hidden="true" />
-              </button>
-              <button 
-                onClick={() => updateStock({ id: producto.id, delta: 1 })}
-                className="size-8 rounded-full hover:bg-background flex items-center justify-center transition-colors shadow-sm"
-                aria-label={`Aumentar stock de ${producto.nombre}`}
-                title={`Aumentar stock de ${producto.nombre}`}
-              >
-                <Plus size={14} aria-hidden="true" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 

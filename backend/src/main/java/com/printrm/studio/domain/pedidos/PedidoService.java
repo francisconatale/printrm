@@ -32,6 +32,7 @@ public class PedidoService {
     private final ProductoService productoService;
     private final OrdenProduccionRepository ordenProduccionRepository;
     private final VentaService ventaService;
+    private final PedidoMapper mapper;
 
     @Transactional
     public PedidoResponseDTO crearPedido(PedidoRequestDTO request) {
@@ -42,8 +43,6 @@ public class PedidoService {
             
         Pedido pedido = Pedido.builder()
                 .cliente(cliente)
-                .estado(Pedido.EstadoPedido.BORRADOR)
-                .montoPagado(0.0)
                 .build();
 
         Pedido savedPedido = repository.save(pedido);
@@ -52,8 +51,6 @@ public class PedidoService {
             ItemPedido item = ItemPedido.builder()
                     .pedido(savedPedido)
                     .cantidad(itemDto.getCantidad())
-                    .precioPersonalizado(itemDto.getPrecioPersonalizado())
-                    .cantidadMerma(0)
                     .build();
 
             if (itemDto.getProductoId() != null) {
@@ -68,7 +65,7 @@ public class PedidoService {
         }
 
         savedPedido.calcularTotal();
-        return mapToDTO(repository.save(savedPedido));
+        return mapper.toDto(repository.save(savedPedido));
     }
 
     @Transactional
@@ -84,7 +81,7 @@ public class PedidoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
         
         pedido.calcularTotal();
-        return mapToDTO(repository.save(pedido));
+        return mapper.toDto(repository.save(pedido));
     }
 
     @Transactional
@@ -93,27 +90,33 @@ public class PedidoService {
     }
 
     @Transactional
-    public void cambiarEstado(String pedidoId, String nuevoEstado) {
-        boolean estadoValido = false;
-        if (nuevoEstado != null) {
-            for (Pedido.EstadoPedido ep : Pedido.EstadoPedido.values()) {
-                if (ep.name().equals(nuevoEstado)) {
-                    estadoValido = true;
-                    break;
-                }
-            }
-        }
-        if (!estadoValido) {
-            throw new IllegalArgumentException("Estado de pedido no válido: " + nuevoEstado);
-        }
+    public void cambiarEstado(String pedidoId, String nuevoEstadoStr) {
+        Pedido.EstadoPedido nuevoEstado = parseEstado(nuevoEstadoStr);
 
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
-        Pedido.EstadoPedido anterior = pedido.getEstado();
-        Pedido.EstadoPedido nuevo = Pedido.EstadoPedido.valueOf(nuevoEstado);
+        validarTransicionEstado(pedido.getEstado(), nuevoEstado);
 
-        // Validaciones de flujo de estado (No permitir volver atrás ni salir de estados terminales)
+        if (nuevoEstado == Pedido.EstadoPedido.ENTREGADO) {
+            procesarEntrega(pedido);
+        } else if (nuevoEstado == Pedido.EstadoPedido.DEVUELTO) {
+            procesarDevolucion(pedido);
+        }
+        
+        pedido.setEstado(nuevoEstado);
+        repository.save(pedido);
+    }
+
+    private Pedido.EstadoPedido parseEstado(String estado) {
+        try {
+            return Pedido.EstadoPedido.valueOf(estado);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException("Estado de pedido no válido: " + estado);
+        }
+    }
+
+    private void validarTransicionEstado(Pedido.EstadoPedido anterior, Pedido.EstadoPedido nuevo) {
         if (anterior == Pedido.EstadoPedido.CANCELADO || anterior == Pedido.EstadoPedido.DEVUELTO) {
             throw new IllegalStateException("No se puede cambiar el estado de un pedido " + anterior);
         }
@@ -133,83 +136,56 @@ public class PedidoService {
         if (nuevo == Pedido.EstadoPedido.CONFIRMADO && anterior.ordinal() >= Pedido.EstadoPedido.EN_PRODUCCION.ordinal()) {
             throw new IllegalStateException("No se puede volver a Confirmado un pedido que ya está en Producción o superior.");
         }
+    }
 
-        if ("ENTREGADO".equals(nuevoEstado)) {
-            if (anterior == Pedido.EstadoPedido.ENTREGADO) {
-                throw new IllegalStateException("Este pedido ya fue entregado.");
-            }
-            boolean yaEntregadoCompletamente = true;
-            for (ItemPedido item : pedido.getItems()) {
-                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
-                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                if (cantidadEntregada < cantidadTotal) {
-                    yaEntregadoCompletamente = false;
-                    break;
-                }
-            }
+    private void procesarEntrega(Pedido pedido) {
+        boolean yaEntregadoCompletamente = pedido.getItems().stream()
+                .allMatch(item -> {
+                    int cant = item.getCantidad() != null ? item.getCantidad() : 0;
+                    int ent = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                    return ent >= cant;
+                });
 
-            if (yaEntregadoCompletamente) {
-                throw new IllegalStateException("Este pedido ya fue entregado.");
-            }
-
-            // 1. Validar stock real disponible para todos los ítems de tipo producto (solo para las unidades pendientes de entrega)
-            for (ItemPedido item : pedido.getItems()) {
-                if (item.getProducto() != null) {
-                    int stockDisponible = item.getProducto().getCantidadStock();
-                    int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
-                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                    int cantidadRequerida = cantidadTotal - cantidadEntregada;
-                    if (cantidadRequerida > 0 && stockDisponible < cantidadRequerida) {
-                        throw new RuntimeException("Stock insuficiente para entregar el producto: " + item.getProducto().getNombre() 
-                                + " (Requerido: " + cantidadRequerida + ", Disponible: " + stockDisponible + ")");
-                    }
-                }
-            }
-
-            // 2. Descontar stock usando VentaService e incrementar cantidadEntregada
-            for (ItemPedido item : pedido.getItems()) {
-                if (item.getProducto() != null) {
-                    int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
-                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                    int cantidadRequerida = cantidadTotal - cantidadEntregada;
-                    if (cantidadRequerida > 0) {
-                        ventaService.registrarConsumoStock(item.getProducto().getId(), cantidadRequerida);
-                        item.setCantidadEntregada(cantidadTotal);
-                        itemRepository.save(item);
-                    }
-                } else {
-                    item.setCantidadEntregada(item.getCantidad());
-                    itemRepository.save(item);
-                }
-            }
-
-            // 3. Registrar cobro final de saldo restante
-            registrarIngresoPorVenta(pedido);
-
-        } else if ("DEVUELTO".equals(nuevoEstado)) {
-            boolean algunaUnidadDevuelta = false;
-            for (ItemPedido item : pedido.getItems()) {
-                if (item.getProducto() != null) {
-                    int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                    if (cantidadEntregada > 0) {
-                        productoService.updateStock(item.getProducto().getId().toString(), cantidadEntregada);
-                        item.setCantidadEntregada(0);
-                        algunaUnidadDevuelta = true;
-                    }
-                }
-            }
-            if (!algunaUnidadDevuelta && anterior == Pedido.EstadoPedido.DEVUELTO) {
-                throw new IllegalStateException("Este pedido ya fue devuelto.");
-            }
-            registrarReembolso(pedido);
-        } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
-            // Ya no registramos el gasto aquí preemptivamente.
-            // El gasto se registra en Finanzas de manera exacta en el momento en que se fabrica la pieza (ProductoService.addStock)
-            // o cuando se declara como fallida (OrdenProduccionService.registrarMerma).
+        if (yaEntregadoCompletamente) {
+            throw new IllegalStateException("Este pedido ya fue entregado.");
         }
-        
-        pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
-        repository.save(pedido);
+
+        for (ItemPedido item : pedido.getItems()) {
+            int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
+            int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+            int cantidadRequerida = cantidadTotal - cantidadEntregada;
+            
+            if (item.getProducto() != null && cantidadRequerida > 0) {
+                productoService.validarStockDisponible(item.getProducto(), cantidadRequerida);
+                ventaService.registrarConsumoStock(item.getProducto().getId(), cantidadRequerida);
+                
+                item.setCantidadEntregada(cantidadTotal);
+                itemRepository.save(item);
+            } else if (item.getProducto() == null) {
+                item.setCantidadEntregada(cantidadTotal);
+                itemRepository.save(item);
+            }
+        }
+
+        ventaService.registrarCobroSaldo(pedido);
+    }
+
+    private void procesarDevolucion(Pedido pedido) {
+        boolean algunaUnidadDevuelta = false;
+        for (ItemPedido item : pedido.getItems()) {
+            if (item.getProducto() != null) {
+                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
+                if (cantidadEntregada > 0) {
+                    productoService.updateStock(item.getProducto().getId().toString(), cantidadEntregada);
+                    item.setCantidadEntregada(0);
+                    algunaUnidadDevuelta = true;
+                }
+            }
+        }
+        if (!algunaUnidadDevuelta && pedido.getEstado() == Pedido.EstadoPedido.DEVUELTO) {
+            throw new IllegalStateException("Este pedido ya fue devuelto.");
+        }
+        ventaService.registrarReembolso(pedido);
     }
 
     @Transactional
@@ -257,117 +233,21 @@ public class PedidoService {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
-        pedido.setMontoPagado(pedido.getMontoPagado() + monto);
-        
-        transaccionService.registrarTransaccion(
-                Transaccion.TipoTransaccion.INGRESO,
-                Transaccion.CategoriaTransaccion.VENTA,
-                monto,
-                descripcion != null ? descripcion : "Pago parcial / Seña",
-                pedido.getId()
-        );
-
-        return mapToDTO(repository.save(pedido));
+        ventaService.registrarPago(pedido, monto, descripcion);
+        return mapper.toDto(repository.save(pedido));
     }
 
-    // Método registrarGastoProduccion eliminado para evitar doble descuento contable y discrepancias por margen de error
-
-    private void registrarIngresoPorVenta(Pedido pedido) {
-        double saldoPendiente = pedido.getTotal() - pedido.getMontoPagado();
-        if (saldoPendiente > 0) {
-            registrarPago(pedido.getId().toString(), saldoPendiente, "Cobro de saldo restante al entregar");
-        }
-    }
-
-    private void registrarReembolso(Pedido pedido) {
-        boolean yaRegistrado = transaccionRepository.existsByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.REEMBOLSO);
-        if (yaRegistrado) return;
-
-        if (pedido.getMontoPagado() > 0) {
-            transaccionService.registrarTransaccion(
-                    Transaccion.TipoTransaccion.REEMBOLSO,
-                    Transaccion.CategoriaTransaccion.VENTA,
-                    -pedido.getMontoPagado(),
-                    "Reembolso por pedido cancelado",
-                    pedido.getId()
-            );
-        }
-    }
-
+    @Transactional(readOnly = true)
     public List<PedidoResponseDTO> getAll() {
         return repository.findAll().stream()
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public PedidoResponseDTO getPedido(String pedidoId) {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
-        return mapToDTO(pedido);
-    }
-
-    private PedidoResponseDTO mapToDTO(Pedido pedido) {
-        PedidoResponseDTO dto = new PedidoResponseDTO();
-        dto.setId(pedido.getId().toString());
-        dto.setClienteNombre(pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Consumidor Final");
-        dto.setEstado(pedido.getEstado().name());
-        dto.setTotal(pedido.getTotal());
-        dto.setMontoPagado(pedido.getMontoPagado());
-        dto.setSaldoPendiente(pedido.getTotal() - pedido.getMontoPagado());
-        LocalDateTime fecha = pedido.getFechaCreacion() != null
-                ? pedido.getFechaCreacion()
-                : (pedido.getFechaActualizacion() != null ? pedido.getFechaActualizacion() : LocalDateTime.now());
-        dto.setFechaCreacion(fecha);
-        dto.setItems(pedido.getItems().stream().map(item -> {
-            ItemPedidoResponseDTO itemDto = new ItemPedidoResponseDTO();
-            itemDto.setId(item.getId().toString());
-            itemDto.setCantidad(item.getCantidad());
-            itemDto.setCantidadMerma(item.getCantidadMerma());
-            itemDto.setCantidadEntregada(item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0);
-            itemDto.setSubtotal(item.getSubtotal());
-            itemDto.setPrecioPersonalizado(item.getPrecioPersonalizado());
-            
-            List<OrdenProduccion> ordenes = ordenProduccionRepository.findByItemPedidoId(item.getId());
-            itemDto.setOrdenesProduccion(ordenes.stream().map(o -> ItemPedidoResponseDTO.OrdenProduccionResumenDTO.builder()
-                .id(o.getId().toString())
-                .cantidad(o.getCantidad())
-                .estado(o.getEstado().name())
-                .build()).collect(Collectors.toList()));
-
-            if (item.getProducto() != null) {
-                itemDto.setProductoId(item.getProducto().getId().toString());
-                itemDto.setProductoNombre(item.getProducto().getNombre());
-                itemDto.setPerfilNombre(item.getProducto().getNombre());
-                
-                int stockTotal = item.getProducto().getCantidadStock();
-                itemDto.setStockDisponible(stockTotal);
-                
-                int cantidadProducida = ordenes.stream()
-                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COMPLETADO)
-                    .mapToInt(OrdenProduccion::getCantidad)
-                    .sum();
-                
-                int cantidadEnProduccion = ordenes.stream()
-                    .filter(o -> o.getEstado() == OrdenProduccion.EstadoProduccion.COLA 
-                              || o.getEstado() == OrdenProduccion.EstadoProduccion.IMPRIMIENDO)
-                    .mapToInt(OrdenProduccion::getCantidad)
-                    .sum();
-                
-                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
-                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                int cantidadPendiente = Math.max(0, cantidadTotal - cantidadEntregada);
-                int faltante = Math.max(0, cantidadPendiente - stockTotal - cantidadEnProduccion);
-                itemDto.setCantidadFaltante(faltante);
-            } else {
-                itemDto.setPerfilNombre("Item Desconocido");
-                itemDto.setStockDisponible(0);
-                int cantidadTotal = item.getCantidad() != null ? item.getCantidad() : 0;
-                int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
-                itemDto.setCantidadFaltante(Math.max(0, cantidadTotal - cantidadEntregada));
-            }
-            
-            return itemDto;
-        }).collect(Collectors.toList()));
-        return dto;
+        return mapper.toDto(pedido);
     }
 }

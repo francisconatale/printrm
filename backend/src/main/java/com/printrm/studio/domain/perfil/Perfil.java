@@ -55,12 +55,4 @@ public class Perfil {
     @Column(name = "max_print_height")
     private Double maxPrintHeight;
 
-    @Column(name = "print_config")
-    private String printConfig;
-
-    @Column(name = "filament_config")
-    private String filamentConfig;
-
-    @Column(name = "printer_config")
-    private String printerConfig;
 }

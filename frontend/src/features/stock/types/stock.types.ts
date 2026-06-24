@@ -19,6 +19,7 @@ export interface Producto {
 }
 
 export interface ProductoCreate {
+  id?: string;
   nombre: string;
   precioSugerido?: number;
   cantidadStock?: number;

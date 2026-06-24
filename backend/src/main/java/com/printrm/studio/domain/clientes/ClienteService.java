@@ -13,16 +13,17 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
     private final ClienteRepository repository;
+    private final ClienteMapper mapper;
 
     public List<ClienteDTO> getAll() {
         return repository.findAll().stream()
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public ClienteDTO getById(UUID id) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
@@ -33,7 +34,7 @@ public class ClienteService {
                 .email(request.getEmail())
                 .telefono(request.getTelefono())
                 .build();
-        return mapToDTO(repository.save(cliente));
+        return mapper.toDto(repository.save(cliente));
     }
 
     @Transactional
@@ -45,20 +46,11 @@ public class ClienteService {
         cliente.setEmail(request.getEmail());
         cliente.setTelefono(request.getTelefono());
         
-        return mapToDTO(repository.save(cliente));
+        return mapper.toDto(repository.save(cliente));
     }
 
     @Transactional
     public void delete(UUID id) {
         repository.deleteById(id);
-    }
-
-    private ClienteDTO mapToDTO(Cliente cliente) {
-        ClienteDTO dto = new ClienteDTO();
-        dto.setId(cliente.getId());
-        dto.setNombre(cliente.getNombre());
-        dto.setEmail(cliente.getEmail());
-        dto.setTelefono(cliente.getTelefono());
-        return dto;
     }
 }

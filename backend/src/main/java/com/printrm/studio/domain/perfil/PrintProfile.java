@@ -34,9 +34,6 @@ public class PrintProfile {
     @Column(name = "speed_print")
     private Double speedPrint;
 
-    @Column(name = "print_config")
-    private String printConfig;
-
     @CreationTimestamp
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;

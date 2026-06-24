@@ -12,7 +12,6 @@ public class ItemPedidoResponseDTO {
     private Integer cantidadMerma;
     private Integer cantidadEntregada;
     private Double subtotal;
-    private Double precioPersonalizado;
     private Integer stockDisponible;
     private Integer cantidadFaltante;
     private java.util.List<OrdenProduccionResumenDTO> ordenesProduccion;

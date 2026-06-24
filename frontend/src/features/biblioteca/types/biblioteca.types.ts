@@ -8,6 +8,7 @@ export interface PiezaSTL {
   costoBase?: number;
   costoMaterial?: number;
   costoEnergia?: number;
+  costoError?: number;
   
   perfilImpresoraNombre?: string;
   perfilFilamentoNombre?: string;

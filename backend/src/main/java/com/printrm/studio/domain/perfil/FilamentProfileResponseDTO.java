@@ -20,7 +20,6 @@ public class FilamentProfileResponseDTO {
     private Double density;
     private Double diameter;
     private String colour;
-    private String filamentConfig;
     private LocalDateTime creadoEn;
     private LocalDateTime actualizadoEn;
 }

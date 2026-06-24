@@ -26,10 +26,11 @@ public class ProductoService {
     private final com.printrm.studio.domain.finanzas.TransaccionService transaccionService;
     private final CostCalculationService costCalculationService;
     private final AjustesService ajustesService;
+    private final ProductoMapper mapper;
 
     public List<ProductoResponseDTO> getAll() {
         return repository.findAll().stream()
-                .map(this::mapToResponseDTO)
+                .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -66,61 +67,7 @@ public class ProductoService {
 
         saved = repository.findById(saved.getId()).orElse(saved);
 
-        return mapToResponseDTO(saved);
-    }
-
-    private ProductoResponseDTO mapToResponseDTO(Producto p) {
-        return ProductoResponseDTO.builder()
-                .id(p.getId().toString())
-                .nombre(p.getNombre())
-                .cantidadStock(p.getCantidadStock())
-                .precioSugerido(p.getPrecioSugerido())
-                .creadoEn(p.getCreadoEn())
-                .actualizadoEn(p.getActualizadoEn())
-                .partes(p.getPartes().stream().map(this::mapPiezaToDTO).collect(Collectors.toList()))
-                .lotes(p.getLotes().stream()
-                        .filter(l -> l.getCantidadActual() > 0)
-                        .sorted(Comparator.comparing(Lote::getFechaCreacion))
-                        .map(l -> ProductoResponseDTO.LoteDTO.builder()
-                                .id(l.getId().toString())
-                                .cantidadActual(l.getCantidadActual())
-                                .costoUnitario(l.getCostoUnitario())
-                                .fechaCreacion(l.getFechaCreacion())
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    private PiezaSTLResponseDTO mapPiezaToDTO(PiezaSTL pieza) {
-        PiezaSTLResponseDTO dto = new PiezaSTLResponseDTO();
-        dto.setId(pieza.getId());
-        dto.setNombre(pieza.getNombre());
-        dto.setFilePath(pieza.getFilePath());
-        dto.setVolumenCm3(pieza.getVolumenCm3());
-        dto.setPesoGramos(pieza.getPesoGramos());
-        dto.setTiempoEstimado(pieza.getTiempoEstimado());
-        dto.setImagenBase64(pieza.getImagenBase64());
-        dto.setCreadoEn(pieza.getCreadoEn());
-        if (pieza.getPerfilPreferido() != null) dto.setPerfilImpresoraNombre(pieza.getPerfilPreferido().getNombre());
-        if (pieza.getFilamentoPreferido() != null) dto.setPerfilFilamentoNombre(pieza.getFilamentoPreferido().getNombre());
-        if (pieza.getImpresionPreferida() != null) dto.setPerfilImpresionNombre(pieza.getImpresionPreferida().getNombre());
-        
-        // Dynamic cost calculation
-        AjustesDTO ajustes = ajustesService.getAjustes();
-        CostCalculationResult calc = costCalculationService.calculate(
-            pieza.getPesoGramos(), 
-            costCalculationService.parseHours(pieza.getTiempoEstimado()), 
-            costCalculationService.parseMinutes(pieza.getTiempoEstimado()), 
-            0.0, 
-            pieza.getPerfilPreferido(), 
-            pieza.getFilamentoPreferido(), 
-            ajustes
-        );
-        dto.setCostoBase(calc != null ? calc.getCostoBase() : 0.0);
-        dto.setCostoMaterial(calc != null ? calc.getCostoFilamento() : 0.0);
-        dto.setCostoEnergia(calc != null ? calc.getCostoEnergia() : 0.0);
-        
-        return dto;
+        return mapper.toResponseDto(saved);
     }
 
     @Transactional
@@ -178,6 +125,16 @@ public class ProductoService {
             "Energía: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
             pedidoId
         );
+
+        if (costos.getCostoError() != null && costos.getCostoError() > 0) {
+            transaccionService.registrarTransaccion(
+                com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
+                com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MERMA,
+                -(costos.getCostoError() * cantidad),
+                "Margen de Error (Merma): " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
+                pedidoId
+            );
+        }
     }
 
     @Transactional
@@ -213,12 +170,18 @@ public class ProductoService {
         }
 
         if (restante > 0) {
-            // This shouldn't happen if producto.getCantidadStock() was accurate
             throw new RuntimeException("Error inconsistencia de stock: no se pudo consumir la cantidad total de los lotes");
         }
 
         producto.setCantidadStock(producto.getCantidadStock() - cantidadAConsumir);
         repository.save(producto);
+    }
+
+    public void validarStockDisponible(Producto producto, int cantidadRequerida) {
+        if (cantidadRequerida > 0 && producto.getCantidadStock() < cantidadRequerida) {
+            throw new RuntimeException("Stock insuficiente para entregar el producto: " + producto.getNombre() 
+                    + " (Requerido: " + cantidadRequerida + ", Disponible: " + producto.getCantidadStock() + ")");
+        }
     }
 
 

@@ -1,0 +1,28 @@
+{
+  "scope": "component",
+  "isRedesign": true,
+  "targetPath": "src/features/stock/components/EditarProductoModal.tsx",
+  "targetName": "EditarProductoModal",
+  "painPoints": ["Unclear hierarchy", "Outdated look"],
+  "inspiration": {
+    "visual": ["Stripe"],
+    "functional": ["Inline editing"]
+  },
+  "brand": {
+    "adjectives": ["Minimal"],
+    "density": "Compact",
+    "darkMode": false
+  },
+  "persona": {
+    "primary": "Business user",
+    "context": "desktop-first",
+    "keyTasks": ["Update product name", "Update selling price"]
+  },
+  "constraints": {
+    "mustKeep": ["existing fields"],
+    "technical": ["Use existing components"]
+  },
+  "framework": "vite",
+  "packageManager": "npm",
+  "stylingSystem": "tailwind"
+}

@@ -56,7 +56,6 @@ export const STLUpload: React.FC<STLUploadProps> = ({
               <X size={14} />
             </button>
             
-            {/* STL Viewer - Full Bleed */}
             <div className="w-full h-full">
               <STLViewer file={file} canvasRef={canvasRef} onInitialCapture={onInitialCapture} />
             </div>

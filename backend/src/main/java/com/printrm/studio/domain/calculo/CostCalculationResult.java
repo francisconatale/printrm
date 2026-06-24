@@ -16,6 +16,7 @@ public class CostCalculationResult {
     private Double tiempoTotalHoras;
     private Double costoEnergia;
     private Double costoFilamento;
+    private Double costoError;
     private Double subtotal;
     private Double costoBase;
 }

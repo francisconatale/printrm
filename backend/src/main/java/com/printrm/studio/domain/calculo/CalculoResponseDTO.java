@@ -25,6 +25,7 @@ public class CalculoResponseDTO {
     // Results
     private Double costoEnergia;
     private Double costoFilamento;
+    private Double costoError;
     private Double subtotal;
     private Double costoBase;
     private Double precioVenta;

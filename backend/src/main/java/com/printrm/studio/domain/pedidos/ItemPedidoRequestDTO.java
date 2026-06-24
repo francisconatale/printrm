@@ -17,11 +17,5 @@ public class ItemPedidoRequestDTO {
     @Min(value = 1, message = "La cantidad debe ser al menos 1")
     private Integer cantidad;
 
-    private Double precioPersonalizado;
 
-    public ItemPedidoRequestDTO(UUID productoId, Integer cantidad) {
-        this.productoId = productoId;
-        this.cantidad = cantidad;
-        this.precioPersonalizado = null;
-    }
 }

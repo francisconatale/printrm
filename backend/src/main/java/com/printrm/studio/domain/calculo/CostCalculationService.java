@@ -81,7 +81,8 @@ public class CostCalculationService {
         double subtotal = costoEnergia + costoFilamento + (insumosExtra != null ? insumosExtra : 0.0);
         
         // 4. Margen de Error (Costo Base)
-        double costoBase = subtotal * (1 + (margenError / 100.0));
+        double costoError = costoFilamento * (margenError / 100.0);
+        double costoBase = subtotal + costoError;
 
         return CostCalculationResult.builder()
                 .horas(horas)
@@ -90,6 +91,7 @@ public class CostCalculationService {
                 .tiempoTotalHoras(tiempoTotalHoras)
                 .costoEnergia(costoEnergia)
                 .costoFilamento(costoFilamento)
+                .costoError(costoError)
                 .subtotal(subtotal)
                 .costoBase(costoBase)
                 .build();
@@ -98,6 +100,7 @@ public class CostCalculationService {
     public CostCalculationResult calculateForProducto(com.printrm.studio.domain.stock.Producto producto, AjustesDTO ajustes) {
         Double totalFilamento = 0.0;
         Double totalEnergia = 0.0;
+        Double totalError = 0.0;
         Double totalBase = 0.0;
         
         for (com.printrm.studio.domain.biblioteca.PiezaSTL pieza : producto.getPartes()) {
@@ -112,16 +115,14 @@ public class CostCalculationService {
             );
             totalFilamento += res.getCostoFilamento();
             totalEnergia += res.getCostoEnergia();
+            totalError += (res.getCostoError() != null ? res.getCostoError() : 0.0);
             totalBase += res.getCostoBase();
         }
-
-        double margenError = ajustes != null && ajustes.getMargenError() != null ? ajustes.getMargenError() / 100.0 : 0.0;
-        double costoError = (totalFilamento + totalEnergia) * margenError;
-        totalFilamento += costoError;
 
         return CostCalculationResult.builder()
                 .costoFilamento(totalFilamento)
                 .costoEnergia(totalEnergia)
+                .costoError(totalError)
                 .costoBase(totalBase)
                 .build();
     }

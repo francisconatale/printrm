@@ -28,8 +28,4 @@ public class PerfilResponseDTO {
     private String bedShape;
     private Double maxPrintHeight;
 
-    // Slicer Configuration
-    private String printConfig;
-    private String filamentConfig;
-    private String printerConfig;
 }
