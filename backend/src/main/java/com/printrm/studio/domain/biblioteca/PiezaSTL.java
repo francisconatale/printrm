@@ -13,12 +13,16 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
 @Table(name = "piezas_stl")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE piezas_stl SET deleted = true WHERE id = ?")
 public class PiezaSTL {
 
     @Id
@@ -60,4 +64,8 @@ public class PiezaSTL {
 
     @UpdateTimestamp
     private LocalDateTime actualizadoEn;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean deleted = false;
 }

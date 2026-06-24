@@ -9,11 +9,18 @@ import {
   Wallet,
   LayoutDashboard,
   ReceiptText,
-  Plus
+  Plus,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { FinanzasDashboard } from './FinanzasDashboard';
 import { TransactionForm } from './TransactionForm';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { Transaccion } from '../types/finanzas.types';
+
+type TransactionItem = 
+  | { isGroup: false; tx: Transaccion }
+  | { isGroup: true; id: string; txs: Transaccion[]; montoTotal: number; fecha: string; descripcion: string; categoria: string; tipo: 'INGRESO' | 'EGRESO' | 'REEMBOLSO' };
 
 const formatCurrency = (value: number) => {
   const absValue = Math.abs(value);
@@ -28,13 +35,59 @@ export function LibroDiarioView() {
   const [activeTab, setActiveTab] = React.useState<'dashboard' | 'ledger'>('dashboard');
   const [isFormOpen, setIsFormOpen] = React.useState(false);
 
-  const filteredTransacciones = React.useMemo(() => {
+  const [expandedGroups, setExpandedGroups] = React.useState<Record<string, boolean>>({});
+
+  const toggleGroup = (id: string) => {
+    setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const groupedTransacciones = React.useMemo<TransactionItem[]>(() => {
     if (!transacciones) return [];
     const sorted = [...transacciones].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-    return sorted.filter(t => 
+    const filtered = sorted.filter(t => 
       t.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.categoria.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const result: TransactionItem[] = [];
+    const groupMap = new Map<string, Transaccion[]>();
+
+    filtered.forEach(t => {
+      if (t.grupoId) {
+        if (!groupMap.has(t.grupoId)) {
+          groupMap.set(t.grupoId, []);
+        }
+        groupMap.get(t.grupoId)!.push(t);
+      } else {
+        result.push({ isGroup: false, tx: t });
+      }
+    });
+
+    groupMap.forEach((txs, groupId) => {
+      const montoTotal = txs.reduce((acc, curr) => acc + curr.monto, 0);
+      const mainTx = txs[0];
+      let desc = mainTx.descripcion;
+      if (desc.includes(': ')) {
+        desc = desc.split(': ').slice(1).join(': ');
+      }
+      
+      result.push({
+        isGroup: true,
+        id: groupId,
+        txs,
+        montoTotal,
+        fecha: mainTx.fecha,
+        descripcion: `Fabricación: ${desc}`,
+        categoria: 'FABRICACION',
+        tipo: 'EGRESO'
+      });
+    });
+
+    return result.sort((a, b) => {
+      const dateA = new Date(a.isGroup ? a.fecha : a.tx.fecha).getTime();
+      const dateB = new Date(b.isGroup ? b.fecha : b.tx.fecha).getTime();
+      return dateB - dateA;
+    });
   }, [transacciones, searchTerm]);
 
   const isLoading = isTransaccionesLoading || isBalanceLoading;
@@ -145,7 +198,7 @@ export function LibroDiarioView() {
                     <Loader2 className="animate-spin" size={32} aria-hidden="true" />
                     <p className="studio-caption">Cargando movimientos...</p>
                   </div>
-                ) : filteredTransacciones.length > 0 ? (
+                ) : groupedTransacciones.length > 0 ? (
                   <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                     <table className="min-w-full">
                       <thead>
@@ -157,32 +210,65 @@ export function LibroDiarioView() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
-                        {filteredTransacciones.map((t, idx) => (
-                          <tr key={t.id} className="hover:bg-muted/5 transition-colors">
-                            <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
-                              <span className="block">{format(new Date(t.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
-                              <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{t.id.slice(-6)}</span>
-                            </td>
-                            <td className="px-6 py-4 text-sm studio-body-strong text-foreground">
-                              {t.descripcion}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                                t.tipo === 'INGRESO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50' :
-                                t.tipo === 'REEMBOLSO' ? 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50' :
-                                'bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50'
+                        {groupedTransacciones.map((item, idx) => (
+                          <React.Fragment key={item.isGroup ? item.id : item.tx.id}>
+                            <tr 
+                              className={`hover:bg-muted/5 transition-colors ${item.isGroup ? 'cursor-pointer' : ''}`}
+                              onClick={() => item.isGroup && toggleGroup(item.id)}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
+                                <div className="flex items-center gap-2">
+                                  {item.isGroup && (
+                                    <button className="text-muted-foreground hover:text-foreground">
+                                      {expandedGroups[item.id] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                    </button>
+                                  )}
+                                  <div>
+                                    <span className="block">{format(new Date(item.isGroup ? item.fecha : item.tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
+                                    <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{item.isGroup ? item.id.slice(-6) : item.tx.id.slice(-6)}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-sm studio-body-strong text-foreground">
+                                {item.isGroup ? item.descripcion : item.tx.descripcion}
+                                {item.isGroup && <span className="ml-2 text-[10px] text-muted-foreground font-normal">({item.txs.length} items)</span>}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-center">
+                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50' :
+                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50' :
+                                  'bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50'
+                                }`}>
+                                  {item.isGroup ? item.categoria : item.tx.categoria}
+                                </span>
+                              </td>
+                              <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-bold ${
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'text-emerald-600 dark:text-emerald-400' :
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'text-amber-600 dark:text-amber-400' :
+                                'text-zinc-900 dark:text-zinc-300'
                               }`}>
-                                {t.categoria}
-                              </span>
-                            </td>
-                            <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-bold ${
-                              t.tipo === 'INGRESO' ? 'text-emerald-600 dark:text-emerald-400' :
-                              t.tipo === 'REEMBOLSO' ? 'text-amber-600 dark:text-amber-400' :
-                              'text-zinc-900 dark:text-zinc-300'
-                            }`}>
-                              {formatCurrency(t.monto)}
-                            </td>
-                          </tr>
+                                {formatCurrency(item.isGroup ? item.montoTotal : item.tx.monto)}
+                              </td>
+                            </tr>
+                            {item.isGroup && expandedGroups[item.id] && item.txs.map(subTx => (
+                              <tr key={subTx.id} className="bg-muted/10 border-l-2 border-l-primary/30">
+                                <td className="px-6 py-3 whitespace-nowrap text-[11px] text-muted-foreground pl-12">
+                                  <span className="block">{format(new Date(subTx.fecha), 'HH:mm', { locale: es })}</span>
+                                </td>
+                                <td className="px-6 py-3 text-xs text-muted-foreground">
+                                  ↳ {subTx.descripcion}
+                                </td>
+                                <td className="px-6 py-3 whitespace-nowrap text-center">
+                                  <span className="text-[9px] font-medium px-2 py-0.5 rounded-full uppercase border bg-zinc-50 text-zinc-500 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50">
+                                    {subTx.categoria}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-3 whitespace-nowrap text-right text-xs text-muted-foreground">
+                                  {formatCurrency(subTx.monto)}
+                                </td>
+                              </tr>
+                            ))}
+                          </React.Fragment>
                         ))}
                       </tbody>
                     </table>

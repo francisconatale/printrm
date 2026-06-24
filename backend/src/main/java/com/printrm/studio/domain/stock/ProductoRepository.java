@@ -6,4 +6,5 @@ import java.util.UUID;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, UUID> {
+    java.util.List<Producto> findAllByDeletedFalse();
 }

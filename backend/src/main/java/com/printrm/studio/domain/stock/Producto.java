@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.SQLDelete;
+
 @Entity
 @Table(name = "productos")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@SQLDelete(sql = "UPDATE productos SET deleted = true WHERE id = ?")
 public class Producto {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -45,4 +48,8 @@ public class Producto {
 
     @UpdateTimestamp
     private LocalDateTime actualizadoEn;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean deleted = false;
 }

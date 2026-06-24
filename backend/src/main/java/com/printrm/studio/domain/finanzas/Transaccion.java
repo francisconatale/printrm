@@ -23,8 +23,9 @@ public class Transaccion {
     private Double monto;
 
     private String descripcion;
-
     private UUID pedidoId;
+    private UUID grupoId;
+    private UUID productoId;
 
     @CreationTimestamp
     private LocalDateTime fecha;

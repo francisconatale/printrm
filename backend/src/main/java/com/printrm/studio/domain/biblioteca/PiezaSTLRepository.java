@@ -7,5 +7,6 @@ import java.util.List;
 
 @Repository
 public interface PiezaSTLRepository extends JpaRepository<PiezaSTL, String> {
+    List<PiezaSTL> findAllByDeletedFalseOrderByCreadoEnDesc();
     List<PiezaSTL> findAllByOrderByCreadoEnDesc();
 }

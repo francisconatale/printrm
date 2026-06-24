@@ -33,7 +33,7 @@ public class PiezaSTLService {
 
     public List<PiezaSTLResponseDTO> getAll() {
         AjustesDTO ajustes = ajustesService.getAjustes();
-        return repository.findAllByOrderByCreadoEnDesc().stream()
+        return repository.findAllByDeletedFalseOrderByCreadoEnDesc().stream()
                 .map(pieza -> mapper.toDto(pieza, ajustes))
                 .collect(Collectors.toList());
     }

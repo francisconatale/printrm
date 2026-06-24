@@ -8,5 +8,7 @@ export interface Transaccion {
   monto: number;
   descripcion: string;
   pedidoId?: string;
+  grupoId?: string;
+  productoId?: string;
   fecha: string;
 }

@@ -28,13 +28,19 @@ public class TransaccionService {
     }
 
     public void registrarTransaccion(Transaccion.TipoTransaccion tipo, Transaccion.CategoriaTransaccion categoria, Double monto, String descripcion, java.util.UUID pedidoId) {
-        if (monto != 0) {
+        registrarTransaccion(tipo, categoria, monto, descripcion, pedidoId, null, null);
+    }
+
+    public void registrarTransaccion(Transaccion.TipoTransaccion tipo, Transaccion.CategoriaTransaccion categoria, Double monto, String descripcion, java.util.UUID pedidoId, java.util.UUID grupoId, java.util.UUID productoId) {
+        if (monto != null && monto != 0) {
             Transaccion tx = Transaccion.builder()
                     .tipo(tipo)
                     .categoria(categoria)
                     .monto(monto)
-                    .pedidoId(pedidoId)
                     .descripcion(descripcion)
+                    .pedidoId(pedidoId)
+                    .grupoId(grupoId)
+                    .productoId(productoId)
                     .build();
             repository.save(tx);
         }

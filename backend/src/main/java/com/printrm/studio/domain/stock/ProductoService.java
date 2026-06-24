@@ -29,7 +29,7 @@ public class ProductoService {
     private final ProductoMapper mapper;
 
     public List<ProductoResponseDTO> getAll() {
-        return repository.findAll().stream()
+        return repository.findAllByDeletedFalse().stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
@@ -110,20 +110,26 @@ public class ProductoService {
         AjustesDTO ajustes = ajustesService.getAjustes();
         CostCalculationResult costos = costCalculationService.calculateForProducto(producto, ajustes);
 
+        UUID grupoId = UUID.randomUUID();
+
         transaccionService.registrarTransaccion(
             com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
             com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MATERIAL,
             -(costos.getCostoFilamento() * cantidad),
-            "Filamento: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
-            pedidoId
+            "Filamento: " + cantidad + " unidades de " + producto.getNombre(),
+            pedidoId,
+            grupoId,
+            producto.getId()
         );
 
         transaccionService.registrarTransaccion(
             com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
             com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.ENERGIA,
             -(costos.getCostoEnergia() * cantidad),
-            "Energía: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
-            pedidoId
+            "Energía: " + cantidad + " unidades de " + producto.getNombre(),
+            pedidoId,
+            grupoId,
+            producto.getId()
         );
 
         if (costos.getCostoError() != null && costos.getCostoError() > 0) {
@@ -131,8 +137,10 @@ public class ProductoService {
                 com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
                 com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MERMA,
                 -(costos.getCostoError() * cantidad),
-                "Margen de Error (Merma): " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
-                pedidoId
+                "Merma: " + cantidad + " unidades de " + producto.getNombre(),
+                pedidoId,
+                grupoId,
+                producto.getId()
             );
         }
     }
