@@ -15,6 +15,7 @@ import { parseISO } from 'date-fns/parseISO';
 import { startOfMonth } from 'date-fns/startOfMonth';
 import { es } from 'date-fns/locale/es';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { DateRangePicker, useDateRange } from '../../../components/ui/date-range-picker';
 
 interface FinanzasDashboardProps {
   onOpenNewTransaction: () => void;
@@ -28,7 +29,9 @@ const formatCurrency = (value: number) => {
 };
 
 export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: FinanzasDashboardProps) {
-  const { data: transaccionesData, isLoading, error } = useGetTransacciones(0, 1000);
+  const dateRangeHook = useDateRange();
+  const { fechaDesde, fechaHasta, dateRange, setRange } = dateRangeHook;
+  const { data: transaccionesData, isLoading, error } = useGetTransacciones(0, 1000, undefined, fechaDesde, fechaHasta);
   const transacciones = transaccionesData?.content;
 
   const metrics = React.useMemo(() => {
@@ -144,6 +147,18 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
 
   return (
     <div className="space-y-10">
+      {/* Header with Date Filter */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold">Panel de Rendimiento</h2>
+          <p className="text-xs text-muted-foreground">Métricas financieras consolidadas.</p>
+        </div>
+        <DateRangePicker
+          value={dateRange}
+          onChange={(range) => setRange(range)}
+        />
+      </div>
+
       {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         
@@ -209,15 +224,15 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         </div>
 
         {/* ROI Card */}
-        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
+        <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
             <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
               <Percent size={20} />
             </div>
             <div className="group relative cursor-pointer">
               <HelpCircle size={16} className="text-muted-foreground" />
-              <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-48 bg-black text-white text-[10px] p-2.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50 leading-relaxed font-sans">
-                ROI = (Balance / Gastos Totales) * 100. Representa el retorno sobre la inversión de fabricación de piezas y costos fijos.
+              <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-56 bg-black text-white text-xs p-3 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-50 leading-relaxed font-sans">
+                ROI = (Balance / Gastos Totales) × 100. Representa el retorno sobre la inversión de fabricación de piezas y costos fijos.
               </div>
             </div>
           </div>
