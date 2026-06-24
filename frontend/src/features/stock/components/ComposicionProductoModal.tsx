@@ -102,7 +102,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
               <input
                 id="prod-nombre"
                 {...register('nombre')}
-                className="w-full bg-transparent border-b-2 border-border px-0 py-1.5 text-base font-medium text-foreground focus:border-primary outline-none transition-colors placeholder:text-muted-foreground/40"
+                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-base font-medium text-foreground focus:ring-2 focus:ring-primary outline-none transition-all placeholder:text-muted-foreground/40"
                 placeholder="Ej: Lámpara de Escritorio"
                 required
               />
@@ -114,7 +114,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                 <Tag size={13} className="text-muted-foreground" />
                 Precio de Venta
               </label>
-              <div className="flex items-center border-b-2 border-border focus-within:border-primary transition-colors">
+              <div className="flex items-center border border-border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-primary transition-all">
                 <span className="text-sm font-medium text-muted-foreground pr-1.5 select-none">$</span>
                 <input
                   id="prod-precio"
@@ -122,7 +122,7 @@ export function ComposicionProductoModal({ isOpen, onClose, preselectedParteId }
                   min="0"
                   step="1"
                   {...register('precioSugerido', { valueAsNumber: true })}
-                  className="w-full bg-transparent py-1.5 text-base font-medium text-foreground outline-none placeholder:text-muted-foreground/40"
+                  className="w-full bg-transparent py-0 text-base font-medium text-foreground outline-none placeholder:text-muted-foreground/40"
                   placeholder="0"
                 />
               </div>

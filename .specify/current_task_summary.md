@@ -1,13 +1,18 @@
-# Tarea Actual: T003 - Desglose de Costo de Error en Transacciones y Calculadora
+# Estado de Tarea Actual
 
-**Estado:** Completado
+**Tarea:** Ver pedidos y transacciones de un cliente directamente en la sección de clientes.
 
-**Descripción:**
-Desglosar el costo del margen de error como un campo separado (`costoError`) en el backend y frontend para evitar valores inconsistentes en el costo de material. El backend ya no incluye el error dentro de `costoFilamento`, sino que lo devuelve como `costoError`.
+**Alcance:**
+- Backend: agregar query por `clienteId` en `PedidoRepository`, `TransaccionRepository`, sus servicios y controladores.
+- Frontend: panel lateral (drawer) que se abre al hacer clic en un cliente mostrando sus pedidos y transacciones.
 
-**Pasos:**
-- [x] Backend: Agregar `costoError` a `CostCalculationResult` y `CalculoResponseDTO`.
-- [x] Backend: Separar `costoError` en `CostCalculationService`.
-- [x] Frontend: Agregar `costoError` a `calculo.types.ts`.
-- [x] Frontend: Mostrar Margen de Error en `ResultadosBreakdown.tsx`.
-- [x] Frontend: Incluir `costoError` en exportaciones (`export.utils.ts`).
+**Archivos a modificar:**
+- `PedidoRepository.java` — agregar `findByClienteId`
+- `PedidoService.java` — agregar `getByCliente`
+- `PedidoController.java` — agregar query param `clienteId`
+- `TransaccionRepository.java` — agregar `findByPedido_ClienteId`
+- `TransaccionService.java` — agregar `getByCliente`
+- `TransaccionController.java` — agregar query param `clienteId`
+- `clientes.api.ts` — agregar hooks para pedidos/transacciones por cliente
+- `ClientesListView.tsx` — abrir drawer al hacer clic en cliente
+- Nueva: `ClienteDetalleDrawer.tsx`

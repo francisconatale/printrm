@@ -1,16 +1,14 @@
 import React from 'react';
-import { useGetPedido, useUpdateEstadoPedido, useRegistrarPago, useRegistrarMerma } from '../api/pedidos.api';
+import { useGetPedido, useUpdateEstadoPedido, useRegistrarPago } from '../api/pedidos.api';
 import { StudioSubNav } from '../../../components/layout/studio-sub-nav';
 import { EstadoBadge } from './EstadoBadge';
 import { 
   ArrowLeft, 
   DollarSign, 
-  AlertTriangle, 
   Package, 
   CheckCircle2, 
   XCircle,
   Truck,
-  History,
   Loader2,
   RefreshCcw,
   Calendar,
@@ -21,8 +19,8 @@ import {
 import { format } from 'date-fns/format';
 import { es } from 'date-fns/locale/es';
 import { RegistrarPagoModal } from './RegistrarPagoModal';
-import { RegistrarMermaModal } from './RegistrarMermaModal';
 import { CrearOrdenVinculadaModal } from './CrearOrdenVinculadaModal';
+import { DevolverItemsPedidoModal } from './DevolverItemsPedidoModal';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 
 interface PedidoDetalleViewProps {
@@ -39,8 +37,8 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
   const { mutate: updateEstado } = useUpdateEstadoPedido();
   
   const [showPagoModal, setShowPagoModal] = React.useState(false);
-  const [showMermaModal, setShowMermaModal] = React.useState(false);
   const [showFabricarModal, setShowFabricarModal] = React.useState(false);
+  const [showDevolverModal, setShowDevolverModal] = React.useState(false);
   const [selectedItemId, setSelectedItemId] = React.useState<string | null>(null);
   const [selectedItemName, setSelectedItemName] = React.useState<string>('');
   const [selectedItemFaltante, setSelectedItemFaltante] = React.useState<number>(0);
@@ -126,7 +124,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
             {/* Timeline / Progress */}
             {!isTerminalState && (
               <div className="bg-muted/30 px-6 py-4 border-b border-border flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm gap-4">
-                <div className="flex flex-wrap gap-4 sm:gap-8 text-muted-foreground font-medium">
+                  <div className="flex flex-wrap gap-4 sm:gap-8 text-muted-foreground font-semibold">
                   {workflowSteps.map((step, idx) => {
                     const isCompleted = idx <= currentStepIndex;
                     const isCurrent = idx === currentStepIndex;
@@ -166,10 +164,10 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                 <table className="w-full text-sm text-left">
                   <thead className="text-muted-foreground">
                     <tr>
-                      <th className="pb-3 font-medium">Ítem</th>
-                      <th className="pb-3 font-medium text-center">Cant.</th>
-                      <th className="pb-3 font-medium text-right">Subtotal</th>
-                      <th className="pb-3 font-medium text-right"></th>
+                      <th className="pb-3 font-semibold text-xs uppercase tracking-widest">Ítem</th>
+                      <th className="pb-3 font-semibold text-xs uppercase tracking-widest text-center">Cant.</th>
+                      <th className="pb-3 font-semibold text-xs uppercase tracking-widest text-right">Subtotal</th>
+                      <th className="pb-3 font-semibold text-xs uppercase tracking-widest text-right"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
@@ -183,16 +181,13 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                               {pedido.estado !== 'ENTREGADO' && it.cantidadFaltante && it.cantidadFaltante > 0 ? (
                                 <span className="text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-500 px-1.5 py-0.5 rounded font-bold tracking-wide">FALTAN {it.cantidadFaltante}</span>
                               ) : null}
-                              {it.cantidadMerma && it.cantidadMerma > 0 ? (
-                                <span className="text-[10px] bg-destructive/10 text-destructive px-1.5 py-0.5 rounded font-bold tracking-wide">{it.cantidadMerma} FALLAS</span>
-                              ) : null}
                               {fabricadas > 0 && (
                                 <span className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-500 px-1.5 py-0.5 rounded font-bold tracking-wide">{fabricadas} FABRICADAS</span>
                               )}
                             </div>
                           </td>
-                          <td className="py-4 text-center font-mono font-medium text-muted-foreground">{it.cantidad}</td>
-                          <td className="py-4 text-right font-medium font-mono">{formatCurrency(it.subtotal)}</td>
+                          <td className="py-4 text-center font-semibold text-muted-foreground">{it.cantidad}</td>
+                          <td className="py-4 text-right font-semibold">{formatCurrency(it.subtotal)}</td>
                           <td className="py-4 text-right pr-2">
                              <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {pedido.estado !== 'ENTREGADO' && (it.cantidadFaltante ?? 0) > 0 && (
@@ -208,16 +203,6 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                                     Fabricar
                                   </button>
                                 )}
-                                <button 
-                                  onClick={() => {
-                                    setSelectedItemId(it.id);
-                                    setShowMermaModal(true);
-                                  }}
-                                  className="p-1.5 rounded-md border border-border hover:bg-destructive/10 text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
-                                  title="Reportar Fallo/Merma"
-                                >
-                                  <AlertTriangle size={14} />
-                                </button>
                              </div>
                           </td>
                         </tr>
@@ -228,28 +213,28 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
               </div>
 
               <div className="space-y-6">
-                <div className="bg-muted/30 p-5 rounded-2xl border border-border shadow-sm">
+                <div className="bg-muted/30 p-5 rounded-xl border border-border">
                   <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Resumen de Cuenta</h2>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">Total Presupuesto</span>
-                      <span className="font-semibold font-mono">{formatCurrency(pedido.total)}</span>
+                      <span className="text-muted-foreground font-semibold">Total Presupuesto</span>
+                      <span className="font-semibold">{formatCurrency(pedido.total)}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-emerald-600 dark:text-emerald-500 font-medium">Monto Pagado</span>
-                      <span className="text-emerald-600 dark:text-emerald-500 font-semibold font-mono">{formatCurrency(pedido.montoPagado)}</span>
+                      <span className="text-success font-semibold">Monto Pagado</span>
+                      <span className="text-success font-semibold">{formatCurrency(pedido.montoPagado)}</span>
                     </div>
                     
                     {/* Progress */}
                     <div className="pt-1 pb-1">
                       <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 transition-all duration-500 rounded-full" style={{ width: `${paymentProgress}%` }} />
+                        <div className="h-full bg-success transition-all duration-500 rounded-full" style={{ width: `${paymentProgress}%` }} />
                       </div>
                     </div>
 
                     <div className="border-t border-border pt-3 flex justify-between items-center font-bold">
                       <span className="text-foreground">Saldo Pendiente</span>
-                      <span className={`font-mono text-lg ${pedido.saldoPendiente > 0 ? 'text-amber-600 dark:text-amber-500' : 'text-muted-foreground'}`}>
+                      <span className={`text-lg ${pedido.saldoPendiente > 0 ? 'text-warning' : 'text-muted-foreground'}`}>
                         {formatCurrency(pedido.saldoPendiente)}
                       </span>
                     </div>
@@ -257,7 +242,7 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                   <button 
                     onClick={() => setShowPagoModal(true)}
                     disabled={pedido.saldoPendiente <= 0}
-                    className="w-full mt-5 flex items-center justify-center gap-2 bg-foreground text-background disabled:opacity-30 disabled:hover:bg-foreground py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-foreground/90 transition-colors"
+                    className="w-full mt-5 flex items-center justify-center gap-2 bg-foreground text-background disabled:opacity-30 disabled:hover:bg-foreground py-2.5 rounded-xl text-sm font-bold hover:bg-foreground/90 transition-colors"
                   >
                     <DollarSign size={16} /> Registrar Pago / Seña
                   </button>
@@ -299,11 +284,10 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                         </button>
                         {pedido.estado === 'ENTREGADO' && (
                           <button 
-                            onClick={() => handleStatusChange('DEVUELTO')}
-                            disabled={pedido.estado === 'DEVUELTO'}
-                            className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors disabled:opacity-30 border border-transparent hover:border-amber-500/20"
+                            onClick={() => setShowDevolverModal(true)}
+                            className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors border border-transparent hover:border-amber-500/20"
                           >
-                            <RefreshCcw size={16} /> Marcar como Devolución
+                            <RefreshCcw size={16} /> Devolver Productos
                           </button>
                         )}
                       </div>
@@ -323,16 +307,6 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
         saldoPendiente={pedido.saldoPendiente}
       />
 
-      <RegistrarMermaModal 
-        isOpen={showMermaModal}
-        onClose={() => {
-          setShowMermaModal(false);
-          setSelectedItemId(null);
-        }}
-        pedidoId={pedido.id}
-        itemId={selectedItemId || ''}
-      />
-
       <CrearOrdenVinculadaModal
         isOpen={showFabricarModal}
         onClose={() => {
@@ -342,6 +316,13 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
         itemPedidoId={selectedItemId || ''}
         perfilNombre={selectedItemName}
         cantidadRecomendada={selectedItemFaltante}
+      />
+
+      <DevolverItemsPedidoModal
+        isOpen={showDevolverModal}
+        onClose={() => setShowDevolverModal(false)}
+        pedidoId={pedido.id}
+        items={pedido.items}
       />
     </div>
   );

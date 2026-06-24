@@ -9,6 +9,7 @@ import { ClienteForm } from './ClienteForm';
 import { Cliente } from '../types/clientes.types';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
+import { ClienteDetalleDrawer } from './ClienteDetalleDrawer';
 
 export function ClientesListView() {
   const [page, setPage] = React.useState(0);
@@ -24,6 +25,7 @@ export function ClientesListView() {
   const [editingCliente, setEditingCliente] = React.useState<Cliente | null>(null);
   const [showConfirmModal, setShowConfirmModal] = React.useState(false);
   const [clienteToDelete, setClienteToDelete] = React.useState<Cliente | null>(null);
+  const [selectedCliente, setSelectedCliente] = React.useState<Cliente | null>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
 
   const filteredClientes = React.useMemo(() => {
@@ -77,7 +79,7 @@ export function ClientesListView() {
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="studio-display-md !text-4xl tracking-tight">Gestión de Clientes</h1>
+              <h1 className="studio-display-md tracking-tight">Gestión de Clientes</h1>
               <p className="studio-body text-muted-foreground">Administrá tu base de contactos comerciales.</p>
             </div>
 
@@ -91,7 +93,7 @@ export function ClientesListView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar cliente..."
-                  className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
                 />
               </div>
               <button 
@@ -117,7 +119,7 @@ export function ClientesListView() {
             </div>
           ) : filteredClientes.length === 0 ? (
             isSearching ? (
-              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                 <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                   <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
                 </div>
@@ -133,7 +135,7 @@ export function ClientesListView() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                 <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                   <User size={32} className="text-muted-foreground/40" aria-hidden="true" />
                 </div>
@@ -144,7 +146,7 @@ export function ClientesListView() {
               </div>
             )
           ) : (
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-border">
@@ -158,7 +160,11 @@ export function ClientesListView() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filteredClientes.map((cliente) => (
-                    <tr key={cliente.id} className="hover:bg-muted/5 transition-colors group">
+                    <tr 
+                      key={cliente.id} 
+                      className="hover:bg-muted/5 transition-colors group cursor-pointer"
+                      onClick={() => setSelectedCliente(cliente)}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm studio-body-strong text-foreground">{cliente.nombre}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden sm:table-cell">{cliente.email || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden md:table-cell">{cliente.telefono || '-'}</td>
@@ -169,7 +175,8 @@ export function ClientesListView() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEditingCliente(cliente);
                               setShowFormModal(true);
                             }}
@@ -180,11 +187,12 @@ export function ClientesListView() {
                             <Edit size={16} aria-hidden="true" />
                           </button>
                           <button 
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setClienteToDelete(cliente);
                               setShowConfirmModal(true);
                             }}
-                            className="p-2 text-muted-foreground hover:text-red-500 transition-colors rounded-full hover:bg-red-500/10"
+                            className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-full hover:bg-destructive/10"
                             title="Eliminar Cliente"
                             aria-label="Eliminar Cliente"
                           >
@@ -235,6 +243,12 @@ export function ClientesListView() {
           variant="destructive"
         />
       )}
+
+      <ClienteDetalleDrawer
+        cliente={selectedCliente}
+        isOpen={!!selectedCliente}
+        onClose={() => setSelectedCliente(null)}
+      />
     </div>
   );
 }

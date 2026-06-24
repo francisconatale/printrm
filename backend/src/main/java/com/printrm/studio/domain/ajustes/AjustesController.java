@@ -19,7 +19,7 @@ public class AjustesController {
     }
 
     @PutMapping
-    public ResponseEntity<AjustesDTO> updateAjustes(@RequestBody AjustesDTO dto) {
+    public ResponseEntity<AjustesDTO> updateAjustes(@jakarta.validation.Valid @RequestBody AjustesDTO dto) {
         return ResponseEntity.ok(ajustesService.updateAjustes(dto));
     }
 }

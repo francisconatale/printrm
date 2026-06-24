@@ -4,7 +4,7 @@ import { OnboardingFormData } from '../types/onboarding.types';
 import { useCompleteOnboarding } from '../hooks/useOnboarding';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 7;
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -69,11 +69,26 @@ const STEPS: StepConfig[] = [
     title: 'Tu filamento',
     subtitle: 'El material que más imprimís',
     fields: [
-      { key: 'filamentName',     label: 'Nombre',       type: 'text',   placeholder: 'PLA Genérico' },
-      { key: 'filamentMaterial', label: 'Material',     type: 'select', options: ['PLA','PLA+','PETG','ABS','TPU','ASA','Nylon','PC'] },
-      { key: 'filamentPriceKg',  label: 'Costo por kg', type: 'number', placeholder: '15000', mono: true },
+      { key: 'filamentName',     label: 'Nombre',        type: 'text',   placeholder: 'PLA Genérico' },
+      { key: 'filamentMaterial', label: 'Material',      type: 'select', options: ['PLA','PLA+','PETG','ABS','TPU','ASA','Nylon','PC'] },
+      { key: 'filamentPriceKg',  label: 'Costo por kg',  type: 'number', placeholder: '15000', mono: true },
+      { key: 'density',          label: 'Densidad g/cm³', type: 'number', placeholder: '1.24',  mono: true },
+      { key: 'diameter',         label: 'Diámetro mm',    type: 'number', placeholder: '1.75',  mono: true },
+      { key: 'colour',           label: 'Color',          type: 'text',   placeholder: '#3B82F6', mono: true },
     ],
   },
+  {
+    kind: 'field',
+    title: 'Perfil de impresión',
+    subtitle: 'Ajustes de calidad con los que imprimís habitualmente',
+    fields: [
+      { key: 'layerHeight', label: 'Altura de capa (mm)',     type: 'number', placeholder: '0.2',  mono: true },
+      { key: 'perimeters',  label: 'Perímetros / Paredes',    type: 'number', placeholder: '3',    mono: true },
+      { key: 'fillDensity', label: 'Densidad de relleno (%)', type: 'text',   placeholder: '15%',  mono: true },
+      { key: 'speedPrint',  label: 'Velocidad (mm/s)',        type: 'number', placeholder: '60',   mono: true },
+    ],
+  },
+  { kind: 'summary' },
 ];
 
 /* ─── Hook: transición de pasos ─── */
@@ -111,9 +126,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
     printerName: '',
     printerModel: '',
     consumoW: 250,
+    nozzleDiameter: 0.4,
+    bedShape: '220x220',
+    maxPrintHeight: 250,
     filamentName: '',
     filamentMaterial: 'PLA',
     filamentPriceKg: 15000,
+    density: 1.24,
+    diameter: 1.75,
+    colour: '#3B82F6',
+    layerHeight: 0.2,
+    perimeters: 3,
+    fillDensity: '15%',
+    speedPrint: 60,
   });
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
@@ -128,6 +153,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
       case 2: return form.precioKwh > 0;
       case 3: return form.printerName.trim().length > 0;
       case 4: return form.filamentName.trim().length > 0 && form.filamentPriceKg > 0;
+      case 5: return form.layerHeight > 0 && form.perimeters > 0 && form.speedPrint > 0;
       default: return true;
     }
   };
@@ -152,11 +178,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
       await apiClient.put('/ajustes', { preciokWh: form.precioKwh, margenError: 10 });
       await apiClient.post('/v1/perfiles', {
         nombre: form.printerName, modeloImpresora: form.printerModel || 'Genérica',
-        consumoW: form.consumoW, nozzleDiameter: 0.4, bedShape: '220x220', maxPrintHeight: 250,
+        consumoW: form.consumoW, nozzleDiameter: form.nozzleDiameter,
+        bedShape: form.bedShape, maxPrintHeight: form.maxPrintHeight,
       });
       await apiClient.post('/v1/filament-profiles', {
         nombre: form.filamentName, material: form.filamentMaterial,
-        filamentoPorKg: form.filamentPriceKg, density: 1.24, diameter: 1.75, colour: '#3B82F6',
+        filamentoPorKg: form.filamentPriceKg, density: form.density,
+        diameter: form.diameter, colour: form.colour,
+      });
+      await apiClient.post('/v1/print-profiles', {
+        nombre: 'Estándar', layerHeight: form.layerHeight,
+        perimeters: form.perimeters, fillDensity: form.fillDensity,
+        speedPrint: form.speedPrint,
       });
       await completeOnboarding.mutateAsync({
         nombreUsuario: form.nombreUsuario,
@@ -194,6 +227,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
       const isCustom = !PRINTERS.slice(0, -1).some(p => p.name === form.printerName) || form.printerName === 'Otra';
       const selectedPreset = PRINTERS.find(p => p.name === form.printerName);
 
+      const setBedDefaults = (model: string) => {
+        if (model.includes('Ender')) return { bedShape: '220x220', maxPrintHeight: 250 };
+        if (model.includes('Mini')) return { bedShape: '180x180', maxPrintHeight: 180 };
+        if (model.includes('Bambu')) return { bedShape: '256x256', maxPrintHeight: 256 };
+        if (model.includes('Prusa') && !model.includes('Mini')) return { bedShape: '250x210', maxPrintHeight: 220 };
+        return { bedShape: '220x220', maxPrintHeight: 250 };
+      };
+
       return (
         <div className="flex flex-col items-center text-center gap-6 w-full">
           <div className="space-y-2">
@@ -210,11 +251,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   key={p.name}
                   type="button"
                   onClick={() => {
+                    const bed = setBedDefaults(p.name);
                     setForm(prev => ({
                       ...prev,
                       printerName:  p.name === 'Otra' ? '' : p.name,
                       printerModel: p.model,
                       consumoW:     p.consumoW,
+                      ...(p.name !== 'Otra' ? bed : {}),
                     }));
                   }}
                   className="ob-printer-card"
@@ -269,6 +312,39 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 />
               </div>
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="ob-field-row">
+                <label className="ob-label">Diámetro boquilla (mm)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={form.nozzleDiameter}
+                  onChange={e => setForm(p => ({ ...p, nozzleDiameter: parseFloat(e.target.value) || 0.4 }))}
+                  className="ob-input font-mono"
+                  placeholder="0.4"
+                />
+              </div>
+              <div className="ob-field-row">
+                <label className="ob-label">Altura max Z (mm)</label>
+                <input
+                  type="number"
+                  value={form.maxPrintHeight}
+                  onChange={e => setForm(p => ({ ...p, maxPrintHeight: parseInt(e.target.value) || 250 }))}
+                  className="ob-input font-mono"
+                  placeholder="250"
+                />
+              </div>
+            </div>
+            <div className="ob-field-row">
+              <label className="ob-label">Cama (ancho x fondo mm)</label>
+              <input
+                type="text"
+                value={form.bedShape}
+                onChange={e => setForm(p => ({ ...p, bedShape: e.target.value }))}
+                placeholder="220x220"
+                className="ob-input font-mono"
+              />
+            </div>
           </div>
         </div>
       );
@@ -289,12 +365,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           </div>
           <div className="ob-summary-grid">
             {[
-              { label: 'Nombre',       value: form.nombreUsuario },
-              { label: 'Emprendimiento', value: form.nombreEmprendimiento },
-              { label: 'kWh',          value: `$${form.precioKwh}`, mono: true },
-              { label: 'Impresora',    value: form.printerName },
-              { label: 'Filamento',    value: `${form.filamentName} · ${form.filamentMaterial}` },
-              { label: 'Costo/kg',     value: `$${form.filamentPriceKg.toLocaleString()}`, mono: true },
+              { label: 'Nombre',          value: form.nombreUsuario },
+              { label: 'Emprendimiento',  value: form.nombreEmprendimiento },
+              { label: 'kWh',             value: `$${form.precioKwh}`, mono: true },
+              { label: 'Impresora',       value: form.printerName },
+              { label: 'Boquilla',        value: `${form.nozzleDiameter} mm`, mono: true },
+              { label: 'Cama',            value: form.bedShape, mono: true },
+              { label: 'Filamento',       value: `${form.filamentName} · ${form.filamentMaterial}` },
+              { label: 'Costo/kg',        value: `$${form.filamentPriceKg.toLocaleString()}`, mono: true },
+              { label: 'Color',           value: form.colour, mono: true },
+              { label: 'Capa',            value: `${form.layerHeight} mm`, mono: true },
+              { label: 'Relleno',         value: form.fillDensity, mono: true },
             ].map(({ label, value, mono }) => (
               <div key={label} className="ob-summary-item">
                 <span className="ob-summary-label">{label}</span>
@@ -318,7 +399,24 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           {cfg.fields.map(f => (
             <div key={f.key as string} className="ob-field-row">
               <label className="ob-label">{f.label}</label>
-              {f.type === 'select' ? (
+              {f.key === 'colour' ? (
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type="color"
+                    value={form.colour}
+                    onChange={e => update('colour', e.target.value)}
+                    className="ob-color-picker"
+                  />
+                  <input
+                    type="text"
+                    value={form.colour}
+                    onChange={e => update('colour', e.target.value)}
+                    placeholder="#3B82F6"
+                    className="ob-input font-mono"
+                    style={{ textTransform: 'uppercase' }}
+                  />
+                </div>
+              ) : f.type === 'select' ? (
                 <select
                   value={form[f.key] as string}
                   onChange={e => update(f.key, e.target.value as any)}
@@ -527,6 +625,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           text-align: center;
           animation: ob-ring-in 300ms ease both;
         }
+
+        .ob-color-picker {
+          width: 40px; height: 40px;
+          border: 1.5px solid var(--border);
+          border-radius: 10px;
+          padding: 2px;
+          background: transparent;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+        .ob-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+        .ob-color-picker::-webkit-color-swatch { border: none; border-radius: 8px; }
 
         .ob-printer-grid {
           display: grid;

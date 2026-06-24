@@ -18,7 +18,12 @@ public class PedidoController {
     private final PedidoService service;
 
     @GetMapping
-    public Page<PedidoResponseDTO> getAll(@PageableDefault(size = 20) Pageable pageable) {
+    public Page<PedidoResponseDTO> getAll(
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false) String clienteId) {
+        if (clienteId != null && !clienteId.isBlank()) {
+            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable);
+        }
         return service.getAll(pageable);
     }
 
@@ -50,6 +55,13 @@ public class PedidoController {
             @PathVariable String id,
             @RequestBody PagoRequest request) {
         return service.registrarPago(id, request.getMonto(), request.getDescripcion());
+    }
+
+    @PostMapping("/{id}/devolucion")
+    public com.printrm.studio.domain.venta.DevolucionResponse devolverProductos(
+            @PathVariable String id,
+            @Valid @RequestBody com.printrm.studio.domain.venta.DevolucionRequest request) {
+        return service.procesarDevolucionParcial(id, request);
     }
 
     @PostMapping("/{pedidoId}/items/{itemId}/merma")

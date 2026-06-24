@@ -129,14 +129,14 @@ export function VentaModal({ isOpen, onClose, producto }: VentaModalProps) {
           />
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <Button variant="outline" type="button" onClick={onClose} className="w-1/3">
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <Button variant="outline" type="button" onClick={onClose}>
             Cancelar
           </Button>
           <Button
             type="button"
             onClick={handleConfirm}
-            className="w-2/3 font-bold uppercase tracking-wider shadow-md"
+            className="font-bold uppercase tracking-wider shadow-md"
             disabled={sinPrecio || stockInsuficiente || isPending}
             isLoading={isPending}
           >

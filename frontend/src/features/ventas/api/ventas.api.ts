@@ -31,13 +31,14 @@ export const useGetVentas = () => {
   });
 };
 
-import { DevolucionRequest } from '../types/venta.types';
+import { DevolucionRequest, DevolucionResponse } from '../types/venta.types';
 
 export const useDevolverVenta = () => {
   const queryClient = useQueryClient();
   return useMutationWithFeedback({
-    mutationFn: async ({ grupoId, request }: { grupoId: string; request: DevolucionRequest }) => {
-      await axios.post(`${API_URL}/${grupoId}/devolucion`, request);
+    mutationFn: async ({ grupoId, request }: { grupoId: string; request: DevolucionRequest }): Promise<DevolucionResponse> => {
+      const { data } = await axios.post(`${API_URL}/${grupoId}/devolucion`, request);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productos'] });

@@ -21,7 +21,7 @@ export function FinanzasDashboardView() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
             <div className="space-y-2">
-              <h1 className="studio-display-md !text-4xl tracking-tight font-bold text-foreground">Finanzas & Negocio</h1>
+              <h1 className="studio-display-md tracking-tight text-foreground">Finanzas & Negocio</h1>
               <p className="studio-body text-muted-foreground">Control de flujo de caja, mermas, rentabilidad y egresos manuales.</p>
             </div>
           </div>

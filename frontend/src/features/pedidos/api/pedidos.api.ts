@@ -6,11 +6,11 @@ import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/pedidos';
 
-export const useGetPedidos = (page = 0, size = 20) => {
+export const useGetPedidos = (page = 0, size = 20, clienteId?: string) => {
   return useQuery<PaginatedResponse<Pedido>>({
-    queryKey: ['pedidos', page, size],
+    queryKey: ['pedidos', page, size, clienteId],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL, { params: { page, size } });
+      const { data } = await axios.get(API_URL, { params: { page, size, clienteId } });
       return data;
     }
   });
@@ -70,6 +70,25 @@ export const useRegistrarPago = () => {
     },
     successMessage: 'Pago registrado correctamente.',
     errorMessage: 'Error al registrar el pago.',
+  });
+};
+
+import { DevolucionRequest } from '../../ventas/types/venta.types';
+
+export const useDevolverProductosPedido = () => {
+  const queryClient = useQueryClient();
+  return useMutationWithFeedback({
+    mutationFn: async ({ pedidoId, request }: { pedidoId: string; request: DevolucionRequest }) => {
+      const { data } = await axios.post(`${API_URL}/${pedidoId}/devolucion`, request);
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['pedidos', variables.pedidoId] });
+      queryClient.invalidateQueries({ queryKey: ['transacciones'] });
+      queryClient.invalidateQueries({ queryKey: ['productos'] });
+    },
+    successMessage: 'Devolución procesada correctamente.',
+    errorMessage: 'Error al procesar la devolución.',
   });
 };
 

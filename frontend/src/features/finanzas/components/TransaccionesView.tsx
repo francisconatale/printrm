@@ -113,7 +113,7 @@ export function TransaccionesView() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
             <div className="space-y-2">
-              <h1 className="studio-display-md !text-4xl tracking-tight font-bold text-foreground">Transacciones</h1>
+              <h1 className="studio-display-md tracking-tight text-foreground">Transacciones</h1>
               <p className="studio-body text-muted-foreground">Historial completo de movimientos, ingresos, egresos y flujo de caja.</p>
             </div>
             
@@ -132,15 +132,15 @@ export function TransaccionesView() {
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Balance Card */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-card border border-border/50 p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm">
+                <div className="bg-card border border-border/50 p-6 rounded-[var(--radius-xl)] space-y-4">
                   <div className="flex justify-between items-start">
-                    <div className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
+                    <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                       <Wallet size={20} aria-hidden="true" />
                     </div>
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Caja Chica</p>
-                    <p className={`text-3xl font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-zinc-900 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'}`}>
+                    <p className={`text-3xl font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-foreground' : 'text-destructive'}`}>
                       {formatCurrency(balance || 0)}
                     </p>
                   </div>
@@ -160,7 +160,7 @@ export function TransaccionesView() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Buscar por descripción..."
-                    className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                    className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function TransaccionesView() {
                   <p className="studio-caption">Cargando movimientos...</p>
                 </div>
               ) : groupedTransacciones.length > 0 ? (
-                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                <div className="bg-card border border-border rounded-2xl overflow-hidden">
                   <table className="min-w-full">
                     <thead>
                       <tr className="border-b border-border">
@@ -198,7 +198,7 @@ export function TransaccionesView() {
                                 )}
                                 <div>
                                   <span className="block">{format(new Date(item.isGroup ? item.fecha : item.tx.fecha), 'dd/MM/yyyy HH:mm', { locale: es })}</span>
-                                  <span className="text-[9px] text-zinc-400 font-sans block mt-0.5">#{item.isGroup ? item.id.slice(-6) : item.tx.id.slice(-6)}</span>
+                                  <span className="text-[10px] text-muted-foreground font-sans block mt-0.5">#{item.isGroup ? item.id.slice(-6) : item.tx.id.slice(-6)}</span>
                                 </div>
                               </div>
                             </td>
@@ -207,18 +207,18 @@ export function TransaccionesView() {
                               {item.isGroup && <span className="ml-2 text-[10px] text-muted-foreground font-normal">({item.txs.length} items)</span>}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                                (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50' :
-                                (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50' :
-                                'bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50'
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'bg-success/10 text-success border-success/20' :
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'bg-warning/10 text-warning border-warning/20' :
+                                'bg-muted text-muted-foreground border-border'
                               }`}>
                                 {item.isGroup ? item.categoria : item.tx.categoria}
                               </span>
                             </td>
                             <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-bold ${
-                              (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'text-emerald-600 dark:text-emerald-400' :
-                              (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'text-amber-600 dark:text-amber-400' :
-                              'text-zinc-900 dark:text-zinc-300'
+                              (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'text-success' :
+                              (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'text-warning' :
+                              'text-foreground'
                             }`}>
                               {formatCurrency(item.isGroup ? item.montoTotal : item.tx.monto)}
                             </td>
@@ -232,7 +232,7 @@ export function TransaccionesView() {
                                 ↳ {subTx.descripcion}
                               </td>
                               <td className="px-6 py-3 whitespace-nowrap text-center">
-                                <span className="text-[9px] font-medium px-2 py-0.5 rounded-full uppercase border bg-zinc-50 text-zinc-500 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50">
+                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full uppercase border bg-muted text-muted-foreground border-border">
                                   {subTx.categoria}
                                 </span>
                               </td>
@@ -254,7 +254,7 @@ export function TransaccionesView() {
                   />
                 </div>
               ) : isSearching ? (
-                <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                   <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                     <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
                   </div>
@@ -270,7 +270,7 @@ export function TransaccionesView() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+                <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                   <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                     <ReceiptText size={32} className="text-muted-foreground/40" aria-hidden="true" />
                   </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from '../../../components/ui/modal';
 import { Button } from '../../../components/ui/button';
 import { useGetVentas, useDevolverVenta } from '../api/ventas.api';
-import { Loader2, PackageSearch, RotateCcw, Minus, Plus } from 'lucide-react';
+import { Loader2, PackageSearch, RotateCcw, Minus, Plus, AlertTriangle } from 'lucide-react';
 
 interface HistorialVentasModalProps {
   isOpen: boolean;
@@ -14,6 +14,8 @@ export function HistorialVentasModal({ isOpen, onClose }: HistorialVentasModalPr
   const { mutate: devolver, isPending: isDevolviendo } = useDevolverVenta();
 
   const [cantidades, setCantidades] = useState<Record<string, Record<string, number>>>({});
+  const [motivos, setMotivos] = useState<Record<string, string>>({});
+  const [confirmacion, setConfirmacion] = useState<string | null>(null);
 
   const getCantidad = (grupoId: string, productoId: string) =>
     cantidades[grupoId]?.[productoId] ?? 0;
@@ -46,7 +48,16 @@ export function HistorialVentasModal({ isOpen, onClose }: HistorialVentasModalPr
 
     if (requestItems.length === 0) return;
 
-    devolver({ grupoId, request: { items: requestItems } });
+    const motivo = motivos[grupoId] || '';
+    devolver({ grupoId, request: { items: requestItems, motivo } });
+    setConfirmacion(null);
+  };
+
+  const confirmarDevolucion = (grupoId: string) => {
+    const items = (cantidades[grupoId] ?? {});
+    const requestItems = Object.entries(items).filter(([_, cant]) => cant > 0);
+    if (requestItems.length === 0) return;
+    setConfirmacion(grupoId);
   };
 
   const tieneSeleccion = (grupoId: string) =>
@@ -117,19 +128,58 @@ export function HistorialVentasModal({ isOpen, onClose }: HistorialVentasModalPr
                     </div>
                   ))}
                 </div>
-                <div className="pt-1 flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDevolver(venta.grupoId)}
-                    disabled={isDevolviendo || !tieneSeleccion(venta.grupoId)}
-                    isLoading={isDevolviendo}
-                    className="text-xs gap-1.5"
-                  >
-                    <RotateCcw size={14} />
-                    Devolver selección
-                  </Button>
-                </div>
+                {confirmacion === venta.grupoId ? (
+                  <div className="pt-2 space-y-2">
+                    <div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                      <AlertTriangle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                      <div className="text-xs text-amber-700">
+                        <p className="font-semibold">Confirmar devolución</p>
+                        <p>Se reintegrarán los productos al stock. Esta acción no se puede deshacer.</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => setConfirmacion(null)}>
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDevolver(venta.grupoId)}
+                        disabled={isDevolviendo}
+                        isLoading={isDevolviendo}
+                        className="text-xs gap-1.5 border-amber-500 text-amber-600 hover:bg-amber-500/10"
+                      >
+                        <RotateCcw size={14} />
+                        Confirmar devolución
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pt-2 space-y-2">
+                    {tieneSeleccion(venta.grupoId) && (
+                      <input
+                        type="text"
+                        placeholder="Motivo de la devolución (opcional)"
+                        value={motivos[venta.grupoId] || ''}
+                        onChange={(e) => setMotivos((prev) => ({ ...prev, [venta.grupoId]: e.target.value }))}
+                        className="w-full text-xs bg-background border border-border rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                      />
+                    )}
+                    <div className="flex justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => confirmarDevolucion(venta.grupoId)}
+                        disabled={isDevolviendo || !tieneSeleccion(venta.grupoId)}
+                        isLoading={isDevolviendo}
+                        className="text-xs gap-1.5"
+                      >
+                        <RotateCcw size={14} />
+                        Devolver selección
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

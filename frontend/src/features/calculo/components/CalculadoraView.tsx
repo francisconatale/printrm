@@ -222,11 +222,15 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
 
       <main className="flex-1 overflow-hidden">
         {/* Operational Section - Studio Spacing */}
-        <section className="px-8 md:px-12 py-6 bg-background h-full overflow-y-auto custom-scrollbar">
-          <div className="max-w-[1400px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <section className="px-8 md:px-12 py-10 bg-background h-full overflow-y-auto custom-scrollbar">
+          <div className="max-w-[1400px] mx-auto space-y-10">
+            <div className="flex items-center">
+              <h1 className="studio-display-md">Cotizador de Piezas 3D</h1>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Input Column */}
-            <div className="lg:col-span-8 bg-card rounded-[1.5rem] border border-border shadow-sm p-6 space-y-10 border-t-[3px] border-t-primary">
+            <div className="lg:col-span-8 bg-card rounded-xl border border-border p-6 space-y-10">
               
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-foreground font-medium">
@@ -264,7 +268,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
             {/* Financial Column */}
             <div className="lg:col-span-4">
               <div className="sticky top-8 space-y-6">
-                <div className="bg-card rounded-[1.5rem] border border-border shadow-sm p-6 border-t-[3px] border-t-primary">
+                <div className="bg-card rounded-xl border border-border p-6">
                   <div className="flex items-center gap-3 text-foreground font-medium mb-6">
                     <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">3</span>
                     Resultado y Cotización
@@ -286,6 +290,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
               </div>
             </div>
 
+          </div>
           </div>
         </section>
       </main>

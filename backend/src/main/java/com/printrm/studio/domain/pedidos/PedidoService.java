@@ -9,6 +9,9 @@ import com.printrm.studio.domain.stock.ProductoRepository;
 import com.printrm.studio.domain.stock.ProductoService;
 import com.printrm.studio.domain.produccion.OrdenProduccion;
 import com.printrm.studio.domain.produccion.OrdenProduccionRepository;
+import com.printrm.studio.domain.venta.DevolucionRequest;
+import com.printrm.studio.domain.venta.DevolucionResponse;
+import com.printrm.studio.domain.venta.DevolucionService;
 import com.printrm.studio.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.time.LocalDateTime;
@@ -34,6 +38,7 @@ public class PedidoService {
     private final ProductoService productoService;
     private final OrdenProduccionRepository ordenProduccionRepository;
     private final com.printrm.studio.domain.venta.VentaService ventaService;
+    private final DevolucionService devolucionService;
     private final PedidoMapper mapper;
 
     @Transactional
@@ -174,21 +179,38 @@ public class PedidoService {
 
     private void procesarDevolucion(Pedido pedido) {
         boolean algunaUnidadDevuelta = false;
+        List<DevolucionRequest.ItemDevolucion> itemsADevolver = new ArrayList<>();
+
         for (ItemPedido item : pedido.getItems()) {
             if (item.getProducto() != null) {
                 int cantidadEntregada = item.getCantidadEntregada() != null ? item.getCantidadEntregada() : 0;
                 if (cantidadEntregada > 0) {
-                    productoService.updateStock(item.getProducto().getId().toString(), cantidadEntregada);
-                    item.setCantidadEntregada(0);
+                    DevolucionRequest.ItemDevolucion itemDev = new DevolucionRequest.ItemDevolucion();
+                    itemDev.setProductoId(item.getProducto().getId());
+                    itemDev.setCantidad(cantidadEntregada);
+                    itemsADevolver.add(itemDev);
                     algunaUnidadDevuelta = true;
                 }
             }
         }
+
         if (!algunaUnidadDevuelta && pedido.getEstado() == Pedido.EstadoPedido.DEVUELTO) {
             throw new IllegalStateException("Este pedido ya fue devuelto.");
         }
-        double totalReembolso = pedido.getMontoPagado() != null ? pedido.getMontoPagado() : 0;
-        ventaService.registrarReembolso(pedido.getId(), totalReembolso, "Reembolso por pedido cancelado/devuelto");
+
+        if (!itemsADevolver.isEmpty()) {
+            DevolucionRequest request = new DevolucionRequest();
+            request.setItems(itemsADevolver);
+            request.setMotivo("Devolución total del pedido");
+            devolucionService.devolverPedido(pedido, request);
+        }
+    }
+
+    @Transactional
+    public DevolucionResponse procesarDevolucionParcial(String pedidoId, DevolucionRequest request) {
+        Pedido pedido = repository.findById(UUID.fromString(pedidoId))
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
+        return devolucionService.devolverPedido(pedido, request);
     }
 
     @Transactional
@@ -212,11 +234,12 @@ public class PedidoService {
                         .sum();
                 double montoAReclasificar = costoPorUnidad * unidadesFallidas;
 
+                String costoStr = "$" + String.format("%.0f", montoAReclasificar);
                 transaccionService.registrarTransaccion(
                     Transaccion.TipoTransaccion.EGRESO,
                     Transaccion.CategoriaTransaccion.MATERIAL,
                     montoAReclasificar,
-                    "Reclasificación por Merma (Ajuste Material)",
+                    "Ajuste material · " + unidadesFallidas + " unidades mermadas de " + producto.getNombre() + " · " + costoStr,
                     pedido.getId()
                 );
 
@@ -224,7 +247,7 @@ public class PedidoService {
                     Transaccion.TipoTransaccion.EGRESO,
                     Transaccion.CategoriaTransaccion.MERMA,
                     -montoAReclasificar,
-                    "Estadística Merma: " + unidadesFallidas + " unidades de " + producto.getNombre(),
+                    "Merma · " + unidadesFallidas + " unidades de " + producto.getNombre() + " · " + costoStr,
                     pedido.getId()
                 );
             }
@@ -258,5 +281,11 @@ public class PedidoService {
         Pedido pedido = repository.findById(UUID.fromString(pedidoId))
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
         return mapper.toDto(pedido);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PedidoResponseDTO> getByCliente(UUID clienteId, Pageable pageable) {
+        return repository.findByClienteId(clienteId, pageable)
+                .map(mapper::toDto);
     }
 }

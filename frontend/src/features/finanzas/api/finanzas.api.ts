@@ -6,11 +6,11 @@ import { PaginatedResponse } from '../../../lib/api-client';
 
 const API_URL = 'http://localhost:8080/api/v1/transacciones';
 
-export const useGetTransacciones = (page = 0, size = 20) => {
+export const useGetTransacciones = (page = 0, size = 20, clienteId?: string) => {
   return useQuery<PaginatedResponse<Transaccion>>({
-    queryKey: ['transacciones', page, size],
+    queryKey: ['transacciones', page, size, clienteId],
     queryFn: async () => {
-      const { data } = await axios.get(API_URL, { params: { page, size } });
+      const { data } = await axios.get(API_URL, { params: { page, size, clienteId } });
       return data;
     }
   });

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,7 +21,12 @@ public class TransaccionController {
     private final TransaccionService service;
 
     @GetMapping
-    public Page<Transaccion> getAll(@PageableDefault(size = 20) Pageable pageable) {
+    public Page<Transaccion> getAll(
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false) String clienteId) {
+        if (clienteId != null && !clienteId.isBlank()) {
+            return service.getByCliente(java.util.UUID.fromString(clienteId), pageable);
+        }
         return service.getAll(pageable);
     }
 

@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 public class VentaService {
 
     private static final String VENTA_DESCRIPTION_PREFIX = "Venta directa";
-    private static final String DEVOLUCION_DESCRIPTION_PREFIX = "Devolución parcial";
 
     private final ProductoService productoService;
     private final ProductoRepository productoRepository;
     private final TransaccionRepository transaccionRepository;
+    private final DevolucionService devolucionService;
 
     @Transactional
     public VentaResponse registrar(VentaRequest request) {
@@ -45,27 +45,13 @@ public class VentaService {
     }
 
     @Transactional
-    public void devolver(UUID grupoId, DevolucionRequest request) {
-        List<Transaccion> ventas = transaccionRepository.findByGrupoIdAndTipo(grupoId, Transaccion.TipoTransaccion.INGRESO);
-        if (ventas.isEmpty()) {
-            throw new RuntimeException("No se encontró la venta con grupoId: " + grupoId);
-        }
-
-        Map<UUID, Transaccion> ventaPorProducto = ventas.stream()
-                .filter(t -> t.getProductoId() != null)
-                .collect(Collectors.toMap(Transaccion::getProductoId, t -> t, (a, b) -> a));
-
-        Map<UUID, Integer> yaDevuelto = calcularDevueltoPorProducto(grupoId);
-
-        for (DevolucionRequest.ItemDevolucion item : request.getItems()) {
-            procesarDevolucionItem(item, ventaPorProducto, yaDevuelto, grupoId);
-        }
+    public DevolucionResponse devolver(UUID grupoId, DevolucionRequest request) {
+        return devolucionService.devolverVentaDirecta(grupoId, request);
     }
 
     @Transactional
     public void registrarReembolso(UUID pedidoId, double monto, String descripcion) {
         if (monto <= 0) return;
-        if (transaccionRepository.existsByPedidoIdAndTipo(pedidoId, Transaccion.TipoTransaccion.REEMBOLSO)) return;
 
         transaccionRepository.save(Transaccion.builder()
                 .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
@@ -79,12 +65,16 @@ public class VentaService {
     @Transactional
     public void registrarPago(Pedido pedido, Double monto, String descripcion) {
         pedido.setMontoPagado(pedido.getMontoPagado() + monto);
+        String cliente = pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Consumidor Final";
+        String desc = descripcion != null
+                ? descripcion
+                : "Pago · $" + String.format("%.0f", monto) + " · " + cliente;
         transaccionRepository.save(Transaccion.builder()
                 .tipo(Transaccion.TipoTransaccion.INGRESO)
                 .categoria(Transaccion.CategoriaTransaccion.VENTA)
                 .monto(monto)
                 .pedidoId(pedido.getId())
-                .descripcion(descripcion != null ? descripcion : "Pago parcial / Seña")
+                .descripcion(desc)
                 .build());
     }
 
@@ -92,11 +82,10 @@ public class VentaService {
     public void registrarCobroSaldo(Pedido pedido) {
         double saldoPendiente = pedido.getTotal() - pedido.getMontoPagado();
         if (saldoPendiente > 0) {
-            registrarPago(pedido, saldoPendiente, "Cobro de saldo restante al entregar");
+            String cliente = pedido.getCliente() != null ? pedido.getCliente().getNombre() : "Consumidor Final";
+            registrarPago(pedido, saldoPendiente, "Saldo final · $" + String.format("%.0f", saldoPendiente) + " · " + cliente);
         }
     }
-
-    // ─── helpers ──────────────────────────────────────────────────────────
 
     private List<VentaResponse.ItemVentaResponse> procesarItems(VentaRequest request, UUID grupoId) {
         List<VentaResponse.ItemVentaResponse> items = new ArrayList<>();
@@ -142,6 +131,7 @@ public class VentaService {
         vr.setFecha(grupo.stream().map(Transaccion::getFecha).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null));
         vr.setItems(grupo.stream().map(this::toItemResponse).collect(Collectors.toList()));
         vr.setCompradorNombre(extraerCompradorNombre(grupo.get(0).getDescripcion()));
+        vr.setDevueltoTotalmente(grupo.stream().anyMatch(Transaccion::isDevueltoTotalmente));
         return vr;
     }
 
@@ -157,56 +147,6 @@ public class VentaService {
     private static String extraerCompradorNombre(String descripcion) {
         if (descripcion == null || !descripcion.startsWith(VENTA_DESCRIPTION_PREFIX + " - ")) return null;
         return descripcion.substring((VENTA_DESCRIPTION_PREFIX + " - ").length());
-    }
-
-    private Map<UUID, Integer> calcularDevueltoPorProducto(UUID grupoId) {
-        List<Transaccion> reembolsosPrevios = transaccionRepository
-                .findByGrupoIdAndTipo(grupoId, Transaccion.TipoTransaccion.REEMBOLSO);
-
-        Map<UUID, Integer> yaDevuelto = new HashMap<>();
-        for (Transaccion r : reembolsosPrevios) {
-            if (r.getProductoId() != null && r.getCantidad() != null) {
-                yaDevuelto.merge(r.getProductoId(), r.getCantidad(), Integer::sum);
-            }
-        }
-        return yaDevuelto;
-    }
-
-    private void procesarDevolucionItem(DevolucionRequest.ItemDevolucion item,
-                                        Map<UUID, Transaccion> ventaPorProducto,
-                                        Map<UUID, Integer> yaDevuelto,
-                                        UUID grupoId) {
-        Transaccion ventaOriginal = ventaPorProducto.get(item.getProductoId());
-        if (ventaOriginal == null) {
-            throw new RuntimeException("El producto " + item.getProductoId() + " no está en esta venta");
-        }
-
-        int original = ventaOriginal.getCantidad() != null ? ventaOriginal.getCantidad() : 1;
-        int yaRetornado = yaDevuelto.getOrDefault(item.getProductoId(), 0);
-        int disponible = original - yaRetornado;
-
-        if (item.getCantidad() > disponible) {
-            throw new RuntimeException("Solo puedes devolver hasta " + disponible + " unidades de este producto");
-        }
-
-        productoService.updateStock(item.getProductoId().toString(), item.getCantidad());
-
-        double precioUnitario = ventaOriginal.getPrecioUnitario() != null
-                ? ventaOriginal.getPrecioUnitario()
-                : ventaOriginal.getMonto() / original;
-        double subtotal = precioUnitario * item.getCantidad();
-
-        transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
-                .categoria(Transaccion.CategoriaTransaccion.VENTA)
-                .monto(-subtotal)
-                .cantidad(item.getCantidad())
-                .precioUnitario(precioUnitario)
-                .productoId(item.getProductoId())
-                .grupoId(grupoId)
-                .descripcion(DEVOLUCION_DESCRIPTION_PREFIX + " - " + item.getCantidad() + " x "
-                        + ventaOriginal.getDescripcion())
-                .build());
     }
 
     private Producto buscarProducto(UUID id) {
@@ -229,6 +169,8 @@ public class VentaService {
 
     private static Transaccion crearTransaccionIngreso(Producto producto, int cantidad, double precioUnitario,
                                                         double subtotal, UUID grupoId, String descBase) {
+        String montoStr = "$" + String.format("%.0f", subtotal);
+        String precioStr = "$" + String.format("%.0f", precioUnitario);
         return Transaccion.builder()
                 .tipo(Transaccion.TipoTransaccion.INGRESO)
                 .categoria(Transaccion.CategoriaTransaccion.VENTA)
@@ -237,7 +179,7 @@ public class VentaService {
                 .precioUnitario(precioUnitario)
                 .productoId(producto.getId())
                 .grupoId(grupoId)
-                .descripcion(descBase + " - " + cantidad + " x " + producto.getNombre())
+                .descripcion(descBase + " · " + cantidad + " × " + producto.getNombre() + " (" + precioStr + " c/u) · Total " + montoStr)
                 .build();
     }
 

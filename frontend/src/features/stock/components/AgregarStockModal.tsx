@@ -46,7 +46,7 @@ export function AgregarStockModal({ isOpen, onClose, producto }: AgregarStockMod
       onClose={onClose}
       title="Fabricar Producto"
       description={`Confirma los costos de fabricación para agregar stock a ${producto.nombre}.`}
-      maxWidth="md"
+      size="md"
     >
       <div className="space-y-6 mt-4">
         {/* Cantidad Input */}

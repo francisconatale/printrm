@@ -53,7 +53,7 @@ export function PedidosListView() {
           {/* Header & Search */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="studio-display-md !text-4xl tracking-tight">Gestión de Pedidos</h1>
+              <h1 className="studio-display-md tracking-tight">Gestión de Pedidos</h1>
               <p className="studio-body text-muted-foreground">Monitoreá estados, registrá pagos parciales y controlá mermas.</p>
             </div>
 
@@ -67,7 +67,7 @@ export function PedidosListView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar por cliente o ID de pedido..."
-                  className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+                  className="w-full bg-background border border-border rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
                 />
               </div>
               <button
@@ -90,7 +90,7 @@ export function PedidosListView() {
             </div>
           ) : filteredPedidos.length === 0 ? (
             isSearching ? (
-              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-zinc-200 dark:border-zinc-800">
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                 <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                   <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
                 </div>
@@ -106,7 +106,7 @@ export function PedidosListView() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-zinc-200 dark:border-zinc-800">
+              <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
                 <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                   <ShoppingBag size={32} className="text-muted-foreground/40" aria-hidden="true" />
                 </div>
@@ -117,7 +117,7 @@ export function PedidosListView() {
               </div>
             )
           ) : (
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-border">
@@ -150,10 +150,10 @@ export function PedidosListView() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-foreground">
                         ${pedido.total.toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-emerald-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-success">
                         ${pedido.montoPagado.toFixed(2)}
                       </td>
-                      <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${pedido.saldoPendiente > 0 ? 'text-amber-600' : 'text-zinc-400'}`}>
+                      <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${pedido.saldoPendiente > 0 ? 'text-warning' : 'text-muted-foreground'}`}>
                         ${pedido.saldoPendiente.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground hidden lg:table-cell">

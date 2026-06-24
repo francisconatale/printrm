@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCreateOrdenVinculada } from '../../produccion/api/produccion.api';
 import { Modal } from '../../../components/ui/modal';
+import { Button } from '../../../components/ui/button';
 import { AlertCircle } from 'lucide-react';
 
 interface CrearOrdenVinculadaModalProps {
@@ -59,7 +60,7 @@ export function CrearOrdenVinculadaModal({
     >
       <form onSubmit={handleSubmit} className="space-y-6 pt-4">
         {error && (
-          <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-sm">
+          <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20 text-sm">
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
@@ -74,27 +75,23 @@ export function CrearOrdenVinculadaModal({
             min="1"
             value={cantidad}
             onChange={(e) => setCantidad(parseInt(e.target.value) || 0)}
-            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none transition-all"
             required
           />
           <p className="text-xs text-muted-foreground">Faltante neto sugerido: {cantidadRecomendada} unidades</p>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-[var(--border)] pt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="studio-button-secondary-pill"
-          >
+        <div className="flex justify-end gap-3 border-t border-border pt-4">
+          <Button variant="outline" type="button" onClick={onClose}>
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isPending || cantidad <= 0}
-            className="studio-button-primary"
+            isLoading={isPending}
           >
             {isPending ? 'Creando...' : 'Crear Orden'}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

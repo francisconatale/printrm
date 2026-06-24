@@ -181,7 +181,7 @@ public class OrdenProduccionService {
                     .categoria(Transaccion.CategoriaTransaccion.MERMA)
                     .monto(-costoTotal)
                     .pedidoId(pedidoId)
-                    .descripcion("Merma en producción: " + unidadesFallidas + " uds de " + nombre)
+                    .descripcion("Merma · " + unidadesFallidas + " unidades de " + nombre + " · Costo $" + String.format("%.0f", costoTotal))
                     .build());
         }
     }

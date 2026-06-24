@@ -102,7 +102,7 @@ export function CrearVentaModal({ isOpen, onClose }: CrearVentaModalProps) {
             />
           </div>
           
-          {isDropdownOpen && searchTerm.length > 0 && (
+          {isDropdownOpen && (
             <div className="absolute z-50 w-full mt-1 bg-card border border-border/60 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredProductos.length === 0 ? (
                 <div className="p-4 text-center text-sm text-muted-foreground">No hay productos disponibles</div>

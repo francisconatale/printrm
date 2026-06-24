@@ -51,4 +51,8 @@ public class TransaccionService {
             repository.save(tx);
         }
     }
+
+    public Page<Transaccion> getByCliente(java.util.UUID clienteId, Pageable pageable) {
+        return repository.findByClienteId(clienteId, pageable);
+    }
 }

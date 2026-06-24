@@ -24,6 +24,7 @@ public class Transaccion {
     private Integer cantidad;
     private Double precioUnitario;
 
+    private boolean devueltoTotalmente;
     private String descripcion;
     private UUID pedidoId;
     private UUID grupoId;

@@ -10,6 +10,20 @@ export interface ItemDevolucion {
 
 export interface DevolucionRequest {
   items: ItemDevolucion[];
+  motivo?: string;
+}
+
+export interface ItemDevuelto {
+  productoId: string;
+  productoNombre: string;
+  cantidad: number;
+  subtotal: number;
+}
+
+export interface DevolucionResponse {
+  items: ItemDevuelto[];
+  totalReembolsado: number;
+  mensaje: string;
 }
 
 export interface VentaRequest {
@@ -32,5 +46,6 @@ export interface VentaResponse {
   compradorNombre?: string;
   compradorEmail?: string;
   fecha: string;
+  devueltoTotalmente: boolean;
   items: ItemVentaResponse[];
 }

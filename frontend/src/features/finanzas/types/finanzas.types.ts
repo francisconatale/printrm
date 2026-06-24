@@ -10,5 +10,6 @@ export interface Transaccion {
   pedidoId?: string;
   grupoId?: string;
   productoId?: string;
+  devueltoTotalmente: boolean;
   fecha: string;
 }

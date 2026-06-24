@@ -25,7 +25,7 @@ public class VentaController {
     }
 
     @PostMapping("/{grupoId}/devolucion")
-    public void devolver(@PathVariable UUID grupoId, @Valid @RequestBody DevolucionRequest request) {
-        service.devolver(grupoId, request);
+    public DevolucionResponse devolver(@PathVariable UUID grupoId, @Valid @RequestBody DevolucionRequest request) {
+        return service.devolver(grupoId, request);
     }
 }

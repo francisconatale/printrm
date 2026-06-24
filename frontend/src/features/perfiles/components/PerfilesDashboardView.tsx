@@ -209,7 +209,7 @@ export const PerfilesDashboardView: React.FC = () => {
     <div className="flex flex-col w-full bg-background min-h-full">
       <StudioSubNav />
 
-      <main className="flex-1 px-8 md:px-12 py-10 max-w-[1200px] w-full mx-auto space-y-10 overflow-y-auto">
+      <main className="flex-1 px-8 md:px-12 py-10 max-w-[1400px] w-full mx-auto space-y-10 overflow-y-auto">
         <div>
           <h1 className="studio-display-lg">Configuraciones de Slicing y Costos</h1>
           <p className="studio-body text-muted-foreground mt-2">

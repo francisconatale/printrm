@@ -11,6 +11,7 @@ public class VentaResponse {
     private String compradorNombre;
     private String compradorEmail;
     private LocalDateTime fecha;
+    private boolean devueltoTotalmente;
     private List<ItemVentaResponse> items;
 
     @Data

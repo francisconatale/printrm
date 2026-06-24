@@ -50,7 +50,7 @@ export function ProductosGalleryView() {
           {/* Header & Actions */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="studio-display-md !text-4xl tracking-tight">Catálogo Stock</h1>
+              <h1 className="studio-display-md tracking-tight">Catálogo Stock</h1>
               <p className="studio-body text-muted-foreground">Gestioná tus productos terminados y niveles de inventario.</p>
             </div>
 
@@ -107,7 +107,7 @@ export function ProductosGalleryView() {
               />
             </>
           ) : isSearching ? (
-            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
               <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                 <Search size={32} className="text-muted-foreground/40" aria-hidden="true" />
               </div>
@@ -123,7 +123,7 @@ export function ProductosGalleryView() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-[3rem] border border-dashed border-border/60">
+            <div className="flex flex-col items-center justify-center py-40 text-center space-y-4 bg-muted/10 rounded-xl border border-border/60">
               <div className="size-20 rounded-full bg-background flex items-center justify-center border border-border">
                 <PackageSearch size={32} className="text-muted-foreground/40" aria-hidden="true" />
               </div>

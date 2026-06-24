@@ -6,7 +6,7 @@ import { Producto } from '../types/stock.types';
 import { useSaveProducto } from '../api/productos.api';
 import { Modal } from '../../../components/ui/modal';
 import { Button } from '../../../components/ui/button';
-import { Tag, Edit3, Info } from 'lucide-react';
+import { Tag, Info } from 'lucide-react';
 
 const editarProductoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
@@ -65,8 +65,7 @@ export function EditarProductoModal({ isOpen, onClose, producto }: EditarProduct
       onClose={onClose}
       title="Editar Producto"
       description="Modifica el nombre y precio de venta del producto."
-      icon={<Edit3 size={24} className="text-primary" />}
-      maxWidth="md"
+      size="md"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
         <div className="space-y-4">

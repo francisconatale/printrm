@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRegistrarPago } from '../api/pedidos.api';
 import { Modal } from '../../../components/ui/modal';
+import { Button } from '../../../components/ui/button';
 import { AlertCircle, DollarSign, FileText } from 'lucide-react';
 
 interface RegistrarPagoModalProps {
@@ -61,7 +62,7 @@ export function RegistrarPagoModal({ pedidoId, saldoPendiente, isOpen, onClose }
     >
       <form onSubmit={handleSubmit} className="space-y-6 pt-4">
         {error && (
-          <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-sm">
+          <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20 text-sm">
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
@@ -77,7 +78,7 @@ export function RegistrarPagoModal({ pedidoId, saldoPendiente, isOpen, onClose }
             min="0.01"
             value={monto}
             onChange={(e) => setMonto(e.target.value)}
-            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none transition-all"
             placeholder="0.00"
             required
           />
@@ -92,26 +93,22 @@ export function RegistrarPagoModal({ pedidoId, saldoPendiente, isOpen, onClose }
             type="text"
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
-            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black outline-none transition-all"
+            className="w-full bg-background border border-border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none transition-all"
             placeholder="Ej: Seña del 50%, Pago total, Transferencia..."
           />
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-[var(--studio-hairline)] pt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="studio-button-secondary-pill"
-          >
+        <div className="flex justify-end gap-3 border-t border-border pt-4">
+          <Button variant="outline" type="button" onClick={onClose}>
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isPending || !monto}
-            className="studio-button-primary"
+            isLoading={isPending}
           >
             {isPending ? 'Procesando...' : 'Registrar Pago'}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

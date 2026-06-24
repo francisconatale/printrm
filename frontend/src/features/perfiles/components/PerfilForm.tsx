@@ -36,12 +36,12 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
   });
 
   const selectedModelo = watch('modeloImpresora');
+  const modelo = MODELOS_IMPRESORA.find(m => m.nombre === selectedModelo);
 
   React.useEffect(() => {
-    const modelo = MODELOS_IMPRESORA.find(m => m.nombre === selectedModelo);
     if (modelo && !initialData) {
       setValue('nozzleDiameter', 0.4);
-      
+
       if (modelo.nombre.includes("Ender 3")) {
         setValue('bedShape', '220x220');
         setValue('maxPrintHeight', 250);
@@ -64,9 +64,9 @@ export const PerfilForm: React.FC<PerfilFormProps> = ({ initialData, onSubmit, o
   const onInternalSubmit = (data: PerfilFormValues) => {
     onSubmit({
       ...data,
-      consumoW: initialData?.consumoW ?? 350,
-      vidaUtilHoras: initialData?.vidaUtilHoras ?? 8000,
-      costoRepuestos: initialData?.costoRepuestos ?? 45000,
+      consumoW: initialData?.consumoW ?? modelo?.consumoW ?? 350,
+      vidaUtilHoras: initialData?.vidaUtilHoras ?? modelo?.vidaUtilHoras ?? 8000,
+      costoRepuestos: initialData?.costoRepuestos ?? modelo?.costoRepuestos ?? 45000,
       filamentoPorKg: initialData?.filamentoPorKg ?? 15000,
     });
   };

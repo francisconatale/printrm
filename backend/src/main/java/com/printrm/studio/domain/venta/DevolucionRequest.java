@@ -15,6 +15,8 @@ public class DevolucionRequest {
     @Valid
     private List<ItemDevolucion> items;
 
+    private String motivo;
+
     @Data
     public static class ItemDevolucion {
         @NotNull(message = "El producto es obligatorio")

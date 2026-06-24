@@ -41,7 +41,7 @@ export function ConfigTable<T extends { id: string }>({
           </th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-border/50 font-mono text-[13px] text-foreground">
+      <tbody className="divide-y divide-border/50 font-sans text-[13px] text-foreground">
         {items.map((item) => (
           <tr key={item.id} className="hover:bg-muted/20">
             {columns.map((col, idx) => (
