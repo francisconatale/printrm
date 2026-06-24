@@ -251,11 +251,11 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Otras acciones</h2>
-                  
-                  <div className="space-y-2">
-                    {!isTerminalState && (
+                {!isTerminalState && (
+                  <div className="space-y-3">
+                    <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Otras acciones</h2>
+                    
+                    <div className="space-y-2">
                       <button 
                         onClick={() => handleStatusChange('CANCELADO')}
                         disabled={pedido.estado === 'CANCELADO' || pedido.estado === 'ENTREGADO'}
@@ -263,17 +263,17 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                       >
                         <XCircle size={16} /> Anular Pedido
                       </button>
-                    )}
-                    {pedido.estado === 'ENTREGADO' && (
-                      <button 
-                        onClick={() => setShowDevolverModal(true)}
-                        className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors border border-transparent hover:border-amber-500/20"
-                      >
-                        <RefreshCcw size={16} /> Devolver Productos
-                      </button>
-                    )}
+                      {pedido.estado === 'ENTREGADO' && (
+                        <button 
+                          onClick={() => setShowDevolverModal(true)}
+                          className="w-full flex items-center gap-2 text-amber-600 bg-amber-500/5 hover:bg-amber-500/10 p-2.5 rounded-xl text-sm font-semibold transition-colors border border-transparent hover:border-amber-500/20"
+                        >
+                          <RefreshCcw size={16} /> Devolver Productos
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

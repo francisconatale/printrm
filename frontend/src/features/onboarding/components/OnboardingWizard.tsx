@@ -116,6 +116,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
   const [loading, setLoading] = useState(false);
   const [error, setError]   = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const queryClient         = useQueryClient();
   const completeOnboarding  = useCompleteOnboarding();
   const { visible, phase, dir } = useTransition(step);
@@ -197,6 +198,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         nombreUsuario: form.nombreUsuario,
         nombreEmprendimiento: form.nombreEmprendimiento,
       });
+      setIsExiting(true);
+      setLoading(false);
+      await new Promise(r => setTimeout(r, 500));
       onComplete();
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Ocurrió un error al guardar');
@@ -308,7 +312,12 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type="number"
                   value={form.consumoW}
-                  onChange={e => setForm(p => ({ ...p, consumoW: parseFloat(e.target.value) || 0 }))}
+                  onChange={e => {
+                    if (e.target.value !== '') {
+                      const num = parseFloat(e.target.value);
+                      if (!isNaN(num)) setForm(p => ({ ...p, consumoW: num }));
+                    }
+                  }}
                   className="ob-input font-mono"
                   placeholder="250"
                 />
@@ -321,7 +330,12 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   type="number"
                   step="0.1"
                   value={form.nozzleDiameter}
-                  onChange={e => setForm(p => ({ ...p, nozzleDiameter: parseFloat(e.target.value) || 0.4 }))}
+                  onChange={e => {
+                    if (e.target.value !== '') {
+                      const num = parseFloat(e.target.value);
+                      if (!isNaN(num)) setForm(p => ({ ...p, nozzleDiameter: num }));
+                    }
+                  }}
                   className="ob-input font-mono"
                   placeholder="0.4"
                 />
@@ -430,7 +444,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type={f.type}
                   value={form[f.key] as string | number}
-                  onChange={e => update(f.key, f.type === 'number' ? (parseFloat(e.target.value) || 0) as any : e.target.value as any)}
+                  onChange={e => {
+                    if (f.type === 'number') {
+                      if (e.target.value === '') return;
+                      const num = parseFloat(e.target.value);
+                      if (!isNaN(num)) update(f.key, num as any);
+                    } else {
+                      update(f.key, e.target.value as any);
+                    }
+                  }}
                   placeholder={f.placeholder}
                   className={`ob-input ${f.mono ? 'font-mono' : ''}`}
                   step={f.type === 'number' ? 'any' : undefined}
@@ -474,6 +496,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           opacity: 0; transition: opacity 500ms ease;
         }
         .ob-root.ob-mounted { opacity: 1; }
+        .ob-root.ob-exiting { opacity: 0; }
 
         .ob-display {
           font-size: clamp(3.5rem, 8vw, 6rem);
@@ -671,7 +694,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         }
       `}</style>
 
-      <div className={`ob-root ${mounted ? 'ob-mounted' : ''}`}>
+      <div className={`ob-root ${mounted ? 'ob-mounted' : ''} ${isExiting ? 'ob-exiting' : ''}`}>
 
         {error && <div className="ob-error">{error}</div>}
 
@@ -701,7 +724,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
           <button
             className="ob-btn-next"
             onClick={step === TOTAL_STEPS - 1 ? handleFinish : next}
-            disabled={!canProceed() || loading}
+            disabled={!canProceed() || loading || isExiting}
             aria-label={step === TOTAL_STEPS - 1 ? 'Finalizar' : 'Siguiente paso'}
           >
             {loading ? (

@@ -148,11 +148,11 @@ export function CrearPedidoModal({ isOpen, onClose, onCreated }: CrearPedidoModa
             {!selectedCliente ? (
               <div className="relative">
                 <SearchableSelect
-                  placeholder="Buscar cliente por nombre o DNI..."
+                  placeholder="Buscar cliente por nombre..."
                   emptyLabel="No se encontraron clientes"
                   value={clienteId}
                   onValueChange={setClienteId}
-                  items={clientes.map(c => ({ value: c.id, label: `${c.nombre} (DNI: ${c.dni || 'S/N'})` }))}
+                  items={clientes.map(c => ({ value: c.id, label: c.nombre }))}
                   className="!h-14 !text-base !rounded-xl !pl-4 !pr-4 !bg-muted/10 !border-border/50"
                 />
               </div>
@@ -164,7 +164,6 @@ export function CrearPedidoModal({ isOpen, onClose, onCreated }: CrearPedidoModa
                   </div>
                   <div>
                     <p className="font-semibold text-lg text-foreground">{selectedCliente.nombre}</p>
-                    <p className="text-sm text-muted-foreground">DNI: {selectedCliente.dni || '-'}</p>
                   </div>
                 </div>
                 <button 

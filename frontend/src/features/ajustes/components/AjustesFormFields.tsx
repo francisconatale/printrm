@@ -30,7 +30,12 @@ export const AjustesFormFields: React.FC<AjustesFormFieldsProps> = ({
           type="number"
           step="any"
           value={value.preciokWh || ''}
-          onChange={(e) => handleChange('preciokWh', parseFloat(e.target.value) || 0)}
+          onChange={(e) => {
+            if (e.target.value !== '') {
+              const num = parseFloat(e.target.value);
+              if (!isNaN(num)) handleChange('preciokWh', num);
+            }
+          }}
           className={inputClassName || "w-full p-2 bg-background border-b border-border focus:border-primary outline-none transition-all font-medium"}
           placeholder="0"
         />
@@ -44,7 +49,12 @@ export const AjustesFormFields: React.FC<AjustesFormFieldsProps> = ({
           type="number"
           step="any"
           value={value.margenError || ''}
-          onChange={(e) => handleChange('margenError', parseFloat(e.target.value) || 0)}
+          onChange={(e) => {
+            if (e.target.value !== '') {
+              const num = parseFloat(e.target.value);
+              if (!isNaN(num)) handleChange('margenError', num);
+            }
+          }}
           className={inputClassName || "w-full p-2 bg-background border-b border-border focus:border-primary outline-none transition-all font-medium"}
           placeholder="0"
         />
