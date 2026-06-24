@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../../lib/api-client';
 import { OnboardingFormData } from '../types/onboarding.types';
 import { useCompleteOnboarding } from '../hooks/useOnboarding';
@@ -59,8 +60,7 @@ const STEPS: StepConfig[] = [
     title: 'Electricidad',
     subtitle: 'El precio del kWh define tus costos de energía',
     fields: [
-      { key: 'precioKwh', label: 'Precio por kWh', type: 'number', placeholder: '50', mono: true,
-        hint: 'Argentina ~$50 ARS · España ~€0.15' },
+      { key: 'precioKwh', label: 'Precio por kWh', type: 'number', placeholder: '50', mono: true },
     ],
   },
   { kind: 'printer' },
@@ -116,6 +116,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
   const [loading, setLoading] = useState(false);
   const [error, setError]   = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const queryClient         = useQueryClient();
   const completeOnboarding  = useCompleteOnboarding();
   const { visible, phase, dir } = useTransition(step);
 
@@ -176,6 +177,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
     setLoading(true); setError(null);
     try {
       await apiClient.put('/ajustes', { preciokWh: form.precioKwh, margenError: 10 });
+      queryClient.invalidateQueries({ queryKey: ['ajustes'] });
       await apiClient.post('/v1/perfiles', {
         nombre: form.printerName, modeloImpresora: form.printerModel || 'Genérica',
         consumoW: form.consumoW, nozzleDiameter: form.nozzleDiameter,

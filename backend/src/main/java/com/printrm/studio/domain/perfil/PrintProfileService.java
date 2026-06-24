@@ -18,13 +18,13 @@ public class PrintProfileService {
     private final PrintProfileMapper mapper;
 
     public List<PrintProfileResponseDTO> findAll() {
-        return repository.findAll().stream()
+        return repository.findAllByDeletedFalse().stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     public Page<PrintProfileResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+        return repository.findAllByDeletedFalse(pageable)
                 .map(mapper::toResponseDto);
     }
 

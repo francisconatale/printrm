@@ -18,13 +18,13 @@ public class PerfilService {
     private final PerfilMapper mapper;
 
     public List<PerfilResponseDTO> findAll() {
-        return repository.findAll().stream()
+        return repository.findAllByDeletedFalse().stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     public Page<PerfilResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+        return repository.findAllByDeletedFalse(pageable)
                 .map(mapper::toResponseDto);
     }
 

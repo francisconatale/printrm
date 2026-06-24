@@ -48,10 +48,10 @@ class CostCalculationServiceTest {
         }
 
         @Test
-        @DisplayName("OK: ajustes nulo usa defaults (precioKWh=0.15, margenError=0)")
+        @DisplayName("OK: ajustes nulo usa defaults (precioKWh=50.0, margenError=0)")
         void ajustesNulo_usaDefaults() {
             CostCalculationResult r = service.calculate(1000.0, 2, 30, 50.0, printerBase, filamentBase, null);
-            double energiaEsperada = (100.0 / 1000.0) * 2.5 * 0.15;
+            double energiaEsperada = (100.0 / 1000.0) * 2.5 * 50.0;
             double filamentoEsperado = (1000.0 / 1000.0) * 20000.0;
             assertEquals(energiaEsperada, r.getCostoEnergia(), 0.001);
             assertEquals(filamentoEsperado, r.getCostoFilamento(), 0.001);

@@ -53,7 +53,7 @@ public class CostCalculationService {
 
         double tiempoTotalHoras = (horas != null ? horas : 0) + (minutos != null ? minutos / 60.0 : 0);
         
-        double precioKwh = 0.15;
+        double precioKwh = 50.0;
         double margenError = 0.0;
         if (ajustes != null) {
             if (ajustes.getPreciokWh() != null) {

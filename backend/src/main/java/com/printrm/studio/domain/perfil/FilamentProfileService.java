@@ -18,13 +18,13 @@ public class FilamentProfileService {
     private final FilamentProfileMapper mapper;
 
     public List<FilamentProfileResponseDTO> findAll() {
-        return repository.findAll().stream()
+        return repository.findAllByDeletedFalse().stream()
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     public Page<FilamentProfileResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+        return repository.findAllByDeletedFalse(pageable)
                 .map(mapper::toResponseDto);
     }
 

@@ -3,6 +3,7 @@ package com.printrm.studio.domain.perfil;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE print_profiles SET deleted = true WHERE id = ?")
 public class PrintProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,4 +43,8 @@ public class PrintProfile {
     @UpdateTimestamp
     @Column(name = "actualizado_en")
     private LocalDateTime actualizadoEn;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean deleted = false;
 }
