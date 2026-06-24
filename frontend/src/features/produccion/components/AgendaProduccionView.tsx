@@ -13,12 +13,157 @@ import {
   Play, 
   Check, 
   X,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { PaginationBar } from '../../../components/ui/pagination-bar';
 import { Button } from '../../../components/ui/button';
 import { cn } from '@/lib/utils';
 import { QueryErrorView } from '../../../components/ui/query-error-view';
+import { EstadoProduccion } from '../types/produccion.types';
+
+const ESTADO_ORDER: EstadoProduccion[] = ['IMPRIMIENDO', 'COLA', 'COMPLETADO', 'MERMA', 'CANCELADO'];
+
+const statusConfig: Record<string, { icon: React.ReactNode; label: string }> = {
+  COLA: { icon: <Clock size={12} />, label: 'En Cola' },
+  IMPRIMIENDO: { icon: <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />, label: 'Imprimiendo' },
+  COMPLETADO: { icon: <Check size={12} className="text-success" />, label: 'Completado' },
+  MERMA: { icon: <AlertTriangle size={12} />, label: 'Merma' },
+  CANCELADO: { icon: <X size={12} />, label: 'Cancelado' },
+};
+
+const groupBorder = (e: EstadoProduccion) => {
+  switch (e) {
+    case 'IMPRIMIENDO': return 'border-l-primary';
+    case 'COLA': return 'border-l-muted-foreground';
+    case 'COMPLETADO': return 'border-l-success';
+    case 'MERMA': return 'border-l-destructive';
+    case 'CANCELADO': return 'border-l-border';
+  }
+};
+
+function GroupSection({
+  estado,
+  items,
+  onStatusChange,
+  onMerma,
+  updating,
+}: {
+  estado: EstadoProduccion;
+  items: Array<{
+    id: string;
+    productoNombre?: string;
+    clienteNombre?: string;
+    cantidad: number;
+    estado: EstadoProduccion;
+  }>;
+  onStatusChange: (id: string, estado: EstadoProduccion) => void;
+  onMerma: (item: any) => void;
+  updating: boolean;
+}) {
+  const [expanded, setExpanded] = React.useState(
+    estado === 'IMPRIMIENDO' || estado === 'COLA'
+  );
+  const config = statusConfig[estado] || { icon: null, label: estado };
+
+  return (
+    <div className="bg-card border border-border rounded-[18px] overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-3 px-6 py-4 hover:bg-muted/30 transition-colors border-b border-border"
+      >
+        {expanded ? (
+          <ChevronDown size={14} className="text-muted-foreground shrink-0" />
+        ) : (
+          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
+        )}
+        <span className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+          {config.icon}
+          {config.label}
+        </span>
+        <span className="text-[12px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full ml-auto">
+          {items.length}
+        </span>
+      </button>
+
+      {expanded && (
+        <div className="divide-y divide-border/50">
+          {items.length === 0 ? (
+            <div className="py-8 text-center text-[13px] text-muted-foreground">
+              Sin órdenes en este estado
+            </div>
+          ) : (
+            items.map(o => (
+              <div
+                key={o.id}
+                className={`flex items-center gap-4 px-6 py-3.5 hover:bg-muted/20 transition-colors border-l-2 ${groupBorder(o.estado)}`}
+              >
+                <div className="flex-1 min-w-0 flex items-center gap-3">
+                  <span className="studio-caption-strong text-foreground truncate">
+                    {o.productoNombre}
+                  </span>
+                  {o.clienteNombre && (
+                    <span className="text-[11px] text-muted-foreground shrink-0">
+                      {o.clienteNombre}
+                    </span>
+                  )}
+                </div>
+
+                <span className="text-[13px] font-semibold text-foreground font-mono tabular-nums">
+                  {o.cantidad}
+                </span>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {o.estado === 'COLA' && (
+                    <>
+                      <button
+                        disabled={updating}
+                        onClick={() => onStatusChange(o.id, 'IMPRIMIENDO')}
+                        className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors disabled:opacity-50"
+                        title="Iniciar"
+                      >
+                        <Play size={14} fill="currentColor" />
+                      </button>
+                      <button
+                        disabled={updating}
+                        onClick={() => onStatusChange(o.id, 'CANCELADO')}
+                        className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-colors disabled:opacity-50"
+                        title="Cancelar"
+                      >
+                        <X size={14} />
+                      </button>
+                    </>
+                  )}
+                  {o.estado === 'IMPRIMIENDO' && (
+                    <>
+                      <button
+                        disabled={updating}
+                        onClick={() => onStatusChange(o.id, 'COMPLETADO')}
+                        className="p-1.5 text-success hover:bg-success/10 rounded-full transition-colors disabled:opacity-50"
+                        title="Completar"
+                      >
+                        <Check size={14} />
+                      </button>
+                      <button
+                        disabled={updating}
+                        onClick={() => onMerma(o)}
+                        className="p-1.5 text-destructive hover:bg-destructive/10 rounded-full transition-colors disabled:opacity-50"
+                        title="Merma"
+                      >
+                        <AlertTriangle size={14} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function AgendaProduccionView() {
   const [page, setPage] = React.useState(0);
@@ -29,10 +174,9 @@ export function AgendaProduccionView() {
   const { mutate: updateEstado, isPending: updating } = useUpdateEstadoOrden();
 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const [filterType, setFilterType] = React.useState<'ALL' | 'COLA' | 'IMPRIMIENDO'>('ALL');
   const [mermaTarget, setMermaTarget] = React.useState<any>(null);
 
-  const handleStatusChange = (id: string, nuevoEstado: any) => {
+  const handleStatusChange = (id: string, nuevoEstado: EstadoProduccion) => {
     updateEstado({ id, estado: nuevoEstado });
   };
 
@@ -58,19 +202,16 @@ export function AgendaProduccionView() {
     );
   }
 
-  // Filtrar fuera las canceladas y completadas para la vista principal si queremos solo activas
-  // Aunque capaz conviene dejarlas, pero el rediseño se enfocaba en "Cola" e "Imprimiendo" principalmente.
-  // Vamos a dejar todo pero permitir filtrar.
-  const baseOrders = (ordenes || []).filter(o => o.estado !== 'CANCELADO');
-  
-  const filteredOrdenes = baseOrders.filter((o) => {
-    if (filterType === 'COLA' && o.estado !== 'COLA') return false;
-    if (filterType === 'IMPRIMIENDO' && o.estado !== 'IMPRIMIENDO') return false;
-    return true;
-  });
+  const grouped = React.useMemo(() => {
+    const map: Record<string, NonNullable<typeof ordenes>> = {};
+    for (const e of ESTADO_ORDER) map[e] = [];
+    for (const o of ordenes || []) {
+      map[o.estado]?.push(o);
+    }
+    return map;
+  }, [ordenes]);
 
-  const countCola = baseOrders.filter(o => o.estado === 'COLA').length;
-  const countImprimiendo = baseOrders.filter(o => o.estado === 'IMPRIMIENDO').length;
+  const totalActive = (ordenes || []).filter(o => o.estado === 'COLA' || o.estado === 'IMPRIMIENDO').length;
 
   return (
     <div className="flex flex-col w-full bg-background min-h-full animate-in fade-in duration-500 text-foreground">
@@ -78,7 +219,7 @@ export function AgendaProduccionView() {
 
       <main className="flex-1 px-8 md:px-12 py-10 overflow-y-auto custom-scrollbar">
         <div className="max-w-[1400px] mx-auto space-y-10">
-          
+
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
@@ -99,125 +240,31 @@ export function AgendaProduccionView() {
             </Button>
           </div>
 
-          {/* Tabla Principal */}
-          <div className="bg-card rounded-[18px] border border-border overflow-hidden">
-            <div className="p-5 border-b border-border flex items-center justify-between bg-card">
-              <h2 className="studio-body-strong">Cola de Producción</h2>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setFilterType('ALL')}
-                  className={`px-3 py-1 rounded-full text-[12px] font-semibold border transition-colors ${
-                    filterType === 'ALL' ? 'bg-muted text-foreground border-border' : 'border-transparent text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  Todas ({baseOrders.length})
-                </button>
-                <button 
-                  onClick={() => setFilterType('COLA')}
-                  className={`px-3 py-1 rounded-full text-[12px] font-semibold border transition-colors ${
-                    filterType === 'COLA' ? 'bg-muted text-foreground border-border' : 'border-transparent text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  En Cola ({countCola})
-                </button>
-                <button 
-                  onClick={() => setFilterType('IMPRIMIENDO')}
-                  className={`px-3 py-1 rounded-full text-[12px] font-semibold border transition-colors ${
-                    filterType === 'IMPRIMIENDO' ? 'bg-muted text-foreground border-border' : 'border-transparent text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  Imprimiendo ({countImprimiendo})
-                </button>
-              </div>
+          {/* Accordion by status */}
+          {totalActive === 0 && (
+            <div className="py-12 text-center text-[13px] text-muted-foreground bg-card border border-border rounded-[18px]">
+              No hay órdenes activas en este momento.
             </div>
+          )}
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border bg-muted/50">
-                    <th className="py-3 px-6 text-[12px] font-semibold text-muted-foreground uppercase tracking-wider w-[50%]">Producto a Fabricar</th>
-                    <th className="py-3 px-6 text-[12px] font-semibold text-muted-foreground uppercase tracking-wider text-center">Unidades</th>
-                    <th className="py-3 px-6 text-[12px] font-semibold text-muted-foreground uppercase tracking-wider text-center">Estado</th>
-                    <th className="py-3 px-6 text-[12px] font-semibold text-muted-foreground uppercase tracking-wider text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrdenes.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-12 text-center text-muted-foreground">
-                        No hay órdenes para mostrar con los filtros actuales.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredOrdenes.map((o) => (
-                      <tr key={o.id} className="border-b border-border last:border-0 hover:bg-muted transition-colors group">
-                        <td className="py-4 px-6 studio-body-strong text-foreground">
-                          {o.productoNombre}
-                        </td>
-                        <td className="py-4 px-6 text-[17px] font-mono text-center">
-                          {o.cantidad}
-                        </td>
-                        <td className="py-4 px-6 text-center">
-                          <span className={cn(
-                            "px-3 py-1 rounded-full text-[12px] font-semibold border inline-flex items-center gap-1.5",
-                            o.estado === 'IMPRIMIENDO' ? 'bg-primary/10 text-primary border-primary/20' :
-                            o.estado === 'COLA' ? 'bg-card text-foreground border-border' :
-                            o.estado === 'COMPLETADO' ? 'bg-success/10 text-success border-success/20' :
-                            o.estado === 'MERMA' ? 'bg-destructive/10 text-destructive border-destructive/20' :
-                            'bg-muted text-muted-foreground border-transparent'
-                          )}>
-                            {o.estado === 'IMPRIMIENDO' && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
-                            {o.estado}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right">
-                          <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {o.estado === 'COLA' && (
-                              <>
-                                <button 
-                                  disabled={updating}
-                                  onClick={() => handleStatusChange(o.id, 'IMPRIMIENDO')}
-                                  className="text-primary font-semibold text-[14px] hover:underline flex items-center gap-1 disabled:opacity-50"
-                                >
-                                  <Play size={14} fill="currentColor" /> Iniciar
-                                </button>
-                                <button 
-                                  disabled={updating}
-                                  onClick={() => handleStatusChange(o.id, 'CANCELADO')}
-                                  className="text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50"
-                                  title="Cancelar Orden"
-                                >
-                                  <X size={16} />
-                                </button>
-                              </>
-                            )}
-                            {o.estado === 'IMPRIMIENDO' && (
-                              <>
-                                <button 
-                                  disabled={updating}
-                                  onClick={() => handleStatusChange(o.id, 'COMPLETADO')}
-                                  className="text-foreground font-semibold text-[14px] hover:underline flex items-center gap-1 disabled:opacity-50"
-                                >
-                                  <Check size={14} /> Completar
-                                </button>
-                                <button 
-                                  disabled={updating}
-                                  onClick={() => setMermaTarget(o)}
-                                  className="text-destructive font-semibold text-[14px] hover:underline flex items-center gap-1 ml-2 disabled:opacity-50"
-                                  title="Marcar como Merma (Fallo)"
-                                >
-                                  <AlertTriangle size={14} /> Falló (Merma)
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+          <div className="space-y-4">
+            {ESTADO_ORDER.map(e => {
+              const items = grouped[e] || [];
+              if (items.length === 0 && e !== 'IMPRIMIENDO' && e !== 'COLA') return null;
+              return (
+                <GroupSection
+                  key={e}
+                  estado={e}
+                  items={items}
+                  onStatusChange={handleStatusChange}
+                  onMerma={setMermaTarget}
+                  updating={updating}
+                />
+              );
+            })}
+          </div>
+
+          {totalPages > 1 && (
             <PaginationBar
               page={page}
               totalPages={totalPages}
@@ -225,7 +272,7 @@ export function AgendaProduccionView() {
               size={10}
               onPageChange={setPage}
             />
-          </div>
+          )}
 
         </div>
       </main>

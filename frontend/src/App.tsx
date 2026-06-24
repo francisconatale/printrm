@@ -102,7 +102,7 @@ function App() {
       case 'dashboard':
         return <FinanzasDashboardView />
       case 'transactions':
-        return <TransaccionesView />
+        return <TransaccionesView onNavigateToPedido={handleNavigateToPedido} />
       default:
         return <div className="p-12"><h1 className="studio-display-lg">Dashboard Finanzas</h1><p className="studio-lead text-muted-foreground">Próximamente...</p></div>
     }

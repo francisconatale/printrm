@@ -5,12 +5,12 @@
   "main": "main.js",
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && gradlew.bat bootRun --args=\"--server.port=8080\"",
+    "dev:backend": "cd backend && ./gradlew bootRun --args=\"--server.port=8080\"",
     "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development ELECTRON_START_URL=http://localhost:5173 electron .",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
     "dev:web": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && gradlew.bat stageApp",
+    "build:backend": "cd backend && ./gradlew stageApp",
     "dist": "npm run build:frontend && npm run build:backend && electron-builder"
   },
   "devDependencies": {
@@ -53,5 +53,8 @@
         "to": "configs"
       }
     ]
+  },
+  "dependencies": {
+    "lucide-react": "^1.21.0"
   }
 }

@@ -204,6 +204,7 @@ export function VentasListView() {
         tx={selectedTx!}
         isOpen={!!selectedTx}
         onClose={() => setSelectedTx(null)}
+        onNavigateToPedido={(id) => setSelectedPedidoId(id)}
       />
     </div>
   );

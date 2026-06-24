@@ -28,7 +28,7 @@ type TransactionItem =
   | { isGroup: false; tx: Transaccion }
   | { isGroup: true; id: string; txs: Transaccion[]; montoTotal: number; fecha: string; descripcion: string; categoria: string; tipo: 'INGRESO' | 'EGRESO' | 'REEMBOLSO' };
 
-export function TransaccionesView() {
+export function TransaccionesView({ onNavigateToPedido }: { onNavigateToPedido?: (pedidoId: string) => void }) {
   const [page, setPage] = React.useState(0);
   const { data: transaccionesData, isLoading: isTransaccionesLoading, isError: isTransaccionesError, error: transaccionesError, refetch: refetchTransacciones } = useGetTransacciones(page, 20);
   const transacciones = transaccionesData?.content;
@@ -307,6 +307,7 @@ export function TransaccionesView() {
         tx={selectedTx!}
         isOpen={!!selectedTx}
         onClose={() => setSelectedTx(null)}
+        onNavigateToPedido={onNavigateToPedido}
       />
     </div>
   );

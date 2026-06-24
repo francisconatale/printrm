@@ -1,13 +1,17 @@
 import React from 'react';
 import { Modal } from '../../../components/ui/modal';
 import { Transaccion } from '../types/finanzas.types';
+import { useGetPedido } from '../../pedidos/api/pedidos.api';
 import { format } from 'date-fns/format';
 import { es } from 'date-fns/locale/es';
+import { ExternalLink } from 'lucide-react';
+import { EstadoBadge } from '../../pedidos/components/EstadoBadge';
 
 interface TransaccionDetalleModalProps {
   tx: Transaccion;
   isOpen: boolean;
   onClose: () => void;
+  onNavigateToPedido?: (pedidoId: string) => void;
 }
 
 const formatCurrency = (value: number) => {
@@ -16,18 +20,70 @@ const formatCurrency = (value: number) => {
   return value < 0 ? `- ${formatted}` : formatted;
 };
 
-export function TransaccionDetalleModal({ tx, isOpen, onClose }: TransaccionDetalleModalProps) {
+function PedidoInfo({ pedidoId, onNavigate }: { pedidoId: string; onNavigate?: (id: string) => void }) {
+  const { data: pedido, isLoading } = useGetPedido(pedidoId);
+
+  return (
+    <div className="bg-muted/10 p-4 rounded-xl border border-border/50 space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pedido Asociado</p>
+        {onNavigate && (
+          <button
+            onClick={() => onNavigate(pedidoId)}
+            className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-1"
+          >
+            <ExternalLink size={12} /> Ver Pedido
+          </button>
+        )}
+      </div>
+
+      {isLoading ? (
+        <p className="text-[13px] text-muted-foreground animate-pulse">Cargando datos del pedido...</p>
+      ) : pedido ? (
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[13px]">
+          <div>
+            <span className="text-muted-foreground">Cliente:</span>
+            <span className="ml-1 font-semibold text-foreground">{pedido.clienteNombre}</span>
+          </div>
+          <div className="text-right">
+            <EstadoBadge estado={pedido.estado} />
+          </div>
+          <div>
+            <span className="text-muted-foreground">Total:</span>
+            <span className="ml-1 font-semibold text-foreground">{formatCurrency(pedido.total)}</span>
+          </div>
+          <div className="text-right">
+            <span className="text-muted-foreground">Pagado:</span>
+            <span className="ml-1 font-semibold text-success">{formatCurrency(pedido.montoPagado)}</span>
+          </div>
+          <div className="col-span-2 text-right">
+            <span className="text-muted-foreground">Saldo Pendiente:</span>
+            <span className={`ml-1 font-semibold ${pedido.saldoPendiente > 0 ? 'text-warning' : 'text-muted-foreground'}`}>
+              {formatCurrency(pedido.saldoPendiente)}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <p className="text-[13px] text-muted-foreground">No se pudo cargar el pedido.</p>
+      )}
+    </div>
+  );
+}
+
+export function TransaccionDetalleModal({ tx, isOpen, onClose, onNavigateToPedido }: TransaccionDetalleModalProps) {
   if (!tx) return null;
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Detalle de Transacción" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="Detalle de Transacción" size="xl">
       <div className="space-y-6">
-        {/* Description */}
         <div className="bg-muted/10 p-4 rounded-xl border border-border/50">
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Descripción</p>
           <p className="studio-body-strong text-foreground">{tx.descripcion}</p>
         </div>
 
-        {/* Info Grid */}
+        {tx.pedidoId && (
+          <PedidoInfo pedidoId={tx.pedidoId} onNavigate={onNavigateToPedido} />
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-muted/10 p-4 rounded-xl border border-border/50">
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Tipo</p>
