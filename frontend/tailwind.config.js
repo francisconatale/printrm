@@ -53,6 +53,7 @@ export default {
           50: "#fef9c3",
         },
         border: "var(--border)",
+        "border-subtle": "var(--border-subtle)",
         input: "var(--input)",
         ring: "var(--ring)",
         background: "var(--background)",
@@ -68,6 +69,14 @@ export default {
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
+        },
+        success: {
+          DEFAULT: "var(--success)",
+          foreground: "var(--success-foreground)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          foreground: "var(--warning-foreground)",
         },
         muted: {
           DEFAULT: "var(--muted)",

@@ -16,17 +16,13 @@ import { useBackendHealthCheck } from './hooks/useBackendHealthCheck'
 import { useOnboardingStatus } from './features/onboarding/hooks/useOnboarding'
 import { OnboardingWizard } from './features/onboarding/components/OnboardingWizard'
 import { Toaster } from 'sonner'
-import { LabPage } from './__design_lab/LabPage'
 
 function App() {
-  const isDesignLab = window.location.search.includes('design_lab=true')
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const { isReady: isBackendReady, retryCount, error } = useBackendHealthCheck()
   const { data: onboarding, isFetched } = useOnboardingStatus()
-
-  if (isDesignLab) return <LabPage />
 
   useEffect(() => {
     if (isFetched && onboarding && !onboarding.completado) {

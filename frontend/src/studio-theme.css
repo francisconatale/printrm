@@ -12,11 +12,13 @@
   --studio-primary-action:  var(--primary);
 
   /* Tile dark — agregar override faltante */
+  --studio-surface-black:   #000000;
+  --studio-body-on-dark:    #e5e5e7;
   --studio-tile-dark-1:     #272729;
   --studio-tile-dark-2:     #2a2a2c;
 
   /* Aliases internos (para compatibilidad con código existente) */
-  --studio-primary:                 var(--studio-ink);
+  --studio-primary:                 var(--studio-primary-action);
   --studio-primary-on-dark:         #ffffff;
   --studio-body:                    var(--studio-ink);
   --studio-body-muted:              var(--studio-ink-secondary);
@@ -51,7 +53,6 @@
   --studio-rounded-md:   11px;
   --studio-rounded-lg:   18px;
   --studio-rounded-pill: 9999px;
-  --studio-rounded-full: 9999px;
 
   /* Shadows — solo para renders de producto */
   --studio-product-shadow: 3px 5px 30px 0px rgba(0, 0, 0, 0.22);

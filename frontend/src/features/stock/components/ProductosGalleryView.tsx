@@ -169,10 +169,9 @@ export function ProductosGalleryView() {
         }}
         title="Eliminar Producto"
         description="¿Estás seguro de que quieres eliminar este producto del catálogo? Las piezas STL asociadas no se borrarán."
-        confirmText="Eliminar"
-        cancelText="Cancelar"
-        cancelVariant="primary"
-        isDestructive={false}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="primary"
       />
     </div>
   );

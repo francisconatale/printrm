@@ -319,8 +319,8 @@ export const PerfilesDashboardView: React.FC = () => {
               ¿Estás seguro de que deseas eliminar <strong>{deletingItem.nombre}</strong>?
             </>
           }
-          isDestructive
-          confirmText="Eliminar"
+          variant="destructive"
+          confirmLabel="Eliminar"
         />
       )}
     </div>

@@ -230,9 +230,9 @@ export function ClientesListView() {
           onConfirm={() => handleDelete(clienteToDelete!.id)}
           title="Eliminar Cliente"
           description={`¿Estás seguro de que quieres eliminar a "${clienteToDelete?.nombre}"? Esta acción no se puede deshacer.`}
-          confirmText={isDeleting ? "Eliminando..." : "Eliminar"}
-          cancelText="Cancelar"
-          isDestructive={true}
+          confirmLabel={isDeleting ? "Eliminando..." : "Eliminar"}
+          cancelLabel="Cancelar"
+          variant="destructive"
         />
       )}
     </div>

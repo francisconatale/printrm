@@ -6,10 +6,11 @@ import { useModalOverlay } from '../../hooks/useModalOverlay';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
   description?: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '90vw';
+  hideHeader?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -19,6 +20,7 @@ export const Modal: React.FC<ModalProps> = ({
   description,
   children,
   size = '2xl',
+  hideHeader = false,
 }) => {
   useModalOverlay(isOpen, onClose);
 
@@ -45,13 +47,15 @@ export const Modal: React.FC<ModalProps> = ({
       <div className="absolute inset-0" onClick={onClose} />
       
       <div className={`bg-background rounded-[var(--radius-xl)] w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col relative shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 z-10`}>
-        <button 
-          onClick={onClose}
-          className="absolute right-8 top-8 p-2 hover:bg-muted/30 rounded-full transition-colors z-10"
-        >
-          <X size={20} className="text-muted-foreground" />
-        </button>
-        {title && (
+        {!hideHeader && (
+          <button 
+            onClick={onClose}
+            className="absolute right-8 top-8 p-2 hover:bg-muted/30 rounded-full transition-colors z-10"
+          >
+            <X size={20} className="text-muted-foreground" />
+          </button>
+        )}
+        {!hideHeader && title && (
           <div className="p-10 pb-0 shrink-0">
             <div className="mb-6">
               <h2 className="studio-display-md !text-4xl tracking-tight">
@@ -65,9 +69,13 @@ export const Modal: React.FC<ModalProps> = ({
             </div>
           </div>
         )}
-        <div className="flex-1 overflow-y-auto px-10 pb-12 custom-scrollbar">
-          {children}
-        </div>
+        {!hideHeader ? (
+          <div className="flex-1 overflow-y-auto px-10 pb-12 custom-scrollbar">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>,
     document.body
