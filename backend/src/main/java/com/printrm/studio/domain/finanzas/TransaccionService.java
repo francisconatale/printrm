@@ -26,4 +26,17 @@ public class TransaccionService {
         transaccion.setFecha(null);
         return repository.save(transaccion);
     }
+
+    public void registrarTransaccion(Transaccion.TipoTransaccion tipo, Transaccion.CategoriaTransaccion categoria, Double monto, String descripcion, java.util.UUID pedidoId) {
+        if (monto != 0) {
+            Transaccion tx = Transaccion.builder()
+                    .tipo(tipo)
+                    .categoria(categoria)
+                    .monto(monto)
+                    .pedidoId(pedidoId)
+                    .descripcion(descripcion)
+                    .build();
+            repository.save(tx);
+        }
+    }
 }

@@ -27,6 +27,7 @@ public class PedidoService {
     private final ItemPedidoRepository itemRepository;
     private final ClienteRepository clienteRepository;
     private final TransaccionRepository transaccionRepository;
+    private final com.printrm.studio.domain.finanzas.TransaccionService transaccionService;
     private final ProductoRepository productoRepository;
     private final ProductoService productoService;
     private final OrdenProduccionRepository ordenProduccionRepository;
@@ -110,6 +111,28 @@ public class PedidoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
 
         Pedido.EstadoPedido anterior = pedido.getEstado();
+        Pedido.EstadoPedido nuevo = Pedido.EstadoPedido.valueOf(nuevoEstado);
+
+        // Validaciones de flujo de estado (No permitir volver atrás ni salir de estados terminales)
+        if (anterior == Pedido.EstadoPedido.CANCELADO || anterior == Pedido.EstadoPedido.DEVUELTO) {
+            throw new IllegalStateException("No se puede cambiar el estado de un pedido " + anterior);
+        }
+        
+        if (anterior == Pedido.EstadoPedido.ENTREGADO && nuevo != Pedido.EstadoPedido.DEVUELTO) {
+            throw new IllegalStateException("Un pedido entregado solo puede ser devuelto.");
+        }
+
+        if (nuevo == Pedido.EstadoPedido.BORRADOR && anterior != Pedido.EstadoPedido.BORRADOR) {
+            throw new IllegalStateException("No se puede volver al estado Borrador.");
+        }
+        
+        if (nuevo == Pedido.EstadoPedido.COTIZADO && anterior.ordinal() >= Pedido.EstadoPedido.CONFIRMADO.ordinal()) {
+            throw new IllegalStateException("No se puede volver a Cotizado un pedido que ya fue Confirmado o superior.");
+        }
+
+        if (nuevo == Pedido.EstadoPedido.CONFIRMADO && anterior.ordinal() >= Pedido.EstadoPedido.EN_PRODUCCION.ordinal()) {
+            throw new IllegalStateException("No se puede volver a Confirmado un pedido que ya está en Producción o superior.");
+        }
 
         if ("ENTREGADO".equals(nuevoEstado)) {
             if (anterior == Pedido.EstadoPedido.ENTREGADO) {
@@ -152,9 +175,11 @@ public class PedidoService {
                     if (cantidadRequerida > 0) {
                         ventaService.registrarConsumoStock(item.getProducto().getId(), cantidadRequerida);
                         item.setCantidadEntregada(cantidadTotal);
+                        itemRepository.save(item);
                     }
                 } else {
                     item.setCantidadEntregada(item.getCantidad());
+                    itemRepository.save(item);
                 }
             }
 
@@ -178,7 +203,9 @@ public class PedidoService {
             }
             registrarReembolso(pedido);
         } else if ("EN_PRODUCCION".equals(nuevoEstado)) {
-            registrarGastoProduccion(pedido);
+            // Ya no registramos el gasto aquí preemptivamente.
+            // El gasto se registra en Finanzas de manera exacta en el momento en que se fabrica la pieza (ProductoService.addStock)
+            // o cuando se declara como fallida (OrdenProduccionService.registrarMerma).
         }
         
         pedido.setEstado(Pedido.EstadoPedido.valueOf(nuevoEstado));
@@ -206,21 +233,21 @@ public class PedidoService {
                         .sum();
                 double montoAReclasificar = costoPorUnidad * unidadesFallidas;
 
-                transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                    .monto(montoAReclasificar) 
-                    .pedidoId(pedido.getId())
-                    .descripcion("Reclasificación por Merma (Ajuste Material)")
-                    .build());
+                transaccionService.registrarTransaccion(
+                    Transaccion.TipoTransaccion.EGRESO,
+                    Transaccion.CategoriaTransaccion.MATERIAL,
+                    montoAReclasificar,
+                    "Reclasificación por Merma (Ajuste Material)",
+                    pedido.getId()
+                );
 
-                transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(Transaccion.CategoriaTransaccion.MERMA)
-                    .monto(montoAReclasificar * -1)
-                    .pedidoId(pedido.getId())
-                    .descripcion("Estadística Merma: " + unidadesFallidas + " unidades de " + producto.getNombre())
-                    .build());
+                transaccionService.registrarTransaccion(
+                    Transaccion.TipoTransaccion.EGRESO,
+                    Transaccion.CategoriaTransaccion.MERMA,
+                    -montoAReclasificar,
+                    "Estadística Merma: " + unidadesFallidas + " unidades de " + producto.getNombre(),
+                    pedido.getId()
+                );
             }
         }
     }
@@ -232,41 +259,18 @@ public class PedidoService {
 
         pedido.setMontoPagado(pedido.getMontoPagado() + monto);
         
-        transaccionRepository.save(Transaccion.builder()
-                .tipo(Transaccion.TipoTransaccion.INGRESO)
-                .categoria(Transaccion.CategoriaTransaccion.VENTA)
-                .monto(monto)
-                .pedidoId(pedido.getId())
-                .descripcion(descripcion != null ? descripcion : "Pago parcial / Seña")
-                .build());
+        transaccionService.registrarTransaccion(
+                Transaccion.TipoTransaccion.INGRESO,
+                Transaccion.CategoriaTransaccion.VENTA,
+                monto,
+                descripcion != null ? descripcion : "Pago parcial / Seña",
+                pedido.getId()
+        );
 
         return mapToDTO(repository.save(pedido));
     }
 
-    private void registrarGastoProduccion(Pedido pedido) {
-        boolean yaRegistrado = transaccionRepository.existsByPedidoIdAndTipo(pedido.getId(), Transaccion.TipoTransaccion.EGRESO);
-        if (yaRegistrado) return;
-
-        for (ItemPedido item : pedido.getItems()) {
-            Producto producto = item.getProducto();
-            if (producto != null && producto.getPartes() != null) {
-                double costoBaseTotal = producto.getPartes().stream()
-                        .mapToDouble(p -> p.getCostoBase() != null ? p.getCostoBase() : 0.0)
-                        .sum();
-
-                if (costoBaseTotal > 0) {
-                    int cantidad = item.getCantidad() != null ? item.getCantidad() : 0;
-                    transaccionRepository.save(Transaccion.builder()
-                        .tipo(Transaccion.TipoTransaccion.EGRESO)
-                        .categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                        .monto(costoBaseTotal * cantidad * -1)
-                        .pedidoId(pedido.getId())
-                        .descripcion("Costo estimado de fabricación: " + producto.getNombre())
-                        .build());
-                }
-            }
-        }
-    }
+    // Método registrarGastoProduccion eliminado para evitar doble descuento contable y discrepancias por margen de error
 
     private void registrarIngresoPorVenta(Pedido pedido) {
         double saldoPendiente = pedido.getTotal() - pedido.getMontoPagado();
@@ -280,13 +284,13 @@ public class PedidoService {
         if (yaRegistrado) return;
 
         if (pedido.getMontoPagado() > 0) {
-            transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.REEMBOLSO)
-                    .categoria(Transaccion.CategoriaTransaccion.VENTA)
-                    .monto(pedido.getMontoPagado() * -1)
-                    .pedidoId(pedido.getId())
-                    .descripcion("Reembolso total de dinero cobrado: $" + pedido.getMontoPagado())
-                    .build());
+            transaccionService.registrarTransaccion(
+                    Transaccion.TipoTransaccion.REEMBOLSO,
+                    Transaccion.CategoriaTransaccion.VENTA,
+                    -pedido.getMontoPagado(),
+                    "Reembolso por pedido cancelado",
+                    pedido.getId()
+            );
         }
     }
 

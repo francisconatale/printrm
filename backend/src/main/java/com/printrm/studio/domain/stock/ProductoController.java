@@ -27,7 +27,7 @@ public class ProductoController {
             @RequestParam Integer delta,
             @RequestParam(required = false) Double costo) {
         if (delta > 0 && costo != null) {
-            service.addStock(java.util.UUID.fromString(id), delta, costo);
+            service.addStock(java.util.UUID.fromString(id), delta, costo, null);
         } else {
             service.updateStock(id, delta);
         }

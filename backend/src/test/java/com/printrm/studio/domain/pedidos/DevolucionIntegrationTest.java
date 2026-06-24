@@ -29,7 +29,7 @@ public class DevolucionIntegrationTest {
     @Autowired
     private TransaccionRepository transaccionRepository;
     @Autowired
-    private ProductoRepository productoRepository;
+    private com.printrm.studio.utils.TestDataFactory testDataFactory;
     @Autowired
     private ProductoService productoService;
 
@@ -37,7 +37,7 @@ public class DevolucionIntegrationTest {
     public void testDevolucionDePedidoGeneraReembolsoYConsistenciaDeBalance() {
         // 1. Setup: Cliente y un Pedido ENTREGADO (que generó un Ingreso de $800)
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Cliente Devolución").build());
-        Producto prod = productoRepository.save(Producto.builder().nombre("Producto Test").precioSugerido(800.0).build());
+        Producto prod = testDataFactory.crearProductoVacio(800.0);
         
         // Agregar stock para permitir la entrega sin lanzar excepción
         productoService.addStock(prod.getId(), 1, 0.0);

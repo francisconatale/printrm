@@ -26,7 +26,7 @@ public class PedidoIntegrationTest {
     private ClienteRepository clienteRepository;
 
     @Autowired
-    private ProductoRepository productoRepository;
+    private com.printrm.studio.utils.TestDataFactory testDataFactory;
 
     @Autowired
     private ProductoService productoService;
@@ -37,8 +37,8 @@ public class PedidoIntegrationTest {
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Juan Pérez").build());
 
         // 2. Setup: Simular dos productos
-        Producto prodA = productoRepository.save(Producto.builder().nombre("Producto A").precioSugerido(100.0).build());
-        Producto prodB = productoRepository.save(Producto.builder().nombre("Producto B").precioSugerido(50.0).build());
+        Producto prodA = testDataFactory.crearProductoVacio(100.0);
+        Producto prodB = testDataFactory.crearProductoVacio(50.0);
 
         // 3. Acción: Crear Pedido con 8 unidades de A y 2 de B
         PedidoRequestDTO request = new PedidoRequestDTO();
@@ -61,7 +61,7 @@ public class PedidoIntegrationTest {
     public void testAjusteDeCantidadRecalculaTotal() {
         // 1. Setup: Pedido inicial con 8 unidades (8 * 100 = 800)
         Cliente cliente = clienteRepository.save(Cliente.builder().nombre("Ana").build());
-        Producto prod = productoRepository.save(Producto.builder().nombre("Producto Test").precioSugerido(100.0).build());
+        Producto prod = testDataFactory.crearProductoVacio(100.0);
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(cliente.getId(), 
             List.of(new ItemPedidoRequestDTO(prod.getId(), 8))));
@@ -80,7 +80,7 @@ public class PedidoIntegrationTest {
     @Test
     public void testCancelarPedidoCambiaEstadoYPreservaDatos() {
         // 1. Setup: Crear pedido
-        Producto prod = productoRepository.save(Producto.builder().nombre("Producto Test").precioSugerido(100.0).build());
+        Producto prod = testDataFactory.crearProductoVacio(100.0);
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
             List.of(new ItemPedidoRequestDTO(prod.getId(), 1))));
 
@@ -95,10 +95,7 @@ public class PedidoIntegrationTest {
 
     @Test
     public void testEntregarPedidoDosVecesLanzaExcepcion() {
-        Producto prod = productoRepository.save(Producto.builder()
-                .nombre("Producto Test Stock")
-                .precioSugerido(100.0)
-                .build());
+        Producto prod = testDataFactory.crearProductoVacio(100.0);
         productoService.addStock(prod.getId(), 10, 0.0);
         
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 
@@ -115,10 +112,7 @@ public class PedidoIntegrationTest {
 
     @Test
     public void testDevolverPedidoDosVecesLanzaExcepcion() {
-        Producto prod = productoRepository.save(Producto.builder()
-                .nombre("Producto Test Stock")
-                .precioSugerido(100.0)
-                .build());
+        Producto prod = testDataFactory.crearProductoVacio(100.0);
         productoService.addStock(prod.getId(), 10, 0.0);
 
         PedidoResponseDTO pedido = pedidoService.crearPedido(new PedidoRequestDTO(null, 

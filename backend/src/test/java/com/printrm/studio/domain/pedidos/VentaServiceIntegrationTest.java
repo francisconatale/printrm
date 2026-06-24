@@ -29,6 +29,9 @@ public class VentaServiceIntegrationTest {
     private VentaService ventaService;
 
     @Autowired
+    private com.printrm.studio.utils.TestDataFactory testDataFactory;
+
+    @Autowired
     private ProductoRepository productoRepository;
 
     @Autowired
@@ -41,13 +44,7 @@ public class VentaServiceIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        producto = Producto.builder()
-                .nombre("Producto Venta Test")
-                .precioSugerido(300.0)
-                .cantidadStock(0)
-                .partes(new ArrayList<>())
-                .build();
-        producto = productoRepository.save(producto);
+        producto = testDataFactory.crearProductoVacio(300.0);
         
         // Add initial stock via updateStock or addStock
         productoService.addStock(producto.getId(), 10, 150.0);
@@ -77,7 +74,7 @@ public class VentaServiceIntegrationTest {
 
         assertNotNull(ventaTx);
         assertEquals(900.0, ventaTx.getMonto());
-        assertTrue(ventaTx.getDescripcion().contains("Producto Venta Test"));
+        assertTrue(ventaTx.getDescripcion().contains("Producto Vacio"));
     }
 
     @Test

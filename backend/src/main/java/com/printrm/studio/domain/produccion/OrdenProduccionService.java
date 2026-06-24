@@ -82,6 +82,9 @@ public class OrdenProduccionService {
         if (estadoEnum == OrdenProduccion.EstadoProduccion.COMPLETADO) {
             orden.setFechaFin(LocalDateTime.now());
             procesarFinalizacionOrden(orden);
+        } else if (estadoEnum == OrdenProduccion.EstadoProduccion.MERMA) {
+            orden.setFechaFin(LocalDateTime.now());
+            procesarMermaOrden(orden);
         }
 
         return repository.save(orden);
@@ -98,34 +101,10 @@ public class OrdenProduccionService {
                         p.getPerfilPreferido(), p.getFilamentoPreferido(),
                         ajustesService.getAjustes()).getCostoBase())
                 .sum();
-        productoService.addStock(producto.getId(), orden.getCantidad(), costoUnitario);
-
+        
+        // productoService.addStock ya se encarga de registrar las transacciones de MATERIAL y ENERGIA consumidas
         UUID pedidoId = orden.getItemPedido() != null ? orden.getItemPedido().getPedido().getId() : null;
-        String nombre = producto.getNombre();
-
-        AjustesDTO ajustes = ajustesService.getAjustes();
-        double filamento = 0, energia = 0;
-        for (PiezaSTL pieza : producto.getPartes()) {
-            CostCalculationResult r = costCalculationService.calculate(
-                    pieza.getPesoGramos(), parseHours(pieza.getTiempoEstimado()),
-                    parseMinutes(pieza.getTiempoEstimado()), 0.0,
-                    pieza.getPerfilPreferido(), pieza.getFilamentoPreferido(), ajustes);
-            filamento += r.getCostoFilamento();
-            energia += r.getCostoEnergia();
-        }
-        filamento *= orden.getCantidad();
-        energia *= orden.getCantidad();
-
-        if (filamento > 0)
-            transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO).categoria(Transaccion.CategoriaTransaccion.MATERIAL)
-                    .monto(-filamento).pedidoId(pedidoId)
-                    .descripcion("Filamento: " + orden.getCantidad() + " uds de " + nombre).build());
-        if (energia > 0)
-            transaccionRepository.save(Transaccion.builder()
-                    .tipo(Transaccion.TipoTransaccion.EGRESO).categoria(Transaccion.CategoriaTransaccion.ENERGIA)
-                    .monto(-energia).pedidoId(pedidoId)
-                    .descripcion("Energía: " + orden.getCantidad() + " uds de " + nombre).build());
+        productoService.addStock(producto.getId(), orden.getCantidad(), costoUnitario, pedidoId);
     }
 
     private Integer parseHours(String time) {
@@ -142,5 +121,62 @@ public class OrdenProduccionService {
             String m = time.split("h")[1].replace("m", "").trim();
             return Integer.parseInt(m);
         } catch (Exception e) { return 0; }
+    }
+
+    private void procesarMermaOrden(OrdenProduccion orden) {
+        registrarMermaInterno(orden, orden.getCantidad());
+    }
+
+    @Transactional
+    public OrdenProduccion registrarMermaParcial(UUID ordenId, Integer unidadesFallidas) {
+        OrdenProduccion orden = repository.findById(ordenId)
+                .orElseThrow(() -> new RuntimeException("Orden de producción no encontrada: " + ordenId));
+
+        if (unidadesFallidas <= 0) return orden;
+
+        registrarMermaInterno(orden, unidadesFallidas);
+
+        if (unidadesFallidas >= orden.getCantidad()) {
+            orden.setEstado(OrdenProduccion.EstadoProduccion.MERMA);
+            orden.setFechaFin(LocalDateTime.now());
+        } else {
+            orden.setCantidad(orden.getCantidad() - unidadesFallidas);
+        }
+
+        return repository.save(orden);
+    }
+
+    private void registrarMermaInterno(OrdenProduccion orden, Integer unidadesFallidas) {
+        Producto producto = orden.getProducto();
+        if (producto == null) return;
+
+        UUID pedidoId = orden.getItemPedido() != null ? orden.getItemPedido().getPedido().getId() : null;
+        String nombre = producto.getNombre();
+
+        AjustesDTO ajustes = ajustesService.getAjustes();
+        double filamento = 0, energia = 0;
+        for (PiezaSTL pieza : producto.getPartes()) {
+            CostCalculationResult r = costCalculationService.calculate(
+                    pieza.getPesoGramos(), parseHours(pieza.getTiempoEstimado()),
+                    parseMinutes(pieza.getTiempoEstimado()), 0.0,
+                    pieza.getPerfilPreferido(), pieza.getFilamentoPreferido(), ajustes);
+            filamento += r.getCostoFilamento();
+            energia += r.getCostoEnergia();
+        }
+        filamento *= unidadesFallidas;
+        energia *= unidadesFallidas;
+        
+        double margenError = ajustes != null && ajustes.getMargenError() != null ? ajustes.getMargenError() / 100.0 : 0.0;
+        double costoTotal = (filamento + energia) * (1.0 + margenError);
+
+        if (costoTotal > 0) {
+            transaccionRepository.save(Transaccion.builder()
+                    .tipo(Transaccion.TipoTransaccion.EGRESO)
+                    .categoria(Transaccion.CategoriaTransaccion.MERMA)
+                    .monto(-costoTotal)
+                    .pedidoId(pedidoId)
+                    .descripcion("Merma en producción: " + unidadesFallidas + " uds de " + nombre)
+                    .build());
+        }
     }
 }

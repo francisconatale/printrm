@@ -50,6 +50,14 @@ public class OrdenProduccionController {
         return mapToDTO(o);
     }
 
+    @PostMapping("/{id}/merma")
+    public OrdenProduccionResponseDTO registrarMermaParcial(
+            @PathVariable String id,
+            @RequestParam Integer unidadesFallidas) {
+        OrdenProduccion o = service.registrarMermaParcial(UUID.fromString(id), unidadesFallidas);
+        return mapToDTO(o);
+    }
+
     private OrdenProduccionResponseDTO mapToDTO(OrdenProduccion o) {
         return OrdenProduccionResponseDTO.builder()
                 .id(o.getId().toString())

@@ -63,6 +63,9 @@ public class OrdenProduccionServiceIntegrationTest {
     private TransaccionRepository transaccionRepository;
 
     @Autowired
+    private com.printrm.studio.domain.finanzas.TransaccionService transaccionService;
+
+    @Autowired
     private AjustesService ajustesService;
 
     private Perfil printer;
@@ -77,6 +80,7 @@ public class OrdenProduccionServiceIntegrationTest {
         ajustesService.initDefaultAjustes();
         AjustesDTO ajustes = ajustesService.getAjustes();
         ajustes.setPreciokWh(50.0);
+        ajustes.setMargenError(0.0); // Desactivar el margen de error para que las validaciones matemáticas exactas de los tests pasen
         ajustesService.updateAjustes(ajustes);
 
         // Create printer profile
@@ -179,5 +183,90 @@ public class OrdenProduccionServiceIntegrationTest {
         assertEquals(-200.0, tMaterial.getMonto(), 0.001);
         assertNotNull(tEnergia, "Debe registrar egreso de energía");
         assertEquals(-25.0, tEnergia.getMonto(), 0.001);
+    }
+
+    @Test
+    @DisplayName("Debe registrar merma parcial y actualizar el balance y la cantidad de la orden")
+    public void testMermaParcial() {
+        // Given un pedido de 3 productos
+        OrdenProduccion orden = ordenProduccionService.crearOrdenIndependiente(producto.getId(), 3);
+        
+        // When se merman 2
+        orden = ordenProduccionService.registrarMermaParcial(orden.getId(), 2);
+        
+        // Then tengo 1 producto (la orden queda en cantidad 1)
+        assertEquals(1, orden.getCantidad(), "La orden debe quedar con 1 unidad restante");
+        assertNotEquals(OrdenProduccion.EstadoProduccion.MERMA, orden.getEstado(), "La orden no debe pasar a estado MERMA total");
+        
+        // Y el balance refleja el escenario de merma
+        List<Transaccion> transacciones = transaccionRepository.findAll();
+        
+        Transaccion tMerma = transacciones.stream()
+                .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
+                        && t.getCategoria() == Transaccion.CategoriaTransaccion.MERMA)
+                .findFirst().orElse(null);
+                
+        assertNotNull(tMerma, "Debe registrar un egreso consolidado de categoría MERMA");
+        
+        // 2 unidades mermadas. Costo unitario: $200 filamento + $25 energía = $225.
+        // Total merma: 2 * 225 = $450.
+        assertEquals(-450.0, tMerma.getMonto(), 0.001, "El monto de la merma debe ser el costo de 2 unidades");
+    }
+
+    @Test
+    @DisplayName("Debe registrar merma total y marcar la orden como MERMA")
+    public void testMermaTotal() {
+        // Given un pedido de 3 productos
+        OrdenProduccion orden = ordenProduccionService.crearOrdenIndependiente(producto.getId(), 3);
+        
+        // When se merman todas (3)
+        orden = ordenProduccionService.registrarMermaParcial(orden.getId(), 3);
+        
+        // Then la orden se marca como MERMA
+        assertEquals(OrdenProduccion.EstadoProduccion.MERMA, orden.getEstado(), "La orden debe pasar a estado MERMA");
+        assertEquals(3, orden.getCantidad(), "La cantidad no se reduce si la orden completa es merma");
+        
+        List<Transaccion> transacciones = transaccionRepository.findAll();
+        Transaccion tMerma = transacciones.stream()
+                .filter(t -> t.getTipo() == Transaccion.TipoTransaccion.EGRESO 
+                        && t.getCategoria() == Transaccion.CategoriaTransaccion.MERMA)
+                .findFirst().orElse(null);
+                
+        assertNotNull(tMerma, "Debe registrar un egreso consolidado de categoría MERMA");
+        // Total merma: 3 * 225 = $675.
+        assertEquals(-675.0, tMerma.getMonto(), 0.001, "El monto de la merma debe ser el costo de 3 unidades");
+    }
+
+    @Test
+    @DisplayName("Debe impactar correctamente en el balance global al combinar mermas y produccion exitosa")
+    public void testEscenarioCompletoProduccionYMermaConBalance() {
+        // 1. Inyectamos capital inicial para probar el balance: +$1000
+        Transaccion capitalInicial = Transaccion.builder()
+                .tipo(Transaccion.TipoTransaccion.INGRESO)
+                .categoria(Transaccion.CategoriaTransaccion.VENTA)
+                .monto(1000.0)
+                .descripcion("Capital Inicial")
+                .build();
+        transaccionService.create(capitalInicial);
+        
+        assertEquals(1000.0, transaccionService.getBalance(), 0.001);
+
+        // 2. Given un pedido de 3 productos
+        OrdenProduccion orden = ordenProduccionService.crearOrdenIndependiente(producto.getId(), 3);
+        
+        // 3. When se merman 2 de los 3 productos (Fallo en la impresión)
+        orden = ordenProduccionService.registrarMermaParcial(orden.getId(), 2);
+        
+        // El balance hasta ahora: 1000 (inicial) - 450 (merma de 2 unidades) = 550
+        assertEquals(550.0, transaccionService.getBalance(), 0.001, "El balance debe descontar el costo de las 2 unidades mermadas");
+        
+        // 4. And se completa la 1 unidad restante exitosamente
+        orden = ordenProduccionService.cambiarEstado(orden.getId(), "COMPLETADO");
+        
+        // El balance final: 550 - 225 (producción exitosa de 1 unidad) = 325
+        assertEquals(325.0, transaccionService.getBalance(), 0.001, "El balance final debe contemplar la merma parcial y la producción final");
+        
+        // La orden debe estar terminada y solo se suma stock por 1 unidad
+        assertEquals(OrdenProduccion.EstadoProduccion.COMPLETADO, orden.getEstado());
     }
 }

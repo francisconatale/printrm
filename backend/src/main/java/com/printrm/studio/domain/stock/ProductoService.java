@@ -23,7 +23,7 @@ public class ProductoService {
     private final ProductoRepository repository;
     private final PiezaSTLRepository piezaRepository;
     private final LoteRepository loteRepository;
-    private final com.printrm.studio.domain.finanzas.TransaccionRepository transaccionRepository;
+    private final com.printrm.studio.domain.finanzas.TransaccionService transaccionService;
     private final CostCalculationService costCalculationService;
     private final AjustesService ajustesService;
 
@@ -43,7 +43,6 @@ public class ProductoService {
         producto.setNombre(dto.getNombre());
         producto.setPrecioSugerido(dto.getPrecioSugerido());
         
-        // If it's a new product and has initial stock, we create an initial lot
         Integer initialStock = dto.getCantidadStock() != null ? dto.getCantidadStock() : 0;
         if (isNew) {
             producto.setCantidadStock(initialStock);
@@ -110,34 +109,43 @@ public class ProductoService {
         AjustesDTO ajustes = ajustesService.getAjustes();
         CostCalculationResult calc = costCalculationService.calculate(
             pieza.getPesoGramos(), 
-            parseHours(pieza.getTiempoEstimado()), 
-            parseMinutes(pieza.getTiempoEstimado()), 
+            costCalculationService.parseHours(pieza.getTiempoEstimado()), 
+            costCalculationService.parseMinutes(pieza.getTiempoEstimado()), 
             0.0, 
             pieza.getPerfilPreferido(), 
             pieza.getFilamentoPreferido(), 
             ajustes
         );
         dto.setCostoBase(calc != null ? calc.getCostoBase() : 0.0);
+        dto.setCostoMaterial(calc != null ? calc.getCostoFilamento() : 0.0);
+        dto.setCostoEnergia(calc != null ? calc.getCostoEnergia() : 0.0);
         
         return dto;
     }
 
     @Transactional
     public void addStock(UUID productoId, Integer cantidad, Double costo) {
+        addStock(productoId, cantidad, costo, null);
+    }
+
+    @Transactional
+    public void addStock(UUID productoId, Integer cantidad, Double costo, UUID pedidoId) {
         Producto producto = repository.findById(productoId)
             .orElseThrow(() -> new com.printrm.studio.exception.ResourceNotFoundException("Producto no encontrado"));
         
-        // Cost-Tiered FIFO: Check if we can merge with the latest active lot
+        actualizarInventarioLotes(producto, cantidad, costo);
+        registrarGastosDeFabricacion(producto, cantidad, pedidoId);
+    }
+
+    private void actualizarInventarioLotes(Producto producto, Integer cantidad, Double costo) {
         Lote ultimoLote = loteRepository.findFirstByProductoIdAndCantidadActualGreaterThanOrderByFechaCreacionDesc(
-            productoId, 0);
+            producto.getId(), 0);
         
         if (ultimoLote != null && Math.abs(ultimoLote.getCostoUnitario() - costo) < 0.01) {
-            // Same cost, merge into existing lot
             ultimoLote.setCantidadOriginal(ultimoLote.getCantidadOriginal() + cantidad);
             ultimoLote.setCantidadActual(ultimoLote.getCantidadActual() + cantidad);
             loteRepository.save(ultimoLote);
         } else {
-            // Different cost or no active lot, create new one
             Lote nuevoLote = Lote.builder()
                 .producto(producto)
                 .cantidadOriginal(cantidad)
@@ -149,44 +157,27 @@ public class ProductoService {
         
         producto.setCantidadStock(producto.getCantidadStock() + cantidad);
         repository.save(producto);
+    }
 
-        // Registrar los egresos correspondientes al filamento y energía consumidos para la cantidad fabricada
-        Double totalFilamento = 0.0;
-        Double totalEnergia = 0.0;
+    private void registrarGastosDeFabricacion(Producto producto, Integer cantidad, UUID pedidoId) {
         AjustesDTO ajustes = ajustesService.getAjustes();
-        
-        for (PiezaSTL pieza : producto.getPartes()) {
-            CostCalculationResult res = costCalculationService.calculate(
-                pieza.getPesoGramos(),
-                parseHours(pieza.getTiempoEstimado()),
-                parseMinutes(pieza.getTiempoEstimado()),
-                0.0,
-                pieza.getPerfilPreferido(),
-                pieza.getFilamentoPreferido(),
-                ajustes
-            );
-            totalFilamento += res.getCostoFilamento();
-            totalEnergia += res.getCostoEnergia();
-        }
+        CostCalculationResult costos = costCalculationService.calculateForProducto(producto, ajustes);
 
-        if (totalFilamento > 0) {
-            com.printrm.studio.domain.finanzas.Transaccion txMat = com.printrm.studio.domain.finanzas.Transaccion.builder()
-                    .tipo(com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MATERIAL)
-                    .monto(-totalFilamento * cantidad)
-                    .descripcion("Filamento: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)")
-                    .build();
-            transaccionRepository.save(txMat);
-        }
-        if (totalEnergia > 0) {
-            com.printrm.studio.domain.finanzas.Transaccion txEne = com.printrm.studio.domain.finanzas.Transaccion.builder()
-                    .tipo(com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO)
-                    .categoria(com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.ENERGIA)
-                    .monto(-totalEnergia * cantidad)
-                    .descripcion("Energía: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)")
-                    .build();
-            transaccionRepository.save(txEne);
-        }
+        transaccionService.registrarTransaccion(
+            com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
+            com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.MATERIAL,
+            -(costos.getCostoFilamento() * cantidad),
+            "Filamento: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
+            pedidoId
+        );
+
+        transaccionService.registrarTransaccion(
+            com.printrm.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
+            com.printrm.studio.domain.finanzas.Transaccion.CategoriaTransaccion.ENERGIA,
+            -(costos.getCostoEnergia() * cantidad),
+            "Energía: " + cantidad + " uds de " + producto.getNombre() + " (Fabricación)",
+            pedidoId
+        );
     }
 
     @Transactional
@@ -195,24 +186,9 @@ public class ProductoService {
             .orElseThrow(() -> new com.printrm.studio.exception.ResourceNotFoundException("Producto no encontrado"));
         
         if (delta > 0) {
-            // DYNAMIC CALCULATION: Recalculate cost based on current settings for the new lot
-            Double totalCost = 0.0;
             AjustesDTO ajustes = ajustesService.getAjustes();
-            
-            for (PiezaSTL pieza : producto.getPartes()) {
-                CostCalculationResult res = costCalculationService.calculate(
-                    pieza.getPesoGramos(),
-                    parseHours(pieza.getTiempoEstimado()),
-                    parseMinutes(pieza.getTiempoEstimado()),
-                    0.0,
-                    pieza.getPerfilPreferido(),
-                    pieza.getFilamentoPreferido(),
-                    ajustes
-                );
-                totalCost += res.getCostoBase();
-            }
-            
-            addStock(producto.getId(), delta, totalCost);
+            CostCalculationResult costos = costCalculationService.calculateForProducto(producto, ajustes);
+            addStock(producto.getId(), delta, costos.getCostoBase(), null);
         } else if (delta < 0) {
             consumeStock(producto, Math.abs(delta));
         }
@@ -245,21 +221,6 @@ public class ProductoService {
         repository.save(producto);
     }
 
-    private Integer parseHours(String time) {
-        if (time == null) return 0;
-        try {
-            String h = time.split("h")[0].trim();
-            return Integer.parseInt(h);
-        } catch (Exception e) { return 0; }
-    }
-
-    private Integer parseMinutes(String time) {
-        if (time == null || !time.contains("h")) return 0;
-        try {
-            String m = time.split("h")[1].replace("m", "").trim();
-            return Integer.parseInt(m);
-        } catch (Exception e) { return 0; }
-    }
 
     @Transactional
     public void delete(String id) {

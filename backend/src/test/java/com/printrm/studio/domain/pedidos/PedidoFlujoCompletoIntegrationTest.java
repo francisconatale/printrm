@@ -63,6 +63,9 @@ public class PedidoFlujoCompletoIntegrationTest {
     @Autowired
     private AjustesService ajustesService;
 
+    @Autowired
+    private com.printrm.studio.utils.TestDataFactory testDataFactory;
+
     private Perfil printer;
     private FilamentProfile filament;
     private PiezaSTL pieza;
@@ -75,6 +78,7 @@ public class PedidoFlujoCompletoIntegrationTest {
         ajustesService.initDefaultAjustes();
         AjustesDTO ajustes = ajustesService.getAjustes();
         ajustes.setPreciokWh(50.0);
+        ajustes.setMargenError(0.0);
         ajustesService.updateAjustes(ajustes);
 
         // Create printer profile
@@ -86,33 +90,15 @@ public class PedidoFlujoCompletoIntegrationTest {
         printer = perfilRepository.save(printer);
 
         // Create filament profile
-        filament = FilamentProfile.builder()
-                .nombre("Filament Test Flow")
-                .material("PLA")
-                .filamentoPorKg(2000.0)
-                .build();
-        filament = filamentProfileRepository.save(filament);
+        filament = testDataFactory.crearFilamentoPLA(2000.0);
 
         // Create PiezaSTL: 100g, 2h 30m estimated print time
-        pieza = PiezaSTL.builder()
-                .nombre("Pieza Test Flow")
-                .filePath("pieza_test_flow.stl")
-                .pesoGramos(100.0)
-                .tiempoEstimado("2h 30m")
-                .perfilPreferido(printer)
-                .filamentoPreferido(filament)
-                .costoBase(0.0)
-                .build();
+        pieza = testDataFactory.crearPiezaBase(filament, 100.0, "2h 30m", 0.0);
+        pieza.setPerfilPreferido(printer);
         pieza = piezaSTLRepository.save(pieza);
 
         // Create Producto referencing the PiezaSTL
-        producto = Producto.builder()
-                .nombre("Producto Test Flow")
-                .partes(new ArrayList<>(List.of(pieza)))
-                .precioSugerido(500.0)
-                .cantidadStock(0)
-                .build();
-        producto = productoRepository.save(producto);
+        producto = testDataFactory.crearProductoSimple(pieza, 500.0);
 
         // Create Cliente
         cliente = Cliente.builder()

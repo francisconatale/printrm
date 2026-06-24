@@ -16,6 +16,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+package com.printrm.studio.domain.produccion;
+
+import com.printrm.studio.domain.pedidos.ItemPedido;
+import com.printrm.studio.domain.stock.Producto;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "ordenes_produccion")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OrdenProduccion {
 
     @Id
@@ -23,7 +41,7 @@ public class OrdenProduccion {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_pedido_id", nullable = true)
+    @JoinColumn(name = "item_pedido_id")
     private ItemPedido itemPedido;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,6 +55,13 @@ public class OrdenProduccion {
     @Column(nullable = false)
     private EstadoProduccion estado;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private TipoOrigen origen = TipoOrigen.STOCK_INTERNO;
+
+    private String referenciaOrigen;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaInicio;
@@ -44,6 +69,10 @@ public class OrdenProduccion {
     private LocalDateTime fechaFin;
 
     public enum EstadoProduccion {
-        COLA, IMPRIMIENDO, COMPLETADO, CANCELADO
+        COLA, IMPRIMIENDO, COMPLETADO, CANCELADO, MERMA
+    }
+
+    public enum TipoOrigen {
+        PEDIDO_CLIENTE, STOCK_INTERNO, MANTENIMIENTO
     }
 }

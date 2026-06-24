@@ -94,4 +94,51 @@ public class CostCalculationService {
                 .costoBase(costoBase)
                 .build();
     }
+
+    public CostCalculationResult calculateForProducto(com.printrm.studio.domain.stock.Producto producto, AjustesDTO ajustes) {
+        Double totalFilamento = 0.0;
+        Double totalEnergia = 0.0;
+        Double totalBase = 0.0;
+        
+        for (com.printrm.studio.domain.biblioteca.PiezaSTL pieza : producto.getPartes()) {
+            CostCalculationResult res = calculate(
+                pieza.getPesoGramos(),
+                parseHours(pieza.getTiempoEstimado()),
+                parseMinutes(pieza.getTiempoEstimado()),
+                0.0,
+                pieza.getPerfilPreferido(),
+                pieza.getFilamentoPreferido(),
+                ajustes
+            );
+            totalFilamento += res.getCostoFilamento();
+            totalEnergia += res.getCostoEnergia();
+            totalBase += res.getCostoBase();
+        }
+
+        double margenError = ajustes != null && ajustes.getMargenError() != null ? ajustes.getMargenError() / 100.0 : 0.0;
+        double costoError = (totalFilamento + totalEnergia) * margenError;
+        totalFilamento += costoError;
+
+        return CostCalculationResult.builder()
+                .costoFilamento(totalFilamento)
+                .costoEnergia(totalEnergia)
+                .costoBase(totalBase)
+                .build();
+    }
+
+    public Integer parseHours(String time) {
+        if (time == null) return 0;
+        try {
+            String h = time.split("h")[0].trim();
+            return Integer.parseInt(h);
+        } catch (Exception e) { return 0; }
+    }
+
+    public Integer parseMinutes(String time) {
+        if (time == null || !time.contains("h")) return 0;
+        try {
+            String m = time.split("h")[1].replace("m", "").trim();
+            return Integer.parseInt(m);
+        } catch (Exception e) { return 0; }
+    }
 }
