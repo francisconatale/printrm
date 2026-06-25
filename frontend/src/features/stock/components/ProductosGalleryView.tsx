@@ -64,7 +64,7 @@ export function ProductosGalleryView() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar producto..."
-                  className="w-full bg-muted/30 dark:bg-muted/15 border border-border/60 rounded-full pl-10 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                  className="w-full bg-muted/30 border border-border/60 rounded-full pl-10 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                 />
               </div>
               <button 

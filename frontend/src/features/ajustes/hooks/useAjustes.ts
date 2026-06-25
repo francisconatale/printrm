@@ -10,13 +10,13 @@ export const useAjustes = () => {
   const { data: ajustes, ...queryInfo } = useQuery<Ajustes, Error>({
     queryKey: [AJUSTES_QUERY_KEY],
     queryFn: ajustesApi.get,
-    staleTime: Infinity,
+    staleTime: 30_000,
   });
 
   const updateMutation = useMutation({
     mutationFn: ajustesApi.update,
-    onSuccess: (updatedAjustes) => {
-      queryClient.setQueryData([AJUSTES_QUERY_KEY], updatedAjustes);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [AJUSTES_QUERY_KEY] });
     },
   });
 

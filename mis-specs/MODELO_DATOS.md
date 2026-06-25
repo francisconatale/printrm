@@ -1,6 +1,6 @@
 # 🗄️ Modelo de Datos y Relaciones entre Entidades
 
-Este documento especifica de manera exhaustiva el esquema relacional de la base de datos SQLite de **PrintRM**, detallando el mapeo de relaciones JPA (Hibernate) entre todas las entidades del dominio de la aplicación.
+Este documento especifica de manera exhaustiva el esquema relacional de la base de datos SQLite de **Printly**, detallando el mapeo de relaciones JPA (Hibernate) entre todas las entidades del dominio de la aplicación.
 
 ---
 

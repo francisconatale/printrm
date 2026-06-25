@@ -169,11 +169,11 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
               <DollarSign size={20} />
             </div>
             {metrics.balance >= 0 ? (
-              <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50 px-2 py-0.5 rounded-full font-semibold">
+              <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full font-semibold">
                 Superávit
               </span>
             ) : (
-              <span className="text-[10px] bg-red-50 text-red-700 border border-red-100 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/50 px-2 py-0.5 rounded-full font-semibold">
+              <span className="text-[10px] bg-red-50 text-red-700 border border-red-100 px-2 py-0.5 rounded-full font-semibold">
                 Déficit
               </span>
             )}
@@ -181,7 +181,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Neto</p>
             <p className={`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 transition-all truncate ${
-              metrics.balance >= 0 ? 'text-foreground' : 'text-red-600 dark:text-red-400'
+              metrics.balance >= 0 ? 'text-foreground' : 'text-red-600'
             }`} title={formatCurrency(metrics.balance)}>
               {formatCurrency(metrics.balance)}
             </p>
@@ -191,7 +191,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* Ingresos Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="size-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <TrendingUp size={20} />
             </div>
             {metrics.totalReembolsos < 0 && (
@@ -211,7 +211,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
         {/* Gastos Card */}
         <div className="bg-card border border-border/50 p-6 md:p-4 xl:p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm relative overflow-hidden group hover:border-border transition-colors">
           <div className="flex justify-between items-start">
-            <div className="size-10 rounded-full bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 flex items-center justify-center">
+            <div className="size-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
               <TrendingDown size={20} />
             </div>
           </div>
@@ -239,7 +239,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
           <div>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Retorno (ROI)</p>
             <p className={`text-2xl sm:text-3xl md:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-1 truncate ${
-              metrics.roi >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
+              metrics.roi >= 0 ? 'text-emerald-600' : 'text-red-600'
             }`} title={metrics.roi >= 1000 ? '> 1000%' : `${metrics.roi.toFixed(1)}%`}>
               {metrics.roi >= 1000 ? '> 1000%' : `${metrics.roi.toFixed(1)}%`}
             </p>
@@ -264,7 +264,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                 <span className="text-muted-foreground">Ingresos</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="size-2.5 rounded-full bg-zinc-400 dark:bg-zinc-600 inline-block" />
+                <span className="size-2.5 rounded-full bg-zinc-400 inline-block" />
                 <span className="text-muted-foreground">Egresos</span>
               </div>
             </div>
@@ -298,7 +298,7 @@ export function FinanzasDashboard({ onOpenNewTransaction, refetchAll }: Finanzas
                       {/* Expense Bar */}
                       <div 
                         style={{ height: `${Math.max(expHeight, 2)}%` }} 
-                        className={`w-3.5 md:w-5 rounded-t-[3px] bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-all duration-300`} 
+                        className={`w-3.5 md:w-5 rounded-t-[3px] bg-zinc-300 hover:bg-zinc-400 transition-all duration-300`} 
                       />
                     </div>
                   </div>

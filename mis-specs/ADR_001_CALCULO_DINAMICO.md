@@ -37,4 +37,4 @@ El único momento en el que un costo se vuelve "estático" es al momento de fabr
 
 1. **Ajuste Automático Anti-Inflación**: Si el precio del filamento sube un 10%, el usuario solo cambia un número en la pestaña de "Ajustes Globales". Inmediatamente, TODO el catálogo de productos de la app mostrará los nuevos costos de producción de forma retroactiva sin tocar ni un solo archivo STL.
 2. **Resolución del Cuello de Botella "N+1"**: Se optimizó la base de datos para que no pregunte "a cuánto está la luz" por cada pieza individual al cargar la galería. Se carga el precio global una vez y se aplica matemáticamente a todas las piezas en memoria, haciendo que la app cargue instantáneamente aunque tengas miles de diseños.
-3. **Escalabilidad Enterprise**: Si el día de mañana se lanza una App Móvil de PrintRM, no hay que reprogramar las fórmulas financieras en Android o iOS; simplemente llaman al mismo endpoint `/calculate` del servidor central.
+3. **Escalabilidad Enterprise**: Si el día de mañana se lanza una App Móvil de Printly, no hay que reprogramar las fórmulas financieras en Android o iOS; simplemente llaman al mismo endpoint `/calculate` del servidor central.

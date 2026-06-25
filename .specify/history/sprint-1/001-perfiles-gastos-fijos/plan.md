@@ -205,7 +205,7 @@ interface ModeloImpresora {
 | TanStack Query | Cache automático, invalidación post-mutación, loading/error states | fetch manual: más boilerplate sin beneficio |
 | React Hook Form + Zod | Validación declarativa typesafe, integración nativa con TS | useState por campo: no escala con 7 campos |
 | Lista de modelos estática en frontend | Sin overhead de API, actualizable via PR | Endpoint dedicado: overkill para datos que cambian raramente |
-| SQLite | Zero config local, archivo único portable | H2/PostgreSQL: H2 es volátil por defecto y Postgres requiere instalación externa |
+| SQLite | Zero config local, archivo único | H2/PostgreSQL: H2 es volátil por defecto y Postgres requiere instalación externa |
 
 ---
 

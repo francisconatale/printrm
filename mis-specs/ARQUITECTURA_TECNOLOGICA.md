@@ -1,6 +1,6 @@
 # 🏗️ Arquitectura Tecnológica y Empaquetado
 
-Este documento especifica la arquitectura técnica de **PrintRM**, detallando el stack tecnológico, la integración de la base de datos local y los mecanismos de despliegue y empaquetado para generar una aplicación portable en Windows.
+Este documento especifica la arquitectura técnica de **Printly**, detallando el stack tecnológico, la integración de la base de datos local y los mecanismos de despliegue y empaquetado para generar una aplicación de escritorio en Windows.
 
 ---
 
@@ -33,7 +33,7 @@ Este documento especifica la arquitectura técnica de **PrintRM**, detallando el
 
 ## 📂 Estructura de Directorios
 
-### Backend (`/backend/src/main/java/com/printrm/studio/`)
+### Backend (`/backend/src/main/java/com/printly/studio/`)
 La estructura sigue un diseño guiado por el dominio (Domain-Driven Package Layout) en lugar de una arquitectura de 3 capas genérica:
 *   `StudioApplication.java`: Punto de entrada de Spring Boot.
 *   `config/`: Ajustes de CORS globales y controllers de salud del servicio.
@@ -59,7 +59,7 @@ La estructura sigue un diseño guiado por el dominio (Domain-Driven Package Layo
 
 ## 📦 Pipeline de Empaquetado y Portabilidad
 
-La portabilidad es un requisito crítico de PrintRM. La aplicación se distribuye como un único ejecutable `.exe` que no requiere instalar Java o base de datos por separado en el sistema operativo del cliente.
+La portabilidad es un requisito crítico de Printly. La aplicación se distribuye como un único ejecutable `.exe` que no requiere instalar Java o base de datos por separado en el sistema operativo del cliente.
 
 1.  **Compilación del Frontend**:
     ```powershell

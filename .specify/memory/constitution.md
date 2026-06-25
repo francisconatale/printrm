@@ -66,7 +66,7 @@ Todo cambio en cualquier input del formulario debe disparar un recálculo inmedi
 ## Arquitectura de Entrega
 
 ### Stack
-- **Backend:** Spring Boot 3.x, Java 21, SQLite (liviano, portable, sin dependencias externas)
+- **Backend:** Spring Boot 3.x, Java 21, SQLite (liviano, sin dependencias externas)
 - **Frontend:** React 18, TypeScript, Tailwind CSS 3.4, Vite
 
 ### Integración

@@ -1,0 +1,47 @@
+@echo off
+setlocal
+echo ==============================================
+echo   Build Instalador - Printly
+echo ==============================================
+echo.
+
+echo [+] Instalando dependencias del proyecto raiz...
+call npm install
+if errorlevel 1 goto :error
+
+echo.
+echo [+] Instalando dependencias del frontend...
+cd frontend && call npm install --legacy-peer-deps && cd ..
+if errorlevel 1 goto :error
+
+echo.
+echo [+] Limpiando builds anteriores de Java...
+if exist "backend\build" rd /s /q "backend\build"
+if exist "backend\jre" rd /s /q "backend\jre"
+
+echo.
+echo [+] Iniciando proceso de compilacion y empaquetado...
+echo (Java + React + Electron)
+echo.
+
+call npm run dist
+
+if errorlevel 1 goto :error
+
+echo.
+echo ==============================================
+echo [EXITO] Instalador creado correctamente.
+echo El instalador se encuentra en: output\printly
+echo ==============================================
+goto :end
+
+:error
+echo.
+echo ==============================================
+echo [ERROR] Hubo un problema durante el build.
+echo Revisa los logs arriba para identificar el fallo.
+echo ==============================================
+
+:end
+echo.
+pause

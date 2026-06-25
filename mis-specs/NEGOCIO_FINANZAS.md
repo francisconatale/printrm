@@ -1,6 +1,6 @@
 # 🧮 Lógica de Negocio y Finanzas
 
-Este documento describe con máxima precisión técnica y fórmulas reales cómo se procesan las finanzas, los pedidos y el inventario en **PrintRM**. Toda la información aquí expuesta está basada directamente en el comportamiento y flujo del código backend y frontend.
+Este documento describe con máxima precisión técnica y fórmulas reales cómo se procesan las finanzas, los pedidos y el inventario en **Printly**. Toda la información aquí expuesta está basada directamente en el comportamiento y flujo del código backend y frontend.
 
 ---
 

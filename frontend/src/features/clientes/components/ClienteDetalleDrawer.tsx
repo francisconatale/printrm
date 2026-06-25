@@ -92,9 +92,9 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose, onNavigateToPed
                     <div>
                       <p className="studio-body-strong">{fmtDateShort(pedido.fechaCreacion)}</p>
                       <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
-                        pedido.estado === 'ENTREGADO' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
-                        pedido.estado === 'CANCELADO' ? 'bg-red-500/10 text-red-600 dark:text-red-400' :
-                        'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                        pedido.estado === 'ENTREGADO' ? 'bg-green-500/10 text-green-600' :
+                        pedido.estado === 'CANCELADO' ? 'bg-red-500/10 text-red-600' :
+                        'bg-blue-500/10 text-blue-600'
                       }`}>
                         {pedido.estado.replace(/_/g, ' ')}
                       </span>
@@ -143,7 +143,7 @@ export function ClienteDetalleDrawer({ cliente, isOpen, onClose, onNavigateToPed
                         </div>
                       </div>
                     <div className="text-right">
-                      <p className={`studio-body-strong ${tx.tipo === 'INGRESO' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      <p className={`studio-body-strong ${tx.tipo === 'INGRESO' ? 'text-green-600' : 'text-red-600'}`}>
                         {tx.tipo === 'INGRESO' ? '+' : '-'}${tx.monto?.toLocaleString()}
                       </p>
                       <p className="text-xs text-muted-foreground">{fmtDateShort(tx.fecha)}</p>

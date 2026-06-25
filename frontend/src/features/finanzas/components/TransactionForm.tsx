@@ -71,6 +71,7 @@ export function TransactionForm({ isOpen, onClose }: TransactionFormProps) {
         categoria,
         monto: finalMonto,
         descripcion: descripcion.trim(),
+        devueltoTotalmente: false,
       },
       {
         onSuccess: () => {

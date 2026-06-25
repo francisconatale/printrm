@@ -22,7 +22,7 @@
 
 **Primary Dependencies**: [e.g., Spring Web, Spring Data JPA, React, Studio Theme]
 
-**Storage**: [e.g., SQLite (portable), or orchestrated via Spring Boot]
+**Storage**: [e.g., SQLite (local), or orchestrated via Spring Boot]
 
 **Testing**: [e.g., JUnit 5, Vitest]
 

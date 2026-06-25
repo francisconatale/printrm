@@ -5,7 +5,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.printrm.studio'
+group = 'com.printly.studio'
 version = '1.0-SNAPSHOT'
 
 java {
@@ -112,7 +112,7 @@ task stageApp(type: Copy) {
     // Copy the boot JAR into backend folder
     into("backend") {
         from(bootJar.archiveFile) {
-            rename { "printrm-backend.jar" }
+            rename { "printly-backend.jar" }
         }
     }
     

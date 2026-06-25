@@ -30,7 +30,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => onViewDetail?.(pieza)}
-      className="group relative bg-background rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-border/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:border-foreground/30 transition-all duration-300 cursor-pointer"
+      className="group relative bg-background rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
     >
       {/* 3D Preview Area */}
       <div className="aspect-square w-full bg-muted/40 relative overflow-hidden flex items-center justify-center">
@@ -85,7 +85,7 @@ export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, on
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => onDelete(pieza.id)}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
                 >
                   <Trash2 size={16} className="mr-2" aria-hidden="true" />
                   Eliminar

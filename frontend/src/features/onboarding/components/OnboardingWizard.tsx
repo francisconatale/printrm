@@ -184,16 +184,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         consumoW: form.consumoW, nozzleDiameter: form.nozzleDiameter,
         bedShape: form.bedShape, maxPrintHeight: form.maxPrintHeight,
       });
+      queryClient.invalidateQueries({ queryKey: ['perfiles'] });
       await apiClient.post('/v1/filament-profiles', {
         nombre: form.filamentName, material: form.filamentMaterial,
         filamentoPorKg: form.filamentPriceKg, density: form.density,
         diameter: form.diameter, colour: form.colour,
       });
+      queryClient.invalidateQueries({ queryKey: ['filament-profiles'] });
       await apiClient.post('/v1/print-profiles', {
         nombre: 'Estándar', layerHeight: form.layerHeight,
         perimeters: form.perimeters, fillDensity: form.fillDensity,
         speedPrint: form.speedPrint,
       });
+      queryClient.invalidateQueries({ queryKey: ['print-profiles'] });
       await completeOnboarding.mutateAsync({
         nombreUsuario: form.nombreUsuario,
         nombreEmprendimiento: form.nombreEmprendimiento,

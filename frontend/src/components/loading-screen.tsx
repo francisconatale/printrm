@@ -1,11 +1,10 @@
 import { Loader2 } from "lucide-react"
 
 interface LoadingScreenProps {
-  retryCount: number
   error: string | null
 }
 
-export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
+export function LoadingScreen({ error }: LoadingScreenProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
       <div className="text-center space-y-6 max-w-sm px-6">
@@ -26,20 +25,6 @@ export function LoadingScreen({ retryCount, error }: LoadingScreenProps) {
             )}
           </p>
         </div>
-
-        {!error && (
-          <div className="flex flex-col items-center space-y-1">
-             <div className="w-48 h-1 bg-secondary rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-indigo-500 transition-all duration-500 ease-out" 
-                  style={{ width: `${Math.min((retryCount / 30) * 100, 100)}%` }}
-                />
-             </div>
-             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
-               Intento {retryCount} de 30
-             </p>
-          </div>
-        )}
 
         {error && (
           <button 

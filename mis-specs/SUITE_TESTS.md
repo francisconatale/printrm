@@ -1,6 +1,6 @@
 # 🧪 Suite de Pruebas Automatizadas (Testing Suite)
 
-Este documento detalla qué componentes y lógica de negocio están cubiertos por la suite de pruebas de **PrintRM**, además de describir el flujo integrador de punta a punta que simula el ciclo de vida comercial y financiero de la aplicación.
+Este documento detalla qué componentes y lógica de negocio están cubiertos por la suite de pruebas de **Printly**, además de describir el flujo integrador de punta a punta que simula el ciclo de vida comercial y financiero de la aplicación.
 
 ---
 

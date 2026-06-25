@@ -1,6 +1,6 @@
 # 🎨 Constitución de Diseño: Studio Edition
 
-Este documento define la ley visual estricta para la interfaz de **PrintRM**. Cada nueva vista o componente debe adherirse estrictamente a estas reglas para mantener la coherencia estética "Studio Edition", orientada a la máxima funcionalidad sin adornos innecesarios.
+Este documento define la ley visual estricta para la interfaz de **Printly**. Cada nueva vista o componente debe adherirse estrictamente a estas reglas para mantener la coherencia estética "Studio Edition", orientada a la máxima funcionalidad sin adornos innecesarios.
 
 ---
 

@@ -1,6 +1,6 @@
-# PrusaSlicer Portable Cost Calculator
+# Printly - Cost Calculator
 
-Este proyecto es una aplicación de escritorio portable para Windows que integra el motor de PrusaSlicer. Permite a los usuarios calcular costos de impresión 3D a través de una interfaz de usuario moderna, sin necesidad de tener Java o PrusaSlicer preinstalado.
+Printly es una aplicación de escritorio para Windows que integra el motor de PrusaSlicer. Permite calcular costos de impresión 3D a través de una interfaz moderna.
 
 ## 🚀 Stack Tecnológico
 
@@ -16,7 +16,7 @@ El proyecto se ha unificado para mayor claridad:
 
 - **/backend/**: Contiene todo el código fuente de Spring Boot (Java), los scripts de Gradle, y las configuraciones y binarios de PrusaSlicer necesarios para la compilación.
 - **/frontend/**: Contiene todo el código fuente de la interfaz de usuario en React.
-- **/output/printcrm/**: Carpeta donde se genera la aplicación portable (`.exe`) después de compilar.
+- **/output/printcrm/**: Carpeta donde se genera el instalador (`.exe`) después de compilar.
 - `main.js`: El punto de entrada principal de la aplicación Electron, responsable de crear la ventana y lanzar el proceso del backend.
 
 ## ⚙️ Requisitos para Desarrollo
@@ -49,15 +49,17 @@ Para trabajar en la aplicación, podés correr el frontend y el backend simultá
 npm run dev
 ```
 
-### 3. Compilar la Versión Portable
+### 3. Compilar el Instalador
 
-Para generar el ejecutable portable final para Windows, hemos creado dos scripts de ayuda:
+Para generar el instalador de Windows:
 
-- **`limpiar.bat`**: (Opcional) Ejecutá este script para borrar todas las carpetas de compilación (`build`, `dist`, `output`) y dejar el proyecto limpio antes de una nueva compilación.
-- **`armar_portable.bat`**: **Este es el script principal.** Ejecutalo para automatizar todo el proceso:
-    1. Instala todas las dependencias.
-    2. Compila el frontend de React.
-    3. Compila el backend de Java y genera un JRE mínimo.
-    4. Empaqueta todo en un solo `.exe` portable.
+```bash
+npm run dist
+```
 
-Una vez finalizado, encontrarás la aplicación en la carpeta `output/printcrm/`.
+Este comando:
+1. Compila el frontend de React.
+2. Compila el backend de Java y genera un JRE mínimo.
+3. Empaqueta todo en un instalador `.exe` (NSIS).
+
+El instalador se generará en `output/printcrm/`.

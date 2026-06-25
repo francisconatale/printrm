@@ -103,7 +103,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
       pesoGramos: resultado.gramos,
       tiempoEstimado: `${resultado.horas}h ${resultado.minutosAdicionales}m`,
       costoBase: resultado.costoBase,
-      costoError: resultado.costoError,
       perfilImpresoraId: activePrinter?.id,
       perfilFilamentoId: activeFilament?.id,
       perfilImpresionId: overrideConfigs.print || undefined,

@@ -10,7 +10,7 @@ import { Tag, Info } from 'lucide-react';
 
 const editarProductoSchema = z.object({
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
-  precioSugerido: z.number().min(0, "El precio no puede ser negativo").optional().default(0),
+  precioSugerido: z.number().min(0, "El precio no puede ser negativo"),
 });
 
 type EditarProductoForm = z.infer<typeof editarProductoSchema>;
@@ -95,7 +95,7 @@ export function EditarProductoModal({ isOpen, onClose, producto }: EditarProduct
             {errors.precioSugerido && <span className="text-xs text-red-500 font-medium">{errors.precioSugerido.message}</span>}
 
             {ultimoLote && (
-              <div className="flex items-start gap-2 p-3 mt-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
+              <div className="flex items-start gap-2 p-3 mt-2 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-600">
                 <Info size={16} className="mt-0.5 shrink-0" />
                 <p className="text-xs leading-relaxed">
                   El costo unitario del último lote fue de <strong>${ultimoLote.costoUnitario.toFixed(2)}</strong>. 

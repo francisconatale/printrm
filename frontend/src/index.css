@@ -115,7 +115,7 @@
    (sigue el estilo de Modal: bg-background,
     rounded-[2rem], borde sutil)
    ============================================= */
-.printrm-toaster {
+.printly-toaster {
   --normal-bg: var(--background);
   --normal-border: var(--border-subtle);
   --normal-text: var(--foreground);

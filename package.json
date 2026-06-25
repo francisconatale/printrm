@@ -1,16 +1,16 @@
 {
-  "name": "printrm-portable",
+  "name": "printly",
   "version": "1.0.0",
-  "description": "Portable 3D Slicing App with React and Spring Boot",
+  "description": "3D Slicing App with React and Spring Boot",
   "main": "main.js",
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && ./gradlew bootRun --args=\"--server.port=8080\"",
+    "dev:backend": "cd backend && gradlew bootRun --args=\"--server.port=8080\"",
     "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development ELECTRON_START_URL=http://localhost:5173 electron .",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:electron\"",
     "dev:web": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && ./gradlew stageApp",
+    "build:backend": "cd backend && gradlew stageApp",
     "dist": "npm run build:frontend && npm run build:backend && electron-builder"
   },
   "devDependencies": {
@@ -21,13 +21,21 @@
     "wait-on": "^8.0.2"
   },
   "build": {
-    "appId": "com.printrm.portable",
+    "appId": "com.printly.app",
+    "productName": "Printly",
     "win": {
-      "target": "portable",
+      "target": "nsis",
       "icon": "frontend/public/vite.svg"
     },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Printly"
+    },
     "directories": {
-      "output": "output/printcrm"
+      "output": "output/printly"
     },
     "files": [
       "main.js",

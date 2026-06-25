@@ -3,7 +3,7 @@ import { onboardingApi } from '../api/onboarding.api';
 import { Onboarding } from '../types/onboarding.types';
 
 const ONBOARDING_QUERY_KEY = 'onboarding';
-const LS_KEY = 'printrm_onboarding';
+const LS_KEY = 'printly_onboarding';
 
 function readFromLS(): Onboarding | undefined {
   try {

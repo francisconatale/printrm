@@ -1,9 +1,9 @@
 ---
 name: java-integration-tests
-description: Guidance for writing integration tests in this Spring Boot + SQLite project (printrm). Use when writing or reviewing tests for any service in the backend. Covers the real-DB pattern (@SpringBootTest without mocks), flush/clear lifecycle, Hibernate timestamp quirks, and what's worth testing vs what isn't.
+description: Guidance for writing integration tests in this Spring Boot + SQLite project (printly). Use when writing or reviewing tests for any service in the backend. Covers the real-DB pattern (@SpringBootTest without mocks), flush/clear lifecycle, Hibernate timestamp quirks, and what's worth testing vs what isn't.
 ---
 
-# Integration Testing — printrm Backend
+# Integration Testing — printly Backend
 
 ## Stack
 
@@ -315,10 +315,10 @@ void updateAjustes_persistsNewValues() {
 
 ```powershell
 # Correr todos los tests de integración
-.\gradlew.bat test --tests "com.printrm.studio.*"
+.\gradlew.bat test --tests "com.printly.studio.*"
 
 # Correr solo una clase
-.\gradlew.bat test --tests "com.printrm.studio.domain.calculo.CalculoServiceIntegrationTest"
+.\gradlew.bat test --tests "com.printly.studio.domain.calculo.CalculoServiceIntegrationTest"
 
 # Ver el reporte HTML detallado
 start .\build\reports\tests\test\index.html

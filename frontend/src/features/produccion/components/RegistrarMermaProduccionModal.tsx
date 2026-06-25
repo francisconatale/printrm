@@ -72,7 +72,7 @@ export function RegistrarMermaProduccionModal({ orden, isOpen, onClose }: Regist
           </div>
         )}
 
-        <div className="flex gap-3 bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-amber-600 dark:text-amber-400 text-[14px]">
+        <div className="flex gap-3 bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-amber-600 text-[14px]">
           <AlertTriangle className="shrink-0" size={20} />
           <p>
             Al registrar la merma, se asumirá el costo del material perdido en el balance, pero no se sumará stock.

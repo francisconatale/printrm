@@ -61,7 +61,7 @@ export function ConfigTable<T extends { id: string }>({
                 </button>
                 <button
                   onClick={() => onDelete(item)}
-                  className="p-1.5 hover:bg-red-500/10 rounded-full transition-all text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
+                  className="p-1.5 hover:bg-red-500/10 rounded-full transition-all text-muted-foreground hover:text-red-600"
                   title={deleteTitle}
                   aria-label={deleteTitle}
                 >

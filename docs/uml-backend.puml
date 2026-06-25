@@ -1,4 +1,4 @@
-@startuml PrintRM Backend - UML Completo
+@startuml Printly Backend - UML Completo
 !theme plain
 
 skinparam backgroundColor #FEFEFE

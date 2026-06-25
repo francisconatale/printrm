@@ -18,17 +18,6 @@ import { OnboardingWizard } from './features/onboarding/components/OnboardingWiz
 import { Toaster } from 'sonner'
 
 function App() {
-  const params = new URLSearchParams(window.location.search)
-  const isDesignLab = params.get('design_lab') === 'true'
-
-  if (isDesignLab) {
-    const DesignLabPage = React.lazy(() => import('../../.claude-design/lab/page').then(m => ({ default: m.DesignLabPage })))
-    return (
-      <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-background"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>}>
-        <DesignLabPage />
-      </React.Suspense>
-    )
-  }
   const [currentView, setCurrentView] = useState<ViewType>('calculator')
   const [selectedPieza, setSelectedPieza] = useState<any | null>(null)
   const navigateToPedidoRef = useRef<string | null>(null)
@@ -53,7 +42,7 @@ function App() {
   }, [currentView])
 
   if (!isBackendReady) {
-    return <LoadingScreen retryCount={retryCount} error={error} />
+    return <LoadingScreen error={error} />
   }
 
   const renderView = () => {
@@ -73,6 +62,7 @@ function App() {
               costoDesgaste: 0,
               subtotal: selectedPieza.costoBase || 0,
               costoBase: selectedPieza.costoBase || 0,
+              costoError: selectedPieza.costoError || 0,
               precioVenta: (selectedPieza.costoBase || 0) * 3,
             } : null}
             initialFile={selectedPieza ? new File([], selectedPieza.filePath) : null}
@@ -116,7 +106,7 @@ function App() {
           {renderView()}
         </main>
       </AppShell>
-      <Toaster richColors position="top-right" className="printrm-toaster" />
+      <Toaster richColors position="top-right" className="printly-toaster" />
       {showOnboarding && (
         <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
       )}

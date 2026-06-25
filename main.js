@@ -14,7 +14,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    title: "PrintRM Studio",
+    title: "Printly Studio",
   });
 
   if (process.env.ELECTRON_START_URL) {
@@ -45,7 +45,7 @@ function startBackend() {
     });
   } else {
     console.log("Mode: Production");
-    jarPath = path.join(process.resourcesPath, 'backend', 'printrm-backend.jar');
+    jarPath = path.join(process.resourcesPath, 'backend', 'printly-backend.jar');
     jrePath = path.join(process.resourcesPath, 'backend', 'jre', 'bin', 'java.exe');
     
     console.log("Expected JRE at:", jrePath);
@@ -61,7 +61,7 @@ function startBackend() {
     if (!fs.existsSync(jarPath)) {
         console.error(`Backend JAR not found at ${jarPath}`);
         // Fallback for testing without full packaging
-        const localJar = path.join(__dirname, 'backend/build/staging/backend/printrm-backend.jar');
+        const localJar = path.join(__dirname, 'backend/build/staging/backend/printly-backend.jar');
         if (fs.existsSync(localJar)) {
             console.log("Found JAR in staging, using local path:", localJar);
             jarPath = localJar;
@@ -71,7 +71,7 @@ function startBackend() {
         }
     }
 
-    springBootProcess = spawn(finalJavaCmd, ['-jar', jarPath, '--server.port=8080']);
+    springBootProcess = spawn(finalJavaCmd, ['-jar', jarPath, '--server.port=8080', `--studio.base-path=${process.resourcesPath}`]);
   }
 
   springBootProcess.on('error', (err) => {

@@ -1,15 +1,15 @@
 # PrusaSlicer Java Wrapper
 
-A lightweight Java wrapper for the PrusaSlicer CLI and a portable launcher for the GUI.
+A lightweight Java wrapper for the PrusaSlicer CLI and a GUI launcher.
 
 ## Features
-- **Portability:** Automatically uses a local `data` folder for settings (`--datadir`), ensuring no impact on the host system.
+- **Local Data:** Automatically uses a local `data` folder for settings (`--datadir`), ensuring no impact on the host system.
 - **GUI Launcher:** Can launch the PrusaSlicer GUI or CLI.
 - **API:** Robust Java API to programmatically control PrusaSlicer.
 
 ## Requirements
 - Java 11 or higher
-- PrusaSlicer executable installed (bundled in portable version)
+- PrusaSlicer executable installed
 
 ## Usage (API)
 ```java
@@ -20,7 +20,7 @@ SlicingResult result = slicer.execute(
 );
 ```
 
-## Portable Launcher
-The portable distribution includes an `iniciar.bat` which runs the `PrusaSlicerLauncher`.
+## Launcher
+The distribution includes an `iniciar.bat` which runs the `PrusaSlicerLauncher`.
 - **Default:** Launches the PrusaSlicer GUI with a local data directory.
 - **CLI:** Pass arguments to `iniciar.bat` to run the console version.

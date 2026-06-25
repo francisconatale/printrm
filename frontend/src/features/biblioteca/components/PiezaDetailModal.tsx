@@ -29,7 +29,7 @@ export const PiezaDetailModal: React.FC<PiezaDetailModalProps> = ({ pieza, isOpe
       <div className="bg-background text-foreground w-full font-serif mt-4 pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Left: 3D Viewport */}
-          <div className="lg:col-span-8 h-[550px] bg-muted/20 dark:bg-muted/5 flex flex-col items-center justify-center relative overflow-hidden rounded-md border border-border/50">
+          <div className="lg:col-span-8 h-[550px] bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-md border border-border/50">
             <div className="absolute top-8 left-8 z-10 pointer-events-none">
               <h2 className="text-4xl tracking-tight font-light mb-2">{pieza.nombre}</h2>
               <p className="text-muted-foreground font-sans text-sm tracking-widest uppercase">ID: {pieza.id?.split('-')[0] || 'N/A'}</p>

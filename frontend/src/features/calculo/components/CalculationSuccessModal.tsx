@@ -26,7 +26,7 @@ export function CalculationSuccessModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} hideHeader>
       <div className="text-center py-8 px-8">
-        <div className="mx-auto w-16 h-16 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-500 rounded-full flex items-center justify-center mb-4">
+        <div className="mx-auto w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
           <Check className="w-8 h-8" />
         </div>
         <h2 className="text-xl font-semibold mb-1">¡Cálculo Guardado!</h2>

@@ -215,7 +215,7 @@ export function CrearPedidoModal({ isOpen, onClose, onCreated }: CrearPedidoModa
                             <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
                               <span className="font-medium text-foreground">${p.precioSugerido}</span>
                               <span className="w-1.5 h-1.5 rounded-full bg-border"></span>
-                              <span className={p.cantidadStock && p.cantidadStock < item.cantidad ? 'text-destructive font-semibold' : 'text-emerald-600 dark:text-emerald-400'}>
+                              <span className={p.cantidadStock && p.cantidadStock < item.cantidad ? 'text-destructive font-semibold' : 'text-emerald-600'}>
                                 Stock: {p.cantidadStock}
                               </span>
                             </div>

@@ -173,13 +173,13 @@ export function LibroDiarioView() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-card border border-border/50 p-6 rounded-[var(--radius-xl)] space-y-4 shadow-sm">
                     <div className="flex justify-between items-start">
-                      <div className="size-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
+                      <div className="size-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600">
                         <Wallet size={20} aria-hidden="true" />
                       </div>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Balance Caja Chica</p>
-                      <p className={`text-3xl font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-zinc-900 dark:text-zinc-50' : 'text-red-600 dark:text-red-400'}`}>
+                      <p className={`text-3xl font-bold tracking-tight mt-1 ${ (balance || 0) >= 0 ? 'text-zinc-900' : 'text-red-600'}`}>
                         {formatCurrency(balance || 0)}
                       </p>
                     </div>
@@ -267,17 +267,17 @@ export function LibroDiarioView() {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-center">
                                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50' :
-                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50' :
-                                  'bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50'
+                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                  (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                  'bg-zinc-50 text-zinc-600 border-zinc-200'
                                 }`}>
                                   {item.isGroup ? item.categoria : item.tx.categoria}
                                 </span>
                               </td>
                               <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-bold ${
-                                (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'text-emerald-600 dark:text-emerald-400' :
-                                (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'text-amber-600 dark:text-amber-400' :
-                                'text-zinc-900 dark:text-zinc-300'
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'INGRESO' ? 'text-emerald-600' :
+                                (item.isGroup ? item.tipo : item.tx.tipo) === 'REEMBOLSO' ? 'text-amber-600' :
+                                'text-zinc-900'
                               }`}>
                                 {formatCurrency(item.isGroup ? item.montoTotal : item.tx.monto)}
                               </td>
@@ -291,7 +291,7 @@ export function LibroDiarioView() {
                                   ↳ {subTx.descripcion}
                                 </td>
                                 <td className="px-6 py-3 whitespace-nowrap text-center">
-                                  <span className="text-[9px] font-medium px-2 py-0.5 rounded-full uppercase border bg-zinc-50 text-zinc-500 border-zinc-200 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-700/50">
+                                  <span className="text-[9px] font-medium px-2 py-0.5 rounded-full uppercase border bg-zinc-50 text-zinc-500 border-zinc-200">
                                     {subTx.categoria}
                                   </span>
                                 </td>

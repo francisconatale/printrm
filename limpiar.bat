@@ -1,12 +1,12 @@
 @echo off
 setlocal
 echo ========================================
-echo   Limpieza de Carpeta - PrusaSlicer App
+echo   Limpieza de Carpeta - Printly
 echo ========================================
 echo.
 
 echo [+] Cerrando procesos colgados (App y Java)...
-taskkill /f /im "prusaslicer-portable.exe" >nul 2>&1
+taskkill /f /im "printly.exe" >nul 2>&1
 taskkill /f /im "java.exe" >nul 2>&1
 
 echo [+] Eliminando archivos G-code generados...
@@ -31,6 +31,6 @@ if exist "configs" (
 )
 
 echo.
-echo Limpieza completada. Ahora podes correr armar_portable.bat sin bloqueos.
+echo Limpieza completada. Ahora podes correr npm run dist sin bloqueos.
 echo.
 pause

@@ -40,7 +40,7 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
           return data;
         },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [queryKey] });
+          queryClient.invalidateQueries({ queryKey: [queryKey], refetchType: 'all' });
         },
         successMessage: `${entitySingular} creado correctamente.`,
         errorMessage: `Error al crear ${entitySingular.toLowerCase()}.`,
@@ -54,7 +54,7 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
           return data;
         },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [queryKey] });
+          queryClient.invalidateQueries({ queryKey: [queryKey], refetchType: 'all' });
         },
         successMessage: `${entitySingular} actualizado correctamente.`,
         errorMessage: `Error al actualizar ${entitySingular.toLowerCase()}.`,
@@ -67,7 +67,7 @@ function createCrudHooks<T extends { id: string }, TCreate, TUpdate>(
           await apiClient.delete(`${url}/${id}`);
         },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: [queryKey] });
+          queryClient.invalidateQueries({ queryKey: [queryKey], refetchType: 'all' });
         },
         successMessage: `${entitySingular} eliminado correctamente.`,
         errorMessage: `Error al eliminar ${entitySingular.toLowerCase()}.`,

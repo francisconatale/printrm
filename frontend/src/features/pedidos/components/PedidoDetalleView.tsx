@@ -182,10 +182,10 @@ export function PedidoDetalleView({ pedidoId, onBack }: PedidoDetalleViewProps) 
                             {it.perfilNombre}
                             <div className="flex flex-wrap gap-2 mt-1.5">
                               {pedido.estado !== 'ENTREGADO' && it.cantidadFaltante && it.cantidadFaltante > 0 ? (
-                                <span className="text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-500 px-1.5 py-0.5 rounded font-bold tracking-wide">FALTAN {it.cantidadFaltante}</span>
+                                <span className="text-[10px] bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded font-bold tracking-wide">FALTAN {it.cantidadFaltante}</span>
                               ) : null}
                               {fabricadas > 0 && (
-                                <span className="text-[10px] bg-blue-500/10 text-blue-600 dark:text-blue-500 px-1.5 py-0.5 rounded font-bold tracking-wide">{fabricadas} FABRICADAS</span>
+                                <span className="text-[10px] bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded font-bold tracking-wide">{fabricadas} FABRICADAS</span>
                               )}
                             </div>
                           </td>

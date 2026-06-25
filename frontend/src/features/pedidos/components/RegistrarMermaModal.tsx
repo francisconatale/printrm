@@ -66,7 +66,7 @@ export function RegistrarMermaModal({ pedidoId, itemId, isOpen, onClose }: Regis
           </div>
         )}
 
-        <div className="flex gap-3 bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-amber-600 dark:text-amber-400 text-sm">
+        <div className="flex gap-3 bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl text-amber-600 text-sm">
           <AlertTriangle className="shrink-0" size={20} />
           <p className="studio-caption">
             Registrar merma reclasifica estadísticamente el costo del filamento y la energía correspondientes, pero <strong>no descuenta dinero del balance dos veces</strong>.

@@ -1,12 +1,12 @@
 # 🔄 Flujos Operativos y Pipeline 3D
 
-Este documento detalla el funcionamiento técnico del motor de procesamiento 3D y slicing de **PrintRM**, describiendo la interacción desde que el usuario sube un archivo STL hasta que se calcula el costo en tiempo real y se visualiza en la interfaz.
+Este documento detalla el funcionamiento técnico del motor de procesamiento 3D y slicing de **Printly**, describiendo la interacción desde que el usuario sube un archivo STL hasta que se calcula el costo en tiempo real y se visualiza en la interfaz.
 
 ---
 
 ## 🚀 1. El Pipeline de Slicing (Integración PrusaSlicer)
 
-PrintRM integra de forma local la herramienta **PrusaSlicer CLI** para procesar archivos 3D directamente en la computadora del usuario sin requerir APIs web externas.
+Printly integra de forma local la herramienta **PrusaSlicer CLI** para procesar archivos 3D directamente en la computadora del usuario sin requerir APIs web externas.
 
 ```mermaid
 graph TD
