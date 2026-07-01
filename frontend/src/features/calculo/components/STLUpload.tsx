@@ -5,14 +5,13 @@ import { STLViewer } from './STLViewer';
 interface STLUploadProps {
   file: File | null;
   onFileChange: (file: File | null) => void;
-  isSlicing: boolean;
   onReset?: () => void;
   canvasRef?: React.RefObject<HTMLCanvasElement>;
   onInitialCapture?: (dataUrl: string) => void;
 }
 
 export const STLUpload: React.FC<STLUploadProps> = ({ 
-  file, onFileChange, isSlicing, onReset, canvasRef, onInitialCapture
+  file, onFileChange, onReset, canvasRef, onInitialCapture
 }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -67,14 +66,13 @@ export const STLUpload: React.FC<STLUploadProps> = ({
               accept=".stl"
               onChange={handleFileChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
-              disabled={isSlicing}
             />
             <div className="size-16 rounded-full flex items-center justify-center mx-auto bg-muted/20 text-muted-foreground transition-all group-hover:text-foreground group-hover:bg-muted/30">
               <Upload size={24} />
             </div>
             <div>
               <p className="studio-body-strong !text-lg text-foreground">Importar Modelo STL</p>
-              <p className="studio-caption text-muted-foreground mt-1">Arrastrá tu diseño para análisis automático</p>
+              <p className="studio-caption text-muted-foreground mt-1">Arrastrá tu diseño para guardarlo en la biblioteca</p>
             </div>
           </div>
         )}

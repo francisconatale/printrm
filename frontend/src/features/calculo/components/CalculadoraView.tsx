@@ -14,9 +14,7 @@ import {
   useGetPerfiles,
   useGetFilamentProfiles,
 } from '../../perfiles/api/perfiles.api'
-import { useSliceSTL } from '../api/slicer.api'
 import { useGuardarPieza } from '../../biblioteca/api/biblioteca.api'
-import { parseEstimatedTime } from '../utils/calculos.utils'
 import { CalculoSnapshot } from '../types/calculo.types'
 import { formatCurrency } from '../../../lib/utils'
 
@@ -63,7 +61,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
       if (initialData.perfilId) {
         setOverrideConfigs(prev => ({ ...prev, printer: initialData.perfilId }));
       }
-      setHasAnalyzed(true);
     }
     if (initialFile) {
       setFile(initialFile);
@@ -72,8 +69,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
 
   // Set default values when profiles are loaded
 
-  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
-  const [hasAnalyzed, setHasAnalyzed] = React.useState(false);
+  // Set default values when profiles are loaded
 
   const activePrinter = React.useMemo(() => {
     return printers?.find(p => p.id === overrideConfigs.printer) || perfilActivo;
@@ -88,7 +84,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
   
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
-  const { mutate: sliceSTL, isPending: isSlicing } = useSliceSTL();
   const { mutate: guardarPieza, isPending: isSavingPieza } = useGuardarPieza();
 
   const handleSaveToLibrary = () => {
@@ -117,46 +112,8 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
     });
   };
 
-  const handleSlicingComplete = (data: { horas: number; minutos: number; gramos: number }) => {
-    setPiezaInput(prev => ({
-      ...prev,
-      horas: data.horas,
-      minutosAdicionales: data.minutos,
-      gramos: Math.round(data.gramos * 100) / 100
-    }));
-    setIsAnalyzing(false);
-    setHasAnalyzed(true);
-  };
-
   const handleAnalyze = () => {
-    if (!overrideConfigs.print || !overrideConfigs.filament || !overrideConfigs.printer) {
-      toast.error('Por favor, selecciona los 3 parámetros de impresión (Ajuste, Material e Impresora)');
-      return;
-    }
-    if (!file) return;
-    setIsAnalyzing(true);
-    sliceSTL(
-      {
-        file,
-        printConfig: overrideConfigs.print || undefined,
-        filamentConfig: overrideConfigs.filament || undefined,
-        printerConfig: overrideConfigs.printer || undefined,
-      },
-      {
-        onSuccess: (result) => {
-          const { horas, minutos } = parseEstimatedTime(result.estimatedTime || '');
-          handleSlicingComplete({
-            horas,
-            minutos,
-            gramos: result.filamentUsedG || 0,
-          });
-        },
-        onError: () => {
-          toast.error('Error al analizar el archivo STL');
-          setIsAnalyzing(false);
-        },
-      }
-    );
+    // Ya no se requiere análisis automático, los inputs son manuales
   };
 
   const handleOverrideConfigsChange = (type: 'print' | 'filament' | 'printer', val: string) => {
@@ -165,7 +122,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
 
   const handleResetAnalysis = () => {
     setFile(null);
-    setHasAnalyzed(false);
     setPiezaInput(prev => ({ ...prev, horas: 0, minutosAdicionales: 0, gramos: 0 }));
     if (onResetFile) {
       onResetFile();
@@ -197,7 +153,6 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
                   <STLUpload 
                     file={file}
                     onFileChange={setFile}
-                    isSlicing={isAnalyzing || isSlicing}
                     onReset={handleResetAnalysis}
                     canvasRef={canvasRef}
                     onInitialCapture={(dataUrl) => {
@@ -210,6 +165,46 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-foreground font-medium">
                   <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">2</span>
+                  Datos de Producción (Manual)
+                </div>
+                <div className="pl-9 grid grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-muted-foreground font-medium">Horas</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" 
+                      value={piezaInput.horas || ''}
+                      onChange={(e) => setPiezaInput(prev => ({ ...prev, horas: Number(e.target.value) }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-muted-foreground font-medium">Minutos</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      max="59"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" 
+                      value={piezaInput.minutosAdicionales || ''}
+                      onChange={(e) => setPiezaInput(prev => ({ ...prev, minutosAdicionales: Number(e.target.value) }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[12px] text-muted-foreground font-medium">Gramos</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" 
+                      value={piezaInput.gramos || ''}
+                      onChange={(e) => setPiezaInput(prev => ({ ...prev, gramos: Number(e.target.value) }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-foreground font-medium">
+                  <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">3</span>
                   Selecciona los Parámetros
                 </div>
                 <div className="pl-9">
@@ -226,7 +221,7 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
               <div className="sticky top-8 space-y-6">
                 <div className="bg-card rounded-xl border border-border p-6">
                   <div className="flex items-center gap-3 text-foreground font-medium mb-6">
-                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">3</span>
+                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">4</span>
                     Resultado y Cotización
                   </div>
                   <ResultadoPanel 
@@ -234,13 +229,13 @@ export function CalculadoraView({ initialData, initialFile, onResetFile, onGoToL
                     onSaveToLibrary={handleSaveToLibrary}
                     isSavingToLibrary={isSavingPieza}
                     onAnalyze={handleAnalyze}
-                    isAnalyzing={isAnalyzing || isSlicing || calculationQuery.isLoading}
+                    isAnalyzing={calculationQuery.isLoading}
                     hasFile={!!file}
-                    hasAnalyzed={hasAnalyzed}
+                    hasAnalyzed={true}
                     insumosExtra={piezaInput.insumosExtra}
                     onInsumosExtraChange={(v) => setPiezaInput(prev => ({ ...prev, insumosExtra: v }))}
                     onReset={handleResetAnalysis}
-                    isAnalyzeDisabled={!overrideConfigs.print || !overrideConfigs.filament || !overrideConfigs.printer}
+                    isAnalyzeDisabled={false}
                   />
                 </div>
               </div>
