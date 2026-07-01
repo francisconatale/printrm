@@ -1,18 +1,5 @@
-# Estado de Tarea Actual
+# Estado de Tarea
 
-**Tarea:** Ver pedidos y transacciones de un cliente directamente en la sección de clientes.
-
-**Alcance:**
-- Backend: agregar query por `clienteId` en `PedidoRepository`, `TransaccionRepository`, sus servicios y controladores.
-- Frontend: panel lateral (drawer) que se abre al hacer clic en un cliente mostrando sus pedidos y transacciones.
-
-**Archivos a modificar:**
-- `PedidoRepository.java` — agregar `findByClienteId`
-- `PedidoService.java` — agregar `getByCliente`
-- `PedidoController.java` — agregar query param `clienteId`
-- `TransaccionRepository.java` — agregar `findByPedido_ClienteId`
-- `TransaccionService.java` — agregar `getByCliente`
-- `TransaccionController.java` — agregar query param `clienteId`
-- `clientes.api.ts` — agregar hooks para pedidos/transacciones por cliente
-- `ClientesListView.tsx` — abrir drawer al hacer clic en cliente
-- Nueva: `ClienteDetalleDrawer.tsx`
+**ID:** T002 (Refactor Calculadora sin Slicer)
+**Descripción:** Eliminar la dependencia de PrusaSlicer en la Calculadora de Costos, reemplazando el proceso automático de Slicing por entradas manuales del usuario (Gramos, Horas y Minutos) y conservando el visualizador STL o la subida de imagen/modelo para el nombre y thumbnail.
+**Estado:** Planificando
