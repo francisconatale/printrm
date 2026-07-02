@@ -88,6 +88,7 @@ public class CostCalculationService {
                 .horas(horas)
                 .minutosAdicionales(minutos)
                 .gramos(gramos)
+                .insumosExtra(insumosExtra)
                 .tiempoTotalHoras(tiempoTotalHoras)
                 .costoEnergia(costoEnergia)
                 .costoFilamento(costoFilamento)
@@ -102,13 +103,15 @@ public class CostCalculationService {
         Double totalEnergia = 0.0;
         Double totalError = 0.0;
         Double totalBase = 0.0;
+        Double totalInsumosExtra = 0.0;
         
         for (com.printly.studio.domain.biblioteca.PiezaSTL pieza : producto.getPartes()) {
+            Double insumosExtra = pieza.getInsumosExtra() != null ? pieza.getInsumosExtra() : 0.0;
             CostCalculationResult res = calculate(
                 pieza.getPesoGramos(),
                 parseHours(pieza.getTiempoEstimado()),
                 parseMinutes(pieza.getTiempoEstimado()),
-                0.0,
+                insumosExtra,
                 pieza.getPerfilPreferido(),
                 pieza.getFilamentoPreferido(),
                 ajustes
@@ -117,6 +120,7 @@ public class CostCalculationService {
             totalEnergia += res.getCostoEnergia();
             totalError += (res.getCostoError() != null ? res.getCostoError() : 0.0);
             totalBase += res.getCostoBase();
+            totalInsumosExtra += insumosExtra;
         }
 
         return CostCalculationResult.builder()
@@ -124,6 +128,7 @@ public class CostCalculationService {
                 .costoEnergia(totalEnergia)
                 .costoError(totalError)
                 .costoBase(totalBase)
+                .insumosExtra(totalInsumosExtra)
                 .build();
     }
 

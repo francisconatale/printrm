@@ -150,6 +150,18 @@ public class ProductoService {
                 producto.getId()
             );
         }
+
+        if (costos.getInsumosExtra() != null && costos.getInsumosExtra() > 0) {
+            transaccionService.registrarTransaccion(
+                com.printly.studio.domain.finanzas.Transaccion.TipoTransaccion.EGRESO,
+                com.printly.studio.domain.finanzas.Transaccion.CategoriaTransaccion.OTRO,
+                -(costos.getInsumosExtra() * cantidad),
+                "Insumos extra: " + cantidad + " unidades de " + producto.getNombre(),
+                pedidoId,
+                grupoId,
+                producto.getId()
+            );
+        }
     }
 
     @Transactional

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2026-07-02] - Transacción para Insumos Extra (Fix)
+### Descripción
+- **Backend (Producción):** 
+  - Se modificó `CostCalculationService` (`calculateForProducto`) para incluir la suma acumulada de `insumosExtra` en la respuesta `CostCalculationResult`.
+  - Se actualizó `ProductoService` (`registrarGastosDeFabricacion`) para generar una transacción de egreso adicional de categoría `OTRO` por el costo de "Insumos extra" si el producto los tiene configurados. Esto soluciona la inconsistencia donde el costo extra figuraba en el desglose inicial pero no se descontaba del balance de finanzas al fabricarse (quedando solo el costo base sin insumos).
+### Archivos Involucrados
+- [CostCalculationService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/calculo/CostCalculationService.java)
+- [ProductoService.java](file:///C:/Users/franc/OneDrive/Desktop/printrm/backend/src/main/java/com/printrm/studio/domain/stock/ProductoService.java)
+
 ## [2026-06-24] - Desglose de Costo de Error (T003)
 ### Descripción
 - **Backend (Cálculos):**
