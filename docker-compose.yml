@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: printly-backend
+    ports:
+      - "${BACKEND_PORT:-8082}:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/studio.db
+      - STUDIO_BASE_PATH=/app/data
+      - SERVER_PORT=8080
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+    restart: unless-stopped
+    networks:
+      - printly-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: printly-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - printly-network
+
+volumes:
+  backend-data:
+    name: printly-backend-data
+
+networks:
+  printly-network:
+    name: printly-network
+    driver: bridge

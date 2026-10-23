@@ -41,6 +41,7 @@ public class PiezaSTL {
     private String tiempoEstimado;
     private Double costoBase;
     private Double costoError;
+    private Double insumosExtra;
 
     @Lob
     @Column(columnDefinition = "TEXT")

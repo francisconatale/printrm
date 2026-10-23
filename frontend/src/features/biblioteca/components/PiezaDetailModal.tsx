@@ -17,7 +17,7 @@ const formatCurrency = (value?: number) => {
 export const PiezaDetailModal: React.FC<PiezaDetailModalProps> = ({ pieza, isOpen, onClose }) => {
   if (!pieza) return null;
 
-  const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`;
+  const stlUrl = `${import.meta.env.VITE_API_URL || '/api'}/v1/biblioteca/files/${pieza.filePath}`;
 
   return (
     <Modal

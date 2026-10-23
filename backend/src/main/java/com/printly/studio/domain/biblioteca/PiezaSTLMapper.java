@@ -48,6 +48,7 @@ public class PiezaSTLMapper {
         dto.setCostoMaterial(calc != null ? calc.getCostoFilamento() : 0.0);
         dto.setCostoEnergia(calc != null ? calc.getCostoEnergia() : 0.0);
         dto.setCostoError(pieza.getCostoError() != null ? pieza.getCostoError() : (calc != null && calc.getCostoError() != null ? calc.getCostoError() : 0.0));
+        dto.setInsumosExtra(pieza.getInsumosExtra());
 
         return dto;
     }

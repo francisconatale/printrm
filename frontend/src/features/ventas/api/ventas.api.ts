@@ -3,7 +3,7 @@ import axios from 'axios';
 import { VentaRequest, VentaResponse } from '../types/venta.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 
-const API_URL = 'http://localhost:8080/api/v1/ventas';
+const API_URL = `${import.meta.env.VITE_API_URL || '/api'}/v1/ventas`;
 
 export const useRegistrarVenta = () => {
   const queryClient = useQueryClient();

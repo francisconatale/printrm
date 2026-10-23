@@ -23,7 +23,7 @@ const formatCurrency = (value: number) => {
 export const STLCard: React.FC<STLCardProps> = ({ pieza, onDelete, onPublish, onViewDetail }) => {
   const [hovered, setHovered] = useState(false);
   
-  const stlUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/v1/biblioteca/files/${pieza.filePath}`; 
+  const stlUrl = `${import.meta.env.VITE_API_URL || '/api'}/v1/biblioteca/files/${pieza.filePath}`; 
 
   return (
     <div 

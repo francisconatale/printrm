@@ -19,4 +19,5 @@ public class CostCalculationResult {
     private Double costoError;
     private Double subtotal;
     private Double costoBase;
+    private Double insumosExtra;
 }

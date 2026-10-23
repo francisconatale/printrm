@@ -81,11 +81,32 @@ printrm/
 
 ### Prerequisites
 
-- **Node.js**: `v18.0.0` or higher
-- **Java JDK**: Version 17 or higher
+- **Node.js**: `v18.0.0` or higher (para ejecución local sin Docker)
+- **Java JDK**: Version 17 or higher (para ejecución local sin Docker)
+- **Docker & Docker Compose** (para despliegue en contenedores)
 - **Git**
 
-### 1. Run the Backend
+### Opción 1: Ejecutar con Docker Compose (Recomendado)
+
+Levanta frontend y backend con un solo comando:
+
+```bash
+docker compose up -d --build
+```
+
+- **Frontend (Web):** [http://localhost:5173](http://localhost:5173) (Nginx sirviendo el build de React y enrutando `/api/` al backend)
+- **Backend (API):** [http://localhost:8082](http://localhost:8082) (o el puerto configurado en `BACKEND_PORT`)
+- **Healthcheck:** [http://localhost:8082/api/health](http://localhost:8082/api/health) o [http://localhost:5173/api/health](http://localhost:5173/api/health)
+- **Persistencia:** La base de datos SQLite y los modelos STL subidos se persisten automáticamente en el volumen Docker `printly-backend-data`.
+
+Para detener los servicios:
+```bash
+docker compose down
+```
+
+### Opción 2: Ejecución Local en Modo Desarrollo
+
+#### 1. Run the Backend
 
 The backend uses an embedded SQLite database, requiring zero external database setup.
 

@@ -4,7 +4,7 @@ import { Transaccion } from '../types/finanzas.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 import { PaginatedResponse } from '../../../lib/api-client';
 
-const API_URL = 'http://localhost:8080/api/v1/transacciones';
+const API_URL = `${import.meta.env.VITE_API_URL || '/api'}/v1/transacciones`;
 
 export const useGetTransacciones = (page = 0, size = 20, clienteId?: string, fechaDesde?: string, fechaHasta?: string) => {
   return useQuery<PaginatedResponse<Transaccion>>({

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function useBackendHealthCheck(url: string = 'http://localhost:8080/api/health', maxRetries: number = 30) {
+export function useBackendHealthCheck(url: string = `${import.meta.env.VITE_API_URL || '/api'}/health`, maxRetries: number = 30) {
   const [isReady, setIsReady] = useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);

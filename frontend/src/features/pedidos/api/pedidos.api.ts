@@ -4,7 +4,7 @@ import { Pedido, PedidoCreate, EstadoPedido } from '../types/pedidos.types';
 import { useMutationWithFeedback } from '../../../hooks/useMutationWithFeedback';
 import { PaginatedResponse } from '../../../lib/api-client';
 
-const API_URL = 'http://localhost:8080/api/v1/pedidos';
+const API_URL = `${import.meta.env.VITE_API_URL || '/api'}/v1/pedidos`;
 
 export const useGetPedidos = (page = 0, size = 20, clienteId?: string, fechaDesde?: string, fechaHasta?: string) => {
   return useQuery<PaginatedResponse<Pedido>>({

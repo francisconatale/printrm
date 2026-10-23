@@ -85,6 +85,7 @@ public class PiezaSTLService {
                 .tiempoEstimado(dto.getTiempoEstimado())
                 .costoBase(dto.getCostoBase())
                 .costoError(dto.getCostoError())
+                .insumosExtra(dto.getInsumosExtra())
                 .imagenBase64(dto.getImagenBase64())
                 .build();
 

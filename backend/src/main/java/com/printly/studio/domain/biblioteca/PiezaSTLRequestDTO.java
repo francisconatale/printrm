@@ -11,6 +11,7 @@ public class PiezaSTLRequestDTO {
     private String tiempoEstimado;
     private Double costoBase;
     private Double costoError;
+    private Double insumosExtra;
     private String imagenBase64;
     
     private String perfilImpresoraId;
