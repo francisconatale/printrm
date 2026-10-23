@@ -1,26 +1,11 @@
-# PrusaSlicer Java Wrapper
+# Printrm Studio Backend
 
-A lightweight Java wrapper for the PrusaSlicer CLI and a GUI launcher.
+Backend de Printrm desarrollado con Java 17 y Spring Boot.
 
-## Features
-- **Local Data:** Automatically uses a local `data` folder for settings (`--datadir`), ensuring no impact on the host system.
-- **GUI Launcher:** Can launch the PrusaSlicer GUI or CLI.
-- **API:** Robust Java API to programmatically control PrusaSlicer.
+## Requisitos
+- Java 17 o superior
+- Gradle (o usar `./gradlew`)
 
-## Requirements
-- Java 11 or higher
-- PrusaSlicer executable installed
-
-## Usage (API)
-```java
-PrusaSlicer slicer = new PrusaSlicer(); // Uses bundled binaries and local data dir
-SlicingResult result = slicer.execute(
-    List.of("model.stl"),
-    Map.of("--layer-height", "0.2", "--export-gcode", "")
-);
-```
-
-## Launcher
-The distribution includes an `iniciar.bat` which runs the `PrusaSlicerLauncher`.
-- **Default:** Launches the PrusaSlicer GUI with a local data directory.
-- **CLI:** Pass arguments to `iniciar.bat` to run the console version.
+## Comandos principales
+- `./gradlew bootRun`: Inicia el servidor de desarrollo en `http://localhost:8080`.
+- `./gradlew test`: Ejecuta la suite de pruebas unitarias y de integración.

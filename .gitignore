@@ -6,8 +6,6 @@ frontend/node_modules/
 dist/
 output/
 frontend/dist/
-java-wrapper/build/
-java-wrapper/target/
 bin/
 backend/bin/
 
@@ -20,10 +18,7 @@ Thumbs.db
 .DS_Store
 
 # Temporary Java files
-java-wrapper/.gradle/
 .gradle/
-
-
 
 # Environment variables
 .env
@@ -34,4 +29,8 @@ backend/build/
 backend/.gradle/
 backend/*.db
 !backend/studio.db
+
+# Uploads
+backend/saved-uploads/*
+!backend/saved-uploads/gansterglasses_1782291002608.stl
 
